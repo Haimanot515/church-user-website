@@ -1,0 +1,102 @@
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: #4d0000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.15' stroke-width='2'%3E%3Cline x1='30' y1='10' x2='30' y2='35'/%3E%3Cline x1='20' y1='18' x2='40' y2='18'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 60px 60px;
+  z-index: 1000;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+}
+
+/* =========================
+   HAMBURGER BUTTON
+========================= */
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 1002;
+}
+
+/* =========================
+   FULL-WIDTH DROPDOWN
+========================= */
+
+.nav-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #4d0000;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.12' stroke-width='2'%3E%3Cline x1='30' y1='10' x2='30' y2='35'/%3E%3Cline x1='20' y1='18' x2='40' y2='18'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 60px 60px;
+
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  z-index: 1001;
+}
+
+/* Open Menu */
+
+.nav-content.active {
+  max-height: 600px;
+  opacity: 1;
+}
+
+/* =========================
+   MENU ITEMS
+========================= */
+
+.nav-content a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 18px 30px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+
+.nav-content a:last-child {
+  border-bottom: none;
+}
+
+.nav-content a:hover {
+  background: rgba(255,255,255,0.15);
+  padding-left: 45px;
+}
+
+/* =========================
+   BACKDROP
+========================= */
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 999;
+}
