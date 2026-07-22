@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --navy: #1c3a52;
+  --navy-deep: #0f2438;
+  --slate: #3d5a6c;
+  --gold: #cf9f3f;
+  --deep-red: #7a1010;
+  --rust: #c1440e;
+  --cream: #f6f2ea;
+}
+
+* { box-sizing: border-box; }
+
+.church-page {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--cream);
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+}
+.display { font-family: 'Cormorant Garamond', serif; }
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ---- IMAGE HERO ---- */
+.church-hero {
+  position: relative;
+  width: 100%;
+  height: 78vh;
+  min-height: 500px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+.church-hero img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.church-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(15,36,56,0.10) 0%, rgba(15,36,56,0.30) 50%, rgba(15,36,56,0.90) 100%);
+}
+.church-hero-content {
+  position: relative; z-index: 2;
+  width: 100%;
+  padding: 0 24px 68px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.church-hero-content .eyebrow { color: var(--gold); }
+.church-hero-content h1 {
+  font-size: clamp(2.6rem, 5.6vw, 4.4rem);
+  font-weight: 700; line-height: 1.08;
+  color: #f3f6f8; margin: 16px 0 18px 0;
+  max-width: 760px;
+}
+.church-hero-content p {
+  font-size: 1.2rem; color: #c7d6e0; max-width: 560px; line-height: 1.6; margin: 0 0 28px 0;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--gold); color: var(--navy-deep); border: none;
+  padding: 15px 30px; font-weight: 700; font-size: 1rem;
+  border-radius: 4px; cursor: pointer; letter-spacing: 0.02em;
+}
+
+/* ---- WHERE I SERVE NOW ---- */
+.serve-now-section { padding: 90px 0 0 0; }
+.serve-now-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(15,36,56,0.10);
+}
+@media (max-width: 780px) {
+  .serve-now-card { grid-template-columns: 1fr; }
+}
+.serve-now-img-wrap { position: relative; min-height: 320px; }
+.serve-now-img-wrap img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.serve-now-badge {
+  position: absolute; top: 18px; left: 18px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; letter-spacing: 0.1em;
+  text-transform: uppercase; font-weight: 600;
+  background: var(--gold); color: var(--navy-deep);
+  padding: 6px 12px; border-radius: 20px;
+}
+.serve-now-body {
+  padding: 40px 42px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.serve-now-role {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--rust); font-weight: 500; margin-bottom: 10px;
+}
+.serve-now-body h2 {
+  font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700;
+  color: var(--navy-deep); margin: 0 0 6px 0; line-height: 1.15;
+}
+.serve-now-since {
+  font-size: 0.86rem; color: var(--slate); margin-bottom: 18px; font-style: italic;
+}
+.serve-now-desc {
+  font-size: 1rem; color: var(--slate); line-height: 1.65; margin: 0 0 22px 0;
+}
+.serve-now-details {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;
+}
+.serve-now-line {
+  display: flex; align-items: baseline; gap: 8px; font-size: 0.94rem; color: var(--slate);
+}
+.serve-now-line strong { color: var(--navy); font-weight: 700; min-width: 84px; display: inline-block; }
+.serve-now-cta {
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--navy-deep); color: #f3f6f8; border: none;
+  padding: 13px 26px; font-weight: 700; font-size: 0.92rem;
+  border-radius: 4px; cursor: pointer; letter-spacing: 0.02em;
+}
+
+/* ---- CHURCHES WE SERVE ---- */
+.campuses-section { padding: 100px 0; }
+.campuses-head { text-align: center; max-width: 620px; margin: 0 auto 60px auto; }
+.campuses-head h2 {
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin: 14px 0 16px 0; color: var(--navy-deep);
+}
+.campuses-head p { font-size: 1.1rem; color: var(--slate); line-height: 1.6; }
+
+.campus-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+}
+@media (max-width: 860px) { .campus-grid { grid-template-columns: 1fr; } }
+
+.campus-card {
+  background: #ffffff; border-radius: 8px; overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15,36,56,0.08);
+}
+.campus-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+.campus-card-body { padding: 22px 24px 26px 24px; }
+.campus-role {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--rust); font-weight: 500; margin-bottom: 8px;
+}
+.campus-card h3 {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 700;
+  color: var(--navy-deep); margin: 0 0 10px 0; line-height: 1.15;
+}
+.campus-line {
+  display: flex; align-items: baseline; gap: 8px; font-size: 0.92rem; color: var(--slate);
+  margin-bottom: 4px;
+}
+.campus-line strong { color: var(--navy); font-weight: 700; }
+
+/* ---- BLOG ---- */
+.blog-section { padding: 100px 0; }
+.blog-head { max-width: 680px; margin: 0 auto 56px auto; text-align: center; }
+.blog-head h2 {
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin: 14px 0 16px 0; color: var(--navy-deep);
+}
+.blog-head p { font-size: 1.1rem; color: var(--slate); line-height: 1.6; }
+
+.blog-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+}
+@media (max-width: 860px) { .blog-grid { grid-template-columns: 1fr; } }
+
+.blog-card {
+  background: #ffffff; border-radius: 8px; overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15,36,56,0.08);
+}
+.blog-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+.blog-card-body { padding: 22px 24px 26px 24px; }
+.blog-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--rust); font-weight: 500; margin-bottom: 8px;
+}
+.blog-card h3 {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.55rem; font-weight: 700;
+  color: var(--navy-deep); margin: 0 0 10px 0; line-height: 1.2;
+}
+.blog-card p { font-size: 0.96rem; color: var(--slate); line-height: 1.55; margin: 0 0 16px 0; }
+.read-more {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--navy-deep); font-weight: 500;
+  background: none; border: none; padding: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.read-more svg { width: 13px; height: 13px; }
+
+/* ---- CONSTRUCTION AD (full width, white, overlay inside hero) ---- */
+.construction-ad {
+  position: fixed;
+  z-index: 30;
+  left: 24px;
+  right: 24px;
+  top: 65px;
+  bottom: 24px;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  background: #ffffff;
+  border: 1px solid rgba(15,36,56,0.10);
+  border-radius: 10px;
+  box-shadow: 0 20px 44px rgba(0,0,0,0.35);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  display: flex;
+  align-items: stretch;
+}
+.construction-ad.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.construction-ad-img-wrap { position: relative; width: 380px; flex: 0 0 380px; height: 100%; }
+.construction-ad-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.construction-ad-badge {
+  position: absolute; top: 12px; left: 12px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; letter-spacing: 0.09em;
+  text-transform: uppercase; font-weight: 600;
+  background: var(--rust); color: #f6f2ea;
+  padding: 5px 11px; border-radius: 20px;
+}
+.construction-ad-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(15,36,56,0.18); background: #ffffff;
+  color: var(--navy-deep); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 10px rgba(15,36,56,0.2);
+  z-index: 4;
+}
+.construction-ad-close svg { width: 15px; height: 15px; }
+
+.construction-ad-body {
+  padding: 32px 40px;
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.construction-ad-body h3 {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 700;
+  color: var(--navy-deep); margin: 10px 0 12px 0; line-height: 1.18;
+}
+.construction-ad-body p {
+  font-size: 0.98rem; color: var(--slate); line-height: 1.6; margin: 0 0 20px 0; max-width: 420px;
+}
+.ad-progress-label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--slate);
+  margin-bottom: 6px;
+}
+.ad-progress-label strong { color: var(--rust); font-size: 0.78rem; }
+.ad-progress-track {
+  width: 100%; height: 6px; border-radius: 4px;
+  background: rgba(15,36,56,0.10); overflow: hidden; margin-bottom: 16px;
+}
+.ad-progress-fill { height: 100%; border-radius: 4px; background: var(--gold); }
+
+.construction-ad-support-btn {
+  align-self: flex-start;
+  background: var(--navy-deep); color: #f3f6f8; border: none;
+  padding: 11px 22px; font-weight: 700; font-size: 0.88rem;
+  border-radius: 4px; cursor: pointer; letter-spacing: 0.02em;
+}
+@media (max-width: 640px) {
+  .construction-ad { flex-direction: column; left: 16px; right: 16px; top: 65px; bottom: 16px; }
+  .construction-ad-img-wrap { width: 100%; flex-basis: auto; height: 40%; }
+  .construction-ad-body { padding: 20px 22px; }
+}

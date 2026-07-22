@@ -1,10 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import API from "../api/api.jsx";
+import "./Travel.css";
 
-const PastorTravelPage = () => {
+const TRAVEL_ITEM_LIMIT = 10;
+
+const Travel = () => {
   const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Travel", "Prayer", "Archive", "About Me", "Contact"];
 
   const [openFaq, setOpenFaq] = useState(0);
   const [activeTrip, setActiveTrip] = useState(0);
+
+  // === ADDED: upcoming trips fetched from backend, category = Travel, limit 10, paginated ===
+  const [upcomingTrips, setUpcomingTrips] = useState([]);
+  const [upcomingLoading, setUpcomingLoading] = useState(true);
+  const [upcomingError, setUpcomingError] = useState("");
+  const [upcomingPage, setUpcomingPage] = useState(1);
+  const [upcomingTotalPages, setUpcomingTotalPages] = useState(1);
+
+  useEffect(() => {
+    const fetchTravelPosts = async (pageNum) => {
+      try {
+        setUpcomingLoading(true);
+        setUpcomingError("");
+
+        const res = await API.get("/posts", {
+          params: {
+            category: "Travel",
+            limit: TRAVEL_ITEM_LIMIT,
+            page: pageNum,
+          },
+        });
+
+        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        const pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
+
+        // Append on "Load More" (page > 1), replace on first load
+        setUpcomingTrips((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
+        setUpcomingTotalPages(pages);
+      } catch (err) {
+        console.log(err);
+        setUpcomingError(err.response?.data?.message || "Failed to load travel posts");
+      } finally {
+        setUpcomingLoading(false);
+      }
+    };
+    fetchTravelPosts(upcomingPage);
+  }, [upcomingPage]);
+
+  const handleLoadMoreTrips = () => {
+    if (upcomingPage < upcomingTotalPages) setUpcomingPage((p) => p + 1);
+  };
+
+  const getFormattedDate = (post) =>
+    post.publishedAt || post.createdAt
+      ? new Date(post.publishedAt || post.createdAt).toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })
+      : "";
 
   const quickFacts = [
     { label: "Countries Visited", value: "14, and counting" },
@@ -13,37 +66,6 @@ const PastorTravelPage = () => {
     { label: "Packing Philosophy", value: "One bag, always. No exceptions." },
     { label: "Travel Companion", value: "Usually my wife, sometimes the whole family" },
     { label: "Souvenir Of Choice", value: "A local hymn book or prayer written by hand" }
-  ];
-
-  const upcomingTrips = [
-    {
-      img: "https://images.unsplash.com/photo-1500881308878-4bf1d5872c3e?auto=format&fit=crop&w=900&q=80",
-      alt: "Rolling green hills and a stone path in the Scottish countryside",
-      title: "Scotland Sabbatical",
-      date: "September 2026",
-      desc: "A month away to rest and read on Iona again, this time with Miriam. No sermon to prepare, no meetings to run — just the sea, some old books, and a chapel that's been praying longer than either of us has been alive."
-    },
-    {
-      img: "https://images.unsplash.com/photo-1518259102261-b40117eabbc9?auto=format&fit=crop&w=900&q=80",
-      alt: "Colorful hillside houses in a Central American town",
-      title: "Guatemala Mission Trip",
-      date: "Spring 2027",
-      desc: "A team from the congregation is heading out to partner with a church we've supported for years, finishing a classroom addition and running a week of vacation Bible school alongside the local families."
-    },
-    {
-      img: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=900&q=80",
-      alt: "Coastal cliffs and whitewashed buildings in Portugal",
-      title: "Family Trip: Portugal",
-      date: "Summer 2027",
-      desc: "Half vacation, half education, like always. The kids picked this one — they want to see the tile work in Porto and the coastline everyone keeps telling us about."
-    },
-    {
-      img: "https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=900&q=80",
-      alt: "Ancient stone obelisks against a clear sky in Ethiopia",
-      title: "Day Pilgrimage: Axum",
-      date: "October 2026",
-      desc: "One of those trips that needs no suitcase. A few of us are driving up for the day to walk among the stelae and pray somewhere history has been praying for a very long time."
-    }
   ];
 
   const travelKinds = [
@@ -89,175 +111,11 @@ const PastorTravelPage = () => {
 
   return (
     <div className="church-portal">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-        :root {
-          --sky-top: #a9d3e8;
-          --sky-mid: #d5eaf3;
-          --sky-low: #f3f8fa;
-          --navy: #1c3a52;
-          --navy-deep: #0f2438;
-          --slate: #3d5a6c;
-          --gold: #cf9f3f;
-          --white: #ffffff;
-          --deep-red: #7a1010;
-        }
-
-        * { box-sizing: border-box; }
-
-        .church-portal {
-          font-family: 'Nunito Sans', sans-serif;
-          background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-low) 100%);
-          color: var(--navy);
-          -webkit-font-smoothing: antialiased;
-        }
-        .wrapper { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
-        .display { font-family: 'Cormorant Garamond', serif; }
-        .eyebrow {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.72rem; font-weight: 500;
-          letter-spacing: 0.14em; text-transform: uppercase;
-          color: var(--gold);
-        }
-        a { color: inherit; text-decoration: none; }
-
-        .cloud-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-        .cloud { position: absolute; background: rgba(255,255,255,0.75); border-radius: 100px; filter: blur(1px); }
-        .cloud::before, .cloud::after { content: ''; position: absolute; background: inherit; border-radius: 100px; }
-        .cloud-a { width: 180px; height: 55px; top: 8%; left: -10%; animation: drift 70s linear infinite; }
-        .cloud-a::before { width: 90px; height: 90px; top: -45px; left: 25px; }
-        .cloud-a::after { width: 70px; height: 70px; top: -30px; left: 90px; }
-        .cloud-b { width: 130px; height: 40px; top: 22%; left: -15%; animation: drift 95s linear infinite; animation-delay: -20s; opacity: 0.6; }
-        .cloud-b::before { width: 65px; height: 65px; top: -32px; left: 18px; }
-        .cloud-b::after { width: 50px; height: 50px; top: -22px; left: 65px; }
-        .cloud-c { width: 220px; height: 60px; top: 4%; left: -20%; animation: drift 120s linear infinite; animation-delay: -50s; opacity: 0.5; }
-        .cloud-c::before { width: 100px; height: 100px; top: -50px; left: 30px; }
-        .cloud-c::after { width: 80px; height: 80px; top: -35px; left: 110px; }
-        @keyframes drift { from { transform: translateX(0); } to { transform: translateX(160vw); } }
-        @media (prefers-reduced-motion: reduce) { .cloud { animation: none !important; } }
-
-        section { padding: 90px 0; position: relative; z-index: 1; }
-
-        .nav-bar {
-          position: sticky; top: 0; z-index: 40;
-          display: flex; align-items: center; gap: 26px;
-          padding: 0 24px; height: 100px;
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid rgba(255,255,255,0.12);
-          overflow-x: auto; white-space: nowrap; scrollbar-width: none;
-        }
-        .nav-bar::-webkit-scrollbar { display: none; }
-        .nav-brand { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.6rem; color: #eaf3f8; margin-right: 10px; flex-shrink: 0; }
-        .nav-item { font-size: 1.05rem; font-weight: 700; color: #ffffff; cursor: pointer; flex-shrink: 0; position: relative; padding: 4px 0; transition: color 0.2s ease; }
-        .nav-item:hover { color: var(--gold); }
-        .nav-item::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: var(--gold); transition: width 0.25s ease; }
-        .nav-item:hover::after { width: 100%; }
-        .nav-item.active { color: var(--gold); }
-        .nav-item.active::after { width: 100%; }
-
-        .card { background: rgba(255,255,255,0.7); border: 1px solid rgba(28,58,82,0.10); border-radius: 12px; backdrop-filter: blur(6px); }
-
-        .fixed-cross {
-          position: absolute; top: 26px;
-          display: flex; flex-direction: column; align-items: center;
-          z-index: 3; pointer-events: none;
-        }
-        .fixed-cross.left { left: 4%; }
-        .fixed-cross.right { right: 4%; }
-        .fixed-cross svg { filter: drop-shadow(0 6px 10px rgba(15,36,56,0.25)); }
-        @media (max-width: 900px) { .fixed-cross { display: none; } }
-
-        .fact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.14); border-radius: 12px; overflow: hidden; }
-        .fact-item { background: rgba(255,255,255,0.06); padding: 26px 28px; }
-        .fact-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin: 0 0 8px 0; }
-        .fact-value { font-size: 1.15rem; color: #eaf3f8; margin: 0; line-height: 1.4; }
-        @media (max-width: 600px) { .fact-grid { grid-template-columns: 1fr; } }
-
-        .pull-quote { border-left: 4px solid var(--gold); padding-left: 30px; margin: 0; }
-
-        /* UPCOMING TRIPS GRID */
-        .upcoming-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-        @media (max-width: 650px) { .upcoming-grid { grid-template-columns: 1fr; } }
-        .upcoming-card {
-          overflow: hidden;
-          transition: transform 0.25s ease;
-        }
-        .upcoming-card:hover { transform: translateY(-4px); }
-        .upcoming-card img {
-          width: 100%; aspect-ratio: 16/10; object-fit: cover; display: block;
-          border-radius: 8px; box-shadow: 0 12px 26px rgba(15,36,56,0.14);
-        }
-        .upcoming-card-body { padding: 22px 4px 0 4px; }
-        .upcoming-card-date {
-          font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em;
-          text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 8px;
-        }
-        .upcoming-card-title {
-          font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 700;
-          color: var(--navy-deep); margin: 0 0 12px 0; line-height: 1.15;
-        }
-        .upcoming-card-desc { font-size: 1.02rem; color: #3d5a6c; line-height: 1.65; margin: 0; }
-
-        /* TRAVEL KIND GRID */
-        .reach-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-        @media (max-width: 650px) { .reach-grid { grid-template-columns: 1fr; } }
-        .reach-card {
-          padding: 32px;
-          border-radius: 12px;
-          background: rgba(255,255,255,0.7);
-          border-left: 3px solid var(--gold);
-          border-top: 1px solid rgba(28,58,82,0.1);
-          border-right: 1px solid rgba(28,58,82,0.1);
-          border-bottom: 1px solid rgba(28,58,82,0.1);
-        }
-        .reach-value {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 1rem; font-weight: 500; color: var(--navy);
-          margin: 6px 0 12px 0; word-break: break-word;
-        }
-
-        /* TRIP LOG */
-        .trip-layout { display: grid; grid-template-columns: 260px 1fr; gap: 46px; }
-        @media (max-width: 800px) { .trip-layout { grid-template-columns: 1fr; } }
-        .trip-list { display: flex; flex-direction: column; gap: 2px; }
-        .trip-tab {
-          text-align: left; background: rgba(255,255,255,0.04); border: none;
-          border-left: 3px solid transparent; padding: 16px 18px; cursor: pointer;
-          color: rgba(234,243,248,0.65); font-family: 'Nunito Sans', sans-serif;
-        }
-        .trip-tab.active { background: rgba(255,255,255,0.09); border-left: 3px solid var(--gold); color: #eaf3f8; }
-        .trip-tab-place { font-weight: 700; font-size: 1.05rem; display: block; }
-        .trip-tab-year { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; color: var(--gold); }
-        .trip-detail-title { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 700; color: #eaf3f8; margin: 0 0 16px 0; }
-        .trip-detail-body { font-size: 1.08rem; line-height: 1.75; color: rgba(234,243,248,0.82); max-width: 600px; }
-
-        /* FAQ */
-        .faq-item { border-bottom: 1px solid rgba(28,58,82,0.14); }
-        .faq-item:first-child { border-top: 1px solid rgba(28,58,82,0.14); }
-        .faq-question {
-          width: 100%; text-align: left; background: none; border: none; cursor: pointer;
-          padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
-          gap: 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700;
-          color: var(--navy-deep);
-        }
-        .faq-toggle {
-          flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
-          border: 1.5px solid var(--gold); color: var(--gold);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1.2rem; font-family: 'IBM Plex Mono', monospace;
-        }
-        .faq-answer { padding: 0 0 26px 0; font-size: 1.05rem; color: #3d5a6c; line-height: 1.65; max-width: 640px; }
-      `}</style>
-
       <div className="cloud-layer">
         <div className="cloud cloud-a" />
         <div className="cloud cloud-b" />
         <div className="cloud cloud-c" />
       </div>
-
-  
 
       {/* HERO IMAGE */}
       <div
@@ -284,29 +142,66 @@ const PastorTravelPage = () => {
           </p>
         </div>
       </section>
-    {/* NAV */}
+
+      {/* NAV */}
       <nav className="nav-bar">
         <span className="nav-brand">Daniel&nbsp;Worku</span>
         {categories.map(cat => <span key={cat} className="nav-item">{cat}</span>)}
       </nav>
-      {/* WHAT'S COMING UP NEXT */}
+
+      {/* WHAT'S COMING UP NEXT - fetched from /posts, category = Travel, limit 10 */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
             A few trips already on the calendar
           </h2>
-          <div className="upcoming-grid">
-            {upcomingTrips.map((t, i) => (
-              <div className="upcoming-card" key={i}>
-                <img src={t.img} alt={t.alt} />
-                <div className="upcoming-card-body">
-                  <span className="upcoming-card-date">{t.date}</span>
-                  <h4 className="upcoming-card-title">{t.title}</h4>
-                  <p className="upcoming-card-desc">{t.desc}</p>
+
+          {upcomingError && <p style={{ color: 'red' }}>{upcomingError}</p>}
+
+          {upcomingLoading ? (
+            <p>Loading trips...</p>
+          ) : upcomingTrips.length === 0 ? (
+            <p>No travel posts found.</p>
+          ) : (
+            <div className="upcoming-grid">
+              {upcomingTrips.map((t) => (
+                <div className="upcoming-card" key={t._id}>
+                  <img src={t.imageUrl} alt={t.title} />
+                  <div className="upcoming-card-body">
+                    <span className="upcoming-card-date">{getFormattedDate(t)}</span>
+                    <h4 className="upcoming-card-title">{t.title}</h4>
+                    <p className="upcoming-card-desc">{t.description}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {/* ADDED: Load More — only shown if total posts exceed the limit */}
+          {upcomingPage < upcomingTotalPages && (
+            <div style={{ textAlign: 'center', marginTop: '36px' }}>
+              <button
+                onClick={handleLoadMoreTrips}
+                disabled={upcomingLoading}
+                style={{
+                  backgroundColor: upcomingLoading ? '#ccc' : '#7a1010',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '12px 30px',
+                  fontSize: '1.05rem',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  borderRadius: '4px',
+                  cursor: upcomingLoading ? 'not-allowed' : 'pointer',
+                  transition: 'background 0.3s'
+                }}
+                onMouseOver={(e) => { if (!upcomingLoading) e.target.style.backgroundColor = '#5c0c0c'; }}
+                onMouseOut={(e) => { if (!upcomingLoading) e.target.style.backgroundColor = '#7a1010'; }}
+              >
+                {upcomingLoading ? 'Loading...' : 'Load More Trips'}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -386,7 +281,6 @@ const PastorTravelPage = () => {
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
             A Few Common Questions
-
           </h2>
           <div>
             {faqs.map((f, i) => (
@@ -444,4 +338,4 @@ const PastorTravelPage = () => {
   );
 };
 
-export default PastorTravelPage;
+export default Travel;

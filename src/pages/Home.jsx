@@ -1,11 +1,39 @@
 import React, { useState, useEffect, useRef } from "react";
 import API from "../api/api.jsx";
+import "./Home.css";
 
-const ChurchBlogPage = () => {
+const POSTS_PER_PAGE = 10;
+
+const Home = () => {
   const [data, setData] = useState(null);
-  const [showMoreMinistries, setShowMoreMinistries] = useState(false);
+  const [hero, setHero] = useState(null);
+  const [priest, setPriest] = useState(null);
+  const [testimonials, setTestimonials] = useState([]);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
+  const [testimonialsError, setTestimonialsError] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
   const [showSponsored, setShowSponsored] = useState(true);
+
+  // === ADDED: Current Sermon Series (category = Sermons, paginated) ===
+  const [sermons, setSermons] = useState([]);
+  const [sermonsLoading, setSermonsLoading] = useState(true);
+  const [sermonsError, setSermonsError] = useState("");
+  const [sermonsPage, setSermonsPage] = useState(1);
+  const [sermonsTotalPages, setSermonsTotalPages] = useState(1);
+
+  // === ADDED: Trending posts (all posts, no category filter) ===
+  const [trending, setTrending] = useState([]);
+  const [trendingLoading, setTrendingLoading] = useState(true);
+  const [trendingError, setTrendingError] = useState("");
+  const [trendingPage, setTrendingPage] = useState(1);
+  const [trendingTotalPages, setTrendingTotalPages] = useState(1);
+
+  // === ADDED: Recommended posts (all posts, no category filter) ===
+  const [recommended, setRecommended] = useState([]);
+  const [recommendedLoading, setRecommendedLoading] = useState(true);
+  const [recommendedError, setRecommendedError] = useState("");
+  const [recommendedPage, setRecommendedPage] = useState(1);
+  const [recommendedTotalPages, setRecommendedTotalPages] = useState(1);
 
   const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
 
@@ -76,501 +104,169 @@ const ChurchBlogPage = () => {
     fetchContent();
   }, []);
 
+  // === ADDED: fetch Hero title/image from /homeheros ===
+  useEffect(() => {
+    const fetchHero = async () => {
+      try {
+        const heroRes = await API.get("/homeheros");
+        const heroData = Array.isArray(heroRes.data) ? heroRes.data[0] : heroRes.data;
+        setHero(heroData);
+      } catch (err) { console.error("Error:", err); }
+    };
+    fetchHero();
+  }, []);
+
+  // === ADDED: fetch About the Priest from /about ===
+  useEffect(() => {
+    const fetchPriest = async () => {
+      try {
+        const aboutRes = await API.get("/about");
+        const aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
+        const latest = aboutData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+        setPriest(latest);
+      } catch (err) { console.error("Error:", err); }
+    };
+    fetchPriest();
+  }, []);
+
+  // === ADDED: fetch What People Say from /testimonials ===
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setTestimonialsLoading(true);
+        setTestimonialsError("");
+        const res = await API.get("/testimonials");
+        const testimonialsData = Array.isArray(res.data) ? res.data : res.data.testimonials;
+        setTestimonials(testimonialsData || []);
+      } catch (err) {
+        console.log(err);
+        setTestimonialsError(err.response?.data?.message || "Failed to load testimonials");
+      } finally {
+        setTestimonialsLoading(false);
+      }
+    };
+    fetchTestimonials();
+  }, []);
+
+  // === ADDED: fetch Current Sermon Series — same pattern as GetPost.jsx ===
+  useEffect(() => {
+    const fetchSermons = async (page) => {
+      try {
+        setSermonsLoading(true);
+        setSermonsError("");
+
+        const res = await API.get("/posts", {
+          params: {
+            page,
+            limit: POSTS_PER_PAGE,
+            category: "Sermons",
+          },
+        });
+
+        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        setSermons(postsData || []);
+        setSermonsTotalPages(res.data.totalPages || 1);
+      } catch (err) {
+        console.log(err);
+        setSermonsError(err.response?.data?.message || "Failed to load sermon series");
+      } finally {
+        setSermonsLoading(false);
+      }
+    };
+    fetchSermons(sermonsPage);
+  }, [sermonsPage]);
+
+  // === ADDED: fetch Trending — same pattern as GetPost.jsx ===
+  useEffect(() => {
+    const fetchTrending = async (page) => {
+      try {
+        setTrendingLoading(true);
+        setTrendingError("");
+
+        const res = await API.get("/posts/trending", {
+          params: {
+            page,
+            limit: POSTS_PER_PAGE,
+          },
+        });
+
+        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        setTrending(postsData || []);
+        setTrendingTotalPages(res.data.totalPages || 1);
+      } catch (err) {
+        console.log(err);
+        setTrendingError(err.response?.data?.message || "Failed to load trending posts");
+      } finally {
+        setTrendingLoading(false);
+      }
+    };
+    fetchTrending(trendingPage);
+  }, [trendingPage]);
+
+  // === ADDED: fetch Recommended — same pattern as GetPost.jsx ===
+  useEffect(() => {
+    const fetchRecommended = async (page) => {
+      try {
+        setRecommendedLoading(true);
+        setRecommendedError("");
+
+        const res = await API.get("/posts/recommended", {
+          params: {
+            page,
+            limit: POSTS_PER_PAGE,
+          },
+        });
+
+        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        setRecommended(postsData || []);
+        setRecommendedTotalPages(res.data.totalPages || 1);
+      } catch (err) {
+        console.log(err);
+        setRecommendedError(err.response?.data?.message || "Failed to load recommended posts");
+      } finally {
+        setRecommendedLoading(false);
+      }
+    };
+    fetchRecommended(recommendedPage);
+  }, [recommendedPage]);
+
+  // === ADDED: pagination handlers — same goToPage pattern as GetPost.jsx ===
+  const goToSermonsPage = (page) => {
+    if (page < 1 || page > sermonsTotalPages) return;
+    setSermonsPage(page);
+  };
+
+  const goToTrendingPage = (page) => {
+    if (page < 1 || page > trendingTotalPages) return;
+    setTrendingPage(page);
+  };
+
+  const goToRecommendedPage = (page) => {
+    if (page < 1 || page > recommendedTotalPages) return;
+    setRecommendedPage(page);
+  };
+
+  // === ADDED: same pageButtonStyle as GetPost.jsx ===
+  const pageButtonStyle = (disabled) => ({
+    padding: "8px 16px",
+    background: disabled ? "#e5e7eb" : "#2563eb",
+    color: disabled ? "#999" : "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: disabled ? "not-allowed" : "pointer",
+  });
+
   return (
     <div className="church-portal">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-        :root {
-          --sky-top: #a9d3e8;
-          --sky-mid: #d5eaf3;
-          --sky-low: #f3f8fa;
-          --navy: #1c3a52;
-          --navy-deep: #0f2438;
-          --slate: #3d5a6c;
-          --gold: #cf9f3f;
-          --white: #ffffff;
-          --deep-red: #7a1010;
-        }
-
-        * { box-sizing: border-box; }
-
-        .church-portal {
-          font-family: 'Nunito Sans', sans-serif;
-          background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-low) 100%);
-          color: var(--navy);
-          -webkit-font-smoothing: antialiased;
-        }
-        .wrapper { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
-        .display {
-          font-family: 'Cormorant Garamond', serif;
-        }
-        .eyebrow {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.72rem; font-weight: 500;
-          letter-spacing: 0.14em; text-transform: uppercase;
-          color: var(--gold);
-        }
-        a { color: inherit; text-decoration: none; }
-
-        /* Drifting cloud layer - decorative, behind content */
-        .cloud-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-        .cloud {
-          position: absolute; background: rgba(255,255,255,0.75);
-          border-radius: 100px; filter: blur(1px);
-        }
-        .cloud::before, .cloud::after {
-          content: ''; position: absolute; background: inherit; border-radius: 100px;
-        }
-        .cloud-a { width: 180px; height: 55px; top: 8%; left: -10%; animation: drift 70s linear infinite; }
-        .cloud-a::before { width: 90px; height: 90px; top: -45px; left: 25px; }
-        .cloud-a::after { width: 70px; height: 70px; top: -30px; left: 90px; }
-        .cloud-b { width: 130px; height: 40px; top: 22%; left: -15%; animation: drift 95s linear infinite; animation-delay: -20s; opacity: 0.6; }
-        .cloud-b::before { width: 65px; height: 65px; top: -32px; left: 18px; }
-        .cloud-b::after { width: 50px; height: 50px; top: -22px; left: 65px; }
-        .cloud-c { width: 220px; height: 60px; top: 4%; left: -20%; animation: drift 120s linear infinite; animation-delay: -50s; opacity: 0.5; }
-        .cloud-c::before { width: 100px; height: 100px; top: -50px; left: 30px; }
-        .cloud-c::after { width: 80px; height: 80px; top: -35px; left: 110px; }
-        @keyframes drift {
-          from { transform: translateX(0); }
-          to { transform: translateX(160vw); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .cloud { animation: none !important; }
-        }
-
-        section { padding: 90px 0; position: relative; z-index: 1; }
-
-        .nav-bar {
-          position: sticky; top: 0; z-index: 40;
-          display: flex; align-items: center; gap: 26px;
-          padding: 0 24px; height: 100px;
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid rgba(255,255,255,0.12);
-          overflow: hidden; white-space: nowrap;
-        }
-        .nav-brand {
-          font-family: 'Cormorant Garamond', serif;
-          font-weight: 700; font-size: 1.6rem;
-          color: #eaf3f8; margin-right: 10px; flex-shrink: 0;
-          position: relative; z-index: 2;
-        }
-        .nav-marquee-viewport {
-          flex: 1; min-width: 0; overflow: hidden;
-          -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
-          mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
-        }
-        .nav-marquee-track {
-          display: flex; align-items: center; gap: 26px;
-          width: max-content;
-          animation: navMarquee 32s linear infinite;
-        }
-        .nav-bar:hover .nav-marquee-track { animation-play-state: paused; }
-        @keyframes navMarquee {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .nav-marquee-track { animation: none; }
-        }
-        .nav-item {
-          font-size: 1.05rem; font-weight: 700;
-          color: #ffffff; cursor: pointer; flex-shrink: 0;
-          position: relative; padding: 4px 0;
-          transition: color 0.2s ease;
-        }
-        .nav-item:hover { color: var(--gold); }
-        .nav-item::after {
-          content: ''; position: absolute; left: 0; bottom: -2px;
-          width: 0; height: 2px; background: var(--gold);
-          transition: width 0.25s ease;
-        }
-        .nav-item:hover::after { width: 100%; }
-
-        .card {
-          background: rgba(255,255,255,0.7);
-          border: 1px solid rgba(28,58,82,0.10);
-          border-radius: 12px;
-          backdrop-filter: blur(6px);
-        }
-
-        .sponsored-wrap {
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          padding: 0 24px 0 24px;
-          position: relative;
-        }
-        .sponsored-tag-wrap {
-          position: absolute;
-          top: 46px; right: 16px;
-          display: flex; align-items: center; gap: 8px;
-          z-index: 3;
-        }
-        .sponsored-ad-label {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
-          color: #8a8a8a;
-          border: 1px solid #cfcfcf;
-          border-radius: 3px;
-          padding: 1px 6px;
-        }
-        .sponsored-close {
-          width: 26px; height: 26px;
-          border-radius: 50%;
-          border: none;
-          background: rgba(28,58,82,0.08);
-          color: #6b6b6b;
-          display: flex; align-items: center; justify-content: center;
-          cursor: pointer;
-          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-        }
-        .sponsored-close:hover {
-          background: #d32f2f;
-          color: #ffffff;
-          transform: rotate(90deg);
-        }
-        .cross-string {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 40px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          z-index: 1;
-          pointer-events: none;
-        }
-        .cross-string.left { left: 4%; }
-        .cross-string.right { right: 4%; }
-        .cross-string .string-line {
-          flex: 1;
-          width: 2px;
-          background: linear-gradient(180deg, rgba(207,159,63,0) 0%, rgba(207,159,63,0.6) 15%, rgba(207,159,63,0.6) 85%, rgba(207,159,63,0) 100%);
-        }
-        .cross-string svg { flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-        @media (max-width: 900px) {
-          .cross-string { display: none; }
-        }
-        .sermon-divider {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 34px;
-          padding: 6px 0;
-        }
-        .sermon-divider .h-string {
-          flex: 1;
-          height: 2px;
-          background: linear-gradient(90deg, rgba(207,159,63,0) 0%, rgba(207,159,63,0.55) 50%, rgba(207,159,63,0) 100%);
-          max-width: 220px;
-        }
-        .sermon-divider svg { flex-shrink: 0; }
-
-        .section-cross-divider {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 26px;
-          padding: 46px 24px;
-          background: #ffffff;
-        }
-        .section-cross-divider .h-string {
-          flex: 1;
-          height: 2px;
-          background: linear-gradient(90deg, rgba(207,159,63,0) 0%, rgba(207,159,63,0.55) 50%, rgba(207,159,63,0) 100%);
-          max-width: 260px;
-        }
-        .section-cross-divider svg { flex-shrink: 0; }
-
-        .hanging-cross {
-          position: absolute;
-          top: 0;
-          width: 60px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          transform-origin: top center;
-          animation: swing 4.5s ease-in-out infinite;
-          z-index: 3;
-          pointer-events: none;
-        }
-        .hanging-cross.left { left: 2%; }
-        .hanging-cross.right { right: 2%; animation-delay: -2.3s; }
-        .hanging-cross .hang-string {
-          width: 2px;
-          height: 70px;
-          background: linear-gradient(180deg, rgba(28,58,82,0.5), rgba(28,58,82,0.15));
-        }
-        .hanging-cross svg { filter: drop-shadow(0 6px 10px rgba(15,36,56,0.25)); }
-        @keyframes swing {
-          0%, 100% { transform: rotate(-9deg); }
-          50% { transform: rotate(9deg); }
-        }
-        @media (max-width: 900px) {
-          .hanging-cross { display: none; }
-        }
-
-        .cross-bg {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Crect x='36' y='14' width='8' height='52'/%3E%3Crect x='18' y='30' width='44' height='8'/%3E%3C/g%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 80px 80px;
-        }
-
-        .cross-track {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 50px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          align-items: center;
-          pointer-events: none;
-          z-index: 0;
-        }
-        .cross-track.left { left: 3%; }
-        .cross-track.right { right: 3%; }
-        .wave-cross {
-          animation: waveMotion 3.2s ease-in-out infinite;
-        }
-        @keyframes waveMotion {
-          0%   { transform: translateX(-14px) scaleX(0.85); }
-          50%  { transform: translateX(14px) scaleX(1.2); }
-          100% { transform: translateX(-14px) scaleX(0.85); }
-        }
-        @media (max-width: 900px) {
-          .cross-track { display: none; }
-        }
-
-        .angel-divider {
-          background: var(--deep-red);
-          padding: 50px 0;
-        }
-        .angel-carousel {
-          display: flex;
-          align-items: center;
-          gap: 18px;
-        }
-        .angel-grid {
-          display: flex;
-          gap: 22px;
-          overflow-x: auto;
-          scroll-behavior: smooth;
-          scrollbar-width: none;
-          flex: 1;
-          min-width: 0;
-        }
-        .angel-grid::-webkit-scrollbar { display: none; }
-        .angel-box {
-          position: relative;
-          flex: 0 0 auto;
-          width: 240px;
-          aspect-ratio: 1 / 1;
-          border-radius: 10px;
-          overflow: hidden;
-          background-size: cover;
-          background-position: center;
-          box-shadow: 0 10px 24px rgba(0,0,0,0.3);
-        }
-        .angel-box-overlay {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          padding: 18px;
-          background: linear-gradient(180deg, rgba(15,10,10,0) 40%, rgba(15,10,10,0.85) 100%);
-        }
-        .angel-box-overlay h4 {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #ffffff;
-          margin: 0 0 6px 0;
-        }
-        .angel-box-overlay p {
-          font-size: 0.9rem;
-          line-height: 1.4;
-          color: rgba(255,255,255,0.85);
-          margin: 0;
-        }
-        .angel-arrow {
-          flex-shrink: 0;
-          width: 48px; height: 48px;
-          border-radius: 50%;
-          border: 1.5px solid rgba(255,255,255,0.35);
-          background: rgba(255,255,255,0.08);
-          color: #ffffff;
-          display: flex; align-items: center; justify-content: center;
-          cursor: pointer;
-          transition: background 0.2s ease, transform 0.2s ease;
-        }
-        .angel-arrow:hover {
-          background: var(--gold);
-          color: var(--navy-deep);
-          transform: translateY(-2px);
-        }
-        @media (max-width: 700px) {
-          .angel-box { width: 180px; }
-          .angel-arrow { width: 38px; height: 38px; }
-        }
-
-        /* PHOTO CAROUSEL */
-        .photo-carousel {
-          display: flex;
-          align-items: center;
-          gap: 24px;
-        }
-        .photo-carousel-frame { flex: 1; min-width: 0; }
-        .photo-arrow {
-          flex-shrink: 0;
-          width: 52px; height: 52px;
-          border-radius: 50%;
-          border: 1.5px solid rgba(28,58,82,0.18);
-          background: #ffffff;
-          color: var(--navy-deep);
-          display: flex; align-items: center; justify-content: center;
-          cursor: pointer;
-          box-shadow: 0 6px 16px rgba(15,36,56,0.12);
-          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-        }
-        .photo-arrow:hover {
-          background: var(--gold);
-          color: var(--navy-deep);
-          transform: translateY(-2px);
-        }
-        .photo-arrow.left { margin-right: 4px; }
-        .photo-arrow.right { margin-left: 4px; }
-        @media (max-width: 700px) {
-          .photo-carousel { gap: 10px; }
-          .photo-arrow { width: 40px; height: 40px; }
-        }
-        .photo-dots {
-          display: flex; justify-content: center; gap: 9px;
-          margin-top: 22px;
-        }
-        .photo-dot {
-          width: 9px; height: 9px; border-radius: 50%;
-          background: rgba(28,58,82,0.25);
-          cursor: pointer;
-          transition: background 0.2s ease, transform 0.2s ease;
-        }
-        .photo-dot.active {
-          background: var(--gold);
-          transform: scale(1.2);
-        }
-
-        /* VIDEO SECTION */
-        .video-section { background: #ffffff; }
-        .video-heading {
-          display: flex; align-items: center; gap: 20px;
-          margin-bottom: 40px;
-        }
-        .video-heading h3 {
-          font-family: 'IBM Plex Mono', monospace;
-          font-weight: 700; font-size: 1.5rem;
-          letter-spacing: 0.04em; text-transform: uppercase;
-          color: var(--navy-deep); margin: 0; white-space: nowrap;
-        }
-        .video-heading .rule { flex: 1; height: 5px; background: var(--navy-deep); }
-        .video-grid {
-          display: grid;
-          grid-template-columns: 2fr 1fr;
-          gap: 44px;
-          align-items: start;
-        }
-        @media (max-width: 800px) {
-          .video-grid { grid-template-columns: 1fr; }
-        }
-        .video-player {
-          position: relative;
-          border-radius: 4px;
-          overflow: hidden;
-          background: #000;
-          aspect-ratio: 16/7;
-        }
-        .video-player img {
-          width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.9;
-        }
-        .video-badge {
-          position: absolute; top: 20px; left: 20px;
-          font-family: 'Cormorant Garamond', serif;
-          color: #fff;
-        }
-        .video-badge .brand { font-weight: 700; font-size: 1.4rem; display: block; }
-        .video-badge .series {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
-          color: var(--gold); display: block; margin-top: 4px;
-        }
-        .video-close {
-          position: absolute; top: 16px; right: 20px;
-          color: #fff; font-size: 1.3rem; cursor: pointer;
-          background: none; border: none; line-height: 1;
-        }
-        .video-mute {
-          position: absolute; bottom: 20px; left: 20px;
-          width: 34px; height: 34px; border-radius: 50%;
-          background: rgba(0,0,0,0.5); border: none; color: #fff;
-          display: flex; align-items: center; justify-content: center;
-          cursor: pointer;
-        }
-        .video-list-scroll {
-          max-height: 420px;
-          overflow-y: auto;
-          padding-right: 6px;
-        }
-        .video-list-scroll::-webkit-scrollbar { width: 6px; }
-        .video-list-scroll::-webkit-scrollbar-track { background: transparent; }
-        .video-list-scroll::-webkit-scrollbar-thumb {
-          background: rgba(28,58,82,0.25);
-          border-radius: 10px;
-        }
-        .video-list-item {
-          display: flex; gap: 16px; align-items: flex-start;
-          padding: 16px 0; border-bottom: 1px solid rgba(28,58,82,0.14);
-          cursor: pointer;
-        }
-        .video-list-item:first-child { padding-top: 0; }
-        .video-thumb-wrap {
-          position: relative; flex-shrink: 0;
-          width: 140px; height: 96px; border-radius: 3px; overflow: hidden;
-        }
-        .video-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .now-playing-tag {
-          position: absolute; bottom: 0; left: 0; right: 0;
-          background: rgba(15,36,56,0.85);
-          color: #6ee7b7;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em;
-          text-align: center; padding: 2px 0;
-        }
-        .video-list-item p {
-          font-size: 0.98rem; font-weight: 700; line-height: 1.35;
-          margin: 0; color: var(--navy-deep);
-        }
-        .video-view-all {
-          text-align: center; margin-top: 24px;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
-          text-transform: uppercase; color: var(--navy-deep);
-          border-top: 2px solid var(--navy-deep);
-          padding-top: 16px; cursor: pointer;
-        }
-      `}</style>
-
       <div className="cloud-layer">
         <div className="cloud cloud-a" />
         <div className="cloud cloud-b" />
         <div className="cloud cloud-c" />
       </div>
 
-      
-
-      {/* SPONSORED - original image and text style, outer background now matches hero */}
+      {/* SPONSORED */}
       {showSponsored && (
       <div className="sponsored-wrap">
-        {/* Decorative vertical crosses connected by a string, framing the ad on both sides */}
         <div className="cross-string left">
           <div className="string-line" />
           <svg width="28" height="40" viewBox="0 0 28 40" xmlns="http://www.w3.org/2000/svg">
@@ -656,10 +352,10 @@ const ChurchBlogPage = () => {
         <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '320px' }}>
             <h1 className="display" style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-              Rooted in grace, reaching toward the light
+              {hero?.title || "Rooted in grace, reaching toward the light"}
             </h1>
             <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-              Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week.
+              {hero?.description || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
@@ -672,14 +368,14 @@ const ChurchBlogPage = () => {
           </div>
           <div style={{ flex: '0 0 480px', minWidth: '320px' }}>
             <img
-              src="https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"
-              alt="Orthodox icon of Christ on the iconostasis"
+              src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
+              alt={hero?.title || "Orthodox icon of Christ on the iconostasis"}
               style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
             />
           </div>
         </div>
       </section>
-  <nav className="nav-bar">
+      <nav className="nav-bar">
         <div className="nav-marquee-viewport">
           <div className="nav-marquee-track">
             {categories.map((cat, i) => <span key={`a-${i}`} className="nav-item">{cat}</span>)}
@@ -688,7 +384,7 @@ const ChurchBlogPage = () => {
         </div>
       </nav>
 
-      {/* SERMON SERIES */}
+      {/* SERMON SERIES - fetched from /posts, category = Sermons, paginated */}
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="hanging-cross left">
           <div className="hang-string" />
@@ -706,63 +402,90 @@ const ChurchBlogPage = () => {
         </div>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Current Sermon Series</h3>
-          {[
-            { title: "Hope in Hard Seasons", desc: "Finding steadiness in Scripture when life feels uncertain.", img: "https://images.unsplash.com/photo-1594990375715-2d008aaaa31b?auto=format&fit=crop&w=800&q=80", alt: "Blue and gold Orthodox cathedral interior" },
-            { title: "Living Waters", desc: "A study through John, on thirst, grace, and being made new.", img: "https://images.unsplash.com/photo-1627573897879-1eff66f2c228?auto=format&fit=crop&w=800&q=80", alt: "Low angle view of Orthodox cathedral interior" },
-            { title: "Faith of Our Fathers", desc: "Lessons from the patriarchs on trust and obedience.", img: "https://images.unsplash.com/photo-1730751634426-b51669a83c85?auto=format&fit=crop&w=800&q=80", alt: "Orthodox church walls covered in icon paintings" },
-            { title: "Come As You Are", desc: "Welcome, belonging, and the open table of the Gospel.", img: "https://images.unsplash.com/photo-1731440650603-a931e574c943?auto=format&fit=crop&w=800&q=80", alt: "Painted ceiling icon inside an Orthodox church" },
-            { title: "The Divine Liturgy", desc: "Understanding the rhythm and meaning behind our weekly worship.", img: "https://images.unsplash.com/photo-1764231479915-62f744d20939?auto=format&fit=crop&w=800&q=80", alt: "Interior of a grand, ornate Orthodox church with detailed flooring" },
-            { title: "Icons and Prayer", desc: "How sacred images draw us deeper into stillness and worship.", img: "https://images.unsplash.com/photo-1780259034206-d6d579b5378b?auto=format&fit=crop&w=800&q=80", alt: "Ancient stone wall with a religious icon and vaulted ceiling" }
-          ].map((item, index, arr) => (
-            <React.Fragment key={index}>
-              <div style={{
-                padding: '50px 0',
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '40px',
-                alignItems: 'start'
-              }}>
-                <img
-                  src={item.img}
-                  alt={item.alt}
-                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
-                />
-                <div style={{ marginTop: '-5px' }}>
-                  <h3 style={{ fontSize: '2.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
-                    {item.title}
-                  </h3>
-                  <p style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
-                    {item.desc}
-                  </p>
+
+          {sermonsError && <p style={{ color: 'red', textAlign: 'center' }}>{sermonsError}</p>}
+
+          {sermonsLoading ? (
+            <p style={{ textAlign: 'center' }}>Loading sermon series...</p>
+          ) : sermons.length === 0 ? (
+            <p style={{ textAlign: 'center' }}>No sermons found.</p>
+          ) : (
+            sermons.map((item, index, arr) => (
+              <React.Fragment key={item._id}>
+                <div style={{
+                  padding: '50px 0',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '40px',
+                  alignItems: 'start'
+                }}>
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                  />
+                  <div style={{ marginTop: '-5px' }}>
+                    <h3 style={{ fontSize: '2.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
+                      {item.title}
+                    </h3>
+                    <p style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              {index < arr.length - 1 && (
-                <div className="sermon-divider">
-                  <span className="h-string" />
-                  <svg width="16" height="24" viewBox="0 0 16 24" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="6" y="0" width="4" height="24" fill="var(--gold)" opacity="0.7" />
-                    <rect x="0" y="5" width="16" height="4" fill="var(--gold)" opacity="0.7" />
-                  </svg>
-                  <svg width="22" height="32" viewBox="0 0 22 32" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="9" y="0" width="4" height="32" fill="var(--gold)" />
-                    <rect x="1" y="12" width="20" height="4" fill="var(--gold)" />
-                  </svg>
-                  <svg width="16" height="24" viewBox="0 0 16 24" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="6" y="0" width="4" height="24" fill="var(--gold)" opacity="0.7" />
-                    <rect x="0" y="5" width="16" height="4" fill="var(--gold)" opacity="0.7" />
-                  </svg>
-                  <span className="h-string" />
-                </div>
-              )}
-            </React.Fragment>
-          ))}
+                {index < arr.length - 1 && (
+                  <div className="sermon-divider">
+                    <span className="h-string" />
+                    <svg width="16" height="24" viewBox="0 0 16 24" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="6" y="0" width="4" height="24" fill="var(--gold)" opacity="0.7" />
+                      <rect x="0" y="5" width="16" height="4" fill="var(--gold)" opacity="0.7" />
+                    </svg>
+                    <svg width="22" height="32" viewBox="0 0 22 32" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="9" y="0" width="4" height="32" fill="var(--gold)" />
+                      <rect x="1" y="12" width="20" height="4" fill="var(--gold)" />
+                    </svg>
+                    <svg width="16" height="24" viewBox="0 0 16 24" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="6" y="0" width="4" height="24" fill="var(--gold)" opacity="0.7" />
+                      <rect x="0" y="5" width="16" height="4" fill="var(--gold)" opacity="0.7" />
+                    </svg>
+                    <span className="h-string" />
+                  </div>
+                )}
+              </React.Fragment>
+            ))
+          )}
+
+          {sermonsTotalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
+              <button
+                onClick={() => goToSermonsPage(sermonsPage - 1)}
+                disabled={sermonsPage === 1}
+                style={pageButtonStyle(sermonsPage === 1)}
+              >
+                Prev
+              </button>
+              <span style={{ fontSize: '14px', color: '#444' }}>
+                Page {sermonsPage} of {sermonsTotalPages}
+              </span>
+              <button
+                onClick={() => goToSermonsPage(sermonsPage + 1)}
+                disabled={sermonsPage === sermonsTotalPages}
+                style={pageButtonStyle(sermonsPage === sermonsTotalPages)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ANGEL DIVIDER */}
+      {/* ANGEL DIVIDER (Trending) - fetched from /posts, isTrending=true, paginated */}
       <section className="angel-divider">
         <div className="wrapper">
           <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: '#ffffff' }}>Trending</h3>
+
+          {trendingError && <p style={{ color: '#ffb3b3', textAlign: 'center' }}>{trendingError}</p>}
+
           <div className="angel-carousel">
             <button className="angel-arrow left" aria-label="Scroll left" onClick={() => scrollAngels(-1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -770,25 +493,26 @@ const ChurchBlogPage = () => {
               </svg>
             </button>
             <div className="angel-grid" ref={angelScrollRef}>
-              {[
-                { name: "Guardian Angel", desc: "Watching over each step of our journey.", img: "https://images.unsplash.com/photo-1565074497050-01d0fdab0472?auto=format&fit=crop&w=500&q=80", alt: "Small angel figurine" },
-                { name: "Archangel Gabriel", desc: "The messenger of God's good news.", img: "https://images.unsplash.com/photo-1573823252145-4df9430b057a?auto=format&fit=crop&w=500&q=80", alt: "Angel statue in gray robe" },
-                { name: "Archangel Michael", desc: "Defender of the faithful in every battle.", img: "https://images.unsplash.com/photo-1556658083-367f69a1d55a?auto=format&fit=crop&w=500&q=80", alt: "Angel statue holding a cross" },
-                { name: "Archangel Raphael", desc: "Bringer of healing and gentle guidance.", img: "https://images.unsplash.com/photo-1610633706070-fec011042351?auto=format&fit=crop&w=500&q=80", alt: "Angel statue holding a staff" }
-              ].map((a, i) => (
-                <div
-                  key={i}
-                  className="angel-box"
-                  style={{ backgroundImage: `url(${a.img})` }}
-                  role="img"
-                  aria-label={a.alt}
-                >
-                  <div className="angel-box-overlay">
-                    <h4>{a.name}</h4>
-                    <p>{a.desc}</p>
+              {trendingLoading ? (
+                <p style={{ color: '#fff' }}>Loading trending posts...</p>
+              ) : trending.length === 0 ? (
+                <p style={{ color: '#fff' }}>No trending posts found.</p>
+              ) : (
+                trending.map((post) => (
+                  <div
+                    key={post._id}
+                    className="angel-box"
+                    style={{ backgroundImage: `url(${post.imageUrl})` }}
+                    role="img"
+                    aria-label={post.title}
+                  >
+                    <div className="angel-box-overlay">
+                      <h4>{post.title}</h4>
+                      <p>{post.description}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <button className="angel-arrow right" aria-label="Scroll right" onClick={() => scrollAngels(1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -796,58 +520,76 @@ const ChurchBlogPage = () => {
               </svg>
             </button>
           </div>
+
+          {trendingTotalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
+              <button
+                onClick={() => goToTrendingPage(trendingPage - 1)}
+                disabled={trendingPage === 1}
+                style={pageButtonStyle(trendingPage === 1)}
+              >
+                Prev
+              </button>
+              <span style={{ fontSize: '14px', color: '#fff' }}>
+                Page {trendingPage} of {trendingTotalPages}
+              </span>
+              <button
+                onClick={() => goToTrendingPage(trendingPage + 1)}
+                disabled={trendingPage === trendingTotalPages}
+                style={pageButtonStyle(trendingPage === trendingTotalPages)}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* MINISTRIES GRID */}
+      {/* MINISTRIES GRID (Recommended) - fetched from /posts, isRecommended=true, paginated */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper">
           <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Recommended</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
-            {[
-              { img: "https://images.unsplash.com/photo-1649105703438-0992d6844823?auto=format&fit=crop&w=600&q=80", title: "Youth Ministry", alt: "Priest standing in front of a cross" },
-              { img: "https://images.unsplash.com/photo-1739061749940-124120c10264?auto=format&fit=crop&w=600&q=80", title: "Worship Team", alt: "Priest holding a cross during service" },
-              { img: "https://images.unsplash.com/photo-1619371620133-1c4b489a0569?auto=format&fit=crop&w=600&q=80", title: "Community Outreach", alt: "Orthodox church building near water" },
-              { img: "https://images.unsplash.com/photo-1601231656153-73aa7f115365?auto=format&fit=crop&w=600&q=80", title: "Prayer Circle", alt: "Gold candle holder with lit prayer candles" },
-              { img: "https://images.unsplash.com/photo-1520276580290-de2e2ceb31b8?auto=format&fit=crop&w=600&q=80", title: "Bible Study Groups", alt: "Person in white vestment holding a rod" },
-              { img: "https://images.unsplash.com/photo-1612005660287-62b37fad2eb5?auto=format&fit=crop&w=600&q=80", title: "Missions Team", alt: "Orthodox cross atop a church dome" },
-              ...(showMoreMinistries ? [
-                { img: "https://images.unsplash.com/photo-1764231479915-62f744d20939?auto=format&fit=crop&w=600&q=80", title: "Choir & Chanters", alt: "Ornate Orthodox church interior with detailed flooring" },
-                { img: "https://images.unsplash.com/photo-1780259034206-d6d579b5378b?auto=format&fit=crop&w=600&q=80", title: "Icon Study Group", alt: "Ancient stone wall with religious icon and vaulted ceiling" },
-                { img: "https://images.unsplash.com/photo-1621164871985-9bacd7a1eb87?auto=format&fit=crop&w=600&q=80", title: "Women's Fellowship", alt: "Painting of Christ and the Virgin Mary" }
-              ] : [])
-            ].map((item, index) => (
-              <div key={index} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none' }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                <img src={item.img} alt={item.alt} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
-                <div style={{ padding: '18px' }}>
-                  <h4 className="display" style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 8px 0', color: '#a80070' }}>{item.title}</h4>
-                  <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>Gathering weekly — all are welcome.</p>
+
+          {recommendedError && <p style={{ color: 'red', textAlign: 'center' }}>{recommendedError}</p>}
+
+          {recommendedLoading ? (
+            <p style={{ textAlign: 'center' }}>Loading recommended posts...</p>
+          ) : recommended.length === 0 ? (
+            <p style={{ textAlign: 'center' }}>No recommended posts found.</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
+              {recommended.map((post) => (
+                <div key={post._id} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none' }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+                  <img src={post.imageUrl} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
+                  <div style={{ padding: '18px' }}>
+                    <h4 className="display" style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 8px 0', color: '#a80070' }}>{post.title}</h4>
+                    <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{post.description}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          {!showMoreMinistries && (
-            <div style={{ textAlign: 'center', marginTop: '36px' }}>
+              ))}
+            </div>
+          )}
+
+          {recommendedTotalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
               <button
-                onClick={() => setShowMoreMinistries(true)}
-                style={{
-                  backgroundColor: '#d32f2f',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '12px 30px',
-                  fontSize: '1.1rem',
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  transition: 'background 0.3s'
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#b71c1c'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#d32f2f'}
+                onClick={() => goToRecommendedPage(recommendedPage - 1)}
+                disabled={recommendedPage === 1}
+                style={pageButtonStyle(recommendedPage === 1)}
               >
-                Load More
+                Prev
+              </button>
+              <span style={{ fontSize: '14px', color: '#444' }}>
+                Page {recommendedPage} of {recommendedTotalPages}
+              </span>
+              <button
+                onClick={() => goToRecommendedPage(recommendedPage + 1)}
+                disabled={recommendedPage === recommendedTotalPages}
+                style={pageButtonStyle(recommendedPage === recommendedTotalPages)}
+              >
+                Next
               </button>
             </div>
           )}
@@ -897,18 +639,17 @@ const ChurchBlogPage = () => {
             backdropFilter: 'blur(6px)'
           }}>
             <img
-              src="https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"
-              alt="Priest in ornate robes holding a ceremonial staff"
+              src={priest?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"}
+              alt={priest?.title || "Priest in ornate robes holding a ceremonial staff"}
               style={{ width: '260px', height: '320px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0, border: '4px solid #fff', boxShadow: '0 8px 20px rgba(0,0,0,0.25)' }}
             />
             <div style={{ flex: 1, minWidth: '260px' }}>
               <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem' }}>From the Priest</span>
               <h3 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '12px 0 14px 0', color: '#ffffff' }}>
-                Walking together, one Sunday at a time
+                {priest?.title || "Walking together, one Sunday at a time"}
               </h3>
               <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
-                Twenty years in ministry has taught me that faith grows best in community. This page is where we share
-                what God is teaching us — through sermons, testimonies, and the everyday life of our church family.
+                {priest?.description || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
               </p>
             </div>
           </div>
@@ -921,26 +662,30 @@ const ChurchBlogPage = () => {
           <h3 className="display" style={{ fontSize: '2.6rem', fontWeight: 700, marginBottom: '44px', textAlign: 'center', color: 'var(--navy-deep)' }}>
             What People Say About the Author
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
-            {[
-              { quote: "This church walked with my family through our hardest year. We are forever grateful.", name: "Selam T.", role: "Member since 2019", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80" },
-              { quote: "I found a home here, not just a service to attend.", name: "Biniam K.", role: "Youth Ministry", img: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=200&q=80" },
-              { quote: "The prayer circle carried me when I couldn't pray for myself.", name: "Marta A.", role: "Member since 2021", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" }
-            ].map((t, i) => (
-              <div key={i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
-                <img
-                  src={t.img}
-                  alt={t.name}
-                  style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--gold)', margin: '0 auto 18px auto', display: 'block' }}
-                />
-                <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{t.name}</p>
-                <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.role}</p>
-                <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
-                  "{t.quote}"
-                </p>
-              </div>
-            ))}
-          </div>
+          {testimonialsError && <p style={{ color: 'red', textAlign: 'center' }}>{testimonialsError}</p>}
+
+          {testimonialsLoading ? (
+            <p style={{ textAlign: 'center' }}>Loading testimonies...</p>
+          ) : testimonials.length === 0 ? (
+            <p style={{ textAlign: 'center' }}>No testimonies found.</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
+              {testimonials.map((t, i) => (
+                <div key={t._id || i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--gold)', margin: '0 auto 18px auto', display: 'block' }}
+                  />
+                  <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{t.name}</p>
+                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.role}</p>
+                  <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
+                    "{t.quote}"
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -961,8 +706,6 @@ const ChurchBlogPage = () => {
         </svg>
         <span className="h-string" />
       </div>
-
-    
 
       {/* PHOTO GALLERY */}
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
@@ -1060,4 +803,4 @@ const ChurchBlogPage = () => {
   );
 };
 
-export default ChurchBlogPage;
+export default Home;

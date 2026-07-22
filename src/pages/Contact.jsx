@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+import API from "../api/api";
+import "./Contact.css";
 
-const PriestContactPage = () => {
-  const [formState, setFormState] = useState({ name: "", email: "", topic: "Just Saying Hello", message: "" });
+const Contact = () => {
+  const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [openFaq, setOpenFaq] = useState(0);
 
   const quickFacts = [
@@ -34,179 +38,29 @@ const PriestContactPage = () => {
     { q: "Do you read and reply to every comment on the blog?", a: "I try to. It sometimes takes a week or two, but I've never left one unread." }
   ];
 
-  const handleChange = (field) => (e) => setFormState((prev) => ({ ...prev, [field]: e.target.value }));
-  const handleSubmit = (e) => { e.preventDefault(); setSubmitted(true); };
+  const handleChange = (field) => (e) => {
+    setFormState((prev) => ({ ...prev, [field]: e.target.value }));
+    if (submitted) setSubmitted(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      await API.post("/contact", formState);
+      setSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+    } catch (err) {
+      setError(err.response?.data?.msg || err.response?.data?.message || "Something went wrong — please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="church-portal">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-        :root {
-          --sky-top: #a9d3e8;
-          --sky-mid: #d5eaf3;
-          --sky-low: #f3f8fa;
-          --navy: #1c3a52;
-          --navy-deep: #0f2438;
-          --slate: #3d5a6c;
-          --gold: #cf9f3f;
-          --gold-deep: #96731f;
-          --white: #ffffff;
-          --deep-red: #7a1010;
-        }
-
-        * { box-sizing: border-box; }
-
-        .church-portal {
-          font-family: 'Nunito Sans', sans-serif;
-          background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-low) 100%);
-          color: var(--navy);
-          -webkit-font-smoothing: antialiased;
-        }
-        .wrapper { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
-        .display { font-family: 'Cormorant Garamond', serif; }
-        .eyebrow {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.82rem; font-weight: 600;
-          letter-spacing: 0.14em; text-transform: uppercase;
-          color: var(--gold);
-        }
-        a { color: inherit; text-decoration: none; }
-
-        .cloud-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-        .cloud { position: absolute; background: rgba(255,255,255,0.75); border-radius: 100px; filter: blur(1px); }
-        .cloud::before, .cloud::after { content: ''; position: absolute; background: inherit; border-radius: 100px; }
-        .cloud-a { width: 180px; height: 55px; top: 8%; left: -10%; animation: drift 70s linear infinite; }
-        .cloud-a::before { width: 90px; height: 90px; top: -45px; left: 25px; }
-        .cloud-a::after { width: 70px; height: 70px; top: -30px; left: 90px; }
-        .cloud-b { width: 130px; height: 40px; top: 22%; left: -15%; animation: drift 95s linear infinite; animation-delay: -20s; opacity: 0.6; }
-        .cloud-b::before { width: 65px; height: 65px; top: -32px; left: 18px; }
-        .cloud-b::after { width: 50px; height: 50px; top: -22px; left: 65px; }
-        .cloud-c { width: 220px; height: 60px; top: 4%; left: -20%; animation: drift 120s linear infinite; animation-delay: -50s; opacity: 0.5; }
-        .cloud-c::before { width: 100px; height: 100px; top: -50px; left: 30px; }
-        .cloud-c::after { width: 80px; height: 80px; top: -35px; left: 110px; }
-        @keyframes drift { from { transform: translateX(0); } to { transform: translateX(160vw); } }
-        @media (prefers-reduced-motion: reduce) { .cloud { animation: none !important; } }
-
-        section { padding: 90px 0; position: relative; z-index: 1; }
-
-        .nav-bar {
-          position: sticky; top: 0; z-index: 40;
-          display: flex; align-items: center; gap: 26px;
-          padding: 0 24px; height: 100px;
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid rgba(255,255,255,0.12);
-          overflow-x: auto; white-space: nowrap; scrollbar-width: none;
-        }
-        .nav-bar::-webkit-scrollbar { display: none; }
-        .nav-brand { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.6rem; color: #eaf3f8; margin-right: 10px; flex-shrink: 0; }
-        .nav-item { font-size: 1.05rem; font-weight: 700; color: #ffffff; cursor: pointer; flex-shrink: 0; position: relative; padding: 4px 0; transition: color 0.2s ease; }
-        .nav-item:hover { color: var(--gold); }
-        .nav-item::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: var(--gold); transition: width 0.25s ease; }
-        .nav-item:hover::after { width: 100%; }
-
-        .fact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: transparent; border-radius: 12px; overflow: hidden; }
-        .fact-item { background: var(--deep-red); padding: 26px 28px; border-radius: 10px; }
-        .fact-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin: 0 0 8px 0; }
-        .fact-value { font-size: 1.35rem; color: #eaf3f8; margin: 0; line-height: 1.5; }
-        @media (max-width: 600px) { .fact-grid { grid-template-columns: 1fr; } }
-
-        .pull-quote { border-left: 4px solid var(--gold); padding-left: 30px; margin: 0; }
-
-        /* REACH GRID */
-        .reach-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-        @media (max-width: 650px) { .reach-grid { grid-template-columns: 1fr; } }
-        .reach-card {
-          padding: 32px;
-          border-radius: 12px;
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          border-left: 3px solid var(--gold);
-          border-top: 1px solid rgba(255,255,255,0.08);
-          border-right: 1px solid rgba(255,255,255,0.08);
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .reach-value {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 1.15rem; font-weight: 500; color: var(--gold);
-          margin: 8px 0 14px 0; word-break: break-word;
-        }
-
-        /* FORM — rebuilt as a clearly bounded, high-contrast card */
-        .form-card {
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          border-radius: 20px;
-          padding: 48px;
-          box-shadow: 0 30px 60px -20px rgba(15,36,56,0.45), 0 2px 0 rgba(207,159,63,0.5);
-          border: 1px solid rgba(255,255,255,0.08);
-        }
-        @media (max-width: 600px) { .form-card { padding: 30px 22px; } }
-        .contact-form { display: grid; gap: 24px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
-        .field-label {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
-          color: var(--gold); margin-bottom: 8px; display: block; font-weight: 600;
-        }
-        .field-input, .field-select, .field-textarea {
-          width: 100%; padding: 15px 16px; font-size: 1.05rem;
-          border-radius: 8px; border: 1.5px solid rgba(28,58,82,0.15);
-          background: #fbfdfe; color: var(--navy-deep);
-          font-family: 'Nunito Sans', sans-serif;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .field-input::placeholder, .field-textarea::placeholder { color: rgba(28,58,82,0.4); }
-        .field-select option { color: var(--navy-deep); background: #ffffff; }
-        .field-input:focus, .field-select:focus, .field-textarea:focus {
-          outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(207,159,63,0.25);
-        }
-        .field-textarea { resize: vertical; min-height: 150px; }
-        .submit-btn {
-          justify-self: start; background: var(--gold); color: var(--navy-deep);
-          border: none; padding: 17px 42px; font-size: 1.05rem; font-weight: 700;
-          border-radius: 30px; cursor: pointer; transition: background 0.2s ease, transform 0.15s ease;
-          box-shadow: 0 10px 24px -8px rgba(0,0,0,0.4);
-        }
-        .submit-btn:hover { background: #e0b455; transform: translateY(-1px); }
-        .submit-btn:active { transform: translateY(0); }
-        .success-note {
-          background: rgba(207,159,63,0.16); border: 1px solid rgba(207,159,63,0.4);
-          border-radius: 10px; padding: 22px 26px; font-size: 1.05rem; color: #eaf3f8;
-        }
-
-        /* LOCATION */
-        .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; align-items: center; }
-        @media (max-width: 800px) { .location-grid { grid-template-columns: 1fr; } }
-        .map-frame {
-          width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden;
-          box-shadow: 0 20px 40px rgba(15,36,56,0.2); border: none;
-        }
-        .service-time-row {
-          display: flex; justify-content: space-between; align-items: center;
-          padding: 14px 0; border-bottom: 1px dashed rgba(255,255,255,0.2);
-          font-size: 1.2rem;
-        }
-        .service-time-row:last-child { border-bottom: none; }
-
-        /* FAQ */
-        .faq-item { border-bottom: 1px solid rgba(28,58,82,0.14); }
-        .faq-item:first-child { border-top: 1px solid rgba(28,58,82,0.14); }
-        .faq-question {
-          width: 100%; text-align: left; background: none; border: none; cursor: pointer;
-          padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
-          gap: 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; font-weight: 700;
-          color: var(--navy-deep);
-        }
-        .faq-toggle {
-          flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
-          border: 1.5px solid var(--gold); color: var(--gold);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 1.2rem; font-family: 'IBM Plex Mono', monospace;
-        }
-        .faq-answer { padding: 0 0 26px 0; font-size: 1.2rem; color: #3d5a6c; line-height: 1.8; max-width: 640px; }
-      `}</style>
-
       <div className="cloud-layer">
         <div className="cloud cloud-a" />
         <div className="cloud cloud-b" />
@@ -269,41 +123,43 @@ const PriestContactPage = () => {
           </h2>
 
           <div className="form-card">
-            {submitted ? (
+            {submitted && (
               <div className="success-note">
                 Thank you — your message is on its way to me. I read everything myself, so it may take
                 a few days, but I will get back to you.
               </div>
-            ) : (
-              <form className="contact-form" onSubmit={handleSubmit}>
-                <div className="form-row">
-                  <div>
-                    <label className="field-label" htmlFor="name">Name</label>
-                    <input className="field-input" id="name" type="text" placeholder="Your full name" value={formState.name} onChange={handleChange("name")} required />
-                  </div>
-                  <div>
-                    <label className="field-label" htmlFor="email">Email</label>
-                    <input className="field-input" id="email" type="email" placeholder="you@email.com" value={formState.email} onChange={handleChange("email")} required />
-                  </div>
-                </div>
-                <div>
-                  <label className="field-label" htmlFor="topic">What's this about?</label>
-                  <select className="field-select" id="topic" value={formState.topic} onChange={handleChange("topic")}>
-                    <option>Just Saying Hello</option>
-                    <option>A Question About Something I Wrote</option>
-                    <option>A Prayer Request</option>
-                    <option>Priestly Counseling</option>
-                    <option>Weddings / Funerals</option>
-                    <option>Something Else</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="field-label" htmlFor="message">Your Message</label>
-                  <textarea className="field-textarea" id="message" placeholder="Take your time — I'll read all of it." value={formState.message} onChange={handleChange("message")} required />
-                </div>
-                <button className="submit-btn" type="submit">Send Message</button>
-              </form>
             )}
+            <form className="contact-form" onSubmit={handleSubmit}>
+              <input
+                name="name"
+                value={formState.name}
+                onChange={handleChange("name")}
+                placeholder="Your Name"
+                required
+                className="contact-input"
+              />
+              <input
+                name="email"
+                type="email"
+                value={formState.email}
+                onChange={handleChange("email")}
+                placeholder="Email"
+                required
+                className="contact-input"
+              />
+              <textarea
+                name="message"
+                value={formState.message}
+                onChange={handleChange("message")}
+                placeholder="Take your time — I'll read all of it."
+                required
+                className="contact-textarea"
+              />
+              <button type="submit" className="contact-btn" disabled={submitting}>
+                {submitting ? "Sending..." : "Send Message"}
+              </button>
+              {error && <p style={{ color: "#fb7185", marginTop: "20px", fontWeight: "700" }}>{error}</p>}
+            </form>
           </div>
         </div>
       </section>
@@ -418,4 +274,4 @@ const PriestContactPage = () => {
   );
 };
 
-export default PriestContactPage;
+export default Contact;

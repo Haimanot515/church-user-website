@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import Login from "../pages/Login";
+import Form from "../pages/Registration/Form";
+import Verify from "../pages/Registration/Verify";
+import { Link, useNavigate } from "react-router-dom";
 import { FaTimes, FaBars } from "react-icons/fa";
 import "./Navbar.css";
 
@@ -32,10 +35,48 @@ const ThornCrownLogo = () => (
   </svg>
 );
 
-const Navbar = () => {
+const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [showVerify, setShowVerify] = useState(false);
+
+  useEffect(() => {
+    if (loggedIn) {
+      closeModals();
+    }
+  }, [loggedIn]);
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  const closeModals = () => {
+    setShowLogin(false);
+    setShowRegister(false);
+    setShowVerify(false);
+  };
+
+  const openLogin = () => { closeModals(); setShowLogin(true); };
+  const openRegister = () => { closeModals(); setShowRegister(true); };
+  const openVerify = () => { closeModals(); setShowVerify(true); };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setLoggedIn(false);
+    setIsAdmin(false);
+    closeModals();
+    closeMenu();
+    navigate("/");
+  };
+
+  const handleNavClick = (e) => {
+    if (!loggedIn) {
+      e.preventDefault();
+      e.stopPropagation();
+      openLogin();
+    }
+    closeMenu();
+  };
 
   return (
     <>
@@ -53,20 +94,32 @@ const Navbar = () => {
         </button>
 
         <div className={`nav-content ${isMenuOpen ? "active" : ""}`}>
-        
+
           <Link to="/about" onClick={closeMenu}>About</Link>
           <Link to="/projects" onClick={closeMenu}>Blogs</Link>
           <Link to="/services" onClick={closeMenu}>Services</Link>
           <Link to="/cv" onClick={closeMenu}>Church</Link>
           <Link to="/skill" onClick={closeMenu}>Sermon</Link>
 
-          
+
           <Link to="/testimonials" onClick={closeMenu}>Travel</Link>
           <Link to="/contact" onClick={closeMenu}>Contact</Link>
-           <Link to="/media" onClick={closeMenu}>Media</Link>
-          
+          <Link to="/media" onClick={closeMenu}>Media</Link>
 
-         
+          {/* Auth section */}
+          {loggedIn ? (
+            <>
+              {(isAdmin === true || isAdmin === "true") && (
+                <Link to="/admin/users/view" onClick={closeMenu}>Admin</Link>
+              )}
+              <button onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <>
+              <button onClick={openLogin}>Login</button>
+              <button onClick={openRegister}>Register</button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -75,6 +128,39 @@ const Navbar = () => {
           className="nav-backdrop"
           onClick={closeMenu}
         />
+      )}
+
+      {/* MODALS */}
+      {(showLogin || showRegister || showVerify) && (
+        <div className="overlay" onClick={closeModals}>
+          <div className="auth-card" onClick={(e) => e.stopPropagation()}>
+            <button onClick={closeModals} className="close-btn-style">
+              <FaTimes />
+            </button>
+            {showLogin && (
+              <Login
+                setLoggedIn={setLoggedIn}
+                setIsAdmin={setIsAdmin}
+                closeModal={closeModals}
+                switchToRegister={openRegister}
+              />
+            )}
+            {showRegister && (
+              <Form
+                closeModal={closeModals}
+                switchToLogin={openLogin}
+                switchToVerify={openVerify}
+              />
+            )}
+            {showVerify && (
+              <Verify
+                setLoggedIn={setLoggedIn}
+                setIsAdmin={setIsAdmin}
+                closeModal={closeModals}
+              />
+            )}
+          </div>
+        </div>
       )}
     </>
   );
