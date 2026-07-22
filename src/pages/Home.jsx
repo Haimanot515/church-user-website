@@ -44,6 +44,14 @@ const Home = () => {
   const [recommendedPage, setRecommendedPage] = useState(1);
   const [recommendedTotalPages, setRecommendedTotalPages] = useState(1);
 
+  // === ADDED: shared helper to cap description text at a word limit ===
+  const truncateWords = (text, limit) => {
+    if (!text) return text;
+    const words = text.trim().split(/\s+/);
+    if (words.length <= limit) return text;
+    return words.slice(0, limit).join(" ") + "…";
+  };
+
   const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
 
   const showPrevPhoto = () => {
@@ -163,15 +171,15 @@ const Home = () => {
     fetchTestimonials();
   }, []);
 
-  // === CHANGED: fetch Sponsored/Promotion from /promotions/latest ===
+  // === CHANGED: /promotions/latest is now a real route on the backend
+  // (routes/promotion.js), so fetch it directly instead of sorting client-side ===
   useEffect(() => {
     const fetchPromotion = async () => {
       try {
         setPromotionLoading(true);
         const res = await API.get("/promotions/latest");
-        const promotionsData = Array.isArray(res.data) ? res.data : res.data.promotions;
-        // Endpoint returns up to 10, most recent first — the homepage only shows one.
-        setPromotion(promotionsData && promotionsData.length > 0 ? promotionsData[0] : null);
+        const latest = Array.isArray(res.data) ? res.data[0] : res.data;
+        setPromotion(latest || null);
       } catch (err) {
         console.log(err);
         setPromotion(null);
@@ -379,7 +387,7 @@ const Home = () => {
           </span>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
             <img
-              src={promotion?.image}
+              src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
               alt={promotion?.title || "Sponsored content"}
               style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px' }}
             />
@@ -388,7 +396,7 @@ const Home = () => {
                 {promotion?.title}
               </h3>
               <p style={{ fontSize: '1.1rem', color: '#555', margin: '0 0 20px 0' }}>
-                {promotion?.description}
+                {truncateWords(promotion?.description, 50)}
               </p>
               <button
                 onClick={() => promotion?.link && window.open(promotion.link, "_blank", "noopener,noreferrer")}
@@ -421,7 +429,7 @@ const Home = () => {
               {hero?.title || "Rooted in grace, reaching toward the light"}
             </h1>
             <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-              {hero?.description || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
+              {truncateWords(hero?.description, 50) || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
@@ -495,8 +503,24 @@ const Home = () => {
                       {item.title}
                     </h3>
                     <p style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
-                      {item.description}
+                      {truncateWords(item.description, 50)}
                     </p>
+                    <button
+                      onClick={() => window.location.href = `/posts/${item._id}`}
+                      style={{
+                        marginTop: '20px',
+                        padding: '12px 28px',
+                        background: 'var(--navy-deep)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '30px',
+                        fontSize: '0.95rem',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      See Details
+                    </button>
                   </div>
                 </div>
                 {index < arr.length - 1 && (
@@ -574,7 +598,7 @@ const Home = () => {
                   >
                     <div className="angel-box-overlay">
                       <h4>{post.title}</h4>
-                      <p>{post.description}</p>
+                      <p>{truncateWords(post.description, 50)}</p>
                     </div>
                   </div>
                 ))
@@ -631,7 +655,7 @@ const Home = () => {
                   <img src={post.imageUrl} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
                   <div style={{ padding: '18px' }}>
                     <h4 className="display" style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 8px 0', color: '#a80070' }}>{post.title}</h4>
-                    <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{post.description}</p>
+                    <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{truncateWords(post.description, 50)}</p>
                   </div>
                 </div>
               ))}
@@ -715,7 +739,7 @@ const Home = () => {
                 {priest?.title || "Walking together, one Sunday at a time"}
               </h3>
               <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
-                {priest?.description || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
+                {truncateWords(priest?.description, 50) || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
               </p>
             </div>
           </div>
@@ -746,7 +770,7 @@ const Home = () => {
                   <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{t.name}</p>
                   <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.role}</p>
                   <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
-                    "{t.quote}"
+                    "{truncateWords(t.quote, 50)}"
                   </p>
                 </div>
               ))}
@@ -794,14 +818,14 @@ const Home = () => {
                 <img
                   src={photos[photoIndex]?.imageUrl}
                   alt={photos[photoIndex]?.title}
-                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
                 />
                 <div style={{ marginTop: '26px', textAlign: 'center' }}>
                   <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
                     {photos[photoIndex]?.title}
                   </h3>
                   <p style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px' }}>
-                    {photos[photoIndex]?.description}
+                    {truncateWords(photos[photoIndex]?.description, 50)}
                   </p>
                 </div>
                 <div className="photo-dots">
@@ -851,33 +875,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{ background: 'var(--navy-deep)', color: '#89a3b5', padding: '60px 0 30px 0', borderBottom: '6px solid var(--deep-red)' }}>
-        <div className="wrapper">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '38px', marginBottom: '44px' }}>
-            <div>
-              <h4 className="display" style={{ color: '#eaf3f8', fontSize: '1.6rem', fontWeight: 700, marginBottom: '12px' }}>Harbor Light Church</h4>
-              <p style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>Sunday services at 9:00 & 11:00 AM. All are welcome, always.</p>
-            </div>
-            {[
-              { title: "Visit", items: ["Service Times", "Directions", "What to Expect"] },
-              { title: "Get Involved", items: ["Ministries", "Volunteer", "Give", "Missions"] },
-              { title: "Connect", items: ["Facebook", "Instagram", "YouTube"] }
-            ].map((col, i) => (
-              <div key={i}>
-                <h5 className="eyebrow" style={{ color: '#eaf3f8', marginBottom: '12px', fontSize: '0.85rem' }}>{col.title}</h5>
-                {col.items.map((s, j) => (
-                  <p key={j} style={{ fontSize: '1.1rem', margin: '8px 0', cursor: 'pointer' }}>{s}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-            <p className="eyebrow" style={{ margin: 0, fontSize: '0.85rem' }}>© 2026 Harbor Light Church</p>
-            <p className="eyebrow" style={{ margin: 0, fontSize: '0.85rem' }}>Privacy Policy</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
