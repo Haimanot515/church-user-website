@@ -19,6 +19,10 @@ const Home = () => {
   const [photosTotalPages, setPhotosTotalPages] = useState(1);
   const [showSponsored, setShowSponsored] = useState(true);
 
+  // === CHANGED: promotion now comes from the backend instead of being hardcoded ===
+  const [promotion, setPromotion] = useState(null);
+  const [promotionLoading, setPromotionLoading] = useState(true);
+
   // === ADDED: Current Sermon Series (category = Sermons, paginated) ===
   const [sermons, setSermons] = useState([]);
   const [sermonsLoading, setSermonsLoading] = useState(true);
@@ -159,6 +163,25 @@ const Home = () => {
     fetchTestimonials();
   }, []);
 
+  // === CHANGED: fetch Sponsored/Promotion from /promotions/latest ===
+  useEffect(() => {
+    const fetchPromotion = async () => {
+      try {
+        setPromotionLoading(true);
+        const res = await API.get("/promotions/latest");
+        const promotionsData = Array.isArray(res.data) ? res.data : res.data.promotions;
+        // Endpoint returns up to 10, most recent first — the homepage only shows one.
+        setPromotion(promotionsData && promotionsData.length > 0 ? promotionsData[0] : null);
+      } catch (err) {
+        console.log(err);
+        setPromotion(null);
+      } finally {
+        setPromotionLoading(false);
+      }
+    };
+    fetchPromotion();
+  }, []);
+
   // === ADDED: fetch Photos from /media/type/photo, paginated (limit 10) ===
   useEffect(() => {
     const fetchPhotos = async (page) => {
@@ -294,6 +317,9 @@ const Home = () => {
     cursor: disabled ? "not-allowed" : "pointer",
   });
 
+  // === CHANGED: only render sponsored block once loading is done AND a promotion actually exists ===
+  const shouldShowSponsored = showSponsored && !promotionLoading && !!promotion;
+
   return (
     <div className="church-portal">
       <div className="cloud-layer">
@@ -302,8 +328,8 @@ const Home = () => {
         <div className="cloud cloud-c" />
       </div>
 
-      {/* SPONSORED */}
-      {showSponsored && (
+      {/* SPONSORED — now driven by /promotions/latest, hidden entirely if there's no promotion */}
+      {shouldShowSponsored && (
       <div className="sponsored-wrap">
         <div className="cross-string left">
           <div className="string-line" />
@@ -353,29 +379,31 @@ const Home = () => {
           </span>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
             <img
-              src="https://images.unsplash.com/photo-1600876625357-7c980b1bc59b?auto=format&fit=crop&w=900&q=80"
-              alt="Golden and white Orthodox church exterior"
+              src={promotion?.image}
+              alt={promotion?.title || "Sponsored content"}
               style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px' }}
             />
             <div>
               <h3 style={{ fontSize: '1.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif' }}>
-                Drive Your Business Forward with Industry-Leading Insights
+                {promotion?.title}
               </h3>
               <p style={{ fontSize: '1.1rem', color: '#555', margin: '0 0 20px 0' }}>
-                Unlock exclusive strategies and data-driven reports designed to give you a competitive edge in 2026.
+                {promotion?.description}
               </p>
-              <button style={{
-                backgroundColor: '#d32f2f',
-                color: '#fff',
-                border: 'none',
-                padding: '12px 30px',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                transition: 'background 0.3s'
-              }} onMouseOver={(e) => e.target.style.backgroundColor = '#b71c1c'}
+              <button
+                onClick={() => promotion?.link && window.open(promotion.link, "_blank", "noopener,noreferrer")}
+                style={{
+                  backgroundColor: '#d32f2f',
+                  color: '#fff',
+                  border: 'none',
+                  padding: '12px 30px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  transition: 'background 0.3s'
+                }} onMouseOver={(e) => e.target.style.backgroundColor = '#b71c1c'}
                 onMouseOut={(e) => e.target.style.backgroundColor = '#d32f2f'}>
                 Open
               </button>

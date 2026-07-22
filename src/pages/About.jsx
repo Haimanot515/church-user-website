@@ -1,9 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import API from "../api/api.jsx";
 
 const PastorAboutMePage = () => {
   const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Me", "Contact"];
 
   const [activeChapter, setActiveChapter] = useState(0);
+
+  // === ADDED: About/Hero content fetched from /about ===
+  const [about, setAbout] = useState(null);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const aboutRes = await API.get("/about");
+        const aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
+        const latest = aboutData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+        setAbout(latest);
+      } catch (err) { console.error("Error:", err); }
+    };
+    fetchAbout();
+  }, []);
 
   const chapters = [
     { year: "1979", title: "Born in Addis Ababa", desc: "The second of five children, raised in a home where Scripture was read at breakfast and questions were always welcome." },
@@ -263,12 +279,10 @@ const PastorAboutMePage = () => {
         <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '320px' }}>
             <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-              Priest. Father. Still figuring most of it out
+              {about?.title || "Priest. Father. Still figuring most of it out"}
             </h1>
             <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-              I've spent twenty years learning that faith is less about having answers and more about
-              showing up — for God, for my family, and for whoever's sitting across from me. This is
-              where I write about that, honestly.
+              {about?.description || "I've spent twenty years learning that faith is less about having answers and more about showing up — for God, for my family, and for whoever's sitting across from me. This is where I write about that, honestly."}
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
@@ -281,8 +295,8 @@ const PastorAboutMePage = () => {
           </div>
           <div style={{ flex: '0 0 340px', minWidth: '280px' }}>
             <img
-              src="https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=900&q=80"
-              alt="Priest in ornate robes holding a ceremonial staff"
+              src={about?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=900&q=80"}
+              alt={about?.title || "Priest in ornate robes holding a ceremonial staff"}
               style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
             />
           </div>
