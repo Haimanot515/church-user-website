@@ -12,6 +12,11 @@ const Home = () => {
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
   const [testimonialsError, setTestimonialsError] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [photos, setPhotos] = useState([]);
+  const [photosLoading, setPhotosLoading] = useState(true);
+  const [photosError, setPhotosError] = useState("");
+  const [photosPage, setPhotosPage] = useState(1);
+  const [photosTotalPages, setPhotosTotalPages] = useState(1);
   const [showSponsored, setShowSponsored] = useState(true);
 
   // === ADDED: Current Sermon Series (category = Sermons, paginated) ===
@@ -37,17 +42,23 @@ const Home = () => {
 
   const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
 
-  const photos = [
-    { title: "Hope in Hard Seasons", desc: "Finding steadiness in Scripture when life feels uncertain.", img: "https://images.unsplash.com/photo-1594990375715-2d008aaaa31b?auto=format&fit=crop&w=1200&q=80", alt: "Blue and gold Orthodox cathedral interior" },
-    { title: "Living Waters", desc: "A study through John, on thirst, grace, and being made new.", img: "https://images.unsplash.com/photo-1627573897879-1eff66f2c228?auto=format&fit=crop&w=1200&q=80", alt: "Low angle view of Orthodox cathedral interior" },
-    { title: "Faith of Our Fathers", desc: "Lessons from the patriarchs on trust and obedience.", img: "https://images.unsplash.com/photo-1730751634426-b51669a83c85?auto=format&fit=crop&w=1200&q=80", alt: "Orthodox church walls covered in icon paintings" },
-    { title: "Come As You Are", desc: "Welcome, belonging, and the open table of the Gospel.", img: "https://images.unsplash.com/photo-1731440650603-a931e574c943?auto=format&fit=crop&w=1200&q=80", alt: "Painted ceiling icon inside an Orthodox church" },
-    { title: "The Divine Liturgy", desc: "Understanding the rhythm and meaning behind our weekly worship.", img: "https://images.unsplash.com/photo-1764231479915-62f744d20939?auto=format&fit=crop&w=1200&q=80", alt: "Interior of a grand, ornate Orthodox church with detailed flooring" },
-    { title: "Icons and Prayer", desc: "How sacred images draw us deeper into stillness and worship.", img: "https://images.unsplash.com/photo-1780259034206-d6d579b5378b?auto=format&fit=crop&w=1200&q=80", alt: "Ancient stone wall with a religious icon and vaulted ceiling" }
-  ];
+  const showPrevPhoto = () => {
+    if (photoIndex > 0) {
+      setPhotoIndex((i) => i - 1);
+    } else if (photosPage > 1) {
+      setPhotosPage((p) => p - 1);
+      setPhotoIndex(0);
+    }
+  };
 
-  const showPrevPhoto = () => setPhotoIndex((i) => (i === 0 ? photos.length - 1 : i - 1));
-  const showNextPhoto = () => setPhotoIndex((i) => (i === photos.length - 1 ? 0 : i + 1));
+  const showNextPhoto = () => {
+    if (photoIndex < photos.length - 1) {
+      setPhotoIndex((i) => i + 1);
+    } else if (photosPage < photosTotalPages) {
+      setPhotosPage((p) => p + 1);
+      setPhotoIndex(0);
+    }
+  };
 
   const angelScrollRef = useRef(null);
   const scrollAngels = (direction) => {
@@ -147,6 +158,33 @@ const Home = () => {
     };
     fetchTestimonials();
   }, []);
+
+  // === ADDED: fetch Photos from /media/type/photo, paginated (limit 10) ===
+  useEffect(() => {
+    const fetchPhotos = async (page) => {
+      try {
+        setPhotosLoading(true);
+        setPhotosError("");
+
+        const res = await API.get("/media/type/photo", {
+          params: {
+            page,
+            limit: 10,
+          },
+        });
+
+        const mediaData = Array.isArray(res.data) ? res.data : res.data.media;
+        setPhotos(mediaData || []);
+        setPhotosTotalPages(res.data.totalPages || 1);
+      } catch (err) {
+        console.log(err);
+        setPhotosError(err.response?.data?.message || "Failed to load photos");
+      } finally {
+        setPhotosLoading(false);
+      }
+    };
+    fetchPhotos(photosPage);
+  }, [photosPage]);
 
   // === ADDED: fetch Current Sermon Series — same pattern as GetPost.jsx ===
   useEffect(() => {
@@ -711,42 +749,55 @@ const Home = () => {
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Photos</h3>
-          <div className="photo-carousel">
-            <button className="photo-arrow left" aria-label="Previous photo" onClick={showPrevPhoto}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            <div className="photo-carousel-frame">
-              <img
-                src={photos[photoIndex].img}
-                alt={photos[photoIndex].alt}
-                style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
-              />
-              <div style={{ marginTop: '26px', textAlign: 'center' }}>
-                <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
-                  {photos[photoIndex].title}
-                </h3>
-                <p style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px' }}>
-                  {photos[photoIndex].desc}
-                </p>
+          {photosError && <p style={{ color: 'red', textAlign: 'center' }}>{photosError}</p>}
+
+          {photosLoading ? (
+            <p style={{ textAlign: 'center' }}>Loading photos...</p>
+          ) : photos.length === 0 ? (
+            <p style={{ textAlign: 'center' }}>No photos found.</p>
+          ) : (
+            <div className="photo-carousel">
+              <button className="photo-arrow left" aria-label="Previous photo" onClick={showPrevPhoto} disabled={photoIndex === 0 && photosPage === 1}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <div className="photo-carousel-frame">
+                <img
+                  src={photos[photoIndex]?.imageUrl}
+                  alt={photos[photoIndex]?.title}
+                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                />
+                <div style={{ marginTop: '26px', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
+                    {photos[photoIndex]?.title}
+                  </h3>
+                  <p style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px' }}>
+                    {photos[photoIndex]?.description}
+                  </p>
+                </div>
+                <div className="photo-dots">
+                  {photos.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`photo-dot${i === photoIndex ? ' active' : ''}`}
+                      onClick={() => setPhotoIndex(i)}
+                    />
+                  ))}
+                </div>
+                {photosTotalPages > 1 && (
+                  <p style={{ textAlign: 'center', fontSize: '14px', color: '#444', marginTop: '15px' }}>
+                    Page {photosPage} of {photosTotalPages}
+                  </p>
+                )}
               </div>
-              <div className="photo-dots">
-                {photos.map((_, i) => (
-                  <span
-                    key={i}
-                    className={`photo-dot${i === photoIndex ? ' active' : ''}`}
-                    onClick={() => setPhotoIndex(i)}
-                  />
-                ))}
-              </div>
+              <button className="photo-arrow right" aria-label="Next photo" onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </div>
-            <button className="photo-arrow right" aria-label="Next photo" onClick={showNextPhoto}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+          )}
         </div>
       </section>
 
