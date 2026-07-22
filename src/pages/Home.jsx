@@ -425,7 +425,7 @@ const Home = () => {
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '320px' }}>
-            <h1 className="display" style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+            <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
               {hero?.title || "Rooted in grace, reaching toward the light"}
             </h1>
             <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
@@ -499,28 +499,13 @@ const Home = () => {
                     style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
                   />
                   <div style={{ marginTop: '-5px' }}>
-                    <h3 style={{ fontSize: '2.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
+                    <h3 style={{ fontSize: '2rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1', fontWeight: '600', color: '#c1440e' }}>
                       {item.title}
                     </h3>
                     <p style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
-                      {truncateWords(item.description, 50)}
+                      {truncateWords(item.description, 37)}
                     </p>
-                    <button
-                      onClick={() => window.location.href = `/posts/${item._id}`}
-                      style={{
-                        marginTop: '20px',
-                        padding: '12px 28px',
-                        background: 'var(--navy-deep)',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '30px',
-                        fontSize: '0.95rem',
-                        fontWeight: 700,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      See Details
-                    </button>
+                    
                   </div>
                 </div>
                 {index < arr.length - 1 && (
@@ -654,8 +639,8 @@ const Home = () => {
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
                   <img src={post.imageUrl} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
                   <div style={{ padding: '18px' }}>
-                    <h4 className="display" style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 8px 0', color: '#a80070' }}>{post.title}</h4>
-                    <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{truncateWords(post.description, 50)}</p>
+                    <h4 className="display" style={{ fontSize: '2rem', fontWeight: 600, margin: '0 0 8px 0', color: '#a80070' }}>{post.title}</h4>
+                    <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{truncateWords(post.description, 20)}</p>
                   </div>
                 </div>
               ))}
