@@ -153,6 +153,7 @@ const Home = () => {
   }, []);
 
   // === ADDED: fetch What People Say from /testimonials ===
+  // NOTE: Testimonial model fields are: name, title, message, avatar (see backend model)
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
@@ -505,7 +506,7 @@ const Home = () => {
                     <p style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
                       {truncateWords(item.description, 37)}
                     </p>
-                    
+
                   </div>
                 </div>
                 {index < arr.length - 1 && (
@@ -693,9 +694,9 @@ const Home = () => {
         </div>
         <section style={{ textAlign: 'center' }}>
           <div className="wrapper">
-            <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 5vw, 3.8rem)', fontWeight: 700, margin: 0, color: '#ffffff' }}>
-              Come as you are. There's a place for you here.
-            </h2>
+            <h3 className="display" style={{ fontSize: 'clamp(2rem,  4vw, 3.8rem)', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+              Come as you are<br/>There's a place for you here.
+            </h3>
           </div>
         </section>
 
@@ -724,14 +725,14 @@ const Home = () => {
                 {priest?.title || "Walking together, one Sunday at a time"}
               </h3>
               <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
-                {truncateWords(priest?.description, 50) || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
+                {truncateWords(priest?.description, 70) || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
               </p>
             </div>
           </div>
         </section>
       </div>
 
-      {/* TESTIMONIES */}
+      {/* TESTIMONIES — fields match the Testimonial model: name, title, message, avatar */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1080px' }}>
           <h3 className="display" style={{ fontSize: '2.6rem', fontWeight: 700, marginBottom: '44px', textAlign: 'center', color: 'var(--navy-deep)' }}>
@@ -748,14 +749,14 @@ const Home = () => {
               {testimonials.map((t, i) => (
                 <div key={t._id || i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
                   <img
-                    src={t.image}
+                    src={t.avatar}
                     alt={t.name}
                     style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--gold)', margin: '0 auto 18px auto', display: 'block' }}
                   />
                   <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{t.name}</p>
-                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.role}</p>
+                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.title}</p>
                   <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
-                    "{truncateWords(t.quote, 50)}"
+                    "{truncateWords(t.message, 50)}"
                   </p>
                 </div>
               ))}
@@ -801,7 +802,7 @@ const Home = () => {
               </button>
               <div className="photo-carousel-frame">
                 <img
-                  src={photos[photoIndex]?.imageUrl}
+                  src={photos[photoIndex]?.mediaUrl}
                   alt={photos[photoIndex]?.title}
                   style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
                 />

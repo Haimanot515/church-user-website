@@ -35,6 +35,12 @@
   min-height: 440px;
   overflow: hidden;
   background: var(--navy-deep);
+  transition: height 0.35s ease;
+}
+/* "Widen" state toggled by the expand-btn — makes the video area taller
+   so it reads as a bigger, more immersive player. */
+.video-hero.expanded {
+  height: 94vh;
 }
 .yt-bg-wrap {
   position: absolute; inset: 0;
@@ -49,6 +55,21 @@
   height: 100vh;
   min-width: 100%;
   min-height: 56.25vw; /* 100vw * (9/16) */
+}
+/* Self-hosted <video> uploads: fill the hero regardless of the file's
+   native resolution/aspect ratio, cropping instead of stretching. This
+   is the reason some videos looked full-width and others didn't — there
+   was no sizing rule for <video>, only the old iframe one above. */
+.yt-bg-wrap video {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .controls-overlay {
   position: absolute; inset: 0;
@@ -78,6 +99,20 @@
 }
 .mute-btn svg { width: 18px; height: 18px; }
 
+/* Widen/narrow toggle — same visual treatment as the mute button, placed
+   top-right so it doesn't compete with the bottom-corner controls. */
+.expand-btn {
+  position: absolute;
+  top: 24px; right: 24px;
+  z-index: 2;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.35); background: rgba(15,36,56,0.55);
+  color: #f3f6f8; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.expand-btn:hover { background: rgba(15,36,56,0.8); }
+.expand-btn svg { width: 18px; height: 18px; }
+
 .nav-arrow {
   position: absolute;
   top: 50%;
@@ -93,29 +128,78 @@
 .nav-arrow.next { right: 24px; }
 .nav-arrow svg { width: 20px; height: 20px; }
 
-.close-btn {
+/* Big centered play/pause toggle, positioned in the middle of the video
+   like a standard media player control. Same button element is reused in
+   both the playing state (pause icon) and the closed/stopped state
+   (triangle icon) inside .video-closed-panel.
+
+   While playing, it now fades in/out together with the rest of the
+   controls-overlay (nav arrows, mute button, expand button) instead of
+   sitting on screen permanently — tap the empty area to reveal it, tap
+   again to hide it. In the closed/paused panel it always carries the
+   `.visible` class so the play button stays reachable. */
+.center-toggle-btn {
   position: absolute;
-  top: 24px; right: 24px;
-  z-index: 2;
-  width: 40px; height: 40px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.35); background: rgba(15,36,56,0.55);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 84px; height: 84px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4); background: rgba(15,36,56,0.55);
   color: #f3f6f8; cursor: pointer; display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, background 0.2s ease, transform 0.2s ease;
 }
-.close-btn svg { width: 16px; height: 16px; }
+.center-toggle-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.center-toggle-btn:hover {
+  background: rgba(15,36,56,0.78);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+.center-toggle-btn svg { width: 34px; height: 34px; }
 
-.playback-time {
+/* Timer + progressive seek bar. Spans the width of the hero (minus room
+   for the mute button on the right) so it reads clearly as "where the
+   video is playing", with a draggable-looking handle at the fill edge. */
+.progress-bar-row {
   position: absolute;
-  bottom: 24px; left: 24px;
+  left: 24px; right: 86px; bottom: 24px;
   z-index: 2;
+  display: flex; align-items: center; gap: 12px;
+}
+.progress-bar-row .time-label {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #f3f6f8;
-  background: rgba(15,36,56,0.55);
-  padding: 8px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.35);
-  backdrop-filter: blur(2px);
+  min-width: 38px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.progress-bar-track {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.28);
+  cursor: pointer;
+}
+.progress-bar-fill {
+  position: absolute; top: 0; left: 0; height: 100%;
+  border-radius: 3px;
+  background: var(--gold);
+  transition: width 0.1s linear;
+}
+.progress-bar-handle {
+  position: absolute; top: 50%; width: 12px; height: 12px;
+  background: var(--gold);
+  border: 2px solid #f3f6f8;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.1s linear;
+  pointer-events: none;
 }
 
 .video-closed-panel {

@@ -37,6 +37,7 @@ const SERMON_CATEGORY = "Sermons";
 const Sermon = () => {
   const videoRef = useRef(null);
   const videoHeroRef = useRef(null);
+  const seekBarRef = useRef(null);
 
   const [sermons, setSermons] = useState([]);
   const [loadingSermons, setLoadingSermons] = useState(true);
@@ -49,6 +50,9 @@ const Sermon = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(false);
+  // Whether the video hero is shown in its "widened" (taller) layout or
+  // the default "narrow" layout. Toggled from the expand/collapse icon.
+  const [expanded, setExpanded] = useState(false);
 
   const currentSermon = sermons[sermonIndex];
 
@@ -106,6 +110,18 @@ const Sermon = () => {
     setCurrentTime(el.currentTime);
   };
 
+  // Jump playback to wherever the person clicks on the progress track.
+  const handleSeek = (e) => {
+    const el = videoRef.current;
+    const bar = seekBarRef.current;
+    if (!el || !bar || !duration) return;
+    const rect = bar.getBoundingClientRect();
+    const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+    const nextTime = ratio * duration;
+    el.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  };
+
   const toggleMute = () => {
     const el = videoRef.current;
     if (!el) return;
@@ -122,7 +138,6 @@ const Sermon = () => {
   const closeVideo = () => {
     const el = videoRef.current;
     if (el) el.pause();
-    setReady(false);
     setVideoClosed(true);
   };
 
@@ -140,6 +155,12 @@ const Sermon = () => {
 
   const toggleControls = () => {
     setShowControls((v) => !v);
+  };
+
+  // Widen/narrow the video hero. Purely a layout toggle — doesn't touch
+  // playback state.
+  const toggleExpand = () => {
+    setExpanded((v) => !v);
   };
 
   const selectSermonFromGrid = (index) => {
@@ -179,7 +200,7 @@ const Sermon = () => {
 
   return (
     <div className="shepherd-page">
-      <section className="video-hero" ref={videoHeroRef}>
+      <section className={`video-hero${expanded ? " expanded" : ""}`} ref={videoHeroRef}>
         {loadingSermons ? (
           <div className="video-closed-panel">
             <span className="eyebrow">Loading sermons...</span>
@@ -192,8 +213,12 @@ const Sermon = () => {
           <div className="video-closed-panel">
             <span className="eyebrow">No sermons in this category yet</span>
           </div>
-        ) : !videoClosed ? (
+        ) : (
           <>
+            {/* The video element (and its current frame) now stays mounted
+                and visible whether playing or closed/paused — closing no
+                longer swaps it out for a blank panel. Only the controls
+                around it change. */}
             <div className="yt-bg-wrap">
               <video
                 ref={videoRef}
@@ -205,49 +230,100 @@ const Sermon = () => {
                 onTimeUpdate={handleTimeUpdate}
               />
             </div>
-            <div className="tap-catcher" onClick={toggleControls} />
+            <div
+              className="tap-catcher"
+              onClick={videoClosed ? toggleVideo : toggleControls}
+            />
 
-            <div className={`controls-overlay${showControls ? " visible" : ""}`} onClick={toggleControls}>
-              <button
-                className="nav-arrow prev"
-                onClick={(e) => { e.stopPropagation(); goToSermon(sermonIndex - 1); }}
-                aria-label="Previous sermon"
-                disabled={!ready}
-              >
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-              <button
-                className="nav-arrow next"
-                onClick={(e) => { e.stopPropagation(); goToSermon(sermonIndex + 1); }}
-                aria-label="Next sermon"
-                disabled={!ready}
-              >
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-
-              <button className="close-btn" onClick={(e) => { e.stopPropagation(); toggleVideo(); }} aria-label="Close video">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6L18 18M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
-              </button>
-
-              <div className="playback-time" onClick={(e) => e.stopPropagation()}>{formatTime(currentTime)} / {formatTime(duration)}</div>
-
-              <button className="mute-btn" onClick={(e) => { e.stopPropagation(); toggleMute(); }} aria-label={muted ? "Unmute video" : "Mute video"} disabled={!ready}>
-                {muted ? (
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9V15H8L13 20V4L8 9H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M17 8L21 16M21 8L17 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9V15H8L13 20V4L8 9H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M16.5 8.5C17.5 9.5 18 10.7 18 12C18 13.3 17.5 14.5 16.5 15.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
-                )}
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="video-closed-panel">
-            <span className="eyebrow">Video closed</span>
-            <button className="reopen-toggle-btn" onClick={toggleVideo} aria-label="Open video">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5V19L19 12L8 5Z" fill="currentColor"/></svg>
-              Watch the sermon
+            {/* Big centered play/pause toggle. While playing, it fades
+                in/out together with the rest of the controls (tap the
+                empty area to reveal it). While paused/closed it stays on
+                screen over the still-visible last frame so the video can
+                always be resumed with one click. */}
+            <button
+              className={`center-toggle-btn${(showControls || videoClosed) ? " visible" : ""}`}
+              onClick={(e) => { e.stopPropagation(); toggleVideo(); }}
+              aria-label={videoClosed ? "Play video" : "Pause video"}
+            >
+              {videoClosed ? (
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5V19L19 12L8 5Z" /></svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="6" y="4" width="4" height="16" rx="1" />
+                  <rect x="14" y="4" width="4" height="16" rx="1" />
+                </svg>
+              )}
             </button>
-          </div>
+
+            <div className={`controls-overlay${(showControls || videoClosed) ? " visible" : ""}`} onClick={videoClosed ? toggleVideo : toggleControls}>
+                <button
+                  className="nav-arrow prev"
+                  onClick={(e) => { e.stopPropagation(); goToSermon(sermonIndex - 1); }}
+                  aria-label="Previous sermon"
+                  disabled={!ready}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+                <button
+                  className="nav-arrow next"
+                  onClick={(e) => { e.stopPropagation(); goToSermon(sermonIndex + 1); }}
+                  aria-label="Next sermon"
+                  disabled={!ready}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+
+                {/* Timer + progressive seek bar: shows elapsed/total time
+                    and how far through the sermon playback currently is.
+                    Click or drag anywhere on the track to jump there. */}
+                <div className="progress-bar-row" onClick={(e) => e.stopPropagation()}>
+                  <span className="time-label">{formatTime(currentTime)}</span>
+                  <div
+                    className="progress-bar-track"
+                    ref={seekBarRef}
+                    onClick={handleSeek}
+                  >
+                    <div
+                      className="progress-bar-fill"
+                      style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                    />
+                    <div
+                      className="progress-bar-handle"
+                      style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                    />
+                  </div>
+                  <span className="time-label">{formatTime(duration)}</span>
+                </div>
+
+                {/* Widen/narrow toggle for the video display area. Sits
+                    top-right, always reachable while the controls overlay
+                    is visible, and swaps its icon based on current state. */}
+                <button
+                  className="expand-btn"
+                  onClick={(e) => { e.stopPropagation(); toggleExpand(); }}
+                  aria-label={expanded ? "Narrow video" : "Widen video"}
+                  disabled={!ready}
+                >
+                  {expanded ? (
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 3H4V8M15 3H20V8M9 21H4V16M15 21H20V16M4 4L10 10M20 4L14 10M4 20L10 14M20 20L14 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 9V4H9M15 4H20V9M20 15V20H15M9 20H4V15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+
+                <button className="mute-btn" onClick={(e) => { e.stopPropagation(); toggleMute(); }} aria-label={muted ? "Unmute video" : "Mute video"} disabled={!ready}>
+                  {muted ? (
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9V15H8L13 20V4L8 9H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M17 8L21 16M21 8L17 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9V15H8L13 20V4L8 9H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M16.5 8.5C17.5 9.5 18 10.7 18 12C18 13.3 17.5 14.5 16.5 15.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                  )}
+                </button>
+              </div>
+          </>
         )}
       </section>
 
