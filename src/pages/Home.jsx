@@ -19,32 +19,27 @@ const Home = () => {
   const [photosTotalPages, setPhotosTotalPages] = useState(1);
   const [showSponsored, setShowSponsored] = useState(true);
 
-  // === CHANGED: promotion now comes from the backend instead of being hardcoded ===
   const [promotion, setPromotion] = useState(null);
   const [promotionLoading, setPromotionLoading] = useState(true);
 
-  // === ADDED: Current Sermon Series (category = Sermons, paginated) ===
   const [sermons, setSermons] = useState([]);
   const [sermonsLoading, setSermonsLoading] = useState(true);
   const [sermonsError, setSermonsError] = useState("");
   const [sermonsPage, setSermonsPage] = useState(1);
   const [sermonsTotalPages, setSermonsTotalPages] = useState(1);
 
-  // === ADDED: Trending posts (all posts, no category filter) ===
   const [trending, setTrending] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState("");
   const [trendingPage, setTrendingPage] = useState(1);
   const [trendingTotalPages, setTrendingTotalPages] = useState(1);
 
-  // === ADDED: Recommended posts (all posts, no category filter) ===
   const [recommended, setRecommended] = useState([]);
   const [recommendedLoading, setRecommendedLoading] = useState(true);
   const [recommendedError, setRecommendedError] = useState("");
   const [recommendedPage, setRecommendedPage] = useState(1);
   const [recommendedTotalPages, setRecommendedTotalPages] = useState(1);
 
-  // === ADDED: shared helper to cap description text at a word limit ===
   const truncateWords = (text, limit) => {
     if (!text) return text;
     const words = text.trim().split(/\s+/);
@@ -52,7 +47,13 @@ const Home = () => {
     return words.slice(0, limit).join(" ") + "…";
   };
 
-  const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
+  // "All" is always first, so users can clear the category filter
+  const [categories, setCategories] = useState(["All", "Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState("");
+
+  // default to "All" so the initial render shows every post, no filter
+  const [activeCategory, setActiveCategory] = useState("All");
 
   const showPrevPhoto = () => {
     if (photoIndex > 0) {
@@ -127,7 +128,6 @@ const Home = () => {
     fetchContent();
   }, []);
 
-  // === ADDED: fetch Hero title/image from /homeheros ===
   useEffect(() => {
     const fetchHero = async () => {
       try {
@@ -139,7 +139,6 @@ const Home = () => {
     fetchHero();
   }, []);
 
-  // === ADDED: fetch About the Priest from /about ===
   useEffect(() => {
     const fetchPriest = async () => {
       try {
@@ -152,8 +151,6 @@ const Home = () => {
     fetchPriest();
   }, []);
 
-  // === ADDED: fetch What People Say from /testimonials ===
-  // NOTE: Testimonial model fields are: name, title, message, avatar (see backend model)
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
@@ -172,8 +169,6 @@ const Home = () => {
     fetchTestimonials();
   }, []);
 
-  // === CHANGED: /promotions/latest is now a real route on the backend
-  // (routes/promotion.js), so fetch it directly instead of sorting client-side ===
   useEffect(() => {
     const fetchPromotion = async () => {
       try {
@@ -191,7 +186,6 @@ const Home = () => {
     fetchPromotion();
   }, []);
 
-  // === ADDED: fetch Photos from /media/type/photo, paginated (limit 10) ===
   useEffect(() => {
     const fetchPhotos = async (page) => {
       try {
@@ -218,7 +212,7 @@ const Home = () => {
     fetchPhotos(photosPage);
   }, [photosPage]);
 
-  // === ADDED: fetch Current Sermon Series — same pattern as GetPost.jsx ===
+  // "All" fetches every post with no category filter, same limit as every category
   useEffect(() => {
     const fetchSermons = async (page) => {
       try {
@@ -229,7 +223,7 @@ const Home = () => {
           params: {
             page,
             limit: POSTS_PER_PAGE,
-            category: "Sermons",
+            ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
           },
         });
 
@@ -244,9 +238,8 @@ const Home = () => {
       }
     };
     fetchSermons(sermonsPage);
-  }, [sermonsPage]);
+  }, [sermonsPage, activeCategory]);
 
-  // === ADDED: fetch Trending — same pattern as GetPost.jsx ===
   useEffect(() => {
     const fetchTrending = async (page) => {
       try {
@@ -273,7 +266,6 @@ const Home = () => {
     fetchTrending(trendingPage);
   }, [trendingPage]);
 
-  // === ADDED: fetch Recommended — same pattern as GetPost.jsx ===
   useEffect(() => {
     const fetchRecommended = async (page) => {
       try {
@@ -300,7 +292,38 @@ const Home = () => {
     fetchRecommended(recommendedPage);
   }, [recommendedPage]);
 
-  // === ADDED: pagination handlers — same goToPage pattern as GetPost.jsx ===
+  // prepend "All" (UI-only, never comes from the DB) before the fetched names
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        setCategoriesError("");
+
+        const res = await API.get("/categories");
+        const raw = Array.isArray(res.data) ? res.data : res.data.categories;
+
+        const names = (raw || [])
+          .map((c) => (typeof c === "string" ? c : c?.name))
+          .filter(Boolean);
+
+        if (names.length > 0) {
+          setCategories(["All", ...names]);
+        }
+      } catch (err) {
+        console.log(err);
+        setCategoriesError(err.response?.data?.message || "Failed to load categories");
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleCategoryClick = (cat) => {
+    setActiveCategory(cat);
+    setSermonsPage(1);
+  };
+
   const goToSermonsPage = (page) => {
     if (page < 1 || page > sermonsTotalPages) return;
     setSermonsPage(page);
@@ -316,7 +339,6 @@ const Home = () => {
     setRecommendedPage(page);
   };
 
-  // === ADDED: same pageButtonStyle as GetPost.jsx ===
   const pageButtonStyle = (disabled) => ({
     padding: "8px 16px",
     background: disabled ? "#e5e7eb" : "#2563eb",
@@ -326,7 +348,6 @@ const Home = () => {
     cursor: disabled ? "not-allowed" : "pointer",
   });
 
-  // === CHANGED: only render sponsored block once loading is done AND a promotion actually exists ===
   const shouldShowSponsored = showSponsored && !promotionLoading && !!promotion;
 
   return (
@@ -337,7 +358,6 @@ const Home = () => {
         <div className="cloud cloud-c" />
       </div>
 
-      {/* SPONSORED — now driven by /promotions/latest, hidden entirely if there's no promotion */}
       {shouldShowSponsored && (
       <div className="sponsored-wrap">
         <div className="cross-string left">
@@ -422,7 +442,6 @@ const Home = () => {
       </div>
       )}
 
-      {/* HERO */}
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '320px' }}>
@@ -450,16 +469,20 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Static nav — each category renders once, no marquee duplication */}
       <nav className="nav-bar">
         <div className="nav-marquee-viewport">
           <div className="nav-marquee-track">
-            {categories.map((cat, i) => <span key={`a-${i}`} className="nav-item">{cat}</span>)}
-            {categories.map((cat, i) => <span key={`b-${i}`} className="nav-item" aria-hidden="true">{cat}</span>)}
+            {categories.map((cat, i) => (
+              <span key={i} className="nav-item" onClick={() => handleCategoryClick(cat)}>
+                {cat}
+              </span>
+            ))}
           </div>
         </div>
       </nav>
 
-      {/* SERMON SERIES - fetched from /posts, category = Sermons, paginated */}
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="hanging-cross left">
           <div className="hang-string" />
@@ -555,7 +578,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ANGEL DIVIDER (Trending) - fetched from /posts, isTrending=true, paginated */}
       <section className="angel-divider">
         <div className="wrapper">
           <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: '#ffffff' }}>Trending</h3>
@@ -621,7 +643,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* MINISTRIES GRID (Recommended) - fetched from /posts, isRecommended=true, paginated */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper">
           <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Recommended</h3>
@@ -672,7 +693,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA + ABOUT THE PASTOR + TESTIMONIES share the same deep red background */}
       <div className="cross-bg" style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <div className="cross-track left">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -700,7 +720,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ABOUT THE Priest */}
         <section>
           <div className="wrapper" style={{
             maxWidth: '880px',
@@ -732,7 +751,6 @@ const Home = () => {
         </section>
       </div>
 
-      {/* TESTIMONIES — fields match the Testimonial model: name, title, message, avatar */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1080px' }}>
           <h3 className="display" style={{ fontSize: '2.6rem', fontWeight: 700, marginBottom: '44px', textAlign: 'center', color: 'var(--navy-deep)' }}>
@@ -765,7 +783,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* SECTION DIVIDER: Testimonies -> Video */}
       <div className="section-cross-divider">
         <span className="h-string" />
         <svg width="18" height="26" viewBox="0 0 18 26" xmlns="http://www.w3.org/2000/svg">
@@ -783,7 +800,6 @@ const Home = () => {
         <span className="h-string" />
       </div>
 
-      {/* PHOTO GALLERY */}
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Photos</h3>
@@ -839,7 +855,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* WEEKLY DEVOTIONAL SIGNUP */}
       <section style={{ background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)', color: '#eaf3f8' }}>
         <div className="wrapper" style={{ maxWidth: '640px', textAlign: 'center' }}>
           <h3 className="display" style={{ fontSize: '2.9rem', fontWeight: 700, margin: '18px 0 18px 0' }}>
