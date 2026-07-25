@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import "./Travel.css";
 
 const TRAVEL_ITEM_LIMIT = 10;
 
 const Travel = () => {
-  const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Travel", "Prayer", "Archive", "About Me", "Contact"];
-
   const [openFaq, setOpenFaq] = useState(0);
   const [activeTrip, setActiveTrip] = useState(0);
 
-  // === ADDED: upcoming trips fetched from backend, category = Travel, limit 10, paginated ===
   const [upcomingTrips, setUpcomingTrips] = useState([]);
   const [upcomingLoading, setUpcomingLoading] = useState(true);
   const [upcomingError, setUpcomingError] = useState("");
@@ -34,7 +32,6 @@ const Travel = () => {
         const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
         const pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
 
-        // Append on "Load More" (page > 1), replace on first load
         setUpcomingTrips((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
         setUpcomingTotalPages(pages);
       } catch (err) {
@@ -117,7 +114,6 @@ const Travel = () => {
         <div className="cloud cloud-c" />
       </div>
 
-      {/* HERO IMAGE */}
       <div
         className="hero-image"
         style={{
@@ -130,7 +126,6 @@ const Travel = () => {
         }}
       />
 
-      {/* HERO TEXT */}
       <section style={{ padding: '70px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
@@ -143,13 +138,6 @@ const Travel = () => {
         </div>
       </section>
 
-      {/* NAV */}
-      <nav className="nav-bar">
-        <span className="nav-brand">Daniel&nbsp;Worku</span>
-        {categories.map(cat => <span key={cat} className="nav-item">{cat}</span>)}
-      </nav>
-
-      {/* WHAT'S COMING UP NEXT - fetched from /posts, category = Travel, limit 10 */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
@@ -165,19 +153,23 @@ const Travel = () => {
           ) : (
             <div className="upcoming-grid">
               {upcomingTrips.map((t) => (
-                <div className="upcoming-card" key={t._id}>
+                <Link
+                  className="upcoming-card"
+                  key={t._id}
+                  to={`/projects/${t._id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
                   <img src={t.imageUrl} alt={t.title} />
                   <div className="upcoming-card-body">
                     <span className="upcoming-card-date">{getFormattedDate(t)}</span>
                     <h4 className="upcoming-card-title">{t.title}</h4>
                     <p className="upcoming-card-desc">{t.description}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
 
-          {/* ADDED: Load More — only shown if total posts exceed the limit */}
           {upcomingPage < upcomingTotalPages && (
             <div style={{ textAlign: 'center', marginTop: '36px' }}>
               <button
@@ -205,7 +197,6 @@ const Travel = () => {
         </div>
       </section>
 
-      {/* QUICK FACTS BAND */}
       <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <section style={{ padding: '64px 0' }}>
           <div className="wrapper">
@@ -222,7 +213,6 @@ const Travel = () => {
         </section>
       </div>
 
-      {/* WAYS I TRAVEL */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
@@ -240,7 +230,6 @@ const Travel = () => {
         </div>
       </section>
 
-      {/* TRIP LOG */}
       <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <div className="fixed-cross left">
           <svg width="46" height="64" viewBox="0 0 46 64" xmlns="http://www.w3.org/2000/svg">
@@ -276,7 +265,6 @@ const Travel = () => {
         </section>
       </div>
 
-      {/* FAQ */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
@@ -296,7 +284,6 @@ const Travel = () => {
         </div>
       </section>
 
-      {/* PULL QUOTE */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <p className="pull-quote display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5 }}>
@@ -307,7 +294,6 @@ const Travel = () => {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer style={{ background: 'var(--navy-deep)', color: '#89a3b5', padding: '60px 0 30px 0', borderBottom: '6px solid var(--deep-red)' }}>
         <div className="wrapper">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '38px', marginBottom: '44px' }}>

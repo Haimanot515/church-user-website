@@ -47,9 +47,6 @@ const Church = () => {
       setPrimaryLoading(true);
       setPrimaryError("");
 
-      // Public endpoint — returns the single church with isPrimary: true.
-      // Powers the hero section (title, description, image) instead of
-      // hardcoded copy.
       const res = await API.get(`/churches/primary`);
 
       setPrimaryChurch(res.data);
@@ -72,9 +69,6 @@ const Church = () => {
       setCurrentLoading(true);
       setCurrentError("");
 
-      // Public endpoint — returns the single isCurrent && isPrimary
-      // assignment (the featured leader). A 404 here just means no
-      // leader is currently assigned — not a real error.
       const res = await API.get(`/churches/current`);
 
       setCurrentChurch(res.data);
@@ -119,9 +113,6 @@ const Church = () => {
 
       const res = await API.get(`/churches?page=${page}&limit=${BLOG_LIMIT}`);
 
-      // Adjust these keys to match whatever your /churches endpoint actually
-      // returns when paginated — e.g. { churches: [...], totalPages } or
-      // just a plain array with no pagination metadata.
       const newChurches = res.data.churches || res.data.data || res.data || [];
       const totalPages = res.data.totalPages;
 
@@ -131,7 +122,6 @@ const Church = () => {
       if (totalPages != null) {
         setHasMoreBlog(page < totalPages);
       } else {
-        // Fallback: if we got a full page, assume there might be more
         setHasMoreBlog(newChurches.length === BLOG_LIMIT);
       }
     } catch (err) {
@@ -151,15 +141,20 @@ const Church = () => {
 
   const dismissConstructionAd = () => setShowConstructionAd(false);
 
-  // Helper: safely render a field that might be a populated object
-  // (e.g. { _id, name }) instead of a plain string — prevents the
-  // "Objects are not valid as a React child" crash.
   const renderLabel = (value, fallback = "") => {
     if (!value) return fallback;
     if (typeof value === "string") return value;
     if (typeof value === "object") return value.name || value.title || fallback;
     return fallback;
   };
+
+  // Exclude the "Where I Serve Now" church from the blog grid so it
+  // isn't shown twice on the page. currentChurch is a ChurchAssignment,
+  // so the church id lives at currentChurch.church._id.
+  const currentChurchId = currentChurch?.church?._id;
+  const visibleBlogChurches = currentChurchId
+    ? blogChurches.filter((c) => c._id !== currentChurchId)
+    : blogChurches;
 
   return (
     <div className="church-page">
@@ -363,12 +358,12 @@ const Church = () => {
             <p>Loading churches...</p>
           ) : blogError ? (
             <p style={{ color: "red" }}>{blogError}</p>
-          ) : blogChurches.length === 0 ? (
+          ) : visibleBlogChurches.length === 0 ? (
             <p>No churches found.</p>
           ) : (
             <>
               <div className="blog-grid">
-                {blogChurches.map((c) => (
+                {visibleBlogChurches.map((c) => (
                   <div className="blog-card" key={c._id}>
                     <img src={c.image || ""} alt={c.churchName} />
                     <div className="blog-card-body">
