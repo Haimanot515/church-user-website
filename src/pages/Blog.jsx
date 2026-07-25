@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import "./Blog.css";
 
@@ -12,9 +13,15 @@ const Blog = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
+  // === Categories now fetched from backend (same pattern as Home.jsx); this list is just the fallback ===
+  const [categories, setCategories] = useState(["All", "Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState("");
 
-  // === ADDED: fetch all posts, irrespective of category — same pattern as GetPost.jsx ===
+  // === ADDED: which category is currently selected in the nav ===
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  // === ADDED: fetch posts, filtered by activeCategory when it isn't "All" — same pattern as Home.jsx sermons ===
   useEffect(() => {
     const fetchPosts = async (pageNum) => {
       try {
@@ -25,6 +32,7 @@ const Blog = () => {
           params: {
             page: pageNum,
             limit: POSTS_PER_PAGE,
+            ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
           },
         });
 
@@ -42,11 +50,44 @@ const Blog = () => {
       }
     };
     fetchPosts(page);
-  }, [page]);
+  }, [page, activeCategory]);
 
   const handleLoadMore = () => {
     if (page < totalPages) setPage((p) => p + 1);
   };
+
+  // === ADDED: switching category resets back to page 1 so the fetch above starts fresh ===
+  const handleCategoryClick = (cat) => {
+    setActiveCategory(cat);
+    setPage(1);
+  };
+
+  // === ADDED: fetch categories from backend, same pattern as Home.jsx ===
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        setCategoriesError("");
+
+        const res = await API.get("/categories");
+        const raw = Array.isArray(res.data) ? res.data : res.data.categories;
+
+        const names = (raw || [])
+          .map((c) => (typeof c === "string" ? c : c?.name))
+          .filter(Boolean);
+
+        if (names.length > 0) {
+          setCategories(["All", ...names]);
+        }
+      } catch (err) {
+        console.log(err);
+        setCategoriesError(err.response?.data?.message || "Failed to load categories");
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // === ADDED: helpers to safely read populated fields ===
   const getCategoryName = (post) =>
@@ -90,8 +131,16 @@ const Blog = () => {
 
       {/* NAV */}
       <nav className="nav-bar">
-        <span className="nav-brand">Harbor&nbsp;Light&nbsp;Church</span>
-        {categories.map(cat => <span key={cat} className="nav-item">{cat}</span>)}
+        {categories.map(cat => (
+          <span
+            key={cat}
+            className={`nav-item${cat === activeCategory ? " active" : ""}`}
+            onClick={() => handleCategoryClick(cat)}
+            style={cat === activeCategory ? { fontWeight: 700, color: "var(--gold)" } : undefined}
+          >
+            {cat}
+          </span>
+        ))}
       </nav>
 
       <section className="blog-list-section">
@@ -106,9 +155,9 @@ const Blog = () => {
             posts.map((post, index) => (
               <React.Fragment key={post._id || index}>
                 <div className={`post-row${index % 2 === 1 ? " reverse" : ""}`}>
-                  <div className="post-media">
+                  <Link to={`/projects/${post._id}`} className="post-media">
                     <img src={post.imageUrl} alt={post.title} />
-                  </div>
+                  </Link>
                   <div className="post-copy">
                     <div className="post-meta">
                       <span className="tag">{getCategoryName(post)}</span>
@@ -120,12 +169,12 @@ const Blog = () => {
                     <h3>{post.title}</h3>
                     <p className="desc">{post.description}</p>
                     <p className="byline">By {getAuthorName(post)}</p>
-                    <span className="read-more">
+                    <Link to={`/projects/${post._id}`} className="read-more">
                       Read Full Post
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                    </span>
+                    </Link>
                   </div>
                 </div>
                 {index < posts.length - 1 && (

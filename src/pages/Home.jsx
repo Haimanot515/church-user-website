@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api/api.jsx";
 import "./Home.css";
 
 const POSTS_PER_PAGE = 10;
 
 const Home = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [hero, setHero] = useState(null);
   const [priest, setPriest] = useState(null);
@@ -74,6 +76,7 @@ const Home = () => {
   };
 
   const angelScrollRef = useRef(null);
+  const sermonSectionRef = useRef(null);
   const scrollAngels = (direction) => {
     if (angelScrollRef.current) {
       const amount = angelScrollRef.current.clientWidth * 0.8;
@@ -228,7 +231,8 @@ const Home = () => {
         });
 
         const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
-        setSermons(postsData || []);
+        // Append on "Load More" (page > 1), replace on first load / category switch
+        setSermons((prev) => (page === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
         setSermonsTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
@@ -322,11 +326,13 @@ const Home = () => {
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setSermonsPage(1);
+    if (sermonSectionRef.current) {
+      sermonSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  const goToSermonsPage = (page) => {
-    if (page < 1 || page > sermonsTotalPages) return;
-    setSermonsPage(page);
+  const handleLoadMoreSermons = () => {
+    if (sermonsPage < sermonsTotalPages) setSermonsPage((p) => p + 1);
   };
 
   const goToTrendingPage = (page) => {
@@ -410,7 +416,8 @@ const Home = () => {
             <img
               src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
               alt={promotion?.title || "Sponsored content"}
-              style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px' }}
+              onClick={() => promotion?._id && navigate(`/promotions/${promotion._id}`)}
+              style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px', cursor: promotion?._id ? 'pointer' : 'default' }}
             />
             <div>
               <h3 style={{ fontSize: '1.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif' }}>
@@ -420,7 +427,13 @@ const Home = () => {
                 {truncateWords(promotion?.description, 50)}
               </p>
               <button
-                onClick={() => promotion?.link && window.open(promotion.link, "_blank", "noopener,noreferrer")}
+                onClick={() => {
+                  if (promotion?._id) {
+                    navigate(`/promotions/${promotion._id}`);
+                  } else if (promotion?.link) {
+                    window.open(promotion.link, "_blank", "noopener,noreferrer");
+                  }
+                }}
                 style={{
                   backgroundColor: '#d32f2f',
                   color: '#fff',
@@ -445,45 +458,65 @@ const Home = () => {
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '320px' }}>
-            <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-              {hero?.title || "Rooted in grace, reaching toward the light"}
-            </h1>
-            <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-              {truncateWords(hero?.description, 50) || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
-            </p>
+            <Link to={`/homeheros/${hero?._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+                {hero?.title || "Rooted in grace, reaching toward the light"}
+              </h1>
+              <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                {truncateWords(hero?.description, 50) || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
+              </p>
+            </Link>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  navigate('/skill');
+                }}
+                style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
+              >
                 Watch Latest Sermon
               </button>
-              <button style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  navigate('/contact');
+                }}
+                style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
+              >
                 Plan a Visit
               </button>
             </div>
           </div>
           <div style={{ flex: '0 0 480px', minWidth: '320px' }}>
-            <img
-              src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
-              alt={hero?.title || "Orthodox icon of Christ on the iconostasis"}
-              style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
-            />
+            <Link to={`/homeheros/${hero?._id}`}>
+              <img
+                src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
+                alt={hero?.title || "Orthodox icon of Christ on the iconostasis"}
+                style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
+              />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Static nav — each category renders once, no marquee duplication */}
+      {/* Static nav — same structure as Blog.jsx */}
       <nav className="nav-bar">
-        <div className="nav-marquee-viewport">
-          <div className="nav-marquee-track">
-            {categories.map((cat, i) => (
-              <span key={i} className="nav-item" onClick={() => handleCategoryClick(cat)}>
-                {cat}
-              </span>
-            ))}
-          </div>
-        </div>
+        {categories.map((cat, i) => (
+          <span
+            key={i}
+            className={`nav-item${cat === activeCategory ? " active" : ""}`}
+            onClick={() => handleCategoryClick(cat)}
+            style={{
+              textDecoration: "none",
+              ...(cat === activeCategory ? { fontWeight: 700, color: "var(--gold)" } : {}),
+            }}
+          >
+            {cat}
+          </span>
+        ))}
       </nav>
 
-      <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
+      <section ref={sermonSectionRef} style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="hanging-cross left">
           <div className="hang-string" />
           <svg width="46" height="64" viewBox="0 0 46 64" xmlns="http://www.w3.org/2000/svg">
@@ -503,19 +536,21 @@ const Home = () => {
 
           {sermonsError && <p style={{ color: 'red', textAlign: 'center' }}>{sermonsError}</p>}
 
-          {sermonsLoading ? (
+          {sermonsLoading && sermons.length === 0 ? (
             <p style={{ textAlign: 'center' }}>Loading sermon series...</p>
           ) : sermons.length === 0 ? (
             <p style={{ textAlign: 'center' }}>No sermons found.</p>
           ) : (
             sermons.map((item, index, arr) => (
               <React.Fragment key={item._id}>
-                <div style={{
+                <Link to={`/projects/${item._id}`} style={{
                   padding: '50px 0',
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
                   gap: '40px',
-                  alignItems: 'start'
+                  alignItems: 'start',
+                  textDecoration: 'none',
+                  color: 'inherit'
                 }}>
                   <img
                     src={item.imageUrl}
@@ -531,7 +566,7 @@ const Home = () => {
                     </p>
 
                   </div>
-                </div>
+                </Link>
                 {index < arr.length - 1 && (
                   <div className="sermon-divider">
                     <span className="h-string" />
@@ -554,24 +589,10 @@ const Home = () => {
             ))
           )}
 
-          {sermonsTotalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
-              <button
-                onClick={() => goToSermonsPage(sermonsPage - 1)}
-                disabled={sermonsPage === 1}
-                style={pageButtonStyle(sermonsPage === 1)}
-              >
-                Prev
-              </button>
-              <span style={{ fontSize: '14px', color: '#444' }}>
-                Page {sermonsPage} of {sermonsTotalPages}
-              </span>
-              <button
-                onClick={() => goToSermonsPage(sermonsPage + 1)}
-                disabled={sermonsPage === sermonsTotalPages}
-                style={pageButtonStyle(sermonsPage === sermonsTotalPages)}
-              >
-                Next
+          {sermonsPage < sermonsTotalPages && (
+            <div className="load-more-wrap">
+              <button className="load-more-btn" onClick={handleLoadMoreSermons} disabled={sermonsLoading}>
+                {sermonsLoading ? "Loading..." : "Load More Posts"}
               </button>
             </div>
           )}
@@ -597,8 +618,9 @@ const Home = () => {
                 <p style={{ color: '#fff' }}>No trending posts found.</p>
               ) : (
                 trending.map((post) => (
-                  <div
+                  <Link
                     key={post._id}
+                    to={`/projects/${post._id}`}
                     className="angel-box"
                     style={{ backgroundImage: `url(${post.imageUrl})` }}
                     role="img"
@@ -608,7 +630,7 @@ const Home = () => {
                       <h4>{post.title}</h4>
                       <p>{truncateWords(post.description, 50)}</p>
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
             </div>
@@ -656,7 +678,7 @@ const Home = () => {
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
               {recommended.map((post) => (
-                <div key={post._id} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none' }}
+                <Link key={post._id} to={`/projects/${post._id}`} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none', display: 'block', textDecoration: 'none', color: 'inherit' }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
                   <img src={post.imageUrl} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
@@ -664,7 +686,7 @@ const Home = () => {
                     <h4 className="display" style={{ fontSize: '2rem', fontWeight: 600, margin: '0 0 8px 0', color: '#a80070' }}>{post.title}</h4>
                     <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{truncateWords(post.description, 20)}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
@@ -721,7 +743,7 @@ const Home = () => {
         </section>
 
         <section>
-          <div className="wrapper" style={{
+          <Link to={`/about/${priest?._id}`} style={{
             maxWidth: '880px',
             display: 'flex',
             gap: '50px',
@@ -731,8 +753,10 @@ const Home = () => {
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.14)',
             borderRadius: '12px',
-            backdropFilter: 'blur(6px)'
-          }}>
+            backdropFilter: 'blur(6px)',
+            textDecoration: 'none',
+            color: 'inherit'
+          }} className="wrapper" >
             <img
               src={priest?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"}
               alt={priest?.title || "Priest in ornate robes holding a ceremonial staff"}
@@ -747,7 +771,7 @@ const Home = () => {
                 {truncateWords(priest?.description, 70) || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
               </p>
             </div>
-          </div>
+          </Link>
         </section>
       </div>
 
@@ -820,9 +844,13 @@ const Home = () => {
                 <img
                   src={photos[photoIndex]?.mediaUrl}
                   alt={photos[photoIndex]?.title}
-                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                  onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
+                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
                 />
-                <div style={{ marginTop: '26px', textAlign: 'center' }}>
+                <div
+                  style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
+                  onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
+                >
                   <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
                     {photos[photoIndex]?.title}
                   </h3>

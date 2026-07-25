@@ -13,6 +13,12 @@ import Testimonials from "./pages/Travel";
 import Church from "./pages/Church";
 import Services from "./pages/Services";
 import Media from "./pages/Media";
+import Book from "./pages/Book";
+import Detail from "./pages/Detail";
+import PromotionDetail from "./pages/PromotionDetail";
+import AboutDetail from "./pages/AboutDetail";
+import HeroDetail from "./pages/HeroDetail";
+
 
 import "./styles.css";
 
@@ -40,6 +46,11 @@ function App() {
         <Route path="/cv" element={<Church />} />
         <Route path="/services" element={<Services />} />
         <Route path="/media" element={<Media />} />
+        <Route path="/book" element={<Book />} />
+        <Route path="/projects/:id" element={<Detail />} />
+        <Route path="/promotions/:id" element={<PromotionDetail />} />
+        <Route path="/about/:id" element={<AboutDetail />} />
+        <Route path="/homeheros/:id" element={<HeroDetail />} />
 
         {/* 404 */}
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />

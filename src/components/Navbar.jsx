@@ -105,6 +105,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
           <Link to="/testimonials" onClick={closeMenu}>Travel</Link>
           <Link to="/contact" onClick={closeMenu}>Contact</Link>
           <Link to="/media" onClick={closeMenu}>Media</Link>
+          <Link to="/book" onClick={closeMenu}>Books</Link>
 
           {/* Auth section */}
           {loggedIn ? (

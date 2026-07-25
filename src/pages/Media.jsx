@@ -3,30 +3,27 @@ import API from "../api/api";
 import "./Media.css";
 
 /**
- * Media page — one page, three sections, each laid out as a
+ * Media page — one page, four sections, each laid out as a
  * functional 3-item grid, fetched from the backend (same API client
  * used in CreateMedia.jsx):
  *  1. Video  — grid of cards; click a card to play it inline
  *  2. Photos — grid of cards; click a card to open it in a lightbox
  *  3. Audio  — grid of cards; click play on a card to listen
  *              (playing one card pauses any other that's playing)
+ *  4. Books/PDFs — grid of cards; click a card to open the file in a new tab
  *
  * Each section shows 10 items at a time with its own "Load More" button
  * that reveals 10 more, and only appears once that section has more
  * than 10 items.
  *
- * Same outer shell as Home/Services (cloud layer, marquee nav, footer).
+ * Same outer shell as Home/Services (cloud layer, footer).
  * Styles live in Media.css (imported above).
  */
-const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
-
 const PAGE_SIZE = 10;
 
-// Turns whatever the API sends back for a media file (a full URL, or just a
-// filename/relative path saved from an upload) into a usable src.
 const getMediaUrl = (mediaUrl) => {
   if (!mediaUrl) return null;
-  if (/^https?:\/\//i.test(mediaUrl)) return mediaUrl; // already a full URL
+  if (/^https?:\/\//i.test(mediaUrl)) return mediaUrl;
   const base = (API.defaults.baseURL || "").replace(/\/api\/?$/, "");
   const path = mediaUrl.startsWith("/") ? mediaUrl : `/uploads/${mediaUrl}`;
   return `${base}${path}`;
@@ -52,7 +49,7 @@ const VideoSection = ({ items }) => {
                 <video src={v.mediaUrl} controls autoPlay />
               </div>
             ) : (
-              <button className="video-thumb-btn" onClick={() => setPlayingIndex(i)} aria-label={`Play ${v.title}`}>
+              <button className="video-thumb-btn" onClick={() => setPlayingIndex(i)} aria-label={"Play " + v.title}>
                 {v.thumbnail ? (
                   <img src={v.thumbnail} alt={v.title} />
                 ) : (
@@ -194,23 +191,64 @@ const AudioSection = ({ items }) => {
   );
 };
 
+const BookSection = ({ items }) => {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  if (items.length === 0) return null;
+  const visible = items.slice(0, visibleCount);
+
+  return (
+    <div className="media-section">
+      <span className="eyebrow">Read</span>
+      <h2 className="display">Books and PDFs</h2>
+      <p className="section-intro">Study guides, booklets, and reading materials to download or read online.</p>
+      <div className="media-grid">
+        {visible.map((b, i) => (
+          <a className="grid-card book-card" key={b._id || i} href={b.mediaUrl} target="_blank" rel="noopener noreferrer">
+            <div className="book-cover">
+              {b.thumbnail ? (
+                <img src={b.thumbnail} alt={b.title} />
+              ) : (
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                </svg>
+              )}
+            </div>
+            <p className="grid-card-title">{b.title}</p>
+            <p className="book-meta">{b.description}</p>
+          </a>
+        ))}
+      </div>
+      {items.length > visibleCount && (
+        <div className="load-more-wrap">
+          <button className="load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
+            Load More
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Media = () => {
   const [videoItems, setVideoItems] = useState([]);
   const [photoItems, setPhotoItems] = useState([]);
   const [audioItems, setAudioItems] = useState([]);
+  const [bookItems, setBookItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const fetchMedia = async () => {
     try {
       setLoading(true);
-      const [videoRes, photoRes, audioRes] = await Promise.all([
+      const [videoRes, photoRes, audioRes, bookRes] = await Promise.all([
         API.get("/media/type/video"),
         API.get("/media/type/photo"),
         API.get("/media/type/audio"),
+        API.get("/media/type/document"),
       ]);
 
-      // Public page: only show published items, resolve mediaUrl/thumbnail
       const mapItems = (data) =>
         data
           .filter((m) => m.status === "published")
@@ -223,6 +261,7 @@ const Media = () => {
       setVideoItems(mapItems(videoRes.data));
       setPhotoItems(mapItems(photoRes.data));
       setAudioItems(mapItems(audioRes.data));
+      setBookItems(mapItems(bookRes.data));
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load media");
     } finally {
@@ -251,19 +290,10 @@ const Media = () => {
       <section className="media-hero">
         <div className="wrapper">
           <span className="eyebrow">Media</span>
-          <h1 className="display">Video, Photos & Audio</h1>
-          <p>Everything to watch, look back on, and listen to — all in one place.</p>
+          <h1 className="display">Video, Photos, Audio and Books</h1>
+          <p>Everything to watch, look back on, listen to, and read - all in one place.</p>
         </div>
       </section>
-
-      <nav className="nav-bar">
-        <div className="nav-marquee-viewport">
-          <div className="nav-marquee-track">
-            {categories.map((cat, i) => <span key={`a-${i}`} className="nav-item">{cat}</span>)}
-            {categories.map((cat, i) => <span key={`b-${i}`} className="nav-item" aria-hidden="true">{cat}</span>)}
-          </div>
-        </div>
-      </nav>
 
       <section className="media-sections">
         <div className="wrapper">
@@ -271,7 +301,7 @@ const Media = () => {
           {!loading && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
           )}
-          {!loading && !error && videoItems.length === 0 && photoItems.length === 0 && audioItems.length === 0 && (
+          {!loading && !error && videoItems.length === 0 && photoItems.length === 0 && audioItems.length === 0 && bookItems.length === 0 && (
             <p style={{ textAlign: "center" }}>No media found.</p>
           )}
           {!loading && !error && (
@@ -279,6 +309,7 @@ const Media = () => {
               <VideoSection items={videoItems} />
               <PhotoSection items={photoItems} />
               <AudioSection items={audioItems} />
+              <BookSection items={bookItems} />
             </>
           )}
         </div>
@@ -289,7 +320,7 @@ const Media = () => {
           <div className="footer-grid">
             <div>
               <h4 className="display footer-brand">Harbor Light Church</h4>
-              <p className="footer-tagline">Sunday services at 9:00 & 11:00 AM. All are welcome, always.</p>
+              <p className="footer-tagline">Sunday services at 9:00 and 11:00 AM. All are welcome, always.</p>
             </div>
             {footerColumns.map((col, i) => (
               <div key={i}>
