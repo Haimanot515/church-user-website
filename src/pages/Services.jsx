@@ -138,29 +138,7 @@ const Services = () => {
         </div>
       </section>
 
-      {/* FOOTER - same as home page */}
-      <footer className="services-footer">
-        <div className="wrapper">
-          <div className="footer-grid">
-            <div>
-              <h4 className="display footer-brand">Harbor Light Church</h4>
-              <p className="footer-tagline">Sunday services at 9:00 & 11:00 AM. All are welcome, always.</p>
-            </div>
-            {footerColumns.map((col, i) => (
-              <div key={i}>
-                <h5 className="eyebrow footer-col-title">{col.title}</h5>
-                {col.items.map((s, j) => (
-                  <p key={j} className="footer-col-item">{s}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="footer-bottom">
-            <p className="eyebrow">© 2026 Harbor Light Church</p>
-            <p className="eyebrow">Privacy Policy</p>
-          </div>
-        </div>
-      </footer>
+     
     </div>
   );
 };

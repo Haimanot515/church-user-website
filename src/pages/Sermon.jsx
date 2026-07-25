@@ -54,6 +54,11 @@ const Sermon = () => {
   // the default "narrow" layout. Toggled from the expand/collapse icon.
   const [expanded, setExpanded] = useState(false);
 
+  // --- "The churches I serve": GET /churches (Church table) ---
+  const [campuses, setCampuses] = useState([]);
+  const [campusesLoading, setCampusesLoading] = useState(true);
+  const [campusesError, setCampusesError] = useState("");
+
   const currentSermon = sermons[sermonIndex];
 
   // Fetch sermon videos from the Media API on mount
@@ -81,6 +86,23 @@ const Sermon = () => {
       }
     };
     fetchSermons();
+  }, []);
+
+  // Fetch churches from the Church table on mount
+  useEffect(() => {
+    const fetchCampuses = async () => {
+      try {
+        setCampusesLoading(true);
+        setCampusesError("");
+        const res = await API.get("/churches");
+        setCampuses(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setCampusesError(err.response?.data?.message || "Failed to load churches");
+      } finally {
+        setCampusesLoading(false);
+      }
+    };
+    fetchCampuses();
   }, []);
 
   // Autoplay (muted) whenever the current sermon changes, as long as the panel is open
@@ -170,33 +192,6 @@ const Sermon = () => {
       videoHeroRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
-
-  const campuses = [
-    {
-      name: "Harbor Light — Downtown",
-      role: "Lead Pastor",
-      address: "214 Wharf Street, Addis Ababa",
-      service: "Sundays · 9:00 & 11:00 AM",
-      img: "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=900&q=80",
-      alt: "Downtown church sanctuary filled with light"
-    },
-    {
-      name: "Harbor Light — Eastside",
-      role: "Preaching Pastor, 2nd Sunday",
-      address: "88 Founders Road, Addis Ababa",
-      service: "Sundays · 10:00 AM",
-      img: "https://images.unsplash.com/photo-1445445290350-18a3b86e0b5a?auto=format&fit=crop&w=900&q=80",
-      alt: "Small chapel with wooden pews"
-    },
-    {
-      name: "Harbor Light — Riverside",
-      role: "Founding Pastor",
-      address: "12 Mill Lane, Addis Ababa",
-      service: "Sundays · 8:30 AM",
-      img: "https://images.unsplash.com/photo-1465378552210-6900a2e5a4c0?auto=format&fit=crop&w=900&q=80",
-      alt: "Riverside chapel exterior at dusk"
-    }
-  ];
 
   return (
     <div className="shepherd-page">
@@ -392,19 +387,27 @@ const Sermon = () => {
             <p>Every Sunday, Priest James moves between three congregations — each with its own rhythm, but the same commitment to the Word.</p>
           </div>
 
-          <div className="campus-grid">
-            {campuses.map((c) => (
-              <div className="campus-card" key={c.name}>
-                <img src={c.img} alt={c.alt} />
-                <div className="campus-card-body">
-                  <div className="campus-role">{c.role}</div>
-                  <h3>{c.name}</h3>
-                  <div className="campus-line"><strong>Address:</strong> {c.address}</div>
-                  <div className="campus-line"><strong>Service:</strong> {c.service}</div>
+          {campusesLoading ? (
+            <p style={{ textAlign: "center" }}>Loading churches...</p>
+          ) : campusesError ? (
+            <p style={{ textAlign: "center", color: "#dc2626" }}>{campusesError}</p>
+          ) : campuses.length === 0 ? (
+            <p style={{ textAlign: "center" }}>No churches found.</p>
+          ) : (
+            <div className="campus-grid">
+              {campuses.map((c) => (
+                <div className="campus-card" key={c._id}>
+                  <img src={c.image || ""} alt={c.churchName} />
+                  <div className="campus-card-body">
+                    <div className="campus-role">{c.isPrimary ? "Primary" : c.isFeatured ? "Featured" : ""}</div>
+                    <h3>{c.churchName}</h3>
+                    <div className="campus-line"><strong>Address:</strong> {c.address}</div>
+                    <div className="campus-line"><strong>Service:</strong> {c.serviceDays} · {c.serviceTime}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

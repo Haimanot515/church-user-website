@@ -64,8 +64,46 @@
 /* Open Menu */
 
 .nav-content.active {
-  max-height: 600px;
+  max-height: 800px;
   opacity: 1;
+  border-bottom: 4px solid #2e7d32;
+}
+
+/* =========================
+   LINK COLUMNS
+   Both columns live in one row so they start on the same
+   top line, side by side. Auth row sits full width below.
+========================= */
+
+.nav-links-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.nav-links-primary,
+.nav-links-middle,
+.nav-links-secondary {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.nav-links-primary {
+  margin-left: 60px;
+}
+
+.nav-links-middle {
+  align-items: center;
+  text-align: center;
+}
+
+.nav-links-secondary {
+  align-items: flex-end;
+  text-align: right;
+  margin-right: 60px;
 }
 
 /* =========================
@@ -79,15 +117,38 @@
   padding: 18px 30px;
   border-bottom: 1px solid rgba(255,255,255,0.15);
   transition: all 0.3s ease;
+  width: 100%;
 }
 
-.nav-content a:last-child {
+.nav-links-primary a:last-child,
+.nav-links-middle a:last-child,
+.nav-links-secondary a:last-child {
   border-bottom: none;
 }
 
 .nav-content a:hover {
   background: rgba(255,255,255,0.15);
   padding-left: 45px;
+}
+
+.nav-links-secondary a:hover {
+  padding-left: 30px;
+  padding-right: 45px;
+}
+
+/* =========================
+   AUTH ROW (full width, below both columns)
+========================= */
+
+.nav-auth {
+  flex: 0 0 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 30px;
+  border-top: 1px solid rgba(255,255,255,0.25);
 }
 
 /* =========================
@@ -101,8 +162,8 @@
   z-index: 999;
 }
 
-/* ===== AUTH BUTTONS (inside nav-content) ===== */
-.nav-content button {
+/* ===== AUTH BUTTONS (inside nav-auth) ===== */
+.nav-auth button {
   background: transparent;
   border: 1px solid #fff;
   color: #fff;
@@ -113,20 +174,34 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.nav-content button:hover {
+.nav-auth button:hover {
   background: #fff;
   color: #111;
 }
 
 /* Optional: make Logout stand out slightly differently */
-.nav-content button:last-child {
+.nav-auth button:last-child {
   border-color: #e63946;
   color: #e63946;
 }
 
-.nav-content button:last-child:hover {
+.nav-auth button:last-child:hover {
   background: #e63946;
   color: #fff;
+}
+
+/* Admin link inside the auth row shouldn't look like a menu row item */
+.nav-auth a {
+  padding: 8px 18px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  border-bottom: 1px solid #fff;
+  width: auto;
+}
+
+.nav-auth a:hover {
+  padding-left: 18px;
+  background: rgba(255,255,255,0.15);
 }
 
 /* ===== MOBILE BACKDROP (behind slide-out menu) ===== */
@@ -188,10 +263,16 @@
   right: 12px;
   background: transparent;
   border: none;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   color: #555;
   cursor: pointer;
   transition: color 0.2s ease;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn-style:hover {

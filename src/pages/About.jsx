@@ -442,56 +442,9 @@ const PastorAboutMePage = () => {
         </section>
       </div>
 
-      {/* CONTACT CTA */}
-      <section style={{ background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)', color: '#eaf3f8' }}>
-        <div className="wrapper" style={{ maxWidth: '640px', textAlign: 'center' }}>
+      
 
-          <h3 className="display" style={{ fontSize: '2.7rem', fontWeight: 700, margin: '18px 0 18px 0' }}>
-            I read every message myself
-          </h3>
-          <p className="body-copy on-dark" style={{ marginBottom: '32px' }}>
-            If something I've written struck a chord — or if you just want to say hi — I'd love to hear from you.
-          </p>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <input
-              type="email"
-              placeholder="you@email.com"
-              style={{ padding: '15px 20px', fontSize: '1.1rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '30px', width: '280px', maxWidth: '80vw', background: 'rgba(255,255,255,0.08)', color: '#fff' }}
-            />
-            <button style={{ background: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 32px', fontWeight: 700, borderRadius: '30px', cursor: 'pointer', fontSize: '1.05rem' }}>
-              Send a Message
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer style={{ background: 'var(--navy-deep)', color: '#89a3b5', padding: '60px 0 30px 0', borderBottom: '6px solid var(--deep-red)' }}>
-        <div className="wrapper">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '38px', marginBottom: '44px' }}>
-            <div>
-              <h4 className="display" style={{ color: '#eaf3f8', fontSize: '1.6rem', fontWeight: 700, marginBottom: '12px' }}>Daniel Worku</h4>
-              <p className="body-copy on-dark" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)' }}>Pastor at Harbor Light Church. Writing about faith, family, and the ordinary work of ministry.</p>
-            </div>
-            {[
-              { title: "Read", items: ["Latest Posts", "Journal", "Sermon Notes", "Archive"] },
-              { title: "About", items: ["My Story", "Family", "Books I Recommend"] },
-              { title: "Connect", items: ["Email Me", "Instagram", "YouTube"] }
-            ].map((col, i) => (
-              <div key={i}>
-                <h5 className="eyebrow" style={{ color: '#eaf3f8', marginBottom: '12px', fontSize: '0.85rem' }}>{col.title}</h5>
-                {col.items.map((s, j) => (
-                  <p key={j} className="display" style={{ fontSize: '1.15rem', fontWeight: 600, color: '#eaf3f8', margin: '8px 0', cursor: 'pointer' }}>{s}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-            <p className="eyebrow" style={{ margin: 0, fontSize: '0.85rem' }}>© 2026 Daniel Worku</p>
-            <p className="eyebrow" style={{ margin: 0, fontSize: '0.85rem' }}>Privacy Policy</p>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   );
 };

@@ -201,22 +201,6 @@ const Blog = () => {
         </div>
       </section>
 
-      <section className="newsletter-section">
-        <div className="wrapper" style={{ maxWidth: "600px" }}>
-          <h3 className="display">Never miss a post — delivered every Monday.</h3>
-          <p>One email a week: a new post, a verse, and this week's prayer requests</p>
-          <div className="newsletter-form">
-            <input type="email" placeholder="you@email.com" />
-            <button>Subscribe</button>
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        <div className="wrapper" style={{ textAlign: "center" }}>
-          <p className="eyebrow">© 2026 Harbor Light Church</p>
-        </div>
-      </footer>
     </div>
   );
 };

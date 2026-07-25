@@ -883,27 +883,6 @@ const Home = () => {
         </div>
       </section>
 
-      <section style={{ background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)', color: '#eaf3f8' }}>
-        <div className="wrapper" style={{ maxWidth: '640px', textAlign: 'center' }}>
-          <h3 className="display" style={{ fontSize: '2.9rem', fontWeight: 700, margin: '18px 0 18px 0' }}>
-            A short reflection, delivered every Monday.
-          </h3>
-          <p style={{ fontSize: '1.3rem', color: '#a9c2d3', marginBottom: '32px' }}>
-            One email a week — a verse, a short reflection, and this week's prayer requests.
-          </p>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <input
-              type="email"
-              placeholder="you@email.com"
-              style={{ padding: '15px 20px', fontSize: '1.1rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '30px', width: '280px', maxWidth: '80vw', background: 'rgba(255,255,255,0.08)', color: '#fff' }}
-            />
-            <button style={{ background: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 32px', fontWeight: 700, borderRadius: '30px', cursor: 'pointer', fontSize: '1.05rem' }}>
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 };

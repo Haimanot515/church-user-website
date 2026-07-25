@@ -294,32 +294,7 @@ const Travel = () => {
         </div>
       </section>
 
-      <footer style={{ background: 'var(--navy-deep)', color: '#89a3b5', padding: '60px 0 30px 0', borderBottom: '6px solid var(--deep-red)' }}>
-        <div className="wrapper">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '38px', marginBottom: '44px' }}>
-            <div>
-              <h4 className="display" style={{ color: '#eaf3f8', fontSize: '1.6rem', fontWeight: 700, marginBottom: '12px' }}>Daniel Worku</h4>
-              <p style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>Pastor at Harbor Light Church. Writing about faith, family, and the ordinary work of ministry.</p>
-            </div>
-            {[
-              { title: "Read", items: ["Latest Posts", "Journal", "Sermon Notes", "Archive"] },
-              { title: "About", items: ["My Story", "Family", "Books I Recommend"] },
-              { title: "Connect", items: ["Email Me", "Instagram", "YouTube"] }
-            ].map((col, i) => (
-              <div key={i}>
-                <h5 className="eyebrow" style={{ color: '#eaf3f8', marginBottom: '12px', fontSize: '0.85rem' }}>{col.title}</h5>
-                {col.items.map((s, j) => (
-                  <p key={j} style={{ fontSize: '1.1rem', margin: '8px 0', cursor: 'pointer' }}>{s}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-            <p className="eyebrow" style={{ margin: 0, fontSize: '0.85rem' }}>© 2026 Daniel Worku</p>
-            <p className="eyebrow" style={{ margin: 0, fontSize: '0.85rem' }}>Privacy Policy</p>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   );
 };
