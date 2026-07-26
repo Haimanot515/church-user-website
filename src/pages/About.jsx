@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import API from "../api/api.jsx";
 
-const PastorAboutMePage = () => {
-  const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Me", "Contact"];
+const CHURCH_NAME = "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine";
+
+const ChurchAboutPage = () => {
+  const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Us", "Contact"];
 
   const [activeChapter, setActiveChapter] = useState(0);
+  const [visibleStoryCount, setVisibleStoryCount] = useState(10);
+  const [activeFaith, setActiveFaith] = useState(0);
+  const [activeFaq, setActiveFaq] = useState(null);
+  const [activeLang, setActiveLang] = useState("en");
 
   // === ADDED: About/Hero content fetched from /about ===
   const [about, setAbout] = useState(null);
@@ -21,43 +27,117 @@ const PastorAboutMePage = () => {
     fetchAbout();
   }, []);
 
-  const chapters = [
-    { year: "1979", title: "Born in Addis Ababa", desc: "The second of five children, raised in a home where Scripture was read at breakfast and questions were always welcome." },
-    { year: "2001", title: "A Call I Tried to Ignore", desc: "I studied engineering, not theology. It took a quiet, persistent sense of calling — and a patient mentor — before I stopped resisting it." },
-    { year: "2006", title: "Seminary and Selam", desc: "I met my wife, Selam, in my first year of seminary. She still edits every sermon before I preach it, and it always gets better." },
-    { year: "2010", title: "First Church, First Funeral", desc: "My first assignment was a small congregation of forty. I buried my first parishioner three weeks in, and it changed how I read the Psalms." },
-    { year: "2020", title: "Coming to Harbor Light", desc: "I've now pastored here longer than anywhere else. It's the closest thing to home a church has ever felt like." },
-    { year: "2026", title: "Still Learning", desc: "Twenty-five years in, I preach less certainly and pray more honestly than I used to. I count that as growth." }
-  ];
+  // === ADDED: Leadership Team / Special Thanks / Testimonials fetched from /church-persons ===
+  const [leaders, setLeaders] = useState([]);
+  const [thanksList, setThanksList] = useState([]);
+  const [testimonialsList, setTestimonialsList] = useState([]);
 
-  const education = [
-    { years: "1997 – 2001", degree: "B.Sc. in Civil Engineering", school: "Addis Ababa University", note: "Where I learned to build things that hold weight — a habit that never really left me." },
-    { years: "2002 – 2006", degree: "M.Div., Master of Divinity", school: "Ethiopian Graduate School of Theology", note: "Four years of Greek, Hebrew, and slowly learning to ask better questions than I answer." },
-    { years: "2013 – 2015", degree: "Certificate in Pastoral Counseling", school: "Nairobi Institute of Pastoral Studies", note: "Taken after realizing seminary hadn't prepared me for grief the way I needed." },
-    { years: "2022", degree: "Sabbatical Study, Spiritual Formation", school: "Regent College, Vancouver", note: "Three months of silence, long walks, and rediscovering why I said yes to this in the first place." }
-  ];
+  useEffect(() => {
+    const fetchChurchPersons = async (category, setter) => {
+      try {
+        const res = await API.get("/church-persons", { params: { category } });
+        const data = Array.isArray(res.data) ? res.data : [];
+        setter(data);
+      } catch (err) {
+        console.error(`Error fetching ${category}:`, err);
+      }
+    };
 
+    fetchChurchPersons("leader", setLeaders);
+    fetchChurchPersons("specialThanks", setThanksList);
+    fetchChurchPersons("testimony", setTestimonialsList);
+  }, []);
 
-  const dreams = [
-    { title: "A Sabbatical Year", desc: "To take a full year, someday, to write, rest, and simply be present with Selam and the kids without a Sunday looming." },
-    { title: "A Book Worth Finishing", desc: "I have three unfinished manuscripts. I'd love to actually finish one — on grief, prayer, and the space between them." },
-    { title: "A Church That Outlasts Me", desc: "My deepest hope isn't for a bigger congregation, but for a healthier one — one that thrives long after I'm gone." },
-    { title: "To Plant One More Church", desc: "There's a neighborhood twenty minutes from here with no congregation at all. I think about it more than I say out loud." }
-  ];
-
-  const specialThanks = [
-    { name: "Yohannes Bekele", role: "Associate Pastor", desc: "Preaches once a month so I can rest, and never once made it feel like a favor.", img: "https://images.unsplash.com/photo-1624224416603-c908080780b1?auto=format&fit=crop&w=300&q=80" },
-    { name: "Simeon Tesfaye", role: "Church Elder", desc: "Has sat with me through every hard board meeting for the last decade.", img: "https://images.unsplash.com/photo-1549043671-1e4550948355?auto=format&fit=crop&w=300&q=80" },
-    { name: "Hana Girma", role: "Ministry Assistant", desc: "Keeps the whole calendar straight so I can actually show up when it matters.", img: "https://images.unsplash.com/photo-1758518727888-ffa196002e59?auto=format&fit=crop&w=300&q=80" },
-    { name: "Meron Alemu", role: "Worship Leader", desc: "Turns Sunday mornings into something people actually want to wake up for.", img: "https://images.unsplash.com/photo-1569925444984-9e2e5fc3d1fb?auto=format&fit=crop&w=300&q=80" }
+  const history = [
+    {
+      year: "1979",
+      range: "1979 – 1987",
+      title: "A Handful of Families",
+      desc: `${CHURCH_NAME} began as a Bible study of six families meeting in a living room, with nothing but a shared conviction that Scripture belonged at the center of ordinary life. Within two years the living room had outgrown itself, and the group began renting a hall on Sundays.`,
+      leader: "Pastor Abebe Kassahun",
+      leaderRole: "Founding Pastor",
+      servedBy: "Founding families: the Kassahun, Tadesse, and Worku households",
+      photo: "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      year: "1988",
+      range: "1987 – 1999",
+      title: "Our First Sanctuary",
+      desc: "After nine years of meeting in rented halls and homes, the congregation raised enough to buy a small plot. Built almost entirely through member fundraising and volunteer labor over eighteen months, the new sanctuary sat eighty people on its first Sunday.",
+      leader: "Pastor Girma Tesfaye",
+      leaderRole: "Senior Pastor",
+      servedBy: "Building committee led by elders Simeon Tesfaye and Almaz Fikru",
+      photo: "https://images.unsplash.com/photo-1520637836862-4d197d17c93a?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      year: "2001",
+      range: "1999 – 2012",
+      title: "A Season of Growth",
+      desc: "New leadership, a growing neighborhood, and a renewed commitment to discipleship brought the congregation past three hundred members for the first time, and the church added a second Sunday service to make room.",
+      leader: "Pastor Solomon Haile",
+      leaderRole: "Senior Pastor",
+      servedBy: "A newly formed board of elders and the first paid ministry staff",
+      photo: "https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      year: "2010",
+      range: "2010 – 2013",
+      title: "Opening Our Doors Wider",
+      desc: "Under Pastor Haile's continued leadership, the congregation launched its first community outreach programs — a food pantry, tutoring for local children, and a counseling ministry — extending the church's work beyond Sunday mornings and into the neighborhood.",
+      leader: "Pastor Solomon Haile",
+      leaderRole: "Senior Pastor",
+      servedBy: "Outreach volunteers and the newly formed Community Ministries team",
+      photo: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      year: "2020",
+      range: "2012 – Present",
+      title: "Weathering a Difficult Year",
+      desc: "Like churches everywhere, the congregation learned to gather differently in 2020, checking in on the elderly and isolated members and discovering that community could stretch further than anyone expected.",
+      leader: "Senior Pastor (current)",
+      leaderRole: "Senior Pastor",
+      servedBy: "The pastoral care team and dozens of members who kept in touch by phone",
+      photo: "https://images.unsplash.com/photo-1523803326055-13445f07c5ba?auto=format&fit=crop&w=900&q=80"
+    },
+    {
+      year: "2026",
+      range: "2012 – Present",
+      title: "Still Building",
+      desc: `Forty-seven years in, ${CHURCH_NAME} is still learning what it means to be a church for this particular community, in this particular season — carried forward by the same conviction that started it all.`,
+      leader: "Senior Pastor (current)",
+      leaderRole: "Senior Pastor",
+      servedBy: "The current pastoral staff, elders, and every ministry team serving today",
+      photo: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?auto=format&fit=crop&w=900&q=80"
+    }
   ];
 
   const location = {
-    city: "Addis Ababa, Ethiopia",
-    address: "Harbor Light Church, Bole Road, Addis Ababa",
-    note: "I write most mornings from a small office behind the sanctuary, or from a corner table at the coffee shop two doors down.",
+    city: "Udine, Italy",
+    address: `${CHURCH_NAME}`,
+    note: "Our doors are open most mornings, and our office team is usually reachable from the small building behind the sanctuary.",
     serviceTimes: ["Sunday — 9:00 & 11:00 AM", "Wednesday Prayer — 6:30 PM"]
   };
+
+  // === ADDED: Advanced About-page sections ===
+
+  const missionVision = [
+    { label: "Our Mission", value: "To help this community know Christ and grow together in faith, one ordinary week at a time." },
+    { label: "Our Vision", value: "A church so rooted in this community that no one nearby has to face hardship, doubt, or celebration alone." }
+  ];
+
+  const faithPoints = [
+    { title: "Scripture", desc: "We believe the Bible is God's word, trustworthy and sufficient for how we understand faith and life." },
+    { title: "The Trinity", desc: "We believe in one God who exists eternally as Father, Son, and Holy Spirit." },
+    { title: "Salvation by Grace", desc: "We believe people are reconciled to God by grace through faith, not by works, through the death and resurrection of Jesus." },
+    { title: "The Church", desc: "We believe the church is God's family on earth, called to worship together, serve one another, and reach out to the world." }
+  ];
+
+  const faqs = [
+    { q: "What should I expect as a first-time visitor?", a: "A warm welcome, a seat wherever you like, and no pressure to sign anything or stand up and introduce yourself." },
+    { q: "Is there a program for kids during the service?", a: "Yes — supervised check-in and age-appropriate programming run alongside both Sunday services." },
+    { q: "Where can I park?", a: "Street parking is available nearby, with additional overflow parking behind the sanctuary." },
+    { q: "Do I need to be a member to join a small group?", a: "Not at all. Small groups are open to anyone, whether you're visiting for the first time or have been here for years." }
+  ];
 
   return (
     <div className="church-portal">
@@ -205,15 +285,15 @@ const PastorAboutMePage = () => {
         .thanks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (max-width: 650px) { .thanks-grid { grid-template-columns: 1fr; } }
         .thanks-card {
-          display: flex; gap: 18px; align-items: flex-start;
+          display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center;
           background: rgba(255,255,255,0.06);
           border: 1px solid rgba(255,255,255,0.14);
           border-radius: 12px;
           padding: 26px;
         }
         .thanks-photo {
-          width: 62px; height: 62px; border-radius: 50%; object-fit: cover;
-          flex-shrink: 0; border: 2px solid var(--gold);
+          width: 140px; height: 140px; border-radius: 12px; object-fit: cover;
+          flex-shrink: 0; border: 3px solid var(--gold);
         }
 
         /* DREAM CARDS */
@@ -253,7 +333,7 @@ const PastorAboutMePage = () => {
         }
         .service-time-row:last-child { border-bottom: none; }
 
-        /* UNIFIED BODY TEXT (matches "Why I Write" pull-quote treatment) */
+        /* UNIFIED BODY TEXT (matches "Why We Write" pull-quote treatment) */
         .body-copy {
           font-family: 'Cormorant Garamond', serif;
           font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -264,6 +344,175 @@ const PastorAboutMePage = () => {
         }
         .body-copy.on-dark { color: #ffffff; }
         .body-copy.on-red { color: rgba(255,255,255,0.9); }
+
+        /* BADGE */
+        .badge {
+          display: inline-block;
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 0.75rem; letter-spacing: 0.06em;
+          padding: 8px 16px; border-radius: 20px;
+          background: rgba(207,159,63,0.14);
+          border: 1px solid rgba(207,159,63,0.4);
+          color: var(--gold);
+          margin-bottom: 20px;
+        }
+
+        /* ACCORDION (Statement of Faith / FAQ) */
+        .accordion-item { border-bottom: 1px solid rgba(28,58,82,0.14); }
+        .accordion-item:first-child { border-top: 1px solid rgba(28,58,82,0.14); }
+        .accordion-head {
+          width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+          display: flex; justify-content: space-between; align-items: center;
+          padding: 24px 4px; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700;
+          color: var(--navy-deep);
+        }
+        .accordion-icon { font-family: 'IBM Plex Mono', monospace; color: var(--gold); font-size: 1.2rem; flex-shrink: 0; margin-left: 20px; }
+        .accordion-body { padding: 0 4px 24px 4px; max-width: 640px; }
+
+        /* SIMPLE LIST CARDS (Small Groups / Volunteer / Sermons) */
+        .list-card {
+          display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+          padding: 20px 24px; border-radius: 10px;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.14);
+        }
+        .list-card + .list-card { margin-top: 12px; }
+        .list-card-title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.3rem; color: #ffffff; }
+        .list-card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--gold); }
+
+        /* TESTIMONIALS */
+        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+        @media (max-width: 800px) { .testimonial-grid { grid-template-columns: 1fr; } }
+        .testimonial-card { padding: 30px; border-radius: 12px; }
+        .testimonial-photo {
+          width: 96px; height: 96px;
+          object-fit: cover;
+          border-radius: 10px;
+          border: 2px solid var(--gold);
+          margin-bottom: 18px;
+          display: block;
+        }
+        .testimonial-title {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase;
+          color: var(--deep-red); margin: 2px 0 0 0;
+        }
+
+        /* LANGUAGE TOGGLE */
+        .lang-toggle { display: inline-flex; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.3); overflow: hidden; margin-bottom: 24px; }
+        .lang-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; padding: 8px 16px; background: transparent; border: none; color: #eaf3f8; cursor: pointer; }
+        .lang-btn.active { background: var(--gold); color: var(--navy-deep); font-weight: 700; }
+
+        /* CTA BAND */
+        .cta-band { text-align: center; }
+
+        /* ABOUT-STYLE PHOTO + TEXT LAYOUT (for Our Story) */
+        .about-section {
+          width: 100%;
+          background: #ffffff;
+          padding: 90px 0;
+        }
+        .about-container {
+          max-width: 1100px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+        .about-item {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 50px;
+          margin-bottom: 60px;
+        }
+        .about-photo-side { flex: 0 1 380px; position: relative; }
+        .about-img-wrapper { position: relative; z-index: 2; }
+        .about-image {
+          width: 100%;
+          height: 450px;
+          border-radius: 20px;
+          object-fit: cover;
+          object-position: center;
+          box-shadow: 0 25px 50px -12px rgba(15,36,56,0.25);
+          display: block;
+          border: 4px solid #fff;
+        }
+        .about-art-accent {
+          position: absolute;
+          top: 20px; left: 20px;
+          width: 100%; height: 100%;
+          background: var(--sky-mid);
+          border-radius: 20px;
+          z-index: 1;
+          border: 1px solid rgba(28,58,82,0.14);
+        }
+        .about-art-accent::after {
+          content: '';
+          position: absolute;
+          bottom: -14px; right: -14px;
+          width: 70px; height: 70px;
+          border-radius: 50%;
+          background: var(--gold);
+          opacity: 0.18;
+        }
+        .about-text-side { flex: 1.2 1 450px; padding-top: 10px; }
+        .about-label {
+          font-family: 'IBM Plex Mono', monospace;
+          color: var(--deep-red);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          font-size: 0.82rem;
+        }
+        .about-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 2.8rem;
+          color: var(--navy-deep);
+          margin: 16px 0;
+          font-weight: 700;
+          line-height: 1.1;
+        }
+        .about-description {
+          font-size: 1.1rem;
+          line-height: 1.8;
+          color: var(--slate);
+          margin-bottom: 26px;
+        }
+        .about-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+        .about-tag {
+          background: var(--sky-low);
+          border: 1px solid rgba(28,58,82,0.16);
+          padding: 8px 16px;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          color: var(--navy);
+          font-weight: 700;
+        }
+        .load-more-btn {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 0.85rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          color: var(--navy-deep);
+          background: transparent;
+          border: 1.5px solid var(--navy-deep);
+          padding: 12px 30px;
+          border-radius: 30px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .load-more-btn:hover { background: var(--navy-deep); color: #eaf3f8; }
+        @media (max-width: 900px) {
+          .about-item { flex-direction: column; align-items: center; text-align: center; }
+          .about-photo-side { flex: 0 1 100%; width: 100%; max-width: 450px; }
+          .about-description { text-align: center; }
+          .about-tags { justify-content: center; }
+          .about-title { font-size: 2.2rem; }
+        }
+        @media (max-width: 480px) {
+          .about-image { height: 350px; }
+          .about-title { font-size: 1.8rem; }
+        }
       `}</style>
 
       <div className="cloud-layer">
@@ -279,14 +528,16 @@ const PastorAboutMePage = () => {
         <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div style={{ flex: '1', minWidth: '320px' }}>
             <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-              {about?.title || "Priest. Father. Still figuring most of it out"}
+              {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
             </h1>
             <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-              {about?.description || "I've spent twenty years learning that faith is less about having answers and more about showing up — for God, for my family, and for whoever's sitting across from me. This is where I write about that, honestly."}
+              {about?.description || (activeLang === 'am'
+                ? `ላለፉት አምስት አስርት ዓመታት ገደማ፣ ${CHURCH_NAME} እምነት መልስ ከማግኘት ይልቅ መገኘት እንደሆነ የተማረ ማህበረሰብ ነው።`
+                : `For nearly five decades, ${CHURCH_NAME} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.`)}
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
-                Read My Story Below
+                Read Our Story Below
               </button>
               <button style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
                 Say Hello
@@ -295,145 +546,131 @@ const PastorAboutMePage = () => {
           </div>
           <div style={{ flex: '0 0 340px', minWidth: '280px' }}>
             <img
-              src={about?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=900&q=80"}
-              alt={about?.title || "Priest in ornate robes holding a ceremonial staff"}
+              src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
+              alt={about?.title || `${CHURCH_NAME} sanctuary`}
               style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
             />
           </div>
         </div>
       </section>
 
-      {/* MY STORY - CHAPTERS */}
-      <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
-        <div className="wrapper" style={{ maxWidth: '860px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 40px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            The short version of a long journey
-          </h2>
-          <div className="chapter-rail">
-            {chapters.map((c, i) => (
-              <button key={i} className={`chapter-tab${i === activeChapter ? ' active' : ''}`} onClick={() => setActiveChapter(i)}>
-                {c.year}
-              </button>
-            ))}
-          </div>
-          <div className="card" style={{ padding: '44px', background: 'var(--deep-red)', border: '1px solid rgba(255,255,255,0.15)' }}>
-            <span className="eyebrow" style={{ fontSize: '0.85rem' }}>{chapters[activeChapter].year}</span>
-            <h4 className="display" style={{ fontSize: '2.2rem', fontWeight: 700, margin: '12px 0 16px 0', color: '#ffffff' }}>
-              {chapters[activeChapter].title}
-            </h4>
-            <p className="body-copy on-red" style={{ maxWidth: '640px' }}>
-              {chapters[activeChapter].desc}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* EDUCATION BACKGROUND */}
-      <section style={{ background: '#ffffff' }}>
-        <div className="wrapper" style={{ maxWidth: '860px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            Educational Background
-          </h2>
-          <div>
-            {education.map((e, i) => (
-              <div className="edu-row" key={i}>
-                <span className="edu-years">{e.years}</span>
-                <div>
-                  <h4 className="display" style={{ fontSize: '1.6rem', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--navy-deep)' }}>{e.degree}</h4>
-                  <p className="body-copy" style={{ fontWeight: 700, margin: '0 0 8px 0' }}>{e.school}</p>
-                  <p className="body-copy" style={{ maxWidth: '620px' }}>{e.note}</p>
-                </div>
+      {/* MISSION & VISION */}
+      <section style={{ background: 'var(--navy-deep)', paddingTop: '60px', paddingBottom: '60px' }}>
+        <div className="wrapper">
+          <div className="fact-grid">
+            {missionVision.map((m, i) => (
+              <div className="fact-item" key={i}>
+                <p className="fact-label">{m.label}</p>
+                <p className="fact-value">{m.value}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* WHY I WRITE - PULL QUOTE */}
+      {/* OUR STORY */}
+      <section className="about-section">
+        <div className="about-container">
+          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+            Our Church Story
+          </h2>
+          {history.slice(0, visibleStoryCount).map((item, i) => (
+            <div key={i} className="about-item">
+
+              {/* PHOTO SIDE */}
+              <div className="about-photo-side">
+                {item.photo && (
+                  <div className="about-img-wrapper">
+                    <img
+                      src={item.photo}
+                      alt={item.title}
+                      className="about-image"
+                    />
+                  </div>
+                )}
+                <div className="about-art-accent"></div>
+              </div>
+
+              {/* TEXT SIDE */}
+              <div className="about-text-side">
+                <span className="about-label">
+                  {item.leaderRole} · Led {item.range}
+                </span>
+
+                <h2 className="about-title">
+                  {item.title}
+                </h2>
+                <div className="about-description">
+                  <p>{item.desc}</p>
+                </div>
+                <div className="about-tags">
+                  <div className="about-tag">{item.leader}</div>
+                  <div className="about-tag">{item.range}</div>
+                  <div className="about-tag">{item.servedBy}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {visibleStoryCount < history.length && (
+            <div style={{ textAlign: 'center', marginTop: '10px' }}>
+              <button className="load-more-btn" onClick={() => setVisibleStoryCount(c => c + 10)}>
+                Load More
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* STATEMENT OF FAITH + WHY WE WRITE (combined) */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h3 className="eyebrow" style={{ marginBottom: '30px', fontSize: '0.85rem', textAlign: 'center' }}>Why I Write This Blog</h3>
-          <p className="pull-quote display" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5 }}>
-            "I preach on Sundays, but a sermon only holds so much. This is where I put the rest —
-            the doubts I don't voice from the pulpit, the small mercies I'd otherwise forget, and
-            the ordinary texture of trying to follow Jesus while raising two kids and running a church."
+          <h3 className="eyebrow" style={{ marginBottom: '30px', fontSize: '0.85rem', textAlign: 'center' }}>What We Believe</h3>
+          <div>
+            {faithPoints.map((f, i) => (
+              <div className="accordion-item" key={i}>
+                <button className="accordion-head" onClick={() => setActiveFaith(activeFaith === i ? -1 : i)}>
+                  {f.title}
+                  <span className="accordion-icon">{activeFaith === i ? '−' : '+'}</span>
+                </button>
+                {activeFaith === i && (
+                  <div className="accordion-body">
+                    <p className="body-copy">{f.desc}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <h3 className="eyebrow" style={{ margin: '70px 0 30px 0', fontSize: '0.85rem', textAlign: 'center' }}>Why We Write This Blog</h3>
+          <p className="display" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5, margin: 0 }}>
+            "We gather on Sundays, but a service only holds so much. This is where we put the rest —
+            the doubts we don't always voice out loud, the small mercies we'd otherwise forget, and
+            the ordinary texture of trying to be a church for this community, in this season."
           </p>
-          <p style={{ marginTop: '26px', fontSize: '1.1rem', color: '#3d5a6c' }}>— Daniel</p>
         </div>
       </section>
 
-      {/* DREAMS */}
-      <section style={{ background: '#ffffff' }}>
-        <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            Dreams & Hopes
-
-          </h2>
-          <div className="dream-grid">
-            {dreams.map((d, i) => (
-              <div className="dream-card" key={i}>
-                <h4 className="display" style={{ fontSize: '1.6rem', fontWeight: 700, margin: '0 0 10px 0', color: 'var(--navy-deep)' }}>{d.title}</h4>
-                <p className="body-copy">{d.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAMILY PHOTO STRIP */}
-      <section style={{ background: '#ffffff' }}>
-        <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h3 className="eyebrow" style={{ marginBottom: '38px', fontSize: '0.85rem', textAlign: 'center' }}>Family</h3>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '26px', marginBottom: '26px' }}>
-            {[
-              { img: "https://images.unsplash.com/photo-1758691030490-fe1cb6c972ce?auto=format&fit=crop&w=600&q=80", title: "My Father, Girma", desc: "Taught me that faith and hard questions could sit at the same table.", alt: "Older man with a warm smile" },
-              { img: "https://images.unsplash.com/photo-1692801439915-ef9194bf0951?auto=format&fit=crop&w=600&q=80", title: "My Mother, Tsehay", desc: "Read Scripture over breakfast every morning I can remember, and still does.", alt: "Older woman smiling warmly" }
-            ].map((item, index) => (
-              <div key={index} className="photo-card">
-                <img src={item.img} alt={item.alt} />
-                <div className="photo-card-body">
-                  <h4 className="display" style={{ fontSize: '1.7rem', fontWeight: 700, margin: '0 0 6px 0', color: 'var(--navy-deep)' }}>{item.title}</h4>
-                  <p className="body-copy" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.6rem)' }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
-            {[
-              { img: "https://images.unsplash.com/photo-1670301130983-d5e3fb519fe9?auto=format&fit=crop&w=600&q=80", title: "Selam", desc: "My wife of nineteen years, and my sharpest editor.", alt: "Woman smiling warmly at the camera" },
-              { img: "https://images.unsplash.com/photo-1487546511569-62a31e1c607c?auto=format&fit=crop&w=600&q=80", title: "Nardos, 14", desc: "Asks better theological questions than most seminarians.", alt: "Teenage girl smiling at the camera" },
-              { img: "https://images.unsplash.com/photo-1678557856807-7ae6ff6893d1?auto=format&fit=crop&w=600&q=80", title: "Yonas, 11", desc: "Wants to be an astronaut. I've stopped arguing with that plan.", alt: "Young boy smiling at the camera" }
-            ].map((item, index) => (
-              <div key={index} className="photo-card">
-                <img src={item.img} alt={item.alt} />
-                <div className="photo-card-body">
-                  <h4 className="display" style={{ fontSize: '1.7rem', fontWeight: 700, margin: '0 0 6px 0', color: 'var(--navy-deep)' }}>{item.title}</h4>
-                  <p className="body-copy" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.6rem)' }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SPECIAL THANKS */}
+      {/* LEADERSHIP TEAM */}
       <div className="cross-bg" style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <section>
           <div className="wrapper" style={{ maxWidth: '760px' }}>
             <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 44px 0', color: '#ffffff', textAlign: 'center' }}>
-              Special Thanks
+              Leadership Team
 
             </h2>
             <div className="thanks-grid">
-              {specialThanks.map((p, i) => (
-                <div className="thanks-card" key={i}>
-                  <img className="thanks-photo" src={p.img} alt={p.name} />
+              {leaders.map((p) => (
+                <div className="thanks-card" key={p._id}>
+                  <img
+                    className="thanks-photo"
+                    src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
+                    alt={p.name}
+                  />
                   <div>
                     <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
-                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role}</span>
-                    <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>{p.desc}</p>
+                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
+                    <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>{p.description}</p>
                   </div>
                 </div>
               ))}
@@ -442,11 +679,155 @@ const PastorAboutMePage = () => {
         </section>
       </div>
 
-      
+      {/* TESTIMONIALS */}
+      <section style={{ background: '#ffffff' }}>
+        <div className="wrapper" style={{ maxWidth: '1000px' }}>
+          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+            In Their Own Words
+          </h2>
+          <div className="testimonial-grid">
+            {testimonialsList.map((t) => (
+              <div className="card testimonial-card" key={t._id}>
+                <img
+                  className="testimonial-photo"
+                  src={(t.photos && t.photos[0]) || `https://ui-avatars.com/api/?name=${t.name}&background=0070f3&color=fff`}
+                  alt={t.name}
+                />
+                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>"{t.message}"</p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{t.name}</p>
+                <p className="testimonial-title">{t.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      
+      {/* FAQ */}
+      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
+        <div className="wrapper" style={{ maxWidth: '760px' }}>
+          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+            Common Questions
+          </h2>
+          <div>
+            {faqs.map((f, i) => (
+              <div className="accordion-item" key={i}>
+                <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === i ? -1 : i)}>
+                  {f.q}
+                  <span className="accordion-icon">{activeFaq === i ? '−' : '+'}</span>
+                </button>
+                {activeFaq === i && (
+                  <div className="accordion-body">
+                    <p className="body-copy" style={{ fontSize: '1.2rem' }}>{f.a}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SPECIAL THANKS (testimonial-style cards) */}
+      <section style={{ background: '#ffffff' }}>
+        <div className="wrapper" style={{ maxWidth: '1000px' }}>
+          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+            Special Thanks
+          </h2>
+          <div className="testimonial-grid">
+            {thanksList.map((p) => (
+              <div className="card testimonial-card" key={p._id}>
+                <img
+                  className="testimonial-photo"
+                  src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
+                  alt={p.name}
+                />
+                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>{p.description}</p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
+                <p className="testimonial-title">{p.role || p.title}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* LOCATION & CONTACT */}
+      <div style={{ background: 'var(--navy-deep)' }}>
+        <section>
+          <div className="wrapper">
+            <div className="location-grid">
+              <div>
+                <h3 className="eyebrow" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>Visit Us</h3>
+                <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>{location.address}</h2>
+                <p className="body-copy on-dark" style={{ fontSize: '1.2rem', marginBottom: '26px' }}>{location.note}</p>
+                <div>
+                  {location.serviceTimes.map((t, i) => (
+                    <div className="service-time-row" key={i}>
+                      <span style={{ color: '#ffffff' }}>{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="map-frame">
+                <img
+                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=80"
+                  alt={`Map area near ${CHURCH_NAME}`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* SUPPORT THE CHURCH */}
+      <div style={{ background: 'var(--deep-red)' }}>
+        <section>
+          <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
+            <h3 className="eyebrow" style={{ marginBottom: '18px', fontSize: '0.85rem' }}>Give Online or In Person</h3>
+            <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
+              Support the Church
+            </h2>
+            <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
+              Whatever you're able to give helps keep this church's doors — and its outreach to the community — open. You can give in person on Sunday, or send your gift directly using the details below.
+            </p>
+            <div style={{ display: 'inline-block', textAlign: 'left', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '28px 34px' }}>
+              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>Bank Transfer</p>
+              <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: '0 0 20px 0' }}>
+                Account Name: {CHURCH_NAME}<br />
+                Account Number: 1000 4522 3390 112
+              </p>
+              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>Online Giving</p>
+              <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: 0 }}>
+                Merchant Name: {CHURCH_NAME}
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* GIVE / GET INVOLVED CTA */}
+      <div style={{ background: 'var(--deep-red)' }}>
+        <section className="cta-band">
+          <div className="wrapper" style={{ maxWidth: '640px' }}>
+            <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>
+              Give or Get Involved
+            </h2>
+            <p className="body-copy on-red" style={{ margin: '0 auto 30px auto', maxWidth: '520px' }}>
+              Whether it's your time, your gifts, or your generosity, there's a place for it here.
+            </p>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+                Give
+              </button>
+              <button style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+                Volunteer
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
     </div>
   );
 };
 
-export default PastorAboutMePage;
+export default ChurchAboutPage;
