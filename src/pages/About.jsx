@@ -550,6 +550,16 @@ const ChurchAboutPage = () => {
               alt={about?.title || `${CHURCH_NAME} sanctuary`}
               style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
             />
+            {about?.churchLeader && (
+              <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                <p className="display" style={{ fontSize: '1.3rem', fontWeight: 700, color: '#ffffff', margin: '0 0 2px 0' }}>
+                  {about.churchLeader}
+                </p>
+                <p className="eyebrow" style={{ fontSize: '0.72rem', margin: 0 }}>
+                  {activeLang === 'am' ? "የቤተ ክርስቲያን መሪ" : "Church Leader"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
