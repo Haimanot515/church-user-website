@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import API from "../api/api.jsx";
 
 const CHURCH_NAME = "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine";
@@ -7,7 +8,6 @@ const ChurchAboutPage = () => {
   const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Us", "Contact"];
 
   const [activeChapter, setActiveChapter] = useState(0);
-  const [visibleStoryCount, setVisibleStoryCount] = useState(10);
   const [activeFaith, setActiveFaith] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeLang, setActiveLang] = useState("en");
@@ -48,68 +48,51 @@ const ChurchAboutPage = () => {
     fetchChurchPersons("testimony", setTestimonialsList);
   }, []);
 
-  const history = [
-    {
-      year: "1979",
-      range: "1979 – 1987",
-      title: "A Handful of Families",
-      desc: `${CHURCH_NAME} began as a Bible study of six families meeting in a living room, with nothing but a shared conviction that Scripture belonged at the center of ordinary life. Within two years the living room had outgrown itself, and the group began renting a hall on Sundays.`,
-      leader: "Pastor Abebe Kassahun",
-      leaderRole: "Founding Pastor",
-      servedBy: "Founding families: the Kassahun, Tadesse, and Worku households",
-      photo: "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      year: "1988",
-      range: "1987 – 1999",
-      title: "Our First Sanctuary",
-      desc: "After nine years of meeting in rented halls and homes, the congregation raised enough to buy a small plot. Built almost entirely through member fundraising and volunteer labor over eighteen months, the new sanctuary sat eighty people on its first Sunday.",
-      leader: "Pastor Girma Tesfaye",
-      leaderRole: "Senior Pastor",
-      servedBy: "Building committee led by elders Simeon Tesfaye and Almaz Fikru",
-      photo: "https://images.unsplash.com/photo-1520637836862-4d197d17c93a?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      year: "2001",
-      range: "1999 – 2012",
-      title: "A Season of Growth",
-      desc: "New leadership, a growing neighborhood, and a renewed commitment to discipleship brought the congregation past three hundred members for the first time, and the church added a second Sunday service to make room.",
-      leader: "Pastor Solomon Haile",
-      leaderRole: "Senior Pastor",
-      servedBy: "A newly formed board of elders and the first paid ministry staff",
-      photo: "https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      year: "2010",
-      range: "2010 – 2013",
-      title: "Opening Our Doors Wider",
-      desc: "Under Pastor Haile's continued leadership, the congregation launched its first community outreach programs — a food pantry, tutoring for local children, and a counseling ministry — extending the church's work beyond Sunday mornings and into the neighborhood.",
-      leader: "Pastor Solomon Haile",
-      leaderRole: "Senior Pastor",
-      servedBy: "Outreach volunteers and the newly formed Community Ministries team",
-      photo: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      year: "2020",
-      range: "2012 – Present",
-      title: "Weathering a Difficult Year",
-      desc: "Like churches everywhere, the congregation learned to gather differently in 2020, checking in on the elderly and isolated members and discovering that community could stretch further than anyone expected.",
-      leader: "Senior Pastor (current)",
-      leaderRole: "Senior Pastor",
-      servedBy: "The pastoral care team and dozens of members who kept in touch by phone",
-      photo: "https://images.unsplash.com/photo-1523803326055-13445f07c5ba?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      year: "2026",
-      range: "2012 – Present",
-      title: "Still Building",
-      desc: `Forty-seven years in, ${CHURCH_NAME} is still learning what it means to be a church for this particular community, in this particular season — carried forward by the same conviction that started it all.`,
-      leader: "Senior Pastor (current)",
-      leaderRole: "Senior Pastor",
-      servedBy: "The current pastoral staff, elders, and every ministry team serving today",
-      photo: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?auto=format&fit=crop&w=900&q=80"
+  // === "Our Church Story" chapters fetched from /church-story (paginated server-side) ===
+  const HISTORY_PAGE_SIZE = 10;
+  const [history, setHistory] = useState([]);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyHasMore, setHistoryHasMore] = useState(true);
+  const [historyLoading, setHistoryLoading] = useState(true);
+
+  const fetchHistory = async (page) => {
+    try {
+      setHistoryLoading(true);
+      const res = await API.get("/church-story", {
+        params: { page, limit: HISTORY_PAGE_SIZE },
+      });
+
+      // Handle either a raw array response or a { stories, total, pages } shape
+      const data = Array.isArray(res.data) ? res.data : res.data.stories || [];
+      const totalPages = res.data.pages ?? (Array.isArray(res.data) ? 1 : undefined);
+
+      setHistory((prev) => (page === 1 ? data : [...prev, ...data]));
+
+      if (typeof totalPages === "number") {
+        setHistoryHasMore(page < totalPages);
+      } else {
+        // Fallback: if we got a full page, assume there might be more
+        setHistoryHasMore(data.length === HISTORY_PAGE_SIZE);
+      }
+    } catch (err) {
+      console.error("Error fetching church story:", err);
+      if (page === 1) setHistory([]);
+      setHistoryHasMore(false);
+    } finally {
+      setHistoryLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchHistory(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleLoadMoreStory = () => {
+    const nextPage = historyPage + 1;
+    setHistoryPage(nextPage);
+    fetchHistory(nextPage);
+  };
 
   const location = {
     city: "Udine, Italy",
@@ -426,7 +409,7 @@ const ChurchAboutPage = () => {
           margin-bottom: 60px;
         }
         .about-photo-side { flex: 0 1 380px; position: relative; }
-        .about-img-wrapper { position: relative; z-index: 2; }
+        .about-img-wrapper { position: relative; z-index: 2; display: block; cursor: pointer; }
         .about-image {
           width: 100%;
           height: 450px;
@@ -436,6 +419,11 @@ const ChurchAboutPage = () => {
           box-shadow: 0 25px 50px -12px rgba(15,36,56,0.25);
           display: block;
           border: 4px solid #fff;
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .about-img-wrapper:hover .about-image {
+          transform: translateY(-4px);
+          box-shadow: 0 30px 55px -10px rgba(15,36,56,0.35);
         }
         .about-art-accent {
           position: absolute;
@@ -488,6 +476,22 @@ const ChurchAboutPage = () => {
           color: var(--navy);
           font-weight: 700;
         }
+        .read-full-story-btn {
+          display: inline-block;
+          margin-top: 26px;
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 0.85rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          color: #ffffff;
+          background: var(--deep-red);
+          border: 1.5px solid var(--deep-red);
+          padding: 12px 30px;
+          border-radius: 30px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .read-full-story-btn:hover { background: var(--navy-deep); border-color: var(--navy-deep); }
         .load-more-btn {
           font-family: 'IBM Plex Mono', monospace;
           font-size: 0.85rem;
@@ -502,6 +506,7 @@ const ChurchAboutPage = () => {
           transition: all 0.2s ease;
         }
         .load-more-btn:hover { background: var(--navy-deep); color: #eaf3f8; }
+        .load-more-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         @media (max-width: 900px) {
           .about-item { flex-direction: column; align-items: center; text-align: center; }
           .about-photo-side { flex: 0 1 100%; width: 100%; max-width: 450px; }
@@ -520,8 +525,6 @@ const ChurchAboutPage = () => {
         <div className="cloud cloud-b" />
         <div className="cloud cloud-c" />
       </div>
-
-    
 
       {/* HERO */}
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
@@ -578,25 +581,26 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* OUR STORY */}
+      {/* OUR STORY (paginated via /church-story?page=&limit=) */}
       <section className="about-section">
         <div className="about-container">
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
             Our Church Story
           </h2>
-          {history.slice(0, visibleStoryCount).map((item, i) => (
-            <div key={i} className="about-item">
 
-              {/* PHOTO SIDE */}
+          {history.map((item) => (
+            <div key={item._id} className="about-item">
+
+              {/* PHOTO SIDE — clicking the photo goes to the detail page */}
               <div className="about-photo-side">
                 {item.photo && (
-                  <div className="about-img-wrapper">
+                  <Link to={`/about/story/${item._id}`} className="about-img-wrapper">
                     <img
                       src={item.photo}
                       alt={item.title}
                       className="about-image"
                     />
-                  </div>
+                  </Link>
                 )}
                 <div className="about-art-accent"></div>
               </div>
@@ -618,14 +622,34 @@ const ChurchAboutPage = () => {
                   <div className="about-tag">{item.range}</div>
                   <div className="about-tag">{item.servedBy}</div>
                 </div>
+
+                {/* Read Full Story button — goes to the detail page */}
+                <Link to={`/about/story/${item._id}`} className="read-full-story-btn">
+                  Read Full Story
+                </Link>
               </div>
             </div>
           ))}
 
-          {visibleStoryCount < history.length && (
+          {history.length === 0 && historyLoading && (
+            <p style={{ textAlign: 'center', color: 'var(--slate)' }}>Loading our story…</p>
+          )}
+
+          {history.length === 0 && !historyLoading && (
+            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+              <p className="display" style={{ fontSize: '1.6rem', fontWeight: 600, color: 'var(--navy-deep)', margin: '0 0 8px 0' }}>
+                No story chapters found yet
+              </p>
+              <p style={{ color: 'var(--slate)', fontSize: '1rem', margin: 0 }}>
+                Check back soon — our history is still being written here.
+              </p>
+            </div>
+          )}
+
+          {historyHasMore && (
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
-              <button className="load-more-btn" onClick={() => setVisibleStoryCount(c => c + 10)}>
-                Load More
+              <button className="load-more-btn" onClick={handleLoadMoreStory} disabled={historyLoading}>
+                {historyLoading ? "Loading…" : "Load More"}
               </button>
             </div>
           )}
@@ -667,7 +691,6 @@ const ChurchAboutPage = () => {
           <div className="wrapper" style={{ maxWidth: '760px' }}>
             <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 44px 0', color: '#ffffff', textAlign: 'center' }}>
               Leadership Team
-
             </h2>
             <div className="thanks-grid">
               {leaders.map((p) => (
