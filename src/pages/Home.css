@@ -611,3 +611,15 @@ img, video { max-width: 100%; height: auto; }
   .photo-arrow { width: 32px; height: 32px; }
   .video-thumb-wrap { width: 68px; height: 48px; }
 }
+
+/* ---------- Hero: image first on tablet/mobile, text first on desktop ---------- */
+@media (max-width: 1024px) {
+  .church-portal > section:first-of-type > .wrapper {
+    flex-direction: column-reverse !important;
+  }
+  .church-portal > section:first-of-type > .wrapper > div {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
