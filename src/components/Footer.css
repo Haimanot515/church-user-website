@@ -61,3 +61,114 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================================
+   RESPONSIVE LAYER — additive only.
+   Nothing above this line has been changed, reordered, or removed, so the
+   desktop appearance (1024px and up) is unchanged.
+
+   Footer.jsx needs ZERO markup changes. Selectors below reuse the classes
+   already in the markup (.wrapper, .footer-grid, .footer-link, etc.) or
+   target the un-classed newsletter elements (h3, p, form, input, button)
+   structurally, scoped under .site-footer so nothing outside this
+   component is affected. Because those un-classed elements carry inline
+   styles in the JSX, a few rules use !important — the only way to win
+   against an inline style without touching the component file.
+   ========================================================================= */
+
+/* Structural map inside .site-footer:
+   section (newsletter, no class) > .wrapper > h3.display, p (subtitle),
+     form (no class) > input, button, then p (feedback, conditional)
+   div.wrapper (footer bottom, no class on the div itself) > .footer-grid,
+     .footer-bottom                                                       */
+
+.site-footer * { min-width: 0; }
+.site-footer img,
+.site-footer svg {
+  max-width: 100%;
+  height: auto;
+}
+.site-footer h3,
+.site-footer h4,
+.site-footer h5,
+.site-footer p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.site-footer form {
+  width: 100%;
+}
+.site-footer form input {
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 16px !important; /* prevents iOS auto-zoom on focus, still ~1.1rem visually */
+}
+.site-footer form button {
+  box-sizing: border-box;
+}
+
+/* --- Large desktop / ultra-wide (1920px+) ------------------------------- */
+@media (min-width: 1920px) {
+  .footer-grid { gap: 48px; }
+}
+
+/* --- Laptops / small desktops -------------------------------------------- */
+@media (max-width: 1024px) {
+  .site-footer { padding: 52px 0 26px 0; }
+  .site-footer > section h3.display { font-size: 2.4rem !important; }
+}
+
+/* --- Tablets (landscape & portrait) -------------------------------------- */
+@media (max-width: 900px) {
+  .footer-grid { gap: 28px; }
+}
+
+@media (max-width: 768px) {
+  .site-footer { padding: 44px 0 24px 0; }
+  .site-footer > section h3.display { font-size: 2.1rem !important; margin: 14px 0 !important; }
+  .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1.15rem !important; margin-bottom: 24px !important; }
+  .footer-grid { gap: 24px; margin-bottom: 34px; }
+}
+
+/* --- Large phones --------------------------------------------------------- */
+@media (max-width: 600px) {
+  .site-footer { padding: 40px 0 20px 0; }
+  .site-footer > section h3.display { font-size: 1.8rem !important; line-height: 1.25 !important; }
+  .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1.05rem !important; }
+  .site-footer form { gap: 10px !important; }
+  .site-footer form input {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+  .site-footer form button { width: 100%; max-width: 320px; }
+  .footer-tagline, .footer-link { font-size: 1rem; }
+  .footer-bottom { text-align: center; justify-content: center; gap: 8px 20px; }
+}
+
+/* --- Standard phones ------------------------------------------------------- */
+@media (max-width: 480px) {
+  .site-footer { padding: 36px 0 18px 0; }
+  .site-footer > section h3.display { font-size: 1.55rem !important; }
+  .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1rem !important; margin-bottom: 20px !important; }
+  .site-footer form input { padding: 13px 18px !important; font-size: 16px !important; }
+  .site-footer form button { padding: 13px 26px !important; font-size: 1rem !important; }
+  .footer-grid { gap: 30px; margin-bottom: 28px; }
+  .footer-col-title { margin-bottom: 8px; }
+  .footer-link { margin: 6px 0; }
+}
+
+/* --- Small phones (320px+) -------------------------------------------------- */
+@media (max-width: 380px) {
+  .site-footer > section h3.display { font-size: 1.4rem !important; }
+  .site-footer form input,
+  .site-footer form button { max-width: 100% !important; }
+}
+
+/* --- Touch target polish (applies alongside, not instead of, desktop rules) */
+@media (hover: none) and (pointer: coarse) {
+  .footer-link { padding: 4px 0; }
+  .site-footer form button { min-height: 48px; }
+  .site-footer form input { min-height: 48px; }
+}

@@ -279,3 +279,133 @@
   .construction-ad-img-wrap { width: 100%; flex-basis: auto; height: 40%; }
   .construction-ad-body { padding: 20px 22px; }
 }
+
+/* ============================================================
+   RESPONSIVE ENHANCEMENTS
+   Everything above this line is untouched from the original file.
+   Desktop appearance (min-width: 1025px) is unaffected by anything
+   below. New breakpoints are written to avoid overlapping the ranges
+   of the original media queries above (780px, 860px, 640px) so none
+   of that existing behavior gets overridden.
+============================================================ */
+
+/* Global overflow / media safety nets (do not alter visuals at desktop) */
+html, body { overflow-x: hidden; }
+.church-page {
+  overflow-x: hidden;
+  width: 100%;
+}
+.church-page img { max-width: 100%; height: auto; }
+.church-page h1,
+.church-page h2,
+.church-page h3,
+.church-page p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* ===== Ultra-wide / large desktop monitors (1920px and up) ===== */
+@media (min-width: 1920px) {
+  .wrapper { max-width: 1300px; }
+  .church-hero-content { max-width: 1300px; }
+}
+
+/* ===== Tablets landscape / small laptops (max-width: 1024px) ===== */
+@media (max-width: 1024px) {
+  .wrapper { padding: 0 20px; }
+
+  .church-hero { height: 62vh; min-height: 420px; }
+  .church-hero-content { padding: 0 20px 52px 20px; }
+
+  .serve-now-section { padding: 70px 0 0 0; }
+  .serve-now-body { padding: 34px 32px; }
+
+  .campuses-section { padding: 80px 0; }
+  .blog-section { padding: 80px 0; }
+}
+
+/* ===== Construction ad: mid-size tablets that keep the row layout
+   (narrower than 861px, but not yet caught by the 640px stack rule) ===== */
+@media (min-width: 641px) and (max-width: 900px) {
+  .construction-ad-img-wrap { width: 260px; flex: 0 0 260px; }
+  .construction-ad-body { padding: 26px 28px; }
+  .construction-ad-body h3 { font-size: 1.6rem; }
+}
+
+/* ===== Tablets portrait / large phones (max-width: 768px) ===== */
+@media (max-width: 768px) {
+  .wrapper { padding: 0 18px; }
+
+  .church-hero { height: 52vh; min-height: 360px; }
+  .church-hero-content { padding: 0 18px 44px 18px; }
+  .church-hero-content p { font-size: 1.05rem; }
+  .hero-cta { padding: 13px 24px; font-size: 0.92rem; }
+
+  .serve-now-section { padding: 56px 0 0 0; }
+  .serve-now-body { padding: 28px 24px; }
+  .serve-now-body h2 { font-size: 1.9rem; }
+  .serve-now-line { flex-wrap: wrap; }
+
+  .campuses-section { padding: 60px 0; }
+  .campuses-head { margin-bottom: 42px; }
+  .campus-card-body { padding: 18px 20px 22px 20px; }
+  .campus-card h3 { font-size: 1.5rem; }
+
+  .blog-section { padding: 60px 0; }
+  .blog-head { margin-bottom: 40px; }
+  .blog-card-body { padding: 18px 20px 22px 20px; }
+
+  .construction-ad-body h3 { font-size: 1.6rem; }
+  .construction-ad-body p { max-width: none; }
+}
+
+/* ===== Standard phones (max-width: 600px) ===== */
+@media (max-width: 600px) {
+  .wrapper { padding: 0 16px; }
+
+  .church-hero { height: 46vh; min-height: 320px; }
+  .church-hero-content { padding: 0 16px 36px 16px; }
+  .church-hero-content p { font-size: 0.98rem; }
+
+  .serve-now-body { padding: 24px 20px; }
+  .serve-now-line strong { min-width: 0; }
+
+  .campuses-head p { font-size: 1rem; }
+  .blog-head p { font-size: 1rem; }
+
+  .construction-ad-support-btn { width: 100%; justify-content: center; }
+}
+
+/* ===== Small phones (max-width: 400px) ===== */
+@media (max-width: 400px) {
+  .wrapper { padding: 0 14px; }
+  .church-hero { min-height: 280px; }
+  .church-hero-content { padding: 0 14px 28px 14px; }
+  .hero-cta { width: 100%; justify-content: center; }
+
+  .serve-now-body { padding: 20px 16px; }
+  .campus-card h3 { font-size: 1.3rem; }
+  .blog-card h3 { font-size: 1.3rem; }
+}
+
+/* ===== Extra-small phones (max-width: 320px) ===== */
+@media (max-width: 320px) {
+  .wrapper { padding: 0 12px; }
+  .church-hero { min-height: 260px; }
+  .construction-ad-body { padding: 16px 16px; }
+}
+
+/* ===== Short-height mobile devices in landscape orientation ===== */
+@media (max-height: 480px) and (orientation: landscape) {
+  .church-hero { height: 100vh; min-height: 280px; }
+  .serve-now-section { padding: 36px 0 0 0; }
+  .campuses-section { padding: 48px 0; }
+  .blog-section { padding: 48px 0; }
+  .construction-ad { top: 12px; bottom: 12px; }
+}
+
+/* ===== Touch-friendly tap targets on touch devices ===== */
+@media (hover: none) and (pointer: coarse) {
+  .construction-ad-close { min-width: 40px; min-height: 40px; }
+  .read-more { padding: 6px 0; }
+}

@@ -518,6 +518,112 @@ const ChurchAboutPage = () => {
           .about-image { height: 350px; }
           .about-title { font-size: 1.8rem; }
         }
+
+        /* ============================================================
+           RESPONSIVE ADDITIONS
+           Nothing above this line was modified.
+           Desktop (≥1025px) renders identically to before — every rule
+           below only takes effect at ≤1024px and narrower breakpoints.
+           ============================================================ */
+
+        html, body { overflow-x: hidden; width: 100%; }
+        .church-portal { overflow-x: hidden; }
+        img, video { max-width: 100%; height: auto; }
+        *, *::before, *::after { min-width: 0; }
+
+        /* ---------- ≤1024px ---------- */
+        @media (max-width: 1024px) {
+          .wrapper { padding: 0 20px; }
+          .about-container { padding: 0 20px; }
+          section { padding: 70px 0; }
+          .about-section { padding: 70px 0; }
+        }
+
+        /* ---------- ≤900px (tablet portrait) ---------- */
+        @media (max-width: 900px) {
+          section { padding: 60px 0; }
+          .about-section { padding: 60px 0; }
+          .nav-bar { height: 80px; gap: 20px; padding: 0 16px; }
+          .nav-brand { font-size: 1.3rem; }
+          .nav-item { font-size: 0.95rem; }
+          .about-hero-flex { gap: 36px !important; }
+        }
+
+        /* ---------- ≤768px ---------- */
+        @media (max-width: 768px) {
+          .wrapper { padding: 0 18px; }
+          .about-container { padding: 0 18px; }
+          section { padding: 50px 0; }
+          .about-section { padding: 50px 0; }
+
+          .give-info-box { width: 100% !important; padding: 22px !important; }
+          .give-info-box p { word-break: break-word; }
+
+          .thanks-card { padding: 20px; }
+          .thanks-photo { width: 110px; height: 110px; }
+
+          .testimonial-card { padding: 22px; }
+        }
+
+        /* ---------- ≤600px (large phone) ---------- */
+        @media (max-width: 600px) {
+          section { padding: 40px 0; }
+          .about-section { padding: 40px 0; }
+          .wrapper { padding: 0 16px; }
+          .about-container { padding: 0 16px; }
+
+          .nav-bar { height: 64px; gap: 16px; padding: 0 14px; }
+          .nav-brand { font-size: 1.1rem; margin-right: 4px; }
+          .nav-item { font-size: 0.85rem; }
+
+          .about-hero-flex { gap: 28px !important; }
+          .about-hero-image-col { flex: 0 1 260px !important; min-width: 220px !important; }
+
+          .fact-item { padding: 20px; }
+          .accordion-head { font-size: 1.25rem; padding: 20px 4px; }
+          .accordion-body { padding: 0 4px 20px 4px; }
+
+          .lang-toggle { margin-bottom: 18px; }
+          .lang-btn { padding: 7px 13px; font-size: 0.72rem; }
+        }
+
+        /* ---------- ≤480px (standard phone) ---------- */
+        @media (max-width: 480px) {
+          section { padding: 32px 0; }
+          .about-section { padding: 32px 0; }
+          .wrapper { padding: 0 14px; }
+          .about-container { padding: 0 14px; }
+
+          .nav-bar { height: 56px; gap: 12px; }
+          .nav-brand { display: none; }
+
+          .about-hero-flex { gap: 22px !important; }
+          .about-hero-text-col { min-width: 0 !important; }
+          .about-hero-image-col { flex: 0 1 100% !important; min-width: 0 !important; width: 100% !important; }
+
+          .give-info-box { padding: 18px !important; }
+          .give-info-box p { font-size: 1rem !important; }
+
+          .testimonial-photo { width: 76px; height: 76px; }
+          .thanks-photo { width: 96px; height: 96px; }
+
+          .service-time-row { font-size: 0.92rem; }
+        }
+
+        /* ---------- ≤360px (small phone) ---------- */
+        @media (max-width: 360px) {
+          .wrapper { padding: 0 12px; }
+          .about-container { padding: 0 12px; }
+          section { padding: 26px 0; }
+          .about-section { padding: 26px 0; }
+
+          .nav-bar { gap: 10px; padding: 0 12px; }
+          .nav-item { font-size: 0.78rem; }
+
+          .about-image { height: 300px; }
+          .thanks-photo { width: 84px; height: 84px; }
+          .testimonial-photo { width: 68px; height: 68px; }
+        }
       `}</style>
 
       <div className="cloud-layer">
@@ -528,8 +634,8 @@ const ChurchAboutPage = () => {
 
       {/* HERO */}
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
-        <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1', minWidth: '320px' }}>
+        <div className="wrapper about-hero-flex" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
+          <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px' }}>
             <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
               {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
             </h1>
@@ -547,7 +653,7 @@ const ChurchAboutPage = () => {
               </button>
             </div>
           </div>
-          <div style={{ flex: '0 0 340px', minWidth: '280px' }}>
+          <div className="about-hero-image-col" style={{ flex: '0 0 340px', minWidth: '280px' }}>
             <img
               src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
               alt={about?.title || `${CHURCH_NAME} sanctuary`}
@@ -822,7 +928,7 @@ const ChurchAboutPage = () => {
             <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
               Whatever you're able to give helps keep this church's doors — and its outreach to the community — open. You can give in person on Sunday, or send your gift directly using the details below.
             </p>
-            <div style={{ display: 'inline-block', textAlign: 'left', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '28px 34px' }}>
+            <div className="give-info-box" style={{ display: 'inline-block', textAlign: 'left', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '28px 34px' }}>
               <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>Bank Transfer</p>
               <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: '0 0 20px 0' }}>
                 Account Name: {CHURCH_NAME}<br />

@@ -278,3 +278,127 @@
 .close-btn-style:hover {
   color: #111;
 }
+
+/* =========================================================================
+   RESPONSIVE LAYER — additive only.
+   Nothing above this line has been changed, reordered, or removed, so
+   desktop appearance (1024px and up) is unchanged. Navbar.jsx needs ZERO
+   markup changes: every element already carries a class name, so every
+   rule below targets an existing selector — no structural hacks or
+   !important needed anywhere in this file.
+   ========================================================================= */
+
+.navbar-logo svg { flex-shrink: 0; }
+
+/* --- Large desktop / ultra-wide (1920px+) ------------------------------- */
+@media (min-width: 1920px) {
+  .navbar { padding: 18px 60px; }
+  .nav-links-primary { margin-left: 100px; }
+  .nav-links-secondary { margin-right: 100px; }
+}
+
+/* --- Laptops / small desktops -------------------------------------------- */
+@media (max-width: 1024px) {
+  .nav-links-primary { margin-left: 30px; }
+  .nav-links-secondary { margin-right: 30px; }
+  .nav-content a { padding: 16px 22px; font-size: 17px; }
+}
+
+/* --- Tablets (landscape & portrait) -------------------------------------- */
+@media (max-width: 800px) {
+  .navbar { padding: 14px 20px; }
+  .nav-links-primary { margin-left: 16px; }
+  .nav-links-secondary { margin-right: 16px; }
+  .nav-content a { padding: 15px 18px; font-size: 16px; }
+}
+
+/* Below this point the three link groups no longer have room to sit
+   side by side without cramping or overlapping, so they stack. */
+@media (max-width: 700px) {
+  .nav-links-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .nav-links-primary,
+  .nav-links-middle,
+  .nav-links-secondary {
+    flex: 1 1 auto;
+    margin-left: 0;
+    margin-right: 0;
+    align-items: stretch;
+    text-align: left;
+  }
+  .nav-links-middle {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .nav-content a {
+    text-align: left;
+    padding: 16px 20px;
+  }
+  .nav-content a:hover {
+    padding-left: 28px;
+  }
+  .nav-links-secondary a:hover {
+    padding-left: 28px;
+    padding-right: 20px;
+  }
+}
+
+/* --- Large phones --------------------------------------------------------- */
+@media (max-width: 600px) {
+  .navbar { padding: 12px 16px; }
+  .navbar-logo svg { width: 40px; height: 40px; }
+  .menu-toggle { font-size: 28px; }
+  .nav-content a { font-size: 16px; padding: 15px 18px; }
+  .nav-auth {
+    padding: 18px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .nav-auth button,
+  .nav-auth a {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* --- Standard phones ------------------------------------------------------- */
+@media (max-width: 480px) {
+  .navbar { padding: 10px 14px; }
+  .navbar-logo svg { width: 34px; height: 34px; }
+  .menu-toggle { font-size: 26px; }
+  .nav-content a { font-size: 15px; padding: 14px 16px; }
+  .nav-auth { padding: 16px; gap: 10px; }
+  .nav-auth button,
+  .nav-auth a { padding: 10px 16px; font-size: 0.95rem; }
+  .overlay { padding: 14px; }
+  .auth-card { padding: 24px 18px; }
+  .close-btn-style { top: 10px; right: 10px; }
+}
+
+/* --- Small phones (320px+) -------------------------------------------------- */
+@media (max-width: 380px) {
+  .navbar { padding: 10px 12px; }
+  .navbar-logo svg { width: 30px; height: 30px; }
+  .nav-content a { padding: 13px 14px; }
+  .nav-auth { flex-direction: column; align-items: stretch; }
+  .nav-auth button,
+  .nav-auth a { width: 100%; }
+  .auth-card { padding: 20px 14px; }
+}
+
+/* --- Touch target polish (applies alongside, not instead of, desktop rules) */
+@media (hover: none) and (pointer: coarse) {
+  .menu-toggle { padding: 8px; }
+  .nav-content a { min-height: 44px; display: flex; align-items: center; }
+  .nav-auth button,
+  .nav-auth a { min-height: 44px; }
+  .close-btn-style {
+    width: 32px;
+    height: 32px;
+    top: 6px;
+    right: 6px;
+    font-size: 1.1rem;
+  }
+}

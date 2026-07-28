@@ -159,8 +159,8 @@ const Home = () => {
       try {
         setTestimonialsLoading(true);
         setTestimonialsError("");
-        const res = await API.get("/testimonials");
-        const testimonialsData = Array.isArray(res.data) ? res.data : res.data.testimonials;
+        const res = await API.get("/church-persons", { params: { category: "testimony" } });
+        const testimonialsData = Array.isArray(res.data) ? res.data : [];
         setTestimonials(testimonialsData || []);
       } catch (err) {
         console.log(err);
@@ -412,7 +412,7 @@ const Home = () => {
           <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#d32f2f', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>
             Sponsored Content
           </span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
+          <div className="sponsored-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
             <img
               src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
               alt={promotion?.title || "Sponsored content"}
@@ -543,7 +543,7 @@ const Home = () => {
           ) : (
             sermons.map((item, index, arr) => (
               <React.Fragment key={item._id}>
-                <Link to={`/projects/${item._id}`} style={{
+                <Link to={`/projects/${item._id}`} className="sermon-item-grid" style={{
                   padding: '50px 0',
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
@@ -676,7 +676,7 @@ const Home = () => {
           ) : recommended.length === 0 ? (
             <p style={{ textAlign: 'center' }}>No recommended posts found.</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
+            <div className="recommended-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
               {recommended.map((post) => (
                 <Link key={post._id} to={`/projects/${post._id}`} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none', display: 'block', textDecoration: 'none', color: 'inherit' }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
@@ -787,18 +787,18 @@ const Home = () => {
           ) : testimonials.length === 0 ? (
             <p style={{ textAlign: 'center' }}>No testimonies found.</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
+            <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
               {testimonials.map((t, i) => (
                 <div key={t._id || i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
                   <img
-                    src={t.avatar}
+                    src={(t.photos && t.photos[0]) || `https://ui-avatars.com/api/?name=${t.name}&background=0070f3&color=fff`}
                     alt={t.name}
                     style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--gold)', margin: '0 auto 18px auto', display: 'block' }}
                   />
                   <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{t.name}</p>
-                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.title}</p>
+                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.role || t.title}</p>
                   <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
-                    "{truncateWords(t.message, 50)}"
+                    "{truncateWords(t.message || t.description, 50)}"
                   </p>
                 </div>
               ))}
