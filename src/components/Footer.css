@@ -122,14 +122,14 @@
 
 /* --- Tablets (landscape & portrait) -------------------------------------- */
 @media (max-width: 900px) {
-  .footer-grid { gap: 28px; }
+  .footer-grid { gap: 28px; text-align: center; }
 }
 
 @media (max-width: 768px) {
   .site-footer { padding: 44px 0 24px 0; }
   .site-footer > section h3.display { font-size: 2.1rem !important; margin: 14px 0 !important; }
   .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1.15rem !important; margin-bottom: 24px !important; }
-  .footer-grid { gap: 24px; margin-bottom: 34px; }
+  .footer-grid { gap: 24px; margin-bottom: 34px; justify-items: center; }
 }
 
 /* --- Large phones --------------------------------------------------------- */
@@ -143,6 +143,7 @@
     max-width: 320px !important;
   }
   .site-footer form button { width: 100%; max-width: 320px; }
+  .footer-grid { justify-items: center; }
   .footer-tagline, .footer-link { font-size: 1rem; }
   .footer-bottom { text-align: center; justify-content: center; gap: 8px 20px; }
 }
@@ -154,7 +155,7 @@
   .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1rem !important; margin-bottom: 20px !important; }
   .site-footer form input { padding: 13px 18px !important; font-size: 16px !important; }
   .site-footer form button { padding: 13px 26px !important; font-size: 1rem !important; }
-  .footer-grid { gap: 30px; margin-bottom: 28px; }
+  .footer-grid { gap: 30px; margin-bottom: 28px; justify-items: center; }
   .footer-col-title { margin-bottom: 8px; }
   .footer-link { margin: 6px 0; }
 }
