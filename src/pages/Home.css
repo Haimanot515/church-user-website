@@ -531,10 +531,18 @@ img, video { max-width: 100%; height: auto; }
     grid-template-columns: 1fr !important;
     gap: 18px !important;
     padding: 32px 0 !important;
+    text-align: center !important;
+  }
+  .sermon-item-grid img {
+    margin: 0 auto !important;
   }
   .sponsored-grid {
     grid-template-columns: 1fr !important;
     gap: 18px !important;
+    text-align: center !important;
+  }
+  .sponsored-grid img {
+    margin: 0 auto !important;
   }
   .sponsored-block { padding: 24px !important; min-height: auto !important; }
   .sponsored-tag-wrap { top: 30px; }
