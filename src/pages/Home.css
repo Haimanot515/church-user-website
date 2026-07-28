@@ -623,3 +623,24 @@ img, video { max-width: 100%; height: auto; }
     min-width: 0 !important;
   }
 }
+
+/* ---------- Hero: image first on tablet/mobile, text first on desktop ---------- */
+@media (max-width: 1024px) {
+  .church-portal > section:first-of-type > .wrapper {
+    flex-direction: column-reverse !important;
+  }
+  .church-portal > section:first-of-type > .wrapper > div {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  /* text block: match the image's full width, no inline max-width cap */
+  .church-portal > section:first-of-type > .wrapper > div p {
+    max-width: none !important;
+  }
+}
+/* Body text: justified, flush on both edges, all sections, all devices */
+.church-portal section p {
+  text-align: justify;
+  text-align-last: left;
+}
