@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api/api.jsx";
 
 const CHURCH_NAME = "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine";
 
 const ChurchAboutPage = () => {
+  const navigate = useNavigate();
   const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Us", "Contact"];
 
   const [activeChapter, setActiveChapter] = useState(0);
@@ -636,29 +637,60 @@ const ChurchAboutPage = () => {
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper about-hero-flex" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px' }}>
-            <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-              {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
-            </h1>
-            <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-              {about?.description || (activeLang === 'am'
-                ? `ላለፉት አምስት አስርት ዓመታት ገደማ፣ ${CHURCH_NAME} እምነት መልስ ከማግኘት ይልቅ መገኘት እንደሆነ የተማረ ማህበረሰብ ነው።`
-                : `For nearly five decades, ${CHURCH_NAME} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.`)}
-            </p>
+            {about?._id ? (
+              <Link to={`/about/${about._id}`} style={{ display: 'block', cursor: 'pointer' }}>
+                <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+                  {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
+                </h1>
+                <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                  {about?.description || (activeLang === 'am'
+                    ? `ላለፉት አምስት አስርት ዓመታት ገደማ፣ ${CHURCH_NAME} እምነት መልስ ከማግኘት ይልቅ መገኘት እንደሆነ የተማረ ማህበረሰብ ነው።`
+                    : `For nearly five decades, ${CHURCH_NAME} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.`)}
+                </p>
+              </Link>
+            ) : (
+              <>
+                <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+                  {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
+                </h1>
+                <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                  {about?.description || (activeLang === 'am'
+                    ? `ላለፉት አምስት አስርት ዓመታት ገደማ፣ ${CHURCH_NAME} እምነት መልስ ከማግኘት ይልቅ መገኘት እንደሆነ የተማረ ማህበረሰብ ነው።`
+                    : `For nearly five decades, ${CHURCH_NAME} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.`)}
+                </p>
+              </>
+            )}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+              <button
+                onClick={() => document.getElementById('our-church-story')?.scrollIntoView({ behavior: 'smooth' })}
+                style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
+              >
                 Read Our Story Below
               </button>
-              <button style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+              <button
+                onClick={() => navigate('/contact')}
+                style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
+              >
                 Say Hello
               </button>
             </div>
           </div>
           <div className="about-hero-image-col" style={{ flex: '0 0 340px', minWidth: '280px' }}>
-            <img
-              src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
-              alt={about?.title || `${CHURCH_NAME} sanctuary`}
-              style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
-            />
+            {about?._id ? (
+              <Link to={`/about/${about._id}`}>
+                <img
+                  src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
+                  alt={about?.title || `${CHURCH_NAME} sanctuary`}
+                  style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', cursor: 'pointer' }}
+                />
+              </Link>
+            ) : (
+              <img
+                src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
+                alt={about?.title || `${CHURCH_NAME} sanctuary`}
+                style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
+              />
+            )}
             {about?.churchLeader && (
               <div style={{ textAlign: 'center', marginTop: '16px' }}>
                 <p className="display" style={{ fontSize: '1.3rem', fontWeight: 700, color: '#ffffff', margin: '0 0 2px 0' }}>
@@ -688,7 +720,7 @@ const ChurchAboutPage = () => {
       </section>
 
       {/* OUR STORY (paginated via /church-story?page=&limit=) */}
-      <section className="about-section">
+      <section className="about-section" id="our-church-story">
         <div className="about-container">
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
             Our Church Story

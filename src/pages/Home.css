@@ -67,8 +67,18 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.12);
-  overflow: hidden; white-space: nowrap;
+  /* FIX #2: was "overflow: hidden; white-space: nowrap;" — with 15+
+     category items in one non-wrapping row, that clipped everything
+     past the viewport edge instead of letting the user reach it.
+     Swapped to a horizontally scrollable row so every category stays
+     reachable on narrow screens; nothing else about the bar changed. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
 }
+.nav-bar::-webkit-scrollbar { display: none; }
 .nav-brand {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 700; font-size: 1.6rem;
@@ -479,21 +489,22 @@ section { padding: 90px 0; position: relative; z-index: 1; }
 
 /* ============================================================
    RESPONSIVE ADDITIONS
-   Nothing above this line was modified.
-   Desktop (≥1025px) renders identically to before — every rule
-   below only takes effect at ≤1024px and narrower breakpoints.
+   Nothing above this line was modified except the two fixes
+   marked inline above (.nav-bar overflow/scroll behavior) and
+   below (html overflow-x).
 
-   FIX: ".church-portal { overflow-x: hidden; }" was removed from
-   the safety net below. That rule made .church-portal (the direct
-   parent of .nav-bar) into a scroll container, which forces the
-   browser to compute "position: sticky" relative to .church-portal
-   instead of the actual page/viewport — that's what broke the
-   sticky-at-top nav. html/body already block horizontal overflow
-   at the root, so this line was redundant as well as harmful.
+   FIX #1 (sticky nav): "html { overflow-x: hidden; }" implicitly
+   sets overflow-y to "auto" per the CSS Overflow spec whenever
+   only one axis is set to a non-visible value. That silently turns
+   <html> into a scroll container, and any position:sticky element
+   nested inside it (like .nav-bar under .church-portal) loses its
+   stickiness relative to the real viewport. Switched to
+   "overflow-x: clip" which blocks horizontal scroll without
+   triggering that auto-conversion, so .nav-bar can stick again.
    ============================================================ */
 
 /* Global safety net: never allow horizontal scroll / overflow */
-html, body { overflow-x: hidden; width: 100%; }
+html { overflow-x: clip; width: 100%; }
 img, video { max-width: 100%; height: auto; }
 *, *::before, *::after { min-width: 0; }
 

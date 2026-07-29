@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import "./Blog.css";
+import "./Detail.css";
 
 const RELATED_LIMIT = 3;
 
@@ -152,6 +153,11 @@ const Detail = () => {
   if (loading) {
     return (
       <div className="church-portal">
+        <Link to="/projects" aria-label="Go back" className="detail-back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Link>
         <section className="hero-blog">
           <div className="wrapper">
             <p style={{ textAlign: "center" }}>Loading post...</p>
@@ -164,6 +170,11 @@ const Detail = () => {
   if (error || !post) {
     return (
       <div className="church-portal">
+        <Link to="/projects" aria-label="Go back" className="detail-back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Link>
         <section className="hero-blog">
           <div className="wrapper" style={{ textAlign: "center" }}>
             <p style={{ color: "red" }}>{error || "Post not found."}</p>
@@ -183,32 +194,13 @@ const Detail = () => {
         <div className="cloud cloud-b" />
       </div>
 
-      {/* BACK */}
-      <div style={{ background: "#ffffff", borderBottom: "1px solid #eee" }}>
-        <div className="wrapper" style={{ maxWidth: "820px", padding: "18px 20px" }}>
-          <Link
-            to="/projects"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "10px 18px",
-              border: "1px solid #ddd",
-              borderRadius: "30px",
-              color: "var(--navy-deep)",
-              fontWeight: 600,
-              fontSize: "0.95rem",
-              textDecoration: "none",
-              background: "#fff",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Back to all posts
-          </Link>
-        </div>
-      </div>
+      {/* BACK — fixed top-left, transparent/frosted so it blends over the
+          navbar/hero color instead of showing a separate white bar */}
+      <Link to="/projects" aria-label="Go back" className="detail-back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </Link>
 
       {/* HERO */}
       <section className="hero-blog">
@@ -290,7 +282,7 @@ const Detail = () => {
                 </button>
               )}
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
+              <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
                 {related.map((p) => (
                   <Link
                     key={p._id}

@@ -1,0 +1,100 @@
+/* ============================================================
+   ABOUT DETAIL PAGE — responsive sizing
+   Matches the same breakpoint pattern used in PromotionDetail.css /
+   Home.css / Blog.css. Image scales to full width with height
+   following its natural proportions — nothing cropped or stretched.
+   ============================================================ */
+
+.about-detail-back-btn {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #555;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  text-decoration: none;
+}
+.about-detail-back-btn:hover {
+  background: #f5f5f5;
+}
+
+.about-detail-section {
+  padding: 60px 0;
+}
+
+.about-detail-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--gold, #b8860b);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* Image — no fixed width/height box. Scales to full container width,
+   height follows naturally, so the whole image is always shown as-is. */
+.about-detail-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.about-detail-title {
+  font-size: 2.4rem;
+  margin: 0 0 20px 0;
+  font-family: Georgia, serif;
+}
+
+.about-detail-description {
+  font-size: 1.2rem;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+/* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
+@media (max-width: 1024px) {
+  .about-detail-section { padding: 50px 0; }
+  .about-detail-title { font-size: 2.1rem; }
+  .about-detail-description { font-size: 1.1rem; }
+}
+
+/* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
+@media (max-width: 768px) {
+  .about-detail-section { padding: 42px 0; }
+  .about-detail-title { font-size: 1.85rem; margin-bottom: 16px; }
+  .about-detail-description { font-size: 1.05rem; margin-bottom: 24px; }
+  .about-detail-back-btn { top: 18px; left: 18px; width: 36px; height: 36px; }
+}
+
+/* --- Large phones (max-width: 600px) -------------------------------------- */
+@media (max-width: 600px) {
+  .about-detail-section { padding: 34px 0; }
+  .about-detail-title { font-size: 1.6rem; }
+  .about-detail-description { font-size: 1rem; line-height: 1.6; }
+}
+
+/* --- Standard phones (max-width: 480px) ------------------------------------ */
+@media (max-width: 480px) {
+  .about-detail-section { padding: 26px 0; }
+  .about-detail-title { font-size: 1.4rem; }
+  .about-detail-description { font-size: 0.95rem; }
+  .about-detail-back-btn { top: 14px; left: 14px; width: 32px; height: 32px; }
+}
+
+/* --- Small phones (max-width: 380px) ---------------------------------------- */
+@media (max-width: 380px) {
+  .about-detail-title { font-size: 1.25rem; }
+  .about-detail-description { font-size: 0.9rem; }
+}

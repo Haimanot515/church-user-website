@@ -1,0 +1,159 @@
+/* ============================================================
+   PROMOTION DETAIL PAGE — responsive sizing
+   The original file used fixed px/rem values everywhere and a
+   grid hard-coded to 3 columns, so nothing adapted below desktop
+   width. This file scales headings, spacing, and the "More
+   Promotions" grid down across tablet and phone breakpoints,
+   matching the same breakpoint pattern used in Home.css / Blog.css.
+   ============================================================ */
+
+.promo-hero-section {
+  padding: 60px 0;
+}
+
+.promo-title {
+  font-size: 2.4rem;
+  margin: 0 0 20px 0;
+  font-family: Georgia, serif;
+}
+
+.promo-description {
+  font-size: 1.2rem;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+.promo-visit-btn {
+  background-color: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 14px 34px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.promo-visit-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* Main featured image — no fixed aspect-ratio box. The image scales
+   to the full width of its container and height follows naturally
+   from its own proportions, so the whole image is always shown
+   exactly as it is, with nothing cropped, stretched, or letterboxed. */
+.promo-hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  clip-path: inset(0 0 70px 0);
+}
+
+/* "More Promotions" thumbnails — same principle: no cropping, the
+   full image is always shown at its own natural proportions */
+.promo-more-thumb {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.promo-more-section {
+  padding: 20px 0 70px 0;
+  background: #f7f7f7;
+}
+
+.promo-more-heading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  font-family: Georgia, serif;
+}
+
+.promo-more-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.promo-more-card {
+  cursor: pointer;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+.promo-more-card:hover {
+  transform: translateY(-4px);
+}
+
+.promo-more-card-body {
+  padding: 16px;
+}
+
+.promo-more-card-title {
+  font-size: 1.15rem;
+  margin: 8px 0 6px 0;
+  font-family: Georgia, serif;
+}
+
+.promo-more-card-desc {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+}
+
+/* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
+@media (max-width: 1024px) {
+  .promo-hero-section { padding: 50px 0; }
+  .promo-title { font-size: 2.1rem; }
+  .promo-description { font-size: 1.1rem; }
+}
+
+/* --- Tablets (max-width: 900px) ------------------------------------------ */
+@media (max-width: 900px) {
+  .promo-more-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
+@media (max-width: 768px) {
+  .promo-hero-section { padding: 42px 0; }
+  .promo-title { font-size: 1.85rem; margin-bottom: 16px; }
+  .promo-description { font-size: 1.05rem; margin-bottom: 24px; }
+  .promo-visit-btn { padding: 12px 28px; font-size: 0.95rem; }
+
+  .promo-more-section { padding: 16px 0 50px 0; }
+  .promo-more-heading { font-size: 1.5rem; margin-bottom: 20px; }
+}
+
+/* --- Large phones (max-width: 600px) -------------------------------------- */
+@media (max-width: 600px) {
+  .promo-hero-section { padding: 34px 0; }
+  .promo-title { font-size: 1.6rem; }
+  .promo-description { font-size: 1rem; line-height: 1.6; }
+
+  .promo-more-grid { grid-template-columns: 1fr; gap: 18px; }
+  .promo-more-card-title { font-size: 1.05rem; }
+  .promo-more-card-desc { font-size: 0.9rem; }
+}
+
+/* --- Standard phones (max-width: 480px) ------------------------------------ */
+@media (max-width: 480px) {
+  .promo-hero-section { padding: 26px 0; }
+  .promo-title { font-size: 1.4rem; }
+  .promo-description { font-size: 0.95rem; }
+  .promo-visit-btn { width: 100%; padding: 13px 0; }
+
+  .promo-more-heading { font-size: 1.3rem; }
+}
+
+/* --- Small phones (max-width: 380px) ---------------------------------------- */
+@media (max-width: 380px) {
+  .promo-title { font-size: 1.25rem; }
+  .promo-description { font-size: 0.9rem; }
+}

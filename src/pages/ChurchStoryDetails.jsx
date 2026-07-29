@@ -5,7 +5,7 @@ import API from "../api/api.jsx";
 const RELATED_LIMIT = 3;
 
 const StoryDetail = () => {
-  const { id } = useParams();
+  const { slug: id } = useParams();
 
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,14 @@ const StoryDetail = () => {
       }
     };
 
-    if (id) fetchPost();
+    if (id) {
+      fetchPost();
+    } else {
+      // No id in the route params — surface this instead of hanging on "Loading..." forever
+      console.error("StoryDetail: no 'id' route param found. Check that the route is defined as '/about/story/:id'.");
+      setError("This story couldn't be loaded (missing id in the URL).");
+      setLoading(false);
+    }
     window.scrollTo(0, 0);
   }, [id]);
 
@@ -122,9 +129,118 @@ const StoryDetail = () => {
     ));
   };
 
+  // === Same fixed top-left back button used on Detail / PromotionDetail / HeroDetail ===
+  const BackButton = () => (
+    <Link to="/about" aria-label="Back to Our Story" className="story-back-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </Link>
+  );
+
+  // === Same responsive breakpoint pattern used in PromotionDetail.css / HeroDetail, inlined here ===
+  const responsiveStyles = `
+    .story-back-btn {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid #ddd;
+      color: var(--navy-deep);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      text-decoration: none;
+    }
+    .story-back-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .story-hero-section {
+      padding-top: 80px;
+    }
+    .story-title {
+      font-size: 2.6rem;
+    }
+    .story-byline {
+      font-size: 1rem;
+    }
+    .story-featured-image {
+      aspect-ratio: 16/9;
+    }
+    .story-body p {
+      font-size: 1.1rem;
+    }
+    .story-related-heading {
+      font-size: 2.2rem;
+    }
+    .story-related-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+    }
+    .story-related-card-title {
+      font-size: 1.3rem;
+    }
+    .story-newsletter-heading {
+      font-size: 1.6rem;
+    }
+
+    /* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
+    @media (max-width: 1024px) {
+      .story-title { font-size: 2.3rem; }
+      .story-body p { font-size: 1.05rem; }
+    }
+
+    /* --- Tablets (max-width: 900px) ------------------------------------------ */
+    @media (max-width: 900px) {
+      .story-related-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
+    @media (max-width: 768px) {
+      .story-hero-section { padding-top: 66px; }
+      .story-title { font-size: 2rem; }
+      .story-byline { font-size: 0.95rem; }
+      .story-body p { font-size: 1rem; }
+      .story-related-heading { font-size: 1.8rem; }
+      .story-back-btn { top: 18px; left: 18px; width: 36px; height: 36px; }
+    }
+
+    /* --- Large phones (max-width: 600px) -------------------------------------- */
+    @media (max-width: 600px) {
+      .story-title { font-size: 1.7rem; }
+      .story-body p { font-size: 0.95rem; line-height: 1.6; }
+      .story-related-grid { grid-template-columns: 1fr; gap: 18px; }
+      .story-related-card-title { font-size: 1.1rem; }
+      .story-newsletter-heading { font-size: 1.35rem; }
+    }
+
+    /* --- Standard phones (max-width: 480px) ------------------------------------ */
+    @media (max-width: 480px) {
+      .story-hero-section { padding-top: 56px; }
+      .story-title { font-size: 1.5rem; }
+      .story-related-heading { font-size: 1.5rem; }
+      .story-back-btn { top: 14px; left: 14px; width: 32px; height: 32px; }
+    }
+
+    /* --- Small phones (max-width: 380px) ---------------------------------------- */
+    @media (max-width: 380px) {
+      .story-title { font-size: 1.3rem; }
+      .story-body p { font-size: 0.9rem; }
+    }
+  `;
+
   if (loading) {
     return (
       <div className="church-portal">
+        <style>{responsiveStyles}</style>
+        <BackButton />
         <section className="hero-blog">
           <div className="wrapper">
             <p style={{ textAlign: "center" }}>Loading chapter...</p>
@@ -137,6 +253,8 @@ const StoryDetail = () => {
   if (error || !post) {
     return (
       <div className="church-portal">
+        <style>{responsiveStyles}</style>
+        <BackButton />
         <section className="hero-blog">
           <div className="wrapper" style={{ textAlign: "center" }}>
             <p style={{ color: "red" }}>{error || "Chapter not found."}</p>
@@ -151,40 +269,16 @@ const StoryDetail = () => {
 
   return (
     <div className="church-portal">
+      <style>{responsiveStyles}</style>
+      <BackButton />
+
       <div className="cloud-layer">
         <div className="cloud cloud-a" />
         <div className="cloud cloud-b" />
       </div>
 
-      {/* BACK */}
-      <div style={{ background: "#ffffff", borderBottom: "1px solid #eee" }}>
-        <div className="wrapper" style={{ maxWidth: "820px", padding: "18px 20px" }}>
-          <Link
-            to="/about"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "10px 18px",
-              border: "1px solid #ddd",
-              borderRadius: "30px",
-              color: "var(--navy-deep)",
-              fontWeight: 600,
-              fontSize: "0.95rem",
-              textDecoration: "none",
-              background: "#fff",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Back to Our Story
-          </Link>
-        </div>
-      </div>
-
       {/* HERO */}
-      <section className="hero-blog">
+      <section className="hero-blog story-hero-section">
         <div className="wrapper" style={{ maxWidth: "820px" }}>
           <div className="post-meta" style={{ marginBottom: "18px" }}>
             <span className="tag">{getRange(post)}</span>
@@ -194,8 +288,8 @@ const StoryDetail = () => {
             <span className="meta-plain">{getReadTime(post)}</span>
           </div>
 
-          <h1 className="display">{post.title}</h1>
-          <p className="byline">By {getLeaderName(post)}</p>
+          <h1 className="display story-title">{post.title}</h1>
+          <p className="byline story-byline">By {getLeaderName(post)}</p>
         </div>
       </section>
 
@@ -206,9 +300,9 @@ const StoryDetail = () => {
             <img
               src={post.photo || post.imageUrl}
               alt={post.title}
+              className="story-featured-image"
               style={{
                 width: "100%",
-                aspectRatio: "16/9",
                 objectFit: "cover",
                 borderRadius: "10px",
                 boxShadow: "0 16px 30px rgba(0,0,0,0.15)",
@@ -219,7 +313,7 @@ const StoryDetail = () => {
       )}
 
       {/* BODY */}
-      <section style={{ background: "#ffffff" }}>
+      <section style={{ background: "#ffffff" }} className="story-body">
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           {renderBody(post)}
         </div>
@@ -246,7 +340,7 @@ const StoryDetail = () => {
       {!relatedLoading && related.length > 0 && (
         <section style={{ background: "#ffffff" }}>
           <div className="wrapper">
-            <h3 className="display" style={{ marginBottom: "34px", fontSize: "2.2rem", textAlign: "center" }}>
+            <h3 className="display story-related-heading" style={{ marginBottom: "34px", textAlign: "center" }}>
               More of Our Story
             </h3>
 
@@ -263,7 +357,7 @@ const StoryDetail = () => {
                 </button>
               )}
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
+              <div className="story-related-grid">
                 {related.map((p) => (
                   <Link
                     key={p._id}
@@ -278,7 +372,7 @@ const StoryDetail = () => {
                     />
                     <div style={{ padding: "16px" }}>
                       <span className="tag">{getRange(p)}</span>
-                      <h4 style={{ fontSize: "1.3rem", margin: "10px 0 0 0" }}>{p.title}</h4>
+                      <h4 className="story-related-card-title" style={{ margin: "10px 0 0 0" }}>{p.title}</h4>
                     </div>
                   </Link>
                 ))}
@@ -303,7 +397,7 @@ const StoryDetail = () => {
       {/* NEWSLETTER */}
       <section className="newsletter-section">
         <div className="wrapper" style={{ maxWidth: "600px" }}>
-          <h3 className="display">Never miss a post — delivered every Monday.</h3>
+          <h3 className="display story-newsletter-heading">Never miss a post — delivered every Monday.</h3>
           <p>One email a week: a new post, a verse, and this week's prayer requests</p>
           <div className="newsletter-form">
             <input type="email" placeholder="you@email.com" />

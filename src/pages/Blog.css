@@ -161,12 +161,27 @@ footer .eyebrow { font-size: 0.78rem; }
    Desktop appearance (min-width: 1025px) is unaffected by anything
    below — these rules only kick in at smaller viewport widths, or
    add safe, non-visual overflow protections.
+
+   FIX APPLIED: "overflow-x: hidden" on html/body and on
+   .church-portal (the direct parent of .nav-bar) was changed to
+   "overflow-x: clip". Setting overflow-x to a non-visible value
+   while overflow-y is left unset causes the browser to silently
+   promote overflow-y to "auto" as well (per the CSS Overflow
+   spec), turning that element into an actual scroll container.
+   Since .nav-bar sits directly inside .church-portal and uses
+   position: sticky, it was trying to stick relative to that new
+   scroll container instead of the real viewport — and because
+   .church-portal itself never scrolls, sticky had nothing to
+   stick against and behaved as if it were static. "clip" blocks
+   horizontal overflow the same way "hidden" did, but does not
+   trigger that promotion, so .nav-bar can stick to the viewport
+   again. No other visual behavior changes.
 ============================================================ */
 
 /* Global overflow / media safety nets (do not alter visuals at desktop) */
-html, body { overflow-x: hidden; }
+html, body { overflow-x: clip; }
 .church-portal {
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 .church-portal img,

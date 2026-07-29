@@ -104,13 +104,6 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
               <Link to="/skill" onClick={closeMenu}>Sermon</Link>
             </div>
 
-            <div className="nav-links-middle">
-              <Link to="/news" onClick={closeMenu}>News</Link>
-              <Link to="/miracles" onClick={closeMenu}>Miracles</Link>
-              <Link to="/mezmure" onClick={closeMenu}>Mezmure</Link>
-              <Link to="/events" onClick={closeMenu}>Events</Link>
-            </div>
-
             <div className="nav-links-secondary">
               <Link to="/testimonials" onClick={closeMenu}>Travel</Link>
               <Link to="/contact" onClick={closeMenu}>Contact</Link>

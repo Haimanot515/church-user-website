@@ -1,0 +1,232 @@
+/* ============================================================
+   DETAIL PAGE — fixed back button
+   Pinned to the top-left corner of the viewport at all times,
+   independent of scroll. Uses a translucent frosted-glass style
+   (semi-transparent white + blur) instead of a solid color block,
+   so it reads correctly whether it's sitting over the fixed navy
+   navbar, a white section, or an image — no background-color
+   mismatch / horizontal white bar at the top of the page.
+
+   Sizing uses explicit breakpoints (matching Home.css / Blog.css /
+   Navbar.css) instead of clamp(), so behavior is predictable and
+   consistent with the rest of the site across every device class.
+   ============================================================ */
+
+.detail-back-btn {
+  position: fixed;
+  top: 96px;
+  left: 28px;
+  z-index: 1001; /* above the fixed .navbar (1000) so it's always clickable */
+
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.35);
+
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.detail-back-btn:hover {
+  background: rgba(255,255,255,0.32);
+  transform: translateY(-2px);
+}
+
+.detail-back-btn svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Large desktop / ultra-wide (1920px+) ------------------------------- */
+@media (min-width: 1920px) {
+  .detail-back-btn {
+    top: 104px;
+    left: 40px;
+    width: 50px;
+    height: 50px;
+  }
+  .detail-back-btn svg { width: 20px; height: 20px; }
+}
+
+/* --- Standard desktop (1025px - 1919px) --------------------------------- */
+@media (min-width: 1025px) and (max-width: 1919px) {
+  .detail-back-btn {
+    top: 96px;
+    left: 28px;
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
+@media (max-width: 1024px) {
+  .detail-back-btn {
+    top: 90px;
+    left: 24px;
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* --- Tablets landscape & portrait (max-width: 900px) --------------------- */
+@media (max-width: 900px) {
+  .detail-back-btn {
+    top: 84px;
+    left: 20px;
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
+@media (max-width: 768px) {
+  .detail-back-btn {
+    top: 78px;
+    left: 18px;
+    width: 40px;
+    height: 40px;
+  }
+  .detail-back-btn svg { width: 17px; height: 17px; }
+}
+
+/* --- Large phones (max-width: 600px) ------------------------------------- */
+@media (max-width: 600px) {
+  .detail-back-btn {
+    top: 68px;
+    left: 16px;
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* --- Standard phones (max-width: 480px) ----------------------------------- */
+@media (max-width: 480px) {
+  .detail-back-btn {
+    top: 58px;
+    left: 14px;
+    width: 36px;
+    height: 36px;
+  }
+  .detail-back-btn svg { width: 15px; height: 15px; }
+}
+
+/* --- Small phones (max-width: 380px) --------------------------------------- */
+@media (max-width: 380px) {
+  .detail-back-btn {
+    top: 52px;
+    left: 12px;
+    width: 34px;
+    height: 34px;
+  }
+  .detail-back-btn svg { width: 14px; height: 14px; }
+}
+
+/* --- Extra-small phones (max-width: 320px) ---------------------------------- */
+@media (max-width: 320px) {
+  .detail-back-btn {
+    top: 48px;
+    left: 10px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* --- Short-height mobile devices in landscape orientation ------------------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .detail-back-btn {
+    top: 14px;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* --- Touch target polish on touch devices (applies alongside above rules) --- */
+@media (hover: none) and (pointer: coarse) {
+  .detail-back-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* ============================================================
+   DETAIL PAGE — center all text
+   Detail.jsx imports Blog.css first, then this file, so these
+   rules override Blog.css's text alignment (e.g. the justified
+   body paragraphs) for the Detail page only — Blog.jsx never
+   imports Detail.css, so the blog list page is unaffected.
+   ============================================================ */
+
+.church-portal .hero-blog .wrapper,
+.church-portal .post-meta,
+.church-portal .byline,
+.church-portal h1.display,
+.church-portal h3.display,
+.church-portal h4 {
+  text-align: center;
+}
+
+/* post-meta is a flex row (tag / dot / date / read-time) — center the
+   row itself instead of just its text so it doesn't hug the left edge */
+.church-portal .post-meta {
+  justify-content: center;
+  text-align-last: center;
+}
+
+/* body paragraphs: justified so full lines run flush edge-to-edge on
+   both sides with even word-spacing. text-align-last is left (not
+   justify) on purpose — stretching a short final line to match the
+   full paragraph width would force oversized, uneven gaps between
+   its few words just to fill the line; leaving it unstretched keeps
+   word-spacing consistent with every other line in the paragraph */
+.church-portal .desc,
+.church-portal section p {
+  text-align: justify;
+  text-align-last: left;
+}
+
+/* related-posts heading and card titles */
+.church-portal .card h4 {
+  text-align: center;
+}
+
+/* newsletter block already centers via inline section styles, but make
+   sure it stays centered consistently with the rest of the page */
+.church-portal .newsletter-section .wrapper {
+  text-align: center;
+}
+
+/* ============================================================
+   RELATED POSTS GRID — responsive column count
+   Detail.jsx sets 3 columns via an inline style (needed as the
+   desktop default), so !important is required here to override
+   it at smaller widths. Below 900px, a long title/description
+   in a 3-up grid gets cramped, so it drops to 2 columns, then to
+   1 full-width column per post on phones for proper readability.
+   ============================================================ */
+
+/* Tablets — 2 per row once 3-across starts feeling tight */
+@media (max-width: 900px) {
+  .related-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+/* Phones — 1 full-width post per row so titles/descriptions have room */
+@media (max-width: 600px) {
+  .related-grid {
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
+  }
+}
