@@ -137,35 +137,39 @@ const Church = () => {
   return (
     <div className="church-page">
       <section className="church-hero">
-        <img
-          src={
-            primaryChurch?.image ||
-            "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
-          }
-          alt={primaryChurch?.churchName || "A beautiful church filled with light"}
-        />
-        <div className="church-hero-content">
-          <span className="eyebrow">Our Church</span>
-          {primaryLoading ? (
-            <h1 className="display">Loading...</h1>
-          ) : primaryError ? (
-            <p style={{ color: "red" }}>{primaryError}</p>
-          ) : primaryChurch ? (
-            <>
-              <h1 className="display">{primaryChurch.churchName}</h1>
-              <p>{primaryChurch.shortDescription || primaryChurch.description}</p>
-            </>
-          ) : (
-            <>
-              <h1 className="display">A living faith, rooted in ancient soil.</h1>
-              <p>
-                From the highlands of Aksum to the halls we gather in today, our
-                story is part of one of the oldest continuous Christian
-                traditions on earth.
-              </p>
-            </>
-          )}
-          <button className="hero-cta">Read Our Story</button>
+        <div className="wrapper church-hero-inner">
+          <div className="church-hero-text">
+            <span className="eyebrow">Our Church</span>
+            {primaryLoading ? (
+              <h1 className="display">Loading...</h1>
+            ) : primaryError ? (
+              <p style={{ color: "red" }}>{primaryError}</p>
+            ) : primaryChurch ? (
+              <>
+                <h1 className="display">{primaryChurch.churchName}</h1>
+                <p>{primaryChurch.shortDescription || primaryChurch.description}</p>
+              </>
+            ) : (
+              <>
+                <h1 className="display">A living faith, rooted in ancient soil.</h1>
+                <p>
+                  From the highlands of Aksum to the halls we gather in today, our
+                  story is part of one of the oldest continuous Christian
+                  traditions on earth.
+                </p>
+              </>
+            )}
+            <button className="hero-cta">Read Our Story</button>
+          </div>
+          <div className="church-hero-media">
+            <img
+              src={
+                primaryChurch?.image ||
+                "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
+              }
+              alt={primaryChurch?.churchName || "A beautiful church filled with light"}
+            />
+          </div>
         </div>
       </section>
 
@@ -225,22 +229,18 @@ const Church = () => {
             <div className="serve-now-card">
               <div className="serve-now-img-wrap">
                 <img
-                  src={currentChurch.church?.image || ""}
-                  alt={currentChurch.church?.churchName || ""}
+                  src={
+                    currentChurch.image ||
+                    currentChurch.user?.image ||
+                    currentChurch.church?.image ||
+                    ""
+                  }
+                  alt={currentChurch.user?.name || "Leader"}
                 />
                 <span className="serve-now-badge">Where I Serve Now</span>
               </div>
               <div className="serve-now-body">
-                <div className="serve-now-leader">
-                  {currentChurch.image && (
-                    <img
-                      className="serve-now-leader-photo"
-                      src={currentChurch.image}
-                      alt={currentChurch.user?.name || "Leader"}
-                    />
-                  )}
-                  <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
-                </div>
+                <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
                 <h2 className="display">{currentChurch.church?.churchName}</h2>
                 <div className="serve-now-since">
                   {currentChurch.servingSince &&
