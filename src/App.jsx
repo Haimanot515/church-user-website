@@ -19,6 +19,8 @@ import PromotionDetail from "./pages/PromotionDetail";
 import AboutDetail from "./pages/AboutDetail";
 import HeroDetail from "./pages/HeroDetail";
 import StoryDetail from "./pages/ChurchStoryDetails";
+import MediaDetail from "./pages/MediaDetail";
+import ChurchDetail from "./pages/ChurchDetail";
 
 
 import "./styles.css";
@@ -53,6 +55,8 @@ function App() {
         <Route path="/about/:id" element={<AboutDetail />} />
         <Route path="/homeheros/:id" element={<HeroDetail />} />
         <Route path="/about/story/:slug" element={<StoryDetail />} />
+        <Route path="/media/:id" element={<MediaDetail />} />
+        <Route path="/churches/:id" element={<ChurchDetail />} />
 
         {/* 404 */}
         <Route path="*" element={<h2>404 - Page Not Found</h2>} />

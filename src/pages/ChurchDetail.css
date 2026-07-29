@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ============================================================
+   CHURCH DETAIL PAGE
+   Matches the design system in Church.css: navy/gold/cream palette,
+   Cormorant Garamond display font, IBM Plex Mono eyebrow/tags.
+   Same breakpoint pattern used across the other detail pages.
+   ============================================================ */
+
+.church-detail-page {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--cream);
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.church-detail-back-btn {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(15,36,56,0.12);
+  color: var(--navy);
+  box-shadow: 0 6px 16px rgba(15,36,56,0.15);
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.church-detail-back-btn:hover {
+  background: var(--gold);
+  color: var(--navy-deep);
+}
+
+/* ---- Hero image, same treatment as .church-hero on the list page ---- */
+.church-detail-hero {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 420px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+.church-detail-hero img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.church-detail-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(15,36,56,0.10) 0%, rgba(15,36,56,0.30) 50%, rgba(15,36,56,0.90) 100%);
+}
+.church-detail-hero-content {
+  position: relative; z-index: 2;
+  width: 100%;
+  padding: 0 24px 56px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.church-detail-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 0.1em;
+  text-transform: uppercase; font-weight: 600;
+  background: var(--gold); color: var(--navy-deep);
+  padding: 6px 12px; border-radius: 20px;
+  margin-bottom: 14px;
+}
+.church-detail-hero-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5.2vw, 3.8rem);
+  font-weight: 700; line-height: 1.1;
+  color: #f3f6f8; margin: 0 0 12px 0;
+  max-width: 760px;
+}
+
+/* ---- Body ---- */
+.church-detail-section {
+  padding: 60px 0 100px 0;
+}
+.wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.church-detail-body {
+  max-width: 760px;
+}
+.church-detail-description {
+  font-size: 1.15rem;
+  color: var(--slate);
+  line-height: 1.75;
+  margin: 0 0 34px 0;
+}
+
+.church-detail-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 34px;
+  padding: 26px 28px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(15,36,56,0.08);
+}
+.church-detail-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.98rem;
+  color: var(--slate);
+}
+.church-detail-line strong {
+  color: var(--navy);
+  font-weight: 700;
+  min-width: 90px;
+  display: inline-block;
+}
+
+.church-detail-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--navy-deep); color: #f3f6f8; border: none;
+  padding: 14px 28px; font-weight: 700; font-size: 0.95rem;
+  border-radius: 4px; cursor: pointer; letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+/* --- Tablets landscape / small laptops (max-width: 1024px) ----------------------- */
+@media (max-width: 1024px) {
+  .wrapper { padding: 0 20px; }
+  .church-detail-hero { height: 50vh; min-height: 360px; }
+  .church-detail-hero-content { padding: 0 20px 44px 20px; }
+  .church-detail-section { padding: 50px 0 80px 0; }
+}
+
+/* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
+@media (max-width: 768px) {
+  .wrapper { padding: 0 18px; }
+  .church-detail-back-btn { top: 18px; left: 18px; width: 36px; height: 36px; }
+  .church-detail-hero { height: 42vh; min-height: 300px; }
+  .church-detail-hero-content { padding: 0 18px 36px 18px; }
+  .church-detail-section { padding: 42px 0 60px 0; }
+  .church-detail-description { font-size: 1.05rem; }
+  .church-detail-details { padding: 20px 22px; }
+}
+
+/* --- Large phones (max-width: 600px) -------------------------------------- */
+@media (max-width: 600px) {
+  .wrapper { padding: 0 16px; }
+  .church-detail-hero { height: 36vh; min-height: 260px; }
+  .church-detail-hero-content { padding: 0 16px 28px 16px; }
+  .church-detail-section { padding: 34px 0 50px 0; }
+  .church-detail-line { flex-wrap: wrap; }
+  .church-detail-line strong { min-width: 0; }
+}
+
+/* --- Standard phones (max-width: 480px) ------------------------------------ */
+@media (max-width: 480px) {
+  .church-detail-back-btn { top: 14px; left: 14px; width: 32px; height: 32px; }
+  .church-detail-cta { width: 100%; justify-content: center; }
+}
+
+/* --- Small phones (max-width: 380px) ---------------------------------------- */
+@media (max-width: 380px) {
+  .church-detail-hero-content h1 { font-size: 1.7rem; }
+  .church-detail-tag { font-size: 0.62rem; padding: 5px 10px; }
+  .church-detail-description { font-size: 1rem; }
+  .church-detail-details { padding: 18px 18px; }
+  .church-detail-line { font-size: 0.9rem; }
+}

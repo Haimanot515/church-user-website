@@ -269,18 +269,33 @@ const Church = () => {
                     {currentChurch.church?.serviceTime}
                   </div>
                 </div>
-                <button className="serve-now-cta">
-                  Visit This Campus
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M5 12H19M19 12L13 6M19 12L13 18"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
+                {currentChurchId ? (
+                  <a className="serve-now-cta" href={`/churches/${currentChurchId}`}>
+                    Visit This Campus
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M5 12H19M19 12L13 6M19 12L13 18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </a>
+                ) : (
+                  <button className="serve-now-cta" disabled>
+                    Visit This Campus
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M5 12H19M19 12L13 6M19 12L13 18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -320,10 +335,7 @@ const Church = () => {
                     <div className="campus-line">
                       <strong>Service:</strong> {c.serviceDays} · {c.serviceTime}
                     </div>
-                    <button
-                      className="read-more"
-                      onClick={() => (window.location.href = `/churches/${c._id}`)}
-                    >
+                    <a className="read-more" href={`/churches/${c._id}`}>
                       Read more
                       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -334,7 +346,7 @@ const Church = () => {
                           strokeLinejoin="round"
                         />
                       </svg>
-                    </button>
+                    </a>
                   </div>
                 </div>
               ))}
@@ -372,10 +384,7 @@ const Church = () => {
                       </div>
                       <h3>{c.churchName}</h3>
                       <p>{c.shortDescription || c.description}</p>
-                      <button
-                        className="read-more"
-                        onClick={() => (window.location.href = `/churches/${c._id}`)}
-                      >
+                      <a className="read-more" href={`/churches/${c._id}`}>
                         Read more
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
@@ -386,7 +395,7 @@ const Church = () => {
                             strokeLinejoin="round"
                           />
                         </svg>
-                      </button>
+                      </a>
                     </div>
                   </div>
                 ))}

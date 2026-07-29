@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import API from "../api/api";
 import "./Media.css";
 
@@ -6,11 +7,13 @@ import "./Media.css";
  * Media page — one page, four sections, each laid out as a
  * functional 3-item grid, fetched from the backend (same API client
  * used in CreateMedia.jsx):
- *  1. Video  — grid of cards; click a card to play it inline
- *  2. Photos — grid of cards; click a card to open it in a lightbox
- *  3. Audio  — grid of cards; click play on a card to listen
- *              (playing one card pauses any other that's playing)
- *  4. Books/PDFs — grid of cards; click a card to open the file in a new tab
+ *  1. Video  — grid of cards; click a card to go to its detail page
+ *  2. Photos — grid of cards; click a card to go to its detail page
+ *  3. Audio  — grid of cards; click a card to go to its detail page
+ *  4. Books/PDFs — grid of cards; click a card to go to its detail page
+ *
+ * Every card now redirects to /media/:id (MediaDetail.jsx), where
+ * the actual video/photo/audio/document is played or opened.
  *
  * Each section shows 10 items at a time with its own "Load More" button
  * that reveals 10 more, and only appears once that section has more
@@ -30,7 +33,6 @@ const getMediaUrl = (mediaUrl) => {
 };
 
 const VideoSection = ({ items }) => {
-  const [playingIndex, setPlayingIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   if (items.length === 0) return null;
@@ -43,25 +45,19 @@ const VideoSection = ({ items }) => {
       <p className="section-intro">Sermons and worship moments from our church family.</p>
       <div className="media-grid">
         {visible.map((v, i) => (
-          <div className="grid-card video-card" key={v._id || i}>
-            {playingIndex === i ? (
-              <div className="video-embed">
-                <video src={v.mediaUrl} controls autoPlay />
-              </div>
-            ) : (
-              <button className="video-thumb-btn" onClick={() => setPlayingIndex(i)} aria-label={"Play " + v.title}>
-                {v.thumbnail ? (
-                  <img src={v.thumbnail} alt={v.title} />
-                ) : (
-                  <div className="video-thumb-placeholder" />
-                )}
-                <span className="play-overlay">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-                </span>
-              </button>
-            )}
+          <Link className="grid-card video-card" to={`/media/${v._id}`} key={v._id || i}>
+            <div className="video-thumb-btn" aria-label={"Open " + v.title}>
+              {v.thumbnail ? (
+                <img src={v.thumbnail} alt={v.title} />
+              ) : (
+                <div className="video-thumb-placeholder" />
+              )}
+              <span className="play-overlay">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+            </div>
             <p className="grid-card-title">{v.title}</p>
-          </div>
+          </Link>
         ))}
       </div>
       {items.length > visibleCount && (
@@ -76,14 +72,10 @@ const VideoSection = ({ items }) => {
 };
 
 const PhotoSection = ({ items }) => {
-  const [lightbox, setLightbox] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   if (items.length === 0) return null;
   const visible = items.slice(0, visibleCount);
-
-  const showPrev = () => setLightbox((i) => (i === 0 ? visible.length - 1 : i - 1));
-  const showNext = () => setLightbox((i) => (i === visible.length - 1 ? 0 : i + 1));
 
   return (
     <div className="media-section">
@@ -92,10 +84,10 @@ const PhotoSection = ({ items }) => {
       <p className="section-intro">A look inside our worship and life together.</p>
       <div className="media-grid">
         {visible.map((p, i) => (
-          <button className="grid-card photo-card" key={p._id || i} onClick={() => setLightbox(i)}>
+          <Link className="grid-card photo-card" to={`/media/${p._id}`} key={p._id || i}>
             <img src={p.mediaUrl} alt={p.title} />
             <p className="grid-card-title">{p.title}</p>
-          </button>
+          </Link>
         ))}
       </div>
 
@@ -106,54 +98,15 @@ const PhotoSection = ({ items }) => {
           </button>
         </div>
       )}
-
-      {lightbox !== null && (
-        <div className="lightbox" role="dialog" aria-modal="true" onClick={() => setLightbox(null)}>
-          <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
-            <button className="lightbox-close" onClick={() => setLightbox(null)} aria-label="Close">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" /></svg>
-            </button>
-            <img src={visible[lightbox].mediaUrl} alt={visible[lightbox].title} />
-            <div className="lightbox-caption">
-              <h3>{visible[lightbox].title}</h3>
-              <p>{visible[lightbox].description}</p>
-            </div>
-            <button className="lightbox-nav left" onClick={showPrev} aria-label="Previous photo">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-            <button className="lightbox-nav right" onClick={showNext} aria-label="Next photo">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 const AudioSection = ({ items }) => {
-  const [playingIndex, setPlayingIndex] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const audioRefs = useRef([]);
 
   if (items.length === 0) return null;
   const visible = items.slice(0, visibleCount);
-
-  const toggleTrack = (i) => {
-    const el = audioRefs.current[i];
-    if (!el) return;
-    if (playingIndex === i) {
-      el.pause();
-      setPlayingIndex(null);
-    } else {
-      if (playingIndex !== null && audioRefs.current[playingIndex]) {
-        audioRefs.current[playingIndex].pause();
-      }
-      el.currentTime = 0;
-      el.play();
-      setPlayingIndex(i);
-    }
-  };
 
   return (
     <div className="media-section">
@@ -162,22 +115,13 @@ const AudioSection = ({ items }) => {
       <p className="section-intro">Hymns and sermon recordings you can listen to anytime.</p>
       <div className="media-grid">
         {visible.map((t, i) => (
-          <div className="grid-card audio-card" key={t._id || i}>
-            <button className="audio-play-btn" onClick={() => toggleTrack(i)} aria-label={playingIndex === i ? "Pause" : "Play"}>
-              {playingIndex === i ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-              )}
-            </button>
+          <Link className="grid-card audio-card" to={`/media/${t._id}`} key={t._id || i}>
+            <div className="audio-play-btn" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+            </div>
             <p className="grid-card-title">{t.title}</p>
             <p className="audio-artist">{t.description}</p>
-            <audio
-              ref={(el) => (audioRefs.current[i] = el)}
-              src={t.mediaUrl}
-              onEnded={() => setPlayingIndex(null)}
-            />
-          </div>
+          </Link>
         ))}
       </div>
       {items.length > visibleCount && (
@@ -204,7 +148,7 @@ const BookSection = ({ items }) => {
       <p className="section-intro">Study guides, booklets, and reading materials to download or read online.</p>
       <div className="media-grid">
         {visible.map((b, i) => (
-          <a className="grid-card book-card" key={b._id || i} href={b.mediaUrl} target="_blank" rel="noopener noreferrer">
+          <Link className="grid-card book-card" to={`/media/${b._id}`} key={b._id || i}>
             <div className="book-cover">
               {b.thumbnail ? (
                 <img src={b.thumbnail} alt={b.title} />
@@ -217,7 +161,7 @@ const BookSection = ({ items }) => {
             </div>
             <p className="grid-card-title">{b.title}</p>
             <p className="book-meta">{b.description}</p>
-          </a>
+          </Link>
         ))}
       </div>
       {items.length > visibleCount && (
