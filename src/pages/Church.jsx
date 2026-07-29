@@ -15,11 +15,6 @@ const Church = () => {
   const [currentLoading, setCurrentLoading] = useState(true);
   const [currentError, setCurrentError] = useState("");
 
-  // --- Other Churches (full list, no pagination): GET /api/churches ---
-  const [churches, setChurches] = useState([]);
-  const [churchesLoading, setChurchesLoading] = useState(true);
-  const [churchesError, setChurchesError] = useState("");
-
   // --- "The church in Ethiopia" blog grid: GET /api/churches?page=&limit=20, with Load More ---
   const [blogChurches, setBlogChurches] = useState([]);
   const [blogPage, setBlogPage] = useState(1);
@@ -38,7 +33,6 @@ const Church = () => {
   useEffect(() => {
     fetchPrimaryChurch();
     fetchCurrentChurch();
-    fetchChurches();
     fetchBlogChurches(1);
   }, []);
 
@@ -83,22 +77,6 @@ const Church = () => {
       }
     } finally {
       setCurrentLoading(false);
-    }
-  };
-
-  const fetchChurches = async () => {
-    try {
-      setChurchesLoading(true);
-      setChurchesError("");
-
-      const res = await API.get("/churches");
-
-      setChurches(res.data);
-    } catch (err) {
-      console.log(err);
-      setChurchesError(err.response?.data?.message || "Failed to load churches");
-    } finally {
-      setChurchesLoading(false);
     }
   };
 
@@ -253,7 +231,16 @@ const Church = () => {
                 <span className="serve-now-badge">Where I Serve Now</span>
               </div>
               <div className="serve-now-body">
-                <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
+                <div className="serve-now-leader">
+                  {currentChurch.image && (
+                    <img
+                      className="serve-now-leader-photo"
+                      src={currentChurch.image}
+                      alt={currentChurch.user?.name || "Leader"}
+                    />
+                  )}
+                  <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
+                </div>
                 <h2 className="display">{currentChurch.church?.churchName}</h2>
                 <div className="serve-now-since">
                   {currentChurch.servingSince &&
@@ -297,59 +284,6 @@ const Church = () => {
                   </button>
                 )}
               </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="campuses-section">
-        <div className="wrapper">
-          <div className="campuses-head">
-            <span className="eyebrow">Where We Gather</span>
-            <h2 className="display">The churches it serves</h2>
-            <p>
-              One community, gathered every Sunday — each with its own
-              rhythm, but the same commitment to the Word.
-            </p>
-          </div>
-
-          {churchesLoading ? (
-            <p>Loading churches...</p>
-          ) : churchesError ? (
-            <p style={{ color: "red" }}>{churchesError}</p>
-          ) : churches.length === 0 ? (
-            <p>No churches found.</p>
-          ) : (
-            <div className="campus-grid">
-              {churches.map((c) => (
-                <div className="campus-card" key={c._id}>
-                  <img src={c.image || ""} alt={c.churchName} />
-                  <div className="campus-card-body">
-                    {c.isPrimary && <div className="campus-role">Primary</div>}
-                    {c.isFeatured && <div className="campus-role">Featured</div>}
-                    <h3>{c.churchName}</h3>
-                    <p>{c.shortDescription}</p>
-                    <div className="campus-line">
-                      <strong>Address:</strong> {c.address}
-                    </div>
-                    <div className="campus-line">
-                      <strong>Service:</strong> {c.serviceDays} · {c.serviceTime}
-                    </div>
-                    <a className="read-more" href={`/churches/${c._id}`}>
-                      Read more
-                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M5 12H19M19 12L13 6M19 12L13 18"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              ))}
             </div>
           )}
         </div>
