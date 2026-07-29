@@ -380,7 +380,7 @@
 /* --- Touch target polish (applies alongside, not instead of, desktop rules) */
 @media (hover: none) and (pointer: coarse) {
   .menu-toggle { padding: 8px; }
-  .nav-content a { min-height: 44px; display: flex; align-items: center; }
+  .nav-content a { min-height: 44px; display: flex; align-items: center; justify-content: center; }
   .nav-auth button,
   .nav-auth a { min-height: 44px; }
   .close-btn-style {

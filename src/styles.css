@@ -6,6 +6,25 @@
   font-family: 'Arial', sans-serif;
 }
 
+/* SINGLE SOURCE OF TRUTH for html/body horizontal-overflow control.
+   This file is imported once (in App.jsx) and applies to every route,
+   so this is the only place this should be declared.
+   IMPORTANT: must be "clip", not "hidden". Several page CSS files used
+   to each declare their own "html, body { overflow-x: hidden }" — since
+   every page's CSS loads globally (all routes are imported eagerly in
+   App.jsx), whichever file loaded last won the cascade for this shared
+   selector. "hidden" leaves overflow-y at its default ("visible"), and
+   per the CSS Overflow spec, mixing a non-visible overflow-x with a
+   visible overflow-y silently promotes overflow-y to "auto" — turning
+   <html> into an unexpected scroll container and breaking
+   position:sticky for every sticky element on the page (this is what
+   was breaking the category nav bar on Home/Blog). "clip" avoids that
+   promotion while still blocking horizontal scroll/overflow. Do not
+   re-add an "overflow-x: hidden" rule for html/body in any page CSS
+   file — add page-specific overflow fixes scoped to that page's own
+   wrapper class instead (e.g. ".services-portal { overflow-x: clip; }"). */
+html, body { overflow-x: clip; width: 100%; }
+
 body {
   background-color: #ffffff;
   color: #333;

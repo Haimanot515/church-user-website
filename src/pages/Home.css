@@ -115,7 +115,7 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   width: 0; height: 2px; background: var(--gold);
   transition: width 0.25s ease;
 }
-.nav-item:hover::after { width: 100%; }
+.nav-item:hover::after { width: 0; }
 
 .card {
   background: rgba(255,255,255,0.7);
@@ -504,7 +504,9 @@ section { padding: 90px 0; position: relative; z-index: 1; }
    ============================================================ */
 
 /* Global safety net: never allow horizontal scroll / overflow */
-html { overflow-x: clip; width: 100%; }
+/* html/body overflow-x is now centralized in src/styles.css — do not
+   redeclare it here (see comment there for why: a conflicting copy in
+   another page's CSS was overriding this one and breaking sticky nav). */
 img, video { max-width: 100%; height: auto; }
 *, *::before, *::after { min-width: 0; }
 
@@ -591,6 +593,16 @@ img, video { max-width: 100%; height: auto; }
 
   .section-cross-divider { padding: 30px 16px; gap: 16px; }
   .sermon-divider { gap: 16px; }
+
+  .hero-cta-row { flex-wrap: nowrap; gap: 10px; align-items: stretch; }
+  .hero-cta-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 13px 10px !important;
+    font-size: 0.92rem !important;
+    white-space: normal;
+    line-height: 1.2;
+  }
 }
 
 /* ---------- ≤480px (standard phone) ---------- */
