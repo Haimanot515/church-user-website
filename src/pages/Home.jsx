@@ -542,7 +542,7 @@ const Home = () => {
             <p style={{ textAlign: 'center' }}>
               {activeCategory === "All"
                 ? "No sermons found."
-                : `No sermons found in "${activeCategory}".`}
+                : `No Posts found in "${activeCategory}".`}
             </p>
           ) : (
             sermons.map((item, index, arr) => (
