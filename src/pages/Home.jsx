@@ -50,12 +50,142 @@ const Home = () => {
   };
 
   // "All" is always first, so users can clear the category filter
-  const [categories, setCategories] = useState(["All", "Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"]);
+  const [categories, setCategories] = useState(["All"]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState("");
 
   // default to "All" so the initial render shows every post, no filter
   const [activeCategory, setActiveCategory] = useState("All");
+
+  // ---------- Inlined category nav bar state/refs (formerly CategoryNav.jsx) ----------
+  const catNavBarRef = useRef(null); // the sticky <nav> itself — used to measure its height so scrolling to a section doesn't leave it hidden underneath the sticky bar
+  const catViewportRef = useRef(null); // clipped outer window
+  const catTrackRef = useRef(null); // the moving inner element
+  const catPosRef = useRef(0); // current translateX, always in (-half, 0]
+  const catHalfRef = useRef(0); // width of one copy of the list
+  const catDrag = useRef({ active: false, moved: false, startX: 0, startPos: 0, downCat: null });
+  const catPaused = useRef(false);
+  const catResumeTimeout = useRef(null);
+
+  const canLoopCategories = categories.length > 1;
+  const catLoopItems = canLoopCategories ? [...categories, ...categories] : categories;
+
+  const applyCatTransform = () => {
+    if (catTrackRef.current) {
+      catTrackRef.current.style.transform = `translateX(${catPosRef.current}px)`;
+    }
+  };
+
+  const wrapCatPos = (pos) => {
+    const half = catHalfRef.current;
+    if (half <= 0) return 0;
+    let p = pos % half;
+    if (p > 0) p -= half;
+    return p;
+  };
+
+  // Drives the endless-loop drift + measures/re-measures the track.
+  useEffect(() => {
+    const track = catTrackRef.current;
+    if (!track || !canLoopCategories) return;
+
+    // Measure once layout has settled.
+    catHalfRef.current = track.scrollWidth / 2;
+    catPosRef.current = 0;
+    applyCatTransform();
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    let rafId;
+    const SPEED = 0.45; // px per frame, gentle drift
+
+    const tick = () => {
+      if (!prefersReduced && !catDrag.current.active && !catPaused.current) {
+        catPosRef.current = wrapCatPos(catPosRef.current - SPEED);
+        applyCatTransform();
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    const onResize = () => {
+      catHalfRef.current = track.scrollWidth / 2;
+      catPosRef.current = wrapCatPos(catPosRef.current);
+      applyCatTransform();
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", onResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories]);
+
+  const pauseCatAutoScroll = () => {
+    catPaused.current = true;
+    clearTimeout(catResumeTimeout.current);
+  };
+  const scheduleCatResume = () => {
+    clearTimeout(catResumeTimeout.current);
+    catResumeTimeout.current = setTimeout(() => {
+      catPaused.current = false;
+    }, 2200);
+  };
+  useEffect(() => () => clearTimeout(catResumeTimeout.current), []);
+
+  const startCatDrag = (e) => {
+    // Capture which category (if any) sits under the pointer right now.
+    // We can't rely on the span's own onClick firing later, because
+    // setPointerCapture below redirects the pointerup (and the click the
+    // browser synthesizes from it) to the track div, not to the span —
+    // so a plain tap on a category was silently swallowed. Grabbing the
+    // category here, and firing selection manually from endCatDrag,
+    // sidesteps that entirely.
+    const itemEl = e.target.closest?.(".cat-nav-item");
+    catDrag.current = {
+      active: true,
+      moved: false,
+      startX: e.clientX,
+      startPos: catPosRef.current,
+      downCat: itemEl ? itemEl.dataset.cat : null,
+    };
+    pauseCatAutoScroll();
+    // Pointer capture keeps move/up events firing on this element even if
+    // the pointer drifts outside its (fairly thin) bounds mid-drag — on
+    // mouse, touch, or pen alike — so a fast or slightly-off-axis drag
+    // never gets cut short before reaching the edges.
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const moveCatDrag = (e) => {
+    if (!catDrag.current.active) return;
+    const delta = e.clientX - catDrag.current.startX;
+    if (Math.abs(delta) > 4) catDrag.current.moved = true;
+    catPosRef.current = wrapCatPos(catDrag.current.startPos + delta);
+    applyCatTransform();
+  };
+  const endCatDrag = (e) => {
+    if (!catDrag.current.active) return;
+    catDrag.current.active = false;
+    if (e?.currentTarget?.releasePointerCapture && e?.pointerId != null) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {
+        // no-op: pointer may already be released
+      }
+    }
+    // Fire the selection here instead of via the span's onClick — this is
+    // the event that actually reaches us reliably.
+    if (!catDrag.current.moved && catDrag.current.downCat) {
+      handleCategoryClick(catDrag.current.downCat);
+    }
+    catDrag.current.moved = false;
+    catDrag.current.downCat = null;
+    scheduleCatResume();
+  };
+  // ---------- End inlined category nav bar logic ----------
 
   const showPrevPhoto = () => {
     if (photoIndex > 0) {
@@ -323,12 +453,30 @@ const Home = () => {
     fetchCategories();
   }, []);
 
+  // FIX: plain scrollIntoView({block:"start"}) does move the page, but it
+  // aligns the section's top edge with the very top of the viewport — right
+  // where the sticky .cat-nav-bar sits. So the section moved, but its own
+  // top (the first post) ended up hidden underneath that sticky bar,
+  // making it look like nothing happened, especially when scrolling up
+  // from the bottom of the page. This measures the sticky bar's actual
+  // height and scrolls just far enough that the first post lands right
+  // below it instead — and it runs the same way regardless of where the
+  // page is currently scrolled to.
+  const scrollToSermons = () => {
+    if (!sermonSectionRef.current) return;
+    const navHeight = catNavBarRef.current?.getBoundingClientRect().height || 0;
+    const targetY =
+      sermonSectionRef.current.getBoundingClientRect().top +
+      window.scrollY -
+      navHeight -
+      12; // small breathing room below the bar
+    window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
+  };
+
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setSermonsPage(1);
-    if (sermonSectionRef.current) {
-      sermonSectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    scrollToSermons();
   };
 
   const handleLoadMoreSermons = () => {
@@ -466,8 +614,9 @@ const Home = () => {
                 {truncateWords(hero?.description, 50) || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
               </p>
             </Link>
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <button
+                className="hero-cta-btn"
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                   navigate('/skill');
@@ -477,6 +626,7 @@ const Home = () => {
                 Watch Latest Sermon
               </button>
               <button
+                className="hero-cta-btn"
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                   navigate('/contact');
@@ -499,21 +649,28 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Static nav — same structure as Blog.jsx */}
-      <nav className="nav-bar">
-        {categories.map((cat, i) => (
-          <span
-            key={i}
-            className={`nav-item${cat === activeCategory ? " active" : ""}`}
-            onClick={() => handleCategoryClick(cat)}
-            style={{
-              textDecoration: "none",
-              ...(cat === activeCategory ? { fontWeight: 700, color: "var(--gold)" } : {}),
-            }}
-          >
-            {cat}
-          </span>
-        ))}
+      {/* NAV — inlined (formerly <CategoryNav />) */}
+      <nav className="cat-nav-bar" aria-label="Post categories" ref={catNavBarRef}>
+        <div
+          className="cat-nav-track"
+          ref={catViewportRef}
+          onPointerDown={startCatDrag}
+          onPointerMove={moveCatDrag}
+          onPointerUp={endCatDrag}
+          onPointerCancel={endCatDrag}
+        >
+          <div className="cat-nav-scroll" ref={catTrackRef}>
+            {catLoopItems.map((cat, i) => (
+              <span
+                key={`${cat}-${i}`}
+                data-cat={cat}
+                className={`cat-nav-item${cat === activeCategory ? " active" : ""}`}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        </div>
       </nav>
 
       <section ref={sermonSectionRef} style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>

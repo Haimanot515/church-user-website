@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import "./Blog.css";
@@ -13,13 +13,165 @@ const Blog = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // === Categories now fetched from backend (same pattern as Home.jsx); this list is just the fallback ===
-  const [categories, setCategories] = useState(["All", "Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"]);
+  // Category list comes entirely from the backend (fetched below); "All"
+  // is the only UI-only entry, prepended so people can clear the filter.
+  const [categories, setCategories] = useState(["All"]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState("");
 
   // === ADDED: which category is currently selected in the nav ===
   const [activeCategory, setActiveCategory] = useState("All");
+
+  // ---------- Inlined category nav bar state/refs (formerly CategoryNav.jsx) ----------
+  const catNavBarRef = useRef(null); // the sticky <nav> itself — measured for its height so scrolling to the post list doesn't leave the first post hidden underneath it
+  const catViewportRef = useRef(null); // clipped outer window
+  const catTrackRef = useRef(null); // the moving inner element
+  const catPosRef = useRef(0); // current translateX, always in (-half, 0]
+  const catHalfRef = useRef(0); // width of one copy of the list
+  const catDrag = useRef({ active: false, moved: false, startX: 0, startPos: 0, downCat: null });
+  const catPaused = useRef(false);
+  const catResumeTimeout = useRef(null);
+
+  // Ref on the first post's wrapper — the actual scroll target
+  const postsSectionRef = useRef(null);
+
+  const canLoopCategories = categories.length > 1;
+  const catLoopItems = canLoopCategories ? [...categories, ...categories] : categories;
+
+  const applyCatTransform = () => {
+    if (catTrackRef.current) {
+      catTrackRef.current.style.transform = `translateX(${catPosRef.current}px)`;
+    }
+  };
+
+  const wrapCatPos = (pos) => {
+    const half = catHalfRef.current;
+    if (half <= 0) return 0;
+    let p = pos % half;
+    if (p > 0) p -= half;
+    return p;
+  };
+
+  // Drives the endless-loop drift + measures/re-measures the track.
+  useEffect(() => {
+    const track = catTrackRef.current;
+    if (!track || !canLoopCategories) return;
+
+    // Measure once layout has settled.
+    catHalfRef.current = track.scrollWidth / 2;
+    catPosRef.current = 0;
+    applyCatTransform();
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    let rafId;
+    const SPEED = 0.45; // px per frame, gentle drift
+
+    const tick = () => {
+      if (!prefersReduced && !catDrag.current.active && !catPaused.current) {
+        catPosRef.current = wrapCatPos(catPosRef.current - SPEED);
+        applyCatTransform();
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+
+    const onResize = () => {
+      catHalfRef.current = track.scrollWidth / 2;
+      catPosRef.current = wrapCatPos(catPosRef.current);
+      applyCatTransform();
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("resize", onResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories]);
+
+  const pauseCatAutoScroll = () => {
+    catPaused.current = true;
+    clearTimeout(catResumeTimeout.current);
+  };
+  const scheduleCatResume = () => {
+    clearTimeout(catResumeTimeout.current);
+    catResumeTimeout.current = setTimeout(() => {
+      catPaused.current = false;
+    }, 2200);
+  };
+  useEffect(() => () => clearTimeout(catResumeTimeout.current), []);
+
+  const startCatDrag = (e) => {
+    // Capture which category (if any) sits under the pointer right now.
+    // We can't rely on the span's own onClick firing later, because
+    // setPointerCapture below redirects the pointerup (and the click the
+    // browser synthesizes from it) to the track div, not to the span —
+    // so a plain tap on a category was silently swallowed. Grabbing the
+    // category here, and firing selection manually from endCatDrag,
+    // sidesteps that entirely.
+    const itemEl = e.target.closest?.(".cat-nav-item");
+    catDrag.current = {
+      active: true,
+      moved: false,
+      startX: e.clientX,
+      startPos: catPosRef.current,
+      downCat: itemEl ? itemEl.dataset.cat : null,
+    };
+    pauseCatAutoScroll();
+    // Pointer capture keeps move/up events firing on this element even if
+    // the pointer drifts outside its (fairly thin) bounds mid-drag — on
+    // mouse, touch, or pen alike — so a fast or slightly-off-axis drag
+    // never gets cut short before reaching the edges.
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const moveCatDrag = (e) => {
+    if (!catDrag.current.active) return;
+    const delta = e.clientX - catDrag.current.startX;
+    if (Math.abs(delta) > 4) catDrag.current.moved = true;
+    catPosRef.current = wrapCatPos(catDrag.current.startPos + delta);
+    applyCatTransform();
+  };
+  const endCatDrag = (e) => {
+    if (!catDrag.current.active) return;
+    catDrag.current.active = false;
+    if (e?.currentTarget?.releasePointerCapture && e?.pointerId != null) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {
+        // no-op: pointer may already be released
+      }
+    }
+    // Fire the selection here instead of via the span's onClick — this is
+    // the event that actually reaches us reliably.
+    if (!catDrag.current.moved && catDrag.current.downCat) {
+      handleCategoryClick(catDrag.current.downCat);
+    }
+    catDrag.current.moved = false;
+    catDrag.current.downCat = null;
+    scheduleCatResume();
+  };
+  // ---------- End inlined category nav bar logic ----------
+
+  // ADDED: scroll so the first post lands just below the sticky category
+  // bar. A plain scrollIntoView({block:"start"}) would put the post list's
+  // top edge flush with the very top of the viewport — right where the
+  // sticky bar sits — which hides the first post underneath it instead of
+  // revealing it, especially noticeable when scrolling up from the bottom
+  // of the page. This measures the bar's real height first and always
+  // runs, regardless of where the page currently sits.
+  const scrollToFirstPost = () => {
+    if (!postsSectionRef.current) return;
+    const navHeight = catNavBarRef.current?.getBoundingClientRect().height || 0;
+    const targetY =
+      postsSectionRef.current.getBoundingClientRect().top +
+      window.scrollY -
+      navHeight -
+      12; // small breathing room below the bar
+    window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
+  };
 
   // === ADDED: fetch posts, filtered by activeCategory when it isn't "All" — same pattern as Home.jsx sermons ===
   useEffect(() => {
@@ -60,6 +212,7 @@ const Blog = () => {
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setPage(1);
+    scrollToFirstPost();
   };
 
   // === ADDED: fetch categories from backend, same pattern as Home.jsx ===
@@ -129,21 +282,31 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* NAV */}
-      <nav className="nav-bar">
-        {categories.map(cat => (
-          <span
-            key={cat}
-            className={`nav-item${cat === activeCategory ? " active" : ""}`}
-            onClick={() => handleCategoryClick(cat)}
-            style={cat === activeCategory ? { fontWeight: 700, color: "var(--gold)" } : undefined}
-          >
-            {cat}
-          </span>
-        ))}
+      {/* NAV — inlined (formerly <CategoryNav />) */}
+      <nav className="cat-nav-bar" aria-label="Post categories" ref={catNavBarRef}>
+        <div
+          className="cat-nav-track"
+          ref={catViewportRef}
+          onPointerDown={startCatDrag}
+          onPointerMove={moveCatDrag}
+          onPointerUp={endCatDrag}
+          onPointerCancel={endCatDrag}
+        >
+          <div className="cat-nav-scroll" ref={catTrackRef}>
+            {catLoopItems.map((cat, i) => (
+              <span
+                key={`${cat}-${i}`}
+                data-cat={cat}
+                className={`cat-nav-item${cat === activeCategory ? " active" : ""}`}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        </div>
       </nav>
 
-      <section className="blog-list-section">
+      <section className="blog-list-section" ref={postsSectionRef}>
         <div className="wrapper">
           {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 

@@ -1,0 +1,100 @@
+/* Scoped, self-contained styles for the category nav bar.
+   Deliberately uses its own class names (not .nav-bar / .nav-item)
+   so it can never be overridden by another page's CSS file — every
+   page's stylesheet is bundled globally in this project, so shared
+   generic names like ".nav-bar" collide across pages. */
+
+.cat-nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 28px,
+    #000 calc(100% - 28px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 28px,
+    #000 calc(100% - 28px),
+    transparent 100%
+  );
+}
+
+.cat-nav-track {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* clipped window — never shows more than one container-width slice */
+  cursor: grab;
+  touch-action: pan-y;
+}
+.cat-nav-track:active { cursor: grabbing; }
+
+.cat-nav-scroll {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 0 24px;
+  width: max-content;
+  will-change: transform;
+}
+
+.cat-nav-item {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.2s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.cat-nav-item:hover { color: var(--gold); }
+.cat-nav-item.active { color: var(--gold); }
+
+/* ---------- Tablet landscape ---------- */
+@media (max-width: 900px) {
+  .cat-nav-track { height: 80px; }
+  .cat-nav-scroll { gap: 20px; padding: 0 16px; }
+  .cat-nav-item { font-size: 0.95rem; }
+}
+
+/* ---------- Tablet portrait / large phone ---------- */
+@media (max-width: 768px) {
+  .cat-nav-track { height: 72px; }
+  .cat-nav-scroll { gap: 18px; padding: 0 16px; }
+  .cat-nav-item { font-size: 0.92rem; padding: 8px 0; }
+}
+
+/* ---------- Standard phone ---------- */
+@media (max-width: 600px) {
+  .cat-nav-track { height: 64px; }
+  .cat-nav-scroll { gap: 16px; padding: 0 14px; }
+  .cat-nav-item { font-size: 0.85rem; }
+}
+
+/* ---------- Small phone ---------- */
+@media (max-width: 480px) {
+  .cat-nav-track { height: 56px; }
+  .cat-nav-scroll { gap: 12px; }
+}
+
+@media (max-width: 360px) {
+  .cat-nav-scroll { gap: 10px; padding: 0 12px; }
+  .cat-nav-item { font-size: 0.78rem; }
+}
+
+/* Bigger tap targets on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .cat-nav-item { padding-top: 10px; padding-bottom: 10px; }
+}
