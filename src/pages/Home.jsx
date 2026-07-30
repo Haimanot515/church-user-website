@@ -539,7 +539,11 @@ const Home = () => {
           {sermonsLoading && sermons.length === 0 ? (
             <p style={{ textAlign: 'center' }}>Loading sermon series...</p>
           ) : sermons.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>No sermons found.</p>
+            <p style={{ textAlign: 'center' }}>
+              {activeCategory === "All"
+                ? "No sermons found."
+                : `No sermons found in "${activeCategory}".`}
+            </p>
           ) : (
             sermons.map((item, index, arr) => (
               <React.Fragment key={item._id}>
