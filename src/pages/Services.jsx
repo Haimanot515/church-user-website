@@ -10,15 +10,13 @@ import "./Services.css";
  * status "active" are shown to visitors.
  *
  * Uses the same outer shell as ChurchBlogPage.jsx (home page):
- * drifting cloud layer, sticky marquee nav bar, and site footer —
- * so this page reads as part of the same site.
+ * drifting cloud layer and site footer — so this page reads as part
+ * of the same site.
  *
  * Styles live in Services.css (imported above) rather than an inline
  * <style> block.
  */
 const Services = () => {
-  const categories = ["Sermons", "Events", "Ministries", "Testimonies", "Missions", "Youth", "Prayer Requests", "Bible Study", "Music", "Outreach", "Give", "Community", "Media", "Contact"];
-
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -75,15 +73,6 @@ const Services = () => {
         </div>
       </section>
 
-      <nav className="nav-bar">
-        <div className="nav-marquee-viewport">
-          <div className="nav-marquee-track">
-            {categories.map((cat, i) => <span key={`a-${i}`} className="nav-item">{cat}</span>)}
-            {categories.map((cat, i) => <span key={`b-${i}`} className="nav-item" aria-hidden="true">{cat}</span>)}
-          </div>
-        </div>
-      </nav>
-
       <section className="services-list">
         <div className="wrapper">
           {loading && <p style={{ textAlign: "center" }}>Loading services...</p>}
@@ -138,7 +127,6 @@ const Services = () => {
         </div>
       </section>
 
-     
     </div>
   );
 };
