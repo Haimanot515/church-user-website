@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "eyebrow": "Media",
+    "title": "Video, Photos, Audio and Books",
+    "description": "Everything to watch, look back on, listen to, and read - all in one place."
+  },
+  "common": {
+    "loading": "Loading media...",
+    "none": "No media found.",
+    "loadMore": "Load More",
+    "fallbackNotice": "Showing English content"
+  },
+  "video": {
+    "eyebrow": "Watch",
+    "title": "Video",
+    "intro": "Sermons and worship moments from our church family.",
+    "openAria": "Open {{title}}"
+  },
+  "photo": {
+    "eyebrow": "Look Back",
+    "title": "Photos",
+    "intro": "A look inside our worship and life together."
+  },
+  "audio": {
+    "eyebrow": "Listen",
+    "title": "Audio",
+    "intro": "Hymns and sermon recordings you can listen to anytime."
+  },
+  "book": {
+    "eyebrow": "Read",
+    "title": "Books and PDFs",
+    "intro": "Study guides, booklets, and reading materials to download or read online."
+  },
+  "footer": {
+    "visit": { "title": "Visit", "items": ["Service Times", "Directions", "What to Expect"] },
+    "getInvolved": { "title": "Get Involved", "items": ["Ministries", "Volunteer", "Give", "Missions"] },
+    "connect": { "title": "Connect", "items": ["Facebook", "Instagram", "YouTube"] }
+  },
+  "errors": {
+    "mediaDefault": "Failed to load media"
+  }
+}

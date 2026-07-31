@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "eyebrow": "Our Church",
+    "loading": "Loading...",
+    "fallbackTitle": "A living faith, rooted in ancient soil.",
+    "fallbackDescription": "From the highlands of Aksum to the halls we gather in today, our story is part of one of the oldest continuous Christian traditions on earth.",
+    "cta": "Read Our Story",
+    "imageAlt": "A beautiful church filled with light"
+  },
+  "constructionAd": {
+    "badge": "Under Construction",
+    "eyebrow": "Building For Tomorrow",
+    "title": "A new home for a growing church",
+    "description": "Our Eastside campus has outgrown its walls — help us build a larger sanctuary for the families joining us each week.",
+    "progressLabel": "Progress",
+    "progressValue": "62% complete",
+    "cta": "Support the Build",
+    "closeAria": "Close",
+    "imageAlt": "Church building under construction"
+  },
+  "serveNow": {
+    "loading": "Loading current church...",
+    "none": "No leader is currently assigned to a church.",
+    "badge": "Where I Serve Now",
+    "since": "Serving since {{year}}",
+    "address": "Address:",
+    "service": "Service:",
+    "cta": "Visit This Campus"
+  },
+  "blog": {
+    "eyebrow": "From the Journal",
+    "title": "The church in Ethiopia",
+    "description": "A closer look at the history, architecture, and living traditions that shape our faith community.",
+    "loading": "Loading churches...",
+    "none": "No churches found.",
+    "tagPrimary": "Primary",
+    "tagFeatured": "Featured",
+    "tagDefault": "Church",
+    "readMore": "Read more",
+    "loadMore": "Load More",
+    "loadingMore": "Loading...",
+    "fallbackNotice": "Showing English content"
+  },
+  "errors": {
+    "primaryDefault": "Failed to load the church",
+    "currentDefault": "Failed to load the current church",
+    "blogDefault": "Failed to load churches"
+  }
+}

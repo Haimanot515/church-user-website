@@ -1,0 +1,73 @@
+{
+  "sponsored": {
+    "adLabel": "Ad",
+    "closeAriaLabel": "Close sponsored content",
+    "sponsoredContent": "Sponsored Content",
+    "imageAltFallback": "Sponsored content",
+    "openButton": "Open"
+  },
+  "hero": {
+    "titleFallback": "Rooted in grace, reaching toward the light",
+    "descriptionFallback": "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week.",
+    "watchSermonButton": "Watch Latest Sermon",
+    "planVisitButton": "Plan a Visit",
+    "imageAltFallback": "Orthodox icon of Christ on the iconostasis"
+  },
+  "categoryNav": {
+    "ariaLabel": "Post categories",
+    "all": "All",
+    "errorDefault": "Failed to load categories"
+  },
+  "sermons": {
+    "heading": "Current Sermon Series",
+    "loading": "Loading sermon series...",
+    "noneAll": "No sermons found.",
+    "noneCategory": "No Posts found in \"{{category}}\".",
+    "loadingMore": "Loading...",
+    "loadMoreButton": "Load More Posts",
+    "errorDefault": "Failed to load sermon series"
+  },
+  "trending": {
+    "heading": "Trending",
+    "scrollLeftAriaLabel": "Scroll left",
+    "scrollRightAriaLabel": "Scroll right",
+    "loading": "Loading trending posts...",
+    "none": "No trending posts found.",
+    "errorDefault": "Failed to load trending posts"
+  },
+  "recommended": {
+    "heading": "Recommended",
+    "loading": "Loading recommended posts...",
+    "none": "No recommended posts found.",
+    "errorDefault": "Failed to load recommended posts"
+  },
+  "pagination": {
+    "prev": "Prev",
+    "next": "Next",
+    "pageInfo": "Page {{page}} of {{total}}"
+  },
+  "invite": {
+    "line1": "Come as you are",
+    "line2": "There's a place for you here."
+  },
+  "priest": {
+    "eyebrow": "From the Priest",
+    "titleFallback": "Walking together, one Sunday at a time",
+    "descriptionFallback": "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family.",
+    "imageAltFallback": "Priest in ornate robes holding a ceremonial staff"
+  },
+  "testimonials": {
+    "heading": "What People Say About the Author",
+    "loading": "Loading testimonies...",
+    "none": "No testimonies found.",
+    "errorDefault": "Failed to load testimonials"
+  },
+  "photos": {
+    "heading": "Photos",
+    "loading": "Loading photos...",
+    "none": "No photos found.",
+    "errorDefault": "Failed to load photos",
+    "prevAriaLabel": "Previous photo",
+    "nextAriaLabel": "Next photo"
+  }
+}

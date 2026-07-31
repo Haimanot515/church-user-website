@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import "./Services.css";
 
@@ -17,10 +18,15 @@ import "./Services.css";
  * <style> block.
  */
 const Services = () => {
+  const { t } = useTranslation();
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [visibleCount, setVisibleCount] = useState(10);
+  // NEW: true when the services currently shown came from the English
+  // fallback because the active language had none
+  const [servicesFallback, setServicesFallback] = useState(false);
 
   // Turns whatever the API sends back for imageUrl (a full URL, or just a
   // filename/relative path saved from an upload) into a usable <img src>.
@@ -32,17 +38,34 @@ const Services = () => {
     return `${base}${path}`;
   };
 
+  // === Fetch services, same Accept-Language fallback pattern used
+  // elsewhere on the site (Blog, Travel, About): try the active language
+  // first, and if it comes back with no active services, retry with an
+  // explicit "en" header and flag it. ===
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const res = await API.get("/services");
-      // Only show services that are marked active on the public page
-      const active = res.data
+      setError("");
+      setServicesFallback(false);
+
+      let res = await API.get("/services");
+      let active = (res.data || [])
         .filter((s) => s.status === "active")
         .map((s) => ({ ...s, resolvedImageUrl: getImageUrl(s.imageUrl) }));
+
+      if (active.length === 0) {
+        res = await API.get("/services", {
+          headers: { "Accept-Language": "en" },
+        });
+        active = (res.data || [])
+          .filter((s) => s.status === "active")
+          .map((s) => ({ ...s, resolvedImageUrl: getImageUrl(s.imageUrl) }));
+        if (active.length > 0) setServicesFallback(true);
+      }
+
       setServices(active);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to load services");
+      setError(err.response?.data?.message || t("services.list.errorDefault"));
     } finally {
       setLoading(false);
     }
@@ -50,12 +73,13 @@ const Services = () => {
 
   useEffect(() => {
     fetchServices();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
   const footerColumns = [
-    { title: "Visit", items: ["Service Times", "Directions", "What to Expect"] },
-    { title: "Get Involved", items: ["Ministries", "Volunteer", "Give", "Missions"] },
-    { title: "Connect", items: ["Facebook", "Instagram", "YouTube"] },
+    { title: t("services.footer.visit.title"), items: t("services.footer.visit.items", { returnObjects: true }) },
+    { title: t("services.footer.getInvolved.title"), items: t("services.footer.getInvolved.items", { returnObjects: true }) },
+    { title: t("services.footer.connect.title"), items: t("services.footer.connect.items", { returnObjects: true }) },
   ];
 
   return (
@@ -68,21 +92,27 @@ const Services = () => {
 
       <section className="services-hero">
         <div className="wrapper">
-          <h1 className="display">Our Services</h1>
-          <p>From covenant prayer, to the sacred rhythm of the Liturgy, to the teaching and hymns that carry it through the week — every service is open to all.</p>
+          <h1 className="display">{t("services.hero.title")}</h1>
+          <p>{t("services.hero.description")}</p>
         </div>
       </section>
 
       <section className="services-list">
         <div className="wrapper">
-          {loading && <p style={{ textAlign: "center" }}>Loading services...</p>}
+          {loading && <p style={{ textAlign: "center" }}>{t("services.list.loading")}</p>}
 
           {!loading && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
           )}
 
+          {!loading && !error && servicesFallback && (
+            <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
+              {t("services.list.fallbackNotice")}
+            </p>
+          )}
+
           {!loading && !error && services.length === 0 && (
-            <p style={{ textAlign: "center" }}>No services found.</p>
+            <p style={{ textAlign: "center" }}>{t("services.list.none")}</p>
           )}
 
           {!loading && !error && services.slice(0, visibleCount).map((s, i) => (
@@ -101,7 +131,7 @@ const Services = () => {
                 </svg>
                 <h2>{s.title}</h2>
                 <p className="time">{s.schedule}{s.location ? ` · ${s.location}` : ""}</p>
-                {s.isFeatured && <p className="note">Featured service</p>}
+                {s.isFeatured && <p className="note">{t("services.list.featuredNote")}</p>}
                 <p className="desc">{s.description}</p>
               </div>
             </div>
@@ -113,7 +143,7 @@ const Services = () => {
                 className="load-more-btn"
                 onClick={() => setVisibleCount((c) => c + 10)}
               >
-                Load More
+                {t("services.list.loadMoreButton")}
               </button>
             </div>
           )}
@@ -122,8 +152,8 @@ const Services = () => {
 
       <section className="services-cta">
         <div className="wrapper">
-          <h3 className="display">Come as you are.</h3>
-          <p>All are welcome — no invitation needed.</p>
+          <h3 className="display">{t("services.cta.title")}</h3>
+          <p>{t("services.cta.description")}</p>
         </div>
       </section>
 

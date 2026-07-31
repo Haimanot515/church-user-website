@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "I Nostri Servizi",
+    "description": "Dalla preghiera dell'alleanza, al ritmo sacro della Liturgia, fino all'insegnamento e agli inni che lo accompagnano durante la settimana — ogni servizio è aperto a tutti."
+  },
+  "list": {
+    "loading": "Caricamento dei servizi...",
+    "errorDefault": "Impossibile caricare i servizi",
+    "none": "Nessun servizio trovato.",
+    "featuredNote": "Servizio in evidenza",
+    "loadMoreButton": "Carica Altri",
+    "fallbackNotice": "Questi servizi sono mostrati in inglese perché non sono ancora disponibili nella tua lingua."
+  },
+  "cta": {
+    "title": "Vieni così come sei.",
+    "description": "Tutti sono benvenuti — nessun invito necessario."
+  },
+  "footer": {
+    "visit": { "title": "Visita", "items": ["Orari dei Servizi", "Indicazioni", "Cosa Aspettarsi"] },
+    "getInvolved": { "title": "Partecipa", "items": ["Ministeri", "Volontariato", "Dona", "Missioni"] },
+    "connect": { "title": "Connettiti", "items": ["Facebook", "Instagram", "YouTube"] }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "ታሪኮች፣ ነጸብራቆች እና ዜናዎች ከሃርበር ላይት",
+    "description": "የስብከት ማስታወሻዎች፣ ምስክርነቶች እና ዜናዎች ከጉባኤያችን ሕይወት — በካህናቶቻችን እና ቤተ ክርስቲያናችንን በሚያዋቅሩ ሰዎች የተጻፉ"
+  },
+  "categoryNav": {
+    "ariaLabel": "የልጥፍ ምድቦች",
+    "errorDefault": "ምድቦችን መጫን አልተሳካም",
+    "fallbackNotice": "ምድቦቹ በቋንቋዎ ስላልተዘጋጁ በእንግሊዝኛ እየታዩ ነው።"
+  },
+  "posts": {
+    "errorDefault": "ልጥፎችን መጫን አልተሳካም",
+    "fallbackNotice": "እነዚህ ልጥፎች በቋንቋዎ ስላልተዘጋጁ በእንግሊዝኛ እየታዩ ነው።",
+    "loading": "ልጥፎችን በመጫን ላይ...",
+    "none": "ምንም ልጥፎች አልተገኙም።",
+    "readMoreButton": "ሙሉ ልጥፉን ያንብቡ",
+    "loadMoreButton": "ተጨማሪ ልጥፎችን ይጫኑ",
+    "loadingMoreButton": "በመጫን ላይ...",
+    "defaultAuthor": "ሃርበር ላይት ቤተ ክርስቲያን",
+    "defaultCategory": "አጠቃላይ",
+    "readTimeSuffix": "ደቂቃ ንባብ"
+  }
+}

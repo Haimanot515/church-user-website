@@ -1,0 +1,42 @@
+{
+  "hero": {
+    "eyebrow": "Media",
+    "title": "Video, Foto, Audio e Libri",
+    "description": "Tutto ciò che c'è da guardare, ricordare, ascoltare e leggere - in un unico posto."
+  },
+  "common": {
+    "loading": "Caricamento dei contenuti multimediali...",
+    "none": "Nessun contenuto multimediale trovato.",
+    "loadMore": "Carica Altro",
+    "fallbackNotice": "Contenuto in inglese mostrato"
+  },
+  "video": {
+    "eyebrow": "Guarda",
+    "title": "Video",
+    "intro": "Predicazioni e momenti di culto della nostra famiglia parrocchiale.",
+    "openAria": "Apri {{title}}"
+  },
+  "photo": {
+    "eyebrow": "Ricordi",
+    "title": "Foto",
+    "intro": "Uno sguardo dentro il nostro culto e la nostra vita insieme."
+  },
+  "audio": {
+    "eyebrow": "Ascolta",
+    "title": "Audio",
+    "intro": "Inni e registrazioni di predicazioni da ascoltare in qualsiasi momento."
+  },
+  "book": {
+    "eyebrow": "Leggi",
+    "title": "Libri e PDF",
+    "intro": "Guide di studio, opuscoli e materiali di lettura da scaricare o leggere online."
+  },
+  "footer": {
+    "visit": { "title": "Visita", "items": ["Orari delle Funzioni", "Indicazioni", "Cosa Aspettarsi"] },
+    "getInvolved": { "title": "Partecipa", "items": ["Ministeri", "Volontariato", "Dona", "Missioni"] },
+    "connect": { "title": "Connettiti", "items": ["Facebook", "Instagram", "YouTube"] }
+  },
+  "errors": {
+    "mediaDefault": "Impossibile caricare i contenuti multimediali"
+  }
+}

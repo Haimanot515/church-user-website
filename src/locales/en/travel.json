@@ -1,0 +1,105 @@
+{
+  "hero": {
+    "title": "Notes from wherever the road led this time",
+    "description": "Mission trips, sabbaticals, and the occasional family detour — this is where I keep the stories that didn't fit in a sermon. Scroll for the trip log, or jump to what's coming up next."
+  },
+  "upcoming": {
+    "heading": "A few trips already on the calendar",
+    "errorDefault": "Failed to load travel posts",
+    "loading": "Loading trips...",
+    "none": "No travel posts found.",
+    "loadMoreButton": "Load More Trips",
+    "loadingMoreButton": "Loading...",
+    "fallbackNotice": "These trips are shown in English because they aren't available in your language yet."
+  },
+  "quickFacts": {
+    "heading": "Before You Read",
+    "items": [
+      { "label": "Countries Visited", "value": "14, and counting" },
+      { "label": "Favorite Trip So Far", "value": "Kenya, mission year, 2019" },
+      { "label": "Next Departure", "value": "Scotland sabbatical — September" },
+      { "label": "Packing Philosophy", "value": "One bag, always. No exceptions." },
+      { "label": "Travel Companion", "value": "Usually my wife, sometimes the whole family" },
+      { "label": "Souvenir Of Choice", "value": "A local hymn book or prayer written by hand" }
+    ]
+  },
+  "travelKinds": {
+    "heading": "Four kinds of trip, four different reasons",
+    "items": [
+      {
+        "title": "Mission Trips",
+        "value": "Short-term, team-based",
+        "desc": "A week or two, usually with a team from Harbor Light, building something, teaching something, or simply being present somewhere that needed us."
+      },
+      {
+        "title": "Sabbatical Travel",
+        "value": "Longer, slower, solo or with Miriam",
+        "desc": "Every few years the elders send me away for a month to rest, read, and remember why I started doing this in the first place."
+      },
+      {
+        "title": "Family Trips",
+        "value": "The kids come too",
+        "desc": "Half vacation, half education. We try to see one thing that matters to history and one thing that matters to nobody but us."
+      },
+      {
+        "title": "Day Pilgrimages",
+        "value": "No suitcase required",
+        "desc": "A drive to an old monastery, a border town, a place with one good story — gone before dinner, changed a little by evening."
+      }
+    ]
+  },
+  "trips": {
+    "heading": "A few places I keep coming back to, in memory if not in person",
+    "items": [
+      {
+        "place": "Kericho, Kenya",
+        "year": "2019",
+        "title": "The year the church built a well",
+        "body": "We went for two weeks to help finish a well that had stalled for lack of funds. We stayed for the better part of a year. I learned more about patience from the pace of that project than from any seminary course, and I still think about the sound of that pump the first morning it worked."
+      },
+      {
+        "place": "Isle of Iona, Scotland",
+        "year": "2022",
+        "title": "Four weeks of almost nothing",
+        "body": "My first real sabbatical. No sermon to write, no meetings to run. Mostly I walked, read old prayer books, and sat with people who'd been praying in that same small chapel for fifty years. I came home slower, and it took months for that to wear off — which was the point."
+      },
+      {
+        "place": "Lalibela, Ethiopia",
+        "year": "2023",
+        "title": "A pilgrimage closer to home",
+        "body": "You don't always need a passport to be changed. The rock-hewn churches here are a four-hour drive from my own front door, and I'd never made the trip until my youngest asked why. We went the next month, candles and all."
+      },
+      {
+        "place": "Chiang Rai, Thailand",
+        "year": "2024",
+        "title": "A team, a school, a language I didn't speak",
+        "body": "Ten days building bunk beds for a children's home with six people from our congregation who'd never left Ethiopia before. Watching them fall in love with a place that shares almost nothing with home was, quietly, one of my favorite trips to lead rather than take."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "A Few Common Questions",
+    "items": [
+      {
+        "q": "Do you take members of the congregation on these trips?",
+        "a": "Yes, most of them. Mission trips especially are almost always a team — I'll post an open call here and in the bulletin a few months ahead of each one."
+      },
+      {
+        "q": "How do you decide where to go for a mission trip?",
+        "a": "Usually a relationship comes first — a partner church, a missionary we already support, a need someone brought to us directly. We try not to go somewhere just because it sounded meaningful on paper."
+      },
+      {
+        "q": "Can I request prayer for my own upcoming trip?",
+        "a": "Please do. Send it through the contact page or mention it Wednesday night — travel prayers are some of my favorites to pray, oddly specific as they usually are."
+      },
+      {
+        "q": "Do you ever just travel for rest, with no ministry attached?",
+        "a": "I try to, though I'm not always good at it. Sabbatical travel is meant to be exactly that, and I'm learning — slowly — to let a trip be only for rest without turning it into a project."
+      }
+    ]
+  },
+  "quote": {
+    "text": "Every trip I've taken has taught me the same lesson from a different angle: God was already there before I arrived, and He'll stay long after I've gone home.",
+    "attribution": "— Daniel"
+  }
+}

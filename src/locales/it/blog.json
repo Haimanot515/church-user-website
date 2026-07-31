@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "Storie, riflessioni e aggiornamenti da Harbor Light",
+    "description": "Note di predica, testimonianze e notizie dalla vita della nostra congregazione — scritte dai nostri pastori e dalle persone che compongono la nostra chiesa"
+  },
+  "categoryNav": {
+    "ariaLabel": "Categorie dei post",
+    "errorDefault": "Impossibile caricare le categorie",
+    "fallbackNotice": "Le categorie sono mostrate in inglese perché non sono ancora disponibili nella tua lingua."
+  },
+  "posts": {
+    "errorDefault": "Impossibile caricare i post",
+    "fallbackNotice": "Questi post sono mostrati in inglese perché non sono ancora disponibili nella tua lingua.",
+    "loading": "Caricamento dei post...",
+    "none": "Nessun post trovato.",
+    "readMoreButton": "Leggi il Post Completo",
+    "loadMoreButton": "Carica Altri Post",
+    "loadingMoreButton": "Caricamento...",
+    "defaultAuthor": "Harbor Light Church",
+    "defaultCategory": "Generale",
+    "readTimeSuffix": "min di lettura"
+  }
+}

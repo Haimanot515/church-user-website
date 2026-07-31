@@ -1,0 +1,84 @@
+{
+  "hero": {
+    "titleFallback": "Una Chiesa, Non Solo un Edificio",
+    "descriptionFallback": "Da quasi cinque decenni, {{churchName}} è una comunità che impara che la fede non riguarda tanto avere risposte, quanto esserci — per Dio, gli uni per gli altri e per il nostro quartiere. Qui raccontiamo questa storia, con onestà.",
+    "readStoryButton": "Leggi la Nostra Storia Qui Sotto",
+    "sayHelloButton": "Salutaci",
+    "imageAltFallback": "Il santuario di {{churchName}}",
+    "churchLeaderLabel": "Guida della Chiesa",
+    "fallbackNotice": "Contenuto mostrato in inglese — non ancora disponibile nella lingua selezionata."
+  },
+  "missionVision": {
+    "missionLabel": "La Nostra Missione",
+    "missionValue": "Aiutare questa comunità a conoscere Cristo e a crescere insieme nella fede, una settimana ordinaria alla volta.",
+    "visionLabel": "La Nostra Visione",
+    "visionValue": "Una chiesa così radicata in questa comunità che nessuno nei dintorni debba affrontare difficoltà, dubbi o gioie da solo."
+  },
+  "story": {
+    "heading": "La Storia della Nostra Chiesa",
+    "loading": "Caricamento della nostra storia…",
+    "noneTitle": "Nessun capitolo della storia trovato",
+    "noneSubtitle": "Torna a trovarci presto — la nostra storia è ancora in fase di scrittura.",
+    "loadMoreButton": "Carica Altro",
+    "loadingMoreButton": "Caricamento…",
+    "readFullStoryButton": "Leggi la Storia Completa",
+    "fallbackNotice": "Nessun capitolo nella lingua selezionata — visualizzazione in inglese."
+  },
+  "faith": {
+    "heading": "Cosa Crediamo",
+    "points": [
+      { "title": "Scrittura", "desc": "Crediamo che la Bibbia sia la parola di Dio, degna di fiducia e sufficiente per comprendere la fede e la vita." },
+      { "title": "La Trinità", "desc": "Crediamo in un solo Dio che esiste eternamente come Padre, Figlio e Spirito Santo." },
+      { "title": "Salvezza per Grazia", "desc": "Crediamo che le persone siano riconciliate con Dio per grazia mediante la fede, non per opere, attraverso la morte e risurrezione di Gesù." },
+      { "title": "La Chiesa", "desc": "Crediamo che la chiesa sia la famiglia di Dio sulla terra, chiamata ad adorare insieme, servirsi a vicenda e raggiungere il mondo." }
+    ],
+    "whyWeWriteHeading": "Perché Scriviamo Questo Blog",
+    "whyWeWriteQuote": "Ci riuniamo la domenica, ma un servizio può contenere solo una parte. Qui mettiamo il resto — i dubbi che non esprimiamo sempre ad alta voce, le piccole misericordie che altrimenti dimenticheremmo, e la trama ordinaria del cercare di essere una chiesa per questa comunità, in questa stagione."
+  },
+  "leadership": {
+    "heading": "Il Nostro Gruppo Dirigente",
+    "fallbackNotice": "Contenuto mostrato in inglese."
+  },
+  "testimonials": {
+    "heading": "Nelle Loro Parole",
+    "fallbackNotice": "Testimonianze mostrate in inglese."
+  },
+  "faq": {
+    "heading": "Domande Frequenti",
+    "items": [
+      { "q": "Cosa devo aspettarmi come visitatore per la prima volta?", "a": "Un'accoglienza calorosa, un posto a sedere dove preferisci, e nessuna pressione a firmare nulla o alzarti a presentarti." },
+      { "q": "C'è un programma per i bambini durante il servizio?", "a": "Sì — un servizio di accoglienza supervisionato e attività adatte all'età si svolgono durante entrambe le funzioni della domenica." },
+      { "q": "Dove posso parcheggiare?", "a": "Nelle vicinanze è disponibile parcheggio su strada, con ulteriori posti dietro il santuario." },
+      { "q": "Devo essere membro per unirmi a un piccolo gruppo?", "a": "Assolutamente no. I piccoli gruppi sono aperti a tutti, sia che tu sia in visita per la prima volta o che sia qui da anni." }
+    ]
+  },
+  "specialThanks": {
+    "heading": "Ringraziamenti Speciali",
+    "fallbackNotice": "Contenuto mostrato in inglese."
+  },
+  "location": {
+    "eyebrow": "Vieni a Trovarci",
+    "note": "Le nostre porte sono aperte la maggior parte delle mattine, e il nostro team è di solito raggiungibile nel piccolo edificio dietro il santuario.",
+    "serviceTimes": ["Domenica — 9:00 e 11:00", "Preghiera del Mercoledì — 18:30"],
+    "mapAlt": "Mappa dell'area vicino a {{churchName}}"
+  },
+  "support": {
+    "eyebrow": "Dona Online o di Persona",
+    "heading": "Sostieni la Chiesa",
+    "description": "Qualunque cosa tu possa donare aiuta a mantenere aperte le porte di questa chiesa — e il suo servizio verso la comunità. Puoi donare di persona la domenica, oppure inviare il tuo dono direttamente usando i dettagli qui sotto.",
+    "bankTransferLabel": "Bonifico Bancario",
+    "accountName": "Intestatario: {{churchName}}",
+    "accountNumber": "Numero di Conto: 1000 4522 3390 112",
+    "onlineGivingLabel": "Donazione Online",
+    "merchantName": "Nome Esercente: {{churchName}}"
+  },
+  "cta": {
+    "heading": "Dona o Partecipa",
+    "description": "Che si tratti del tuo tempo, dei tuoi doni o della tua generosità, qui c'è un posto per te.",
+    "giveButton": "Dona",
+    "volunteerButton": "Fai Volontariato"
+  },
+  "nav": {
+    "categories": ["Home", "Riflessioni", "Prediche", "Diario", "Libri che Sto Leggendo", "Famiglia", "Preghiera", "Archivio", "Chi Siamo", "Contatti"]
+  }
+}

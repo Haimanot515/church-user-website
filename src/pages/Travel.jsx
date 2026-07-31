@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import "./Travel.css";
 
 const TRAVEL_ITEM_LIMIT = 10;
 
 const Travel = () => {
+  const { t } = useTranslation();
+
   const [openFaq, setOpenFaq] = useState(0);
   const [activeTrip, setActiveTrip] = useState(0);
 
@@ -14,35 +17,56 @@ const Travel = () => {
   const [upcomingError, setUpcomingError] = useState("");
   const [upcomingPage, setUpcomingPage] = useState(1);
   const [upcomingTotalPages, setUpcomingTotalPages] = useState(1);
+  // NEW: true when the upcoming trips currently shown came from the
+  // English fallback because the active language had none
+  const [upcomingFallback, setUpcomingFallback] = useState(false);
+
+  // === Fetch travel posts, same Accept-Language fallback pattern as
+  // ChurchAboutPage's fetchChurchPersons/fetchHistory and Blog's
+  // fetchPosts: try the active language first, and only on a fresh load
+  // (page 1) that comes back empty, retry with an explicit "en" header
+  // and flag it. A "Load More" click on page > 1 never silently
+  // switches language. ===
+  const fetchTravelPosts = async (pageNum) => {
+    try {
+      setUpcomingLoading(true);
+      setUpcomingError("");
+      if (pageNum === 1) setUpcomingFallback(false);
+
+      const params = {
+        category: "Travel",
+        limit: TRAVEL_ITEM_LIMIT,
+        page: pageNum,
+      };
+
+      let res = await API.get("/posts", { params });
+      let postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+      let pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
+
+      if (pageNum === 1 && (!postsData || postsData.length === 0)) {
+        res = await API.get("/posts", {
+          params,
+          headers: { "Accept-Language": "en" },
+        });
+        postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
+        if (postsData && postsData.length > 0) setUpcomingFallback(true);
+      }
+
+      setUpcomingTrips((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
+      setUpcomingTotalPages(pages);
+    } catch (err) {
+      console.log(err);
+      setUpcomingError(err.response?.data?.message || t("travel.upcoming.errorDefault"));
+    } finally {
+      setUpcomingLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTravelPosts = async (pageNum) => {
-      try {
-        setUpcomingLoading(true);
-        setUpcomingError("");
-
-        const res = await API.get("/posts", {
-          params: {
-            category: "Travel",
-            limit: TRAVEL_ITEM_LIMIT,
-            page: pageNum,
-          },
-        });
-
-        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
-        const pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
-
-        setUpcomingTrips((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
-        setUpcomingTotalPages(pages);
-      } catch (err) {
-        console.log(err);
-        setUpcomingError(err.response?.data?.message || "Failed to load travel posts");
-      } finally {
-        setUpcomingLoading(false);
-      }
-    };
     fetchTravelPosts(upcomingPage);
-  }, [upcomingPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [upcomingPage, t]);
 
   const handleLoadMoreTrips = () => {
     if (upcomingPage < upcomingTotalPages) setUpcomingPage((p) => p + 1);
@@ -56,55 +80,18 @@ const Travel = () => {
         })
       : "";
 
-  const quickFacts = [
-    { label: "Countries Visited", value: "14, and counting" },
-    { label: "Favorite Trip So Far", value: "Kenya, mission year, 2019" },
-    { label: "Next Departure", value: "Scotland sabbatical — September" },
-    { label: "Packing Philosophy", value: "One bag, always. No exceptions." },
-    { label: "Travel Companion", value: "Usually my wife, sometimes the whole family" },
-    { label: "Souvenir Of Choice", value: "A local hymn book or prayer written by hand" }
-  ];
+  // === Static, translated content sections ===
+  const quickFactsRaw = t("travel.quickFacts.items", { returnObjects: true });
+  const quickFacts = Array.isArray(quickFactsRaw) ? quickFactsRaw : [];
 
-  const travelKinds = [
-    { title: "Mission Trips", value: "Short-term, team-based", desc: "A week or two, usually with a team from Harbor Light, building something, teaching something, or simply being present somewhere that needed us." },
-    { title: "Sabbatical Travel", value: "Longer, slower, solo or with Miriam", desc: "Every few years the elders send me away for a month to rest, read, and remember why I started doing this in the first place." },
-    { title: "Family Trips", value: "The kids come too", desc: "Half vacation, half education. We try to see one thing that matters to history and one thing that matters to nobody but us." },
-    { title: "Day Pilgrimages", value: "No suitcase required", desc: "A drive to an old monastery, a border town, a place with one good story — gone before dinner, changed a little by evening." }
-  ];
+  const travelKindsRaw = t("travel.travelKinds.items", { returnObjects: true });
+  const travelKinds = Array.isArray(travelKindsRaw) ? travelKindsRaw : [];
 
-  const trips = [
-    {
-      place: "Kericho, Kenya",
-      year: "2019",
-      title: "The year the church built a well",
-      body: "We went for two weeks to help finish a well that had stalled for lack of funds. We stayed for the better part of a year. I learned more about patience from the pace of that project than from any seminary course, and I still think about the sound of that pump the first morning it worked."
-    },
-    {
-      place: "Isle of Iona, Scotland",
-      year: "2022",
-      title: "Four weeks of almost nothing",
-      body: "My first real sabbatical. No sermon to write, no meetings to run. Mostly I walked, read old prayer books, and sat with people who'd been praying in that same small chapel for fifty years. I came home slower, and it took months for that to wear off — which was the point."
-    },
-    {
-      place: "Lalibela, Ethiopia",
-      year: "2023",
-      title: "A pilgrimage closer to home",
-      body: "You don't always need a passport to be changed. The rock-hewn churches here are a four-hour drive from my own front door, and I'd never made the trip until my youngest asked why. We went the next month, candles and all."
-    },
-    {
-      place: "Chiang Rai, Thailand",
-      year: "2024",
-      title: "A team, a school, a language I didn't speak",
-      body: "Ten days building bunk beds for a children's home with six people from our congregation who'd never left Ethiopia before. Watching them fall in love with a place that shares almost nothing with home was, quietly, one of my favorite trips to lead rather than take."
-    }
-  ];
+  const tripsRaw = t("travel.trips.items", { returnObjects: true });
+  const trips = Array.isArray(tripsRaw) ? tripsRaw : [];
 
-  const faqs = [
-    { q: "Do you take members of the congregation on these trips?", a: "Yes, most of them. Mission trips especially are almost always a team — I'll post an open call here and in the bulletin a few months ahead of each one." },
-    { q: "How do you decide where to go for a mission trip?", a: "Usually a relationship comes first — a partner church, a missionary we already support, a need someone brought to us directly. We try not to go somewhere just because it sounded meaningful on paper." },
-    { q: "Can I request prayer for my own upcoming trip?", a: "Please do. Send it through the contact page or mention it Wednesday night — travel prayers are some of my favorites to pray, oddly specific as they usually are." },
-    { q: "Do you ever just travel for rest, with no ministry attached?", a: "I try to, though I'm not always good at it. Sabbatical travel is meant to be exactly that, and I'm learning — slowly — to let a trip be only for rest without turning it into a project." }
-  ];
+  const faqsRaw = t("travel.faq.items", { returnObjects: true });
+  const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
 
   return (
     <div className="church-portal">
@@ -129,11 +116,10 @@ const Travel = () => {
       <section style={{ padding: '70px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-            Notes from wherever the road led this time
+            {t("travel.hero.title")}
           </h1>
           <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '0', maxWidth: '560px' }}>
-            Mission trips, sabbaticals, and the occasional family detour — this is where I keep the
-            stories that didn't fit in a sermon. Scroll for the trip log, or jump to what's coming up next.
+            {t("travel.hero.description")}
           </p>
         </div>
       </section>
@@ -141,29 +127,36 @@ const Travel = () => {
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
-            A few trips already on the calendar
+            {t("travel.upcoming.heading")}
           </h2>
 
           {upcomingError && <p style={{ color: 'red' }}>{upcomingError}</p>}
 
+          {/* note shown when the upcoming trips fell back to English */}
+          {upcomingFallback && (
+            <p style={{ fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '24px' }}>
+              {t("travel.upcoming.fallbackNotice")}
+            </p>
+          )}
+
           {upcomingLoading ? (
-            <p>Loading trips...</p>
+            <p>{t("travel.upcoming.loading")}</p>
           ) : upcomingTrips.length === 0 ? (
-            <p>No travel posts found.</p>
+            <p>{t("travel.upcoming.none")}</p>
           ) : (
             <div className="upcoming-grid">
-              {upcomingTrips.map((t) => (
+              {upcomingTrips.map((trip) => (
                 <Link
                   className="upcoming-card"
-                  key={t._id}
-                  to={`/projects/${t._id}`}
+                  key={trip._id}
+                  to={`/projects/${trip._id}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <img src={t.imageUrl} alt={t.title} />
+                  <img src={trip.imageUrl} alt={trip.title} />
                   <div className="upcoming-card-body">
-                    <span className="upcoming-card-date">{getFormattedDate(t)}</span>
-                    <h4 className="upcoming-card-title">{t.title}</h4>
-                    <p className="upcoming-card-desc">{t.description}</p>
+                    <span className="upcoming-card-date">{getFormattedDate(trip)}</span>
+                    <h4 className="upcoming-card-title">{trip.title}</h4>
+                    <p className="upcoming-card-desc">{trip.description}</p>
                   </div>
                 </Link>
               ))}
@@ -190,7 +183,7 @@ const Travel = () => {
                 onMouseOver={(e) => { if (!upcomingLoading) e.target.style.backgroundColor = '#5c0c0c'; }}
                 onMouseOut={(e) => { if (!upcomingLoading) e.target.style.backgroundColor = '#7a1010'; }}
               >
-                {upcomingLoading ? 'Loading...' : 'Load More Trips'}
+                {upcomingLoading ? t("travel.upcoming.loadingMoreButton") : t("travel.upcoming.loadMoreButton")}
               </button>
             </div>
           )}
@@ -200,7 +193,7 @@ const Travel = () => {
       <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <section style={{ padding: '64px 0' }}>
           <div className="wrapper">
-            <h3 className="eyebrow" style={{ marginBottom: '28px', fontSize: '0.85rem' }}>Before You Read</h3>
+            <h3 className="eyebrow" style={{ marginBottom: '28px', fontSize: '0.85rem' }}>{t("travel.quickFacts.heading")}</h3>
             <div className="fact-grid">
               {quickFacts.map((f, i) => (
                 <div className="fact-item" key={i}>
@@ -216,7 +209,7 @@ const Travel = () => {
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
-            Four kinds of trip, four different reasons
+            {t("travel.travelKinds.heading")}
           </h2>
           <div className="reach-grid">
             {travelKinds.map((m, i) => (
@@ -241,25 +234,27 @@ const Travel = () => {
         <section>
           <div className="wrapper">
             <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 40px 0', color: '#ffffff' }}>
-              A few places I keep coming back to, in memory if not in person
+              {t("travel.trips.heading")}
             </h2>
             <div className="trip-layout">
               <div className="trip-list">
-                {trips.map((t, i) => (
+                {trips.map((trip, i) => (
                   <button
                     key={i}
                     className={`trip-tab${activeTrip === i ? " active" : ""}`}
                     onClick={() => setActiveTrip(i)}
                   >
-                    <span className="trip-tab-place">{t.place}</span>
-                    <span className="trip-tab-year">{t.year}</span>
+                    <span className="trip-tab-place">{trip.place}</span>
+                    <span className="trip-tab-year">{trip.year}</span>
                   </button>
                 ))}
               </div>
-              <div>
-                <h4 className="display trip-detail-title">{trips[activeTrip].title}</h4>
-                <p className="trip-detail-body">{trips[activeTrip].body}</p>
-              </div>
+              {trips.length > 0 && (
+                <div>
+                  <h4 className="display trip-detail-title">{trips[activeTrip]?.title}</h4>
+                  <p className="trip-detail-body">{trips[activeTrip]?.body}</p>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -268,7 +263,7 @@ const Travel = () => {
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
-            A Few Common Questions
+            {t("travel.faq.heading")}
           </h2>
           <div>
             {faqs.map((f, i) => (
@@ -287,10 +282,9 @@ const Travel = () => {
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <p className="pull-quote display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5 }}>
-            "Every trip I've taken has taught me the same lesson from a different angle: God was already
-            there before I arrived, and He'll stay long after I've gone home."
+            "{t("travel.quote.text")}"
           </p>
-          <p style={{ marginTop: '26px', fontSize: '1.1rem', color: '#3d5a6c' }}>— Daniel</p>
+          <p style={{ marginTop: '26px', fontSize: '1.1rem', color: '#3d5a6c' }}>{t("travel.quote.attribution")}</p>
         </div>
       </section>
 

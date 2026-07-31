@@ -1,0 +1,40 @@
+{
+  "videoHero": {
+    "loading": "Loading sermons...",
+    "empty": "No sermons in this category yet",
+    "playAria": "Play video",
+    "pauseAria": "Pause video",
+    "prevAria": "Previous sermon",
+    "nextAria": "Next sermon",
+    "narrowAria": "Narrow video",
+    "widenAria": "Widen video",
+    "muteAria": "Mute video",
+    "unmuteAria": "Unmute video"
+  },
+  "heroText": {
+    "title": "Preaching the Word, wherever the church gathers",
+    "description": "Priest James Whitfield brings the same message across three congregations each week — this is what it looks like to shepherd more than one flock."
+  },
+  "sermons": {
+    "sectionTitle": "Catch up on past sermons",
+    "loading": "Loading sermons...",
+    "none": "No sermons found.",
+    "nowPlaying": "Now Playing",
+    "fallbackNotice": "Showing English content"
+  },
+  "campuses": {
+    "sectionTitle": "The churches I serve",
+    "description": "Every Sunday, Priest James moves between three congregations — each with its own rhythm, but the same commitment to the Word.",
+    "loading": "Loading churches...",
+    "none": "No churches found.",
+    "tagPrimary": "Primary",
+    "tagFeatured": "Featured",
+    "address": "Address:",
+    "service": "Service:",
+    "fallbackNotice": "Showing English content"
+  },
+  "errors": {
+    "sermonsDefault": "Failed to load sermons",
+    "campusesDefault": "Failed to load churches"
+  }
+}

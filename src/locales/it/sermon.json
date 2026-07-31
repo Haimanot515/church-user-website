@@ -1,0 +1,40 @@
+{
+  "videoHero": {
+    "loading": "Caricamento delle predicazioni...",
+    "empty": "Nessuna predicazione in questa categoria per ora",
+    "playAria": "Riproduci video",
+    "pauseAria": "Metti in pausa il video",
+    "prevAria": "Predicazione precedente",
+    "nextAria": "Predicazione successiva",
+    "narrowAria": "Restringi il video",
+    "widenAria": "Allarga il video",
+    "muteAria": "Disattiva l'audio",
+    "unmuteAria": "Attiva l'audio"
+  },
+  "heroText": {
+    "title": "Predicare la Parola, ovunque la chiesa si riunisca",
+    "description": "Il sacerdote James Whitfield porta lo stesso messaggio in tre congregazioni ogni settimana — questo significa essere pastore di più di un gregge."
+  },
+  "sermons": {
+    "sectionTitle": "Rivivi le predicazioni passate",
+    "loading": "Caricamento delle predicazioni...",
+    "none": "Nessuna predicazione trovata.",
+    "nowPlaying": "In Riproduzione",
+    "fallbackNotice": "Contenuto in inglese mostrato"
+  },
+  "campuses": {
+    "sectionTitle": "Le chiese che servo",
+    "description": "Ogni domenica, il sacerdote James si sposta tra tre congregazioni — ognuna con il proprio ritmo, ma con lo stesso impegno verso la Parola.",
+    "loading": "Caricamento delle chiese...",
+    "none": "Nessuna chiesa trovata.",
+    "tagPrimary": "Principale",
+    "tagFeatured": "In Evidenza",
+    "address": "Indirizzo:",
+    "service": "Servizio:",
+    "fallbackNotice": "Contenuto in inglese mostrato"
+  },
+  "errors": {
+    "sermonsDefault": "Impossibile caricare le predicazioni",
+    "campusesDefault": "Impossibile caricare le chiese"
+  }
+}

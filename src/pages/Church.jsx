@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import "./Church.css";
 
 const Church = () => {
+  const { t, i18n } = useTranslation();
+
   const [showConstructionAd, setShowConstructionAd] = useState(false);
 
   // --- Hero: GET /api/churches/primary (the one church with isPrimary: true) ---
   const [primaryChurch, setPrimaryChurch] = useState(null);
   const [primaryLoading, setPrimaryLoading] = useState(true);
   const [primaryError, setPrimaryError] = useState("");
+  const [primaryFallback, setPrimaryFallback] = useState(false);
 
   // --- Where The Leader Serves Now: GET /api/churches/current (public, no userId) ---
   const [currentChurch, setCurrentChurch] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(true);
   const [currentError, setCurrentError] = useState("");
+  const [currentFallback, setCurrentFallback] = useState(false);
 
   // --- "The church in Ethiopia" blog grid: GET /api/churches?page=&limit=20, with Load More ---
   const [blogChurches, setBlogChurches] = useState([]);
@@ -22,6 +27,7 @@ const Church = () => {
   const [blogLoadingMore, setBlogLoadingMore] = useState(false);
   const [blogError, setBlogError] = useState("");
   const [hasMoreBlog, setHasMoreBlog] = useState(true);
+  const [blogFallback, setBlogFallback] = useState(false);
 
   const BLOG_LIMIT = 20;
 
@@ -34,24 +40,38 @@ const Church = () => {
     fetchPrimaryChurch();
     fetchCurrentChurch();
     fetchBlogChurches(1);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
+
+  // === Same Accept-Language fallback pattern used in Services.jsx / Blog /
+  // Travel / About: try the active language first, and if it comes back
+  // empty, retry with an explicit "en" header and flag it so the UI can
+  // show a small "showing English content" notice. ===
 
   const fetchPrimaryChurch = async () => {
     try {
       setPrimaryLoading(true);
       setPrimaryError("");
+      setPrimaryFallback(false);
 
-      const res = await API.get(`/churches/primary`);
+      let res = await API.get(`/churches/primary`);
+      let data = res.data || null;
 
-      setPrimaryChurch(res.data);
+      if (!data || (!data.churchName && !data.name)) {
+        res = await API.get(`/churches/primary`, {
+          headers: { "Accept-Language": "en" },
+        });
+        data = res.data || null;
+        if (data) setPrimaryFallback(true);
+      }
+
+      setPrimaryChurch(data);
     } catch (err) {
       console.log(err);
       if (err.response?.status === 404) {
         setPrimaryChurch(null);
       } else {
-        setPrimaryError(
-          err.response?.data?.message || "Failed to load the church"
-        );
+        setPrimaryError(err.response?.data?.message || t("church.errors.primaryDefault"));
       }
     } finally {
       setPrimaryLoading(false);
@@ -62,18 +82,26 @@ const Church = () => {
     try {
       setCurrentLoading(true);
       setCurrentError("");
+      setCurrentFallback(false);
 
-      const res = await API.get(`/churches/current`);
+      let res = await API.get(`/churches/current`);
+      let data = res.data || null;
 
-      setCurrentChurch(res.data);
+      if (!data || (!data.church && !data.role)) {
+        res = await API.get(`/churches/current`, {
+          headers: { "Accept-Language": "en" },
+        });
+        data = res.data || null;
+        if (data) setCurrentFallback(true);
+      }
+
+      setCurrentChurch(data);
     } catch (err) {
       console.log(err);
       if (err.response?.status === 404) {
         setCurrentChurch(null);
       } else {
-        setCurrentError(
-          err.response?.data?.message || "Failed to load the current church"
-        );
+        setCurrentError(err.response?.data?.message || t("church.errors.currentDefault"));
       }
     } finally {
       setCurrentLoading(false);
@@ -84,18 +112,29 @@ const Church = () => {
     try {
       if (page === 1) {
         setBlogLoading(true);
+        setBlogFallback(false);
       } else {
         setBlogLoadingMore(true);
       }
       setBlogError("");
 
-      const res = await API.get(`/churches?page=${page}&limit=${BLOG_LIMIT}`);
+      let res = await API.get(`/churches?page=${page}&limit=${BLOG_LIMIT}`);
+      let newChurches = res.data.churches || res.data.data || res.data || [];
+      let totalPages = res.data.totalPages;
+      let usedFallback = false;
 
-      const newChurches = res.data.churches || res.data.data || res.data || [];
-      const totalPages = res.data.totalPages;
+      if (page === 1 && newChurches.length === 0) {
+        res = await API.get(`/churches?page=${page}&limit=${BLOG_LIMIT}`, {
+          headers: { "Accept-Language": "en" },
+        });
+        newChurches = res.data.churches || res.data.data || res.data || [];
+        totalPages = res.data.totalPages;
+        if (newChurches.length > 0) usedFallback = true;
+      }
 
       setBlogChurches((prev) => (page === 1 ? newChurches : [...prev, ...newChurches]));
       setBlogPage(page);
+      if (page === 1) setBlogFallback(usedFallback);
 
       if (totalPages != null) {
         setHasMoreBlog(page < totalPages);
@@ -104,7 +143,7 @@ const Church = () => {
       }
     } catch (err) {
       console.log(err);
-      setBlogError(err.response?.data?.message || "Failed to load churches");
+      setBlogError(err.response?.data?.message || t("church.errors.blogDefault"));
     } finally {
       setBlogLoading(false);
       setBlogLoadingMore(false);
@@ -139,9 +178,9 @@ const Church = () => {
       <section className="church-hero">
         <div className="wrapper church-hero-inner">
           <div className="church-hero-text">
-            <span className="eyebrow">Our Church</span>
+            <span className="eyebrow">{t("church.hero.eyebrow")}</span>
             {primaryLoading ? (
-              <h1 className="display">Loading...</h1>
+              <h1 className="display">{t("church.hero.loading")}</h1>
             ) : primaryError ? (
               <p style={{ color: "red" }}>{primaryError}</p>
             ) : primaryChurch ? (
@@ -151,15 +190,16 @@ const Church = () => {
               </>
             ) : (
               <>
-                <h1 className="display">A living faith, rooted in ancient soil.</h1>
-                <p>
-                  From the highlands of Aksum to the halls we gather in today, our
-                  story is part of one of the oldest continuous Christian
-                  traditions on earth.
-                </p>
+                <h1 className="display">{t("church.hero.fallbackTitle")}</h1>
+                <p>{t("church.hero.fallbackDescription")}</p>
               </>
             )}
-            <button className="hero-cta">Read Our Story</button>
+            {primaryChurch && primaryFallback && (
+              <p style={{ fontSize: "0.85rem", color: "#888", marginTop: "4px" }}>
+                {t("church.blog.fallbackNotice")}
+              </p>
+            )}
+            <button className="hero-cta">{t("church.hero.cta")}</button>
           </div>
           <div className="church-hero-media">
             <img
@@ -167,7 +207,7 @@ const Church = () => {
                 primaryChurch?.image ||
                 "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
               }
-              alt={primaryChurch?.churchName || "A beautiful church filled with light"}
+              alt={primaryChurch?.churchName || t("church.hero.imageAlt")}
             />
           </div>
         </div>
@@ -179,14 +219,14 @@ const Church = () => {
             <div className="construction-ad-img-wrap">
               <img
                 src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80"
-                alt="Church building under construction"
+                alt={t("church.constructionAd.imageAlt")}
               />
-              <span className="construction-ad-badge">Under Construction</span>
+              <span className="construction-ad-badge">{t("church.constructionAd.badge")}</span>
             </div>
             <button
               className="construction-ad-close"
               onClick={dismissConstructionAd}
-              aria-label="Close"
+              aria-label={t("church.constructionAd.closeAria")}
             >
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -198,20 +238,19 @@ const Church = () => {
               </svg>
             </button>
             <div className="construction-ad-body">
-              <span className="eyebrow">Building For Tomorrow</span>
-              <h3>A new home for a growing church</h3>
-              <p>
-                Our Eastside campus has outgrown its walls — help us build a
-                larger sanctuary for the families joining us each week.
-              </p>
+              <span className="eyebrow">{t("church.constructionAd.eyebrow")}</span>
+              <h3>{t("church.constructionAd.title")}</h3>
+              <p>{t("church.constructionAd.description")}</p>
               <div className="ad-progress-label">
-                <span>Progress</span>
-                <strong>62% complete</strong>
+                <span>{t("church.constructionAd.progressLabel")}</span>
+                <strong>{t("church.constructionAd.progressValue")}</strong>
               </div>
               <div className="ad-progress-track">
                 <div className="ad-progress-fill" style={{ width: "62%" }} />
               </div>
-              <button className="construction-ad-support-btn">Support the Build</button>
+              <button className="construction-ad-support-btn">
+                {t("church.constructionAd.cta")}
+              </button>
             </div>
           </div>
         </div>
@@ -220,11 +259,11 @@ const Church = () => {
       <section className="serve-now-section">
         <div className="wrapper">
           {currentLoading ? (
-            <p>Loading current church...</p>
+            <p>{t("church.serveNow.loading")}</p>
           ) : currentError ? (
             <p style={{ color: "red" }}>{currentError}</p>
           ) : !currentChurch ? (
-            <p>No leader is currently assigned to a church.</p>
+            <p>{t("church.serveNow.none")}</p>
           ) : (
             <div className="serve-now-card">
               <div className="serve-now-img-wrap">
@@ -237,28 +276,35 @@ const Church = () => {
                   }
                   alt={currentChurch.user?.name || "Leader"}
                 />
-                <span className="serve-now-badge">Where I Serve Now</span>
+                <span className="serve-now-badge">{t("church.serveNow.badge")}</span>
               </div>
               <div className="serve-now-body">
                 <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
                 <h2 className="display">{currentChurch.church?.churchName}</h2>
                 <div className="serve-now-since">
                   {currentChurch.servingSince &&
-                    `Serving since ${new Date(currentChurch.servingSince).getFullYear()}`}
+                    t("church.serveNow.since", {
+                      year: new Date(currentChurch.servingSince).getFullYear(),
+                    })}
                 </div>
                 <p className="serve-now-desc">{currentChurch.description}</p>
                 <div className="serve-now-details">
                   <div className="serve-now-line">
-                    <strong>Address:</strong> {currentChurch.church?.address}
+                    <strong>{t("church.serveNow.address")}</strong> {currentChurch.church?.address}
                   </div>
                   <div className="serve-now-line">
-                    <strong>Service:</strong> {currentChurch.church?.serviceDays} ·{" "}
-                    {currentChurch.church?.serviceTime}
+                    <strong>{t("church.serveNow.service")}</strong>{" "}
+                    {currentChurch.church?.serviceDays} · {currentChurch.church?.serviceTime}
                   </div>
                 </div>
+                {currentFallback && (
+                  <p style={{ fontSize: "0.85rem", color: "#888" }}>
+                    {t("church.blog.fallbackNotice")}
+                  </p>
+                )}
                 {currentChurchId ? (
                   <a className="serve-now-cta" href={`/churches/${currentChurchId}`}>
-                    Visit This Campus
+                    {t("church.serveNow.cta")}
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M5 12H19M19 12L13 6M19 12L13 18"
@@ -271,7 +317,7 @@ const Church = () => {
                   </a>
                 ) : (
                   <button className="serve-now-cta" disabled>
-                    Visit This Campus
+                    {t("church.serveNow.cta")}
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M5 12H19M19 12L13 6M19 12L13 18"
@@ -292,34 +338,40 @@ const Church = () => {
       <section className="blog-section">
         <div className="wrapper">
           <div className="blog-head">
-            <span className="eyebrow">From the Journal</span>
-            <h2 className="display">The church in Ethiopia</h2>
-            <p>
-              A closer look at the history, architecture, and living
-              traditions that shape our faith community.
-            </p>
+            <span className="eyebrow">{t("church.blog.eyebrow")}</span>
+            <h2 className="display">{t("church.blog.title")}</h2>
+            <p>{t("church.blog.description")}</p>
           </div>
 
           {blogLoading ? (
-            <p>Loading churches...</p>
+            <p>{t("church.blog.loading")}</p>
           ) : blogError ? (
             <p style={{ color: "red" }}>{blogError}</p>
           ) : visibleBlogChurches.length === 0 ? (
-            <p>No churches found.</p>
+            <p>{t("church.blog.none")}</p>
           ) : (
             <>
+              {blogFallback && (
+                <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
+                  {t("church.blog.fallbackNotice")}
+                </p>
+              )}
               <div className="blog-grid">
                 {visibleBlogChurches.map((c) => (
                   <div className="blog-card" key={c._id}>
                     <img src={c.image || ""} alt={c.churchName} />
                     <div className="blog-card-body">
                       <div className="blog-tag">
-                        {c.isPrimary ? "Primary" : c.isFeatured ? "Featured" : "Church"}
+                        {c.isPrimary
+                          ? t("church.blog.tagPrimary")
+                          : c.isFeatured
+                          ? t("church.blog.tagFeatured")
+                          : t("church.blog.tagDefault")}
                       </div>
                       <h3>{c.churchName}</h3>
                       <p>{c.shortDescription || c.description}</p>
                       <a className="read-more" href={`/churches/${c._id}`}>
-                        Read more
+                        {t("church.blog.readMore")}
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             d="M5 12H19M19 12L13 6M19 12L13 18"
@@ -342,7 +394,7 @@ const Church = () => {
                     onClick={handleLoadMoreBlog}
                     disabled={blogLoadingMore}
                   >
-                    {blogLoadingMore ? "Loading..." : "Load More"}
+                    {blogLoadingMore ? t("church.blog.loadingMore") : t("church.blog.loadMore")}
                   </button>
                 </div>
               )}

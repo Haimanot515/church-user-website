@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "eyebrow": "La Nostra Chiesa",
+    "loading": "Caricamento...",
+    "fallbackTitle": "Una fede viva, radicata in una terra antica.",
+    "fallbackDescription": "Dagli altopiani di Axum alle sale in cui ci riuniamo oggi, la nostra storia fa parte di una delle più antiche tradizioni cristiane continue sulla terra.",
+    "cta": "Leggi La Nostra Storia",
+    "imageAlt": "Una bellissima chiesa piena di luce"
+  },
+  "constructionAd": {
+    "badge": "In Costruzione",
+    "eyebrow": "Costruendo Per Domani",
+    "title": "Una nuova casa per una chiesa in crescita",
+    "description": "Il nostro campus di Eastside ha superato le sue mura — aiutaci a costruire un santuario più grande per le famiglie che si uniscono a noi ogni settimana.",
+    "progressLabel": "Avanzamento",
+    "progressValue": "62% completato",
+    "cta": "Sostieni La Costruzione",
+    "closeAria": "Chiudi",
+    "imageAlt": "Chiesa in fase di costruzione"
+  },
+  "serveNow": {
+    "loading": "Caricamento della chiesa attuale...",
+    "none": "Nessun leader è attualmente assegnato a una chiesa.",
+    "badge": "Dove Servo Ora",
+    "since": "In servizio dal {{year}}",
+    "address": "Indirizzo:",
+    "service": "Servizio:",
+    "cta": "Visita Questo Campus"
+  },
+  "blog": {
+    "eyebrow": "Dal Diario",
+    "title": "La chiesa in Etiopia",
+    "description": "Uno sguardo più da vicino alla storia, all'architettura e alle tradizioni viventi che modellano la nostra comunità di fede.",
+    "loading": "Caricamento delle chiese...",
+    "none": "Nessuna chiesa trovata.",
+    "tagPrimary": "Principale",
+    "tagFeatured": "In Evidenza",
+    "tagDefault": "Chiesa",
+    "readMore": "Leggi di più",
+    "loadMore": "Carica Altro",
+    "loadingMore": "Caricamento...",
+    "fallbackNotice": "Contenuto in inglese mostrato"
+  },
+  "errors": {
+    "primaryDefault": "Impossibile caricare la chiesa",
+    "currentDefault": "Impossibile caricare la chiesa attuale",
+    "blogDefault": "Impossibile caricare le chiese"
+  }
+}

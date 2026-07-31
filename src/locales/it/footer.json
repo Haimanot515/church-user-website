@@ -1,0 +1,47 @@
+{
+  "newsletter": {
+    "heading": "Una breve riflessione, ogni lunedì.",
+    "subheading": "Un'email a settimana — un versetto, una breve riflessione e le richieste di preghiera di questa settimana.",
+    "placeholder": "tuo@email.com",
+    "subscribeButton": "Iscriviti",
+    "subscribingButton": "Iscrizione in corso…",
+    "errorEmpty": "Inserisci il tuo indirizzo email.",
+    "successDefault": "Grazie per esserti iscritto!",
+    "errorDefault": "Qualcosa è andato storto. Riprova."
+  },
+  "brand": {
+    "name": "Harbor Light Church",
+    "tagline": "Funzioni domenicali alle 9:00 e alle 11:00. Tutti sono sempre benvenuti."
+  },
+  "columns": {
+    "visit": {
+      "title": "Visita",
+      "items": {
+        "serviceTimes": "Orari delle funzioni",
+        "directions": "Indicazioni",
+        "whatToExpect": "Cosa aspettarti"
+      }
+    },
+    "getInvolved": {
+      "title": "Partecipa",
+      "items": {
+        "ministries": "Ministeri",
+        "volunteer": "Volontariato",
+        "give": "Dona",
+        "missions": "Missioni"
+      }
+    },
+    "connect": {
+      "title": "Connettiti",
+      "items": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "youtube": "YouTube"
+      }
+    }
+  },
+  "bottom": {
+    "copyright": "© 2026 Harbor Light Church",
+    "privacyPolicy": "Informativa sulla privacy"
+  }
+}

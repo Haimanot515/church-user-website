@@ -1,0 +1,27 @@
+{
+  "logo": {
+    "ariaLabel": "Home"
+  },
+  "menu": {
+    "toggle": "Toggle Menu",
+    "open": "Open Menu",
+    "close": "Close Menu"
+  },
+  "links": {
+    "about": "About",
+    "blogs": "Blogs",
+    "services": "Services",
+    "church": "Church",
+    "sermon": "Sermon",
+    "travel": "Travel",
+    "contact": "Contact",
+    "media": "Media",
+    "books": "Books",
+    "admin": "Admin"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  }
+}

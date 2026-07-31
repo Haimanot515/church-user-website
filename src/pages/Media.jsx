@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import "./Media.css";
 
@@ -19,6 +20,12 @@ import "./Media.css";
  * that reveals 10 more, and only appears once that section has more
  * than 10 items.
  *
+ * Each of the four media types follows the same Accept-Language
+ * fallback pattern used elsewhere on the site (Services, Church,
+ * Sermon): try the active language first, and if that type comes back
+ * empty, retry just that type with an explicit "en" header and flag
+ * it so its section can show a small notice.
+ *
  * Same outer shell as Home/Services (cloud layer, footer).
  * Styles live in Media.css (imported above).
  */
@@ -32,7 +39,16 @@ const getMediaUrl = (mediaUrl) => {
   return `${base}${path}`;
 };
 
-const VideoSection = ({ items }) => {
+const mapItems = (data) =>
+  (data || [])
+    .filter((m) => m.status === "published")
+    .map((m) => ({
+      ...m,
+      mediaUrl: getMediaUrl(m.mediaUrl),
+      thumbnail: getMediaUrl(m.thumbnail),
+    }));
+
+const VideoSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   if (items.length === 0) return null;
@@ -40,13 +56,16 @@ const VideoSection = ({ items }) => {
 
   return (
     <div className="media-section">
-      <span className="eyebrow">Watch</span>
-      <h2 className="display">Video</h2>
-      <p className="section-intro">Sermons and worship moments from our church family.</p>
+      <span className="eyebrow">{t("media.video.eyebrow")}</span>
+      <h2 className="display">{t("media.video.title")}</h2>
+      <p className="section-intro">{t("media.video.intro")}</p>
+      {fallback && (
+        <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
+      )}
       <div className="media-grid">
         {visible.map((v, i) => (
           <Link className="grid-card video-card" to={`/media/${v._id}`} key={v._id || i}>
-            <div className="video-thumb-btn" aria-label={"Open " + v.title}>
+            <div className="video-thumb-btn" aria-label={t("media.video.openAria", { title: v.title })}>
               {v.thumbnail ? (
                 <img src={v.thumbnail} alt={v.title} />
               ) : (
@@ -63,7 +82,7 @@ const VideoSection = ({ items }) => {
       {items.length > visibleCount && (
         <div className="load-more-wrap">
           <button className="load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-            Load More
+            {t("media.common.loadMore")}
           </button>
         </div>
       )}
@@ -71,7 +90,7 @@ const VideoSection = ({ items }) => {
   );
 };
 
-const PhotoSection = ({ items }) => {
+const PhotoSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   if (items.length === 0) return null;
@@ -79,9 +98,12 @@ const PhotoSection = ({ items }) => {
 
   return (
     <div className="media-section">
-      <span className="eyebrow">Look Back</span>
-      <h2 className="display">Photos</h2>
-      <p className="section-intro">A look inside our worship and life together.</p>
+      <span className="eyebrow">{t("media.photo.eyebrow")}</span>
+      <h2 className="display">{t("media.photo.title")}</h2>
+      <p className="section-intro">{t("media.photo.intro")}</p>
+      {fallback && (
+        <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
+      )}
       <div className="media-grid">
         {visible.map((p, i) => (
           <Link className="grid-card photo-card" to={`/media/${p._id}`} key={p._id || i}>
@@ -94,7 +116,7 @@ const PhotoSection = ({ items }) => {
       {items.length > visibleCount && (
         <div className="load-more-wrap">
           <button className="load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-            Load More
+            {t("media.common.loadMore")}
           </button>
         </div>
       )}
@@ -102,7 +124,7 @@ const PhotoSection = ({ items }) => {
   );
 };
 
-const AudioSection = ({ items }) => {
+const AudioSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   if (items.length === 0) return null;
@@ -110,24 +132,27 @@ const AudioSection = ({ items }) => {
 
   return (
     <div className="media-section">
-      <span className="eyebrow">Listen</span>
-      <h2 className="display">Audio</h2>
-      <p className="section-intro">Hymns and sermon recordings you can listen to anytime.</p>
+      <span className="eyebrow">{t("media.audio.eyebrow")}</span>
+      <h2 className="display">{t("media.audio.title")}</h2>
+      <p className="section-intro">{t("media.audio.intro")}</p>
+      {fallback && (
+        <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
+      )}
       <div className="media-grid">
-        {visible.map((t, i) => (
-          <Link className="grid-card audio-card" to={`/media/${t._id}`} key={t._id || i}>
+        {visible.map((a, i) => (
+          <Link className="grid-card audio-card" to={`/media/${a._id}`} key={a._id || i}>
             <div className="audio-play-btn" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
             </div>
-            <p className="grid-card-title">{t.title}</p>
-            <p className="audio-artist">{t.description}</p>
+            <p className="grid-card-title">{a.title}</p>
+            <p className="audio-artist">{a.description}</p>
           </Link>
         ))}
       </div>
       {items.length > visibleCount && (
         <div className="load-more-wrap">
           <button className="load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-            Load More
+            {t("media.common.loadMore")}
           </button>
         </div>
       )}
@@ -135,7 +160,7 @@ const AudioSection = ({ items }) => {
   );
 };
 
-const BookSection = ({ items }) => {
+const BookSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   if (items.length === 0) return null;
@@ -143,9 +168,12 @@ const BookSection = ({ items }) => {
 
   return (
     <div className="media-section">
-      <span className="eyebrow">Read</span>
-      <h2 className="display">Books and PDFs</h2>
-      <p className="section-intro">Study guides, booklets, and reading materials to download or read online.</p>
+      <span className="eyebrow">{t("media.book.eyebrow")}</span>
+      <h2 className="display">{t("media.book.title")}</h2>
+      <p className="section-intro">{t("media.book.intro")}</p>
+      {fallback && (
+        <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
+      )}
       <div className="media-grid">
         {visible.map((b, i) => (
           <Link className="grid-card book-card" to={`/media/${b._id}`} key={b._id || i}>
@@ -167,7 +195,7 @@ const BookSection = ({ items }) => {
       {items.length > visibleCount && (
         <div className="load-more-wrap">
           <button className="load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-            Load More
+            {t("media.common.loadMore")}
           </button>
         </div>
       )}
@@ -176,38 +204,64 @@ const BookSection = ({ items }) => {
 };
 
 const Media = () => {
+  const { t } = useTranslation();
+
   const [videoItems, setVideoItems] = useState([]);
   const [photoItems, setPhotoItems] = useState([]);
   const [audioItems, setAudioItems] = useState([]);
   const [bookItems, setBookItems] = useState([]);
+
+  const [videoFallback, setVideoFallback] = useState(false);
+  const [photoFallback, setPhotoFallback] = useState(false);
+  const [audioFallback, setAudioFallback] = useState(false);
+  const [bookFallback, setBookFallback] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Fetches one media type, and if the active-language response comes
+  // back with no published items, retries the same endpoint with an
+  // explicit "en" header. Returns { items, usedFallback }.
+  const fetchTypeWithFallback = async (type) => {
+    let res = await API.get(`/media/type/${type}`);
+    let items = mapItems(res.data);
+
+    if (items.length === 0) {
+      res = await API.get(`/media/type/${type}`, {
+        headers: { "Accept-Language": "en" },
+      });
+      items = mapItems(res.data);
+      if (items.length > 0) return { items, usedFallback: true };
+    }
+
+    return { items, usedFallback: false };
+  };
 
   const fetchMedia = async () => {
     try {
       setLoading(true);
-      const [videoRes, photoRes, audioRes, bookRes] = await Promise.all([
-        API.get("/media/type/video"),
-        API.get("/media/type/photo"),
-        API.get("/media/type/audio"),
-        API.get("/media/type/document"),
+      setError("");
+
+      const [video, photo, audio, book] = await Promise.all([
+        fetchTypeWithFallback("video"),
+        fetchTypeWithFallback("photo"),
+        fetchTypeWithFallback("audio"),
+        fetchTypeWithFallback("document"),
       ]);
 
-      const mapItems = (data) =>
-        data
-          .filter((m) => m.status === "published")
-          .map((m) => ({
-            ...m,
-            mediaUrl: getMediaUrl(m.mediaUrl),
-            thumbnail: getMediaUrl(m.thumbnail),
-          }));
+      setVideoItems(video.items);
+      setVideoFallback(video.usedFallback);
 
-      setVideoItems(mapItems(videoRes.data));
-      setPhotoItems(mapItems(photoRes.data));
-      setAudioItems(mapItems(audioRes.data));
-      setBookItems(mapItems(bookRes.data));
+      setPhotoItems(photo.items);
+      setPhotoFallback(photo.usedFallback);
+
+      setAudioItems(audio.items);
+      setAudioFallback(audio.usedFallback);
+
+      setBookItems(book.items);
+      setBookFallback(book.usedFallback);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to load media");
+      setError(err.response?.data?.message || t("media.errors.mediaDefault"));
     } finally {
       setLoading(false);
     }
@@ -215,13 +269,8 @@ const Media = () => {
 
   useEffect(() => {
     fetchMedia();
-  }, []);
-
-  const footerColumns = [
-    { title: "Visit", items: ["Service Times", "Directions", "What to Expect"] },
-    { title: "Get Involved", items: ["Ministries", "Volunteer", "Give", "Missions"] },
-    { title: "Connect", items: ["Facebook", "Instagram", "YouTube"] },
-  ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
   return (
     <div className="media-portal">
@@ -233,33 +282,33 @@ const Media = () => {
 
       <section className="media-hero">
         <div className="wrapper">
-          <span className="eyebrow">Media</span>
-          <h1 className="display">Video, Photos, Audio and Books</h1>
-          <p>Everything to watch, look back on, listen to, and read - all in one place.</p>
+          <span className="eyebrow">{t("media.hero.eyebrow")}</span>
+          <h1 className="display">{t("media.hero.title")}</h1>
+          <p>{t("media.hero.description")}</p>
         </div>
       </section>
 
       <section className="media-sections">
         <div className="wrapper">
-          {loading && <p style={{ textAlign: "center" }}>Loading media...</p>}
+          {loading && <p style={{ textAlign: "center" }}>{t("media.common.loading")}</p>}
           {!loading && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
           )}
           {!loading && !error && videoItems.length === 0 && photoItems.length === 0 && audioItems.length === 0 && bookItems.length === 0 && (
-            <p style={{ textAlign: "center" }}>No media found.</p>
+            <p style={{ textAlign: "center" }}>{t("media.common.none")}</p>
           )}
           {!loading && !error && (
             <>
-              <VideoSection items={videoItems} />
-              <PhotoSection items={photoItems} />
-              <AudioSection items={audioItems} />
-              <BookSection items={bookItems} />
+              <VideoSection items={videoItems} fallback={videoFallback} t={t} />
+              <PhotoSection items={photoItems} fallback={photoFallback} t={t} />
+              <AudioSection items={audioItems} fallback={audioFallback} t={t} />
+              <BookSection items={bookItems} fallback={bookFallback} t={t} />
             </>
           )}
         </div>
       </section>
 
-     
+
     </div>
   );
 };

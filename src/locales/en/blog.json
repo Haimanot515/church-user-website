@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "Stories, reflections, and updates from Harbor Light",
+    "description": "Sermon notes, testimonies, and news from the life of our congregation — written by our pastors and by the people who make up our church"
+  },
+  "categoryNav": {
+    "ariaLabel": "Post categories",
+    "errorDefault": "Failed to load categories",
+    "fallbackNotice": "Categories are shown in English because they aren't available in your language yet."
+  },
+  "posts": {
+    "errorDefault": "Failed to load posts",
+    "fallbackNotice": "These posts are shown in English because they aren't available in your language yet.",
+    "loading": "Loading posts...",
+    "none": "No posts found.",
+    "readMoreButton": "Read Full Post",
+    "loadMoreButton": "Load More Posts",
+    "loadingMoreButton": "Loading...",
+    "defaultAuthor": "Harbor Light Church",
+    "defaultCategory": "General",
+    "readTimeSuffix": "min read"
+  }
+}

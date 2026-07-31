@@ -1,0 +1,73 @@
+{
+  "sponsored": {
+    "adLabel": "Pubblicità",
+    "closeAriaLabel": "Chiudi contenuto sponsorizzato",
+    "sponsoredContent": "Contenuto sponsorizzato",
+    "imageAltFallback": "Contenuto sponsorizzato",
+    "openButton": "Apri"
+  },
+  "hero": {
+    "titleFallback": "Radicati nella grazia, protesi verso la luce",
+    "descriptionFallback": "Riflessioni, appunti di predicazione e storie della nostra congregazione, mentre percorriamo insieme le Scritture, settimana dopo settimana.",
+    "watchSermonButton": "Guarda l'ultima predica",
+    "planVisitButton": "Pianifica una visita",
+    "imageAltFallback": "Icona ortodossa di Cristo sull'iconostasi"
+  },
+  "categoryNav": {
+    "ariaLabel": "Categorie dei post",
+    "all": "Tutti",
+    "errorDefault": "Impossibile caricare le categorie"
+  },
+  "sermons": {
+    "heading": "Serie di prediche attuale",
+    "loading": "Caricamento della serie di prediche...",
+    "noneAll": "Nessuna predica trovata.",
+    "noneCategory": "Nessun post trovato in \"{{category}}\".",
+    "loadingMore": "Caricamento...",
+    "loadMoreButton": "Carica altri post",
+    "errorDefault": "Impossibile caricare la serie di prediche"
+  },
+  "trending": {
+    "heading": "Di tendenza",
+    "scrollLeftAriaLabel": "Scorri a sinistra",
+    "scrollRightAriaLabel": "Scorri a destra",
+    "loading": "Caricamento dei post di tendenza...",
+    "none": "Nessun post di tendenza trovato.",
+    "errorDefault": "Impossibile caricare i post di tendenza"
+  },
+  "recommended": {
+    "heading": "Consigliati",
+    "loading": "Caricamento dei post consigliati...",
+    "none": "Nessun post consigliato trovato.",
+    "errorDefault": "Impossibile caricare i post consigliati"
+  },
+  "pagination": {
+    "prev": "Indietro",
+    "next": "Avanti",
+    "pageInfo": "Pagina {{page}} di {{total}}"
+  },
+  "invite": {
+    "line1": "Vieni come sei",
+    "line2": "C'è un posto per te qui."
+  },
+  "priest": {
+    "eyebrow": "Dal sacerdote",
+    "titleFallback": "Camminando insieme, una domenica alla volta",
+    "descriptionFallback": "Vent'anni di ministero mi hanno insegnato che la fede cresce meglio in comunità. Questa pagina è dove condividiamo ciò che Dio ci sta insegnando — attraverso prediche, testimonianze e la vita quotidiana della nostra famiglia parrocchiale.",
+    "imageAltFallback": "Sacerdote in abiti ornati con un bastone cerimoniale"
+  },
+  "testimonials": {
+    "heading": "Cosa dicono le persone sull'autore",
+    "loading": "Caricamento delle testimonianze...",
+    "none": "Nessuna testimonianza trovata.",
+    "errorDefault": "Impossibile caricare le testimonianze"
+  },
+  "photos": {
+    "heading": "Foto",
+    "loading": "Caricamento delle foto...",
+    "none": "Nessuna foto trovata.",
+    "errorDefault": "Impossibile caricare le foto",
+    "prevAriaLabel": "Foto precedente",
+    "nextAriaLabel": "Foto successiva"
+  }
+}

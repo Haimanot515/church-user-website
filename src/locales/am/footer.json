@@ -1,0 +1,47 @@
+{
+  "newsletter": {
+    "heading": "አጭር የነፍስ ግንዛቤ በየሰኞው ይላካል።",
+    "subheading": "በሳምንት አንድ ኢሜይል — አንድ ጥቅስ፣ አጭር ግንዛቤ እና የዚህ ሳምንት የጸሎት ጥያቄዎች።",
+    "placeholder": "you@email.com",
+    "subscribeButton": "ይመዝገቡ",
+    "subscribingButton": "በመመዝገብ ላይ…",
+    "errorEmpty": "እባክዎ የኢሜይል አድራሻዎን ያስገቡ።",
+    "successDefault": "ስለተመዘገቡ እናመሰግናለን!",
+    "errorDefault": "የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።"
+  },
+  "brand": {
+    "name": "ሃርበር ላይት ቤተክርስቲያን",
+    "tagline": "የእሁድ አገልግሎቶች በ9፡00 እና በ11፡00 ጠዋት። ሁሉም ሁልጊዜ እንኳን በደህና መጡ።"
+  },
+  "columns": {
+    "visit": {
+      "title": "ይጎብኙ",
+      "items": {
+        "serviceTimes": "የአገልግሎት ሰዓቶች",
+        "directions": "አቅጣጫዎች",
+        "whatToExpect": "ምን እንደሚጠብቅዎት"
+      }
+    },
+    "getInvolved": {
+      "title": "ይሳተፉ",
+      "items": {
+        "ministries": "አገልግሎቶች",
+        "volunteer": "በጎ ፈቃደኝነት",
+        "give": "መስጠት",
+        "missions": "ተልእኮዎች"
+      }
+    },
+    "connect": {
+      "title": "ይገናኙ",
+      "items": {
+        "facebook": "ፌስቡክ",
+        "instagram": "ኢንስታግራም",
+        "youtube": "ዩቲዩብ"
+      }
+    }
+  },
+  "bottom": {
+    "copyright": "© 2026 ሃርበር ላይት ቤተክርስቲያን",
+    "privacyPolicy": "የግላዊነት ፖሊሲ"
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import "./Sermon.css";
 
@@ -8,6 +9,12 @@ import "./Sermon.css";
  * YouTube list. Each media doc's uploaded file is played with a plain
  * HTML5 <video> element rather than the YouTube iframe API — there's no
  * YouTube video ID for self-hosted uploads.
+ *
+ * Both the sermons list and the campuses list follow the same
+ * Accept-Language fallback pattern used elsewhere on the site
+ * (Services, Church, Blog, Travel, About): try the active language
+ * first, and if it comes back empty, retry with an explicit "en"
+ * header and flag it so the UI can show a small notice.
  */
 
 function formatTime(totalSeconds) {
@@ -35,6 +42,8 @@ const getMediaUrl = (mediaUrl) => {
 const SERMON_CATEGORY = "Sermons";
 
 const Sermon = () => {
+  const { t } = useTranslation();
+
   const videoRef = useRef(null);
   const videoHeroRef = useRef(null);
   const seekBarRef = useRef(null);
@@ -42,6 +51,7 @@ const Sermon = () => {
   const [sermons, setSermons] = useState([]);
   const [loadingSermons, setLoadingSermons] = useState(true);
   const [error, setError] = useState("");
+  const [sermonsFallback, setSermonsFallback] = useState(false);
 
   const [muted, setMuted] = useState(true);
   const [ready, setReady] = useState(false);
@@ -58,52 +68,83 @@ const Sermon = () => {
   const [campuses, setCampuses] = useState([]);
   const [campusesLoading, setCampusesLoading] = useState(true);
   const [campusesError, setCampusesError] = useState("");
+  const [campusesFallback, setCampusesFallback] = useState(false);
 
   const currentSermon = sermons[sermonIndex];
 
-  // Fetch sermon videos from the Media API on mount
+  const filterSermons = (data) =>
+    (data || [])
+      .filter((m) => m.status === "published")
+      .filter((m) => {
+        const categoryName = typeof m.category === "string" ? m.category : m.category?.name;
+        return (categoryName || "").toLowerCase() === SERMON_CATEGORY.toLowerCase();
+      })
+      .map((m) => ({
+        ...m,
+        mediaUrl: getMediaUrl(m.mediaUrl),
+        thumbnail: getMediaUrl(m.thumbnail),
+      }));
+
+  // Fetch sermon videos from the Media API on mount (and whenever the
+  // active language changes, so titles/descriptions come back localized).
   useEffect(() => {
     const fetchSermons = async () => {
       try {
         setLoadingSermons(true);
-        const res = await API.get("/media/type/video");
-        const items = res.data
-          .filter((m) => m.status === "published")
-          .filter((m) => {
-            const categoryName = typeof m.category === "string" ? m.category : m.category?.name;
-            return (categoryName || "").toLowerCase() === SERMON_CATEGORY.toLowerCase();
-          })
-          .map((m) => ({
-            ...m,
-            mediaUrl: getMediaUrl(m.mediaUrl),
-            thumbnail: getMediaUrl(m.thumbnail),
-          }));
+        setError("");
+        setSermonsFallback(false);
+
+        let res = await API.get("/media/type/video");
+        let items = filterSermons(res.data);
+
+        if (items.length === 0) {
+          res = await API.get("/media/type/video", {
+            headers: { "Accept-Language": "en" },
+          });
+          items = filterSermons(res.data);
+          if (items.length > 0) setSermonsFallback(true);
+        }
+
         setSermons(items);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load sermons");
+        setError(err.response?.data?.message || t("sermon.errors.sermonsDefault"));
       } finally {
         setLoadingSermons(false);
       }
     };
     fetchSermons();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
-  // Fetch churches from the Church table on mount
+  // Fetch churches from the Church table on mount (and on language change)
   useEffect(() => {
     const fetchCampuses = async () => {
       try {
         setCampusesLoading(true);
         setCampusesError("");
-        const res = await API.get("/churches");
-        setCampuses(Array.isArray(res.data) ? res.data : []);
+        setCampusesFallback(false);
+
+        let res = await API.get("/churches");
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/churches", {
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setCampusesFallback(true);
+        }
+
+        setCampuses(data);
       } catch (err) {
-        setCampusesError(err.response?.data?.message || "Failed to load churches");
+        setCampusesError(err.response?.data?.message || t("sermon.errors.campusesDefault"));
       } finally {
         setCampusesLoading(false);
       }
     };
     fetchCampuses();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
   // Autoplay (muted) whenever the current sermon changes, as long as the panel is open
   useEffect(() => {
@@ -198,7 +239,7 @@ const Sermon = () => {
       <section className={`video-hero${expanded ? " expanded" : ""}`} ref={videoHeroRef}>
         {loadingSermons ? (
           <div className="video-closed-panel">
-            <span className="eyebrow">Loading sermons...</span>
+            <span className="eyebrow">{t("sermon.videoHero.loading")}</span>
           </div>
         ) : error ? (
           <div className="video-closed-panel">
@@ -206,7 +247,7 @@ const Sermon = () => {
           </div>
         ) : sermons.length === 0 ? (
           <div className="video-closed-panel">
-            <span className="eyebrow">No sermons in this category yet</span>
+            <span className="eyebrow">{t("sermon.videoHero.empty")}</span>
           </div>
         ) : (
           <>
@@ -238,7 +279,7 @@ const Sermon = () => {
             <button
               className={`center-toggle-btn${(showControls || videoClosed) ? " visible" : ""}`}
               onClick={(e) => { e.stopPropagation(); toggleVideo(); }}
-              aria-label={videoClosed ? "Play video" : "Pause video"}
+              aria-label={videoClosed ? t("sermon.videoHero.playAria") : t("sermon.videoHero.pauseAria")}
             >
               {videoClosed ? (
                 <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 5V19L19 12L8 5Z" /></svg>
@@ -254,7 +295,7 @@ const Sermon = () => {
                 <button
                   className="nav-arrow prev"
                   onClick={(e) => { e.stopPropagation(); goToSermon(sermonIndex - 1); }}
-                  aria-label="Previous sermon"
+                  aria-label={t("sermon.videoHero.prevAria")}
                   disabled={!ready}
                 >
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -262,7 +303,7 @@ const Sermon = () => {
                 <button
                   className="nav-arrow next"
                   onClick={(e) => { e.stopPropagation(); goToSermon(sermonIndex + 1); }}
-                  aria-label="Next sermon"
+                  aria-label={t("sermon.videoHero.nextAria")}
                   disabled={!ready}
                 >
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -296,7 +337,7 @@ const Sermon = () => {
                 <button
                   className="expand-btn"
                   onClick={(e) => { e.stopPropagation(); toggleExpand(); }}
-                  aria-label={expanded ? "Narrow video" : "Widen video"}
+                  aria-label={expanded ? t("sermon.videoHero.narrowAria") : t("sermon.videoHero.widenAria")}
                   disabled={!ready}
                 >
                   {expanded ? (
@@ -310,7 +351,7 @@ const Sermon = () => {
                   )}
                 </button>
 
-                <button className="mute-btn" onClick={(e) => { e.stopPropagation(); toggleMute(); }} aria-label={muted ? "Unmute video" : "Mute video"} disabled={!ready}>
+                <button className="mute-btn" onClick={(e) => { e.stopPropagation(); toggleMute(); }} aria-label={muted ? t("sermon.videoHero.unmuteAria") : t("sermon.videoHero.muteAria")} disabled={!ready}>
                   {muted ? (
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9V15H8L13 20V4L8 9H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M17 8L21 16M21 8L17 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
                   ) : (
@@ -324,58 +365,67 @@ const Sermon = () => {
 
       <section className="hero-text-section">
         <div className="hero-text-inner">
-         
-          <h1 className="display">Preaching the Word, wherever the church gathers</h1>
-          <p>Priest James Whitfield brings the same message across three congregations each week — this is what it looks like to shepherd more than one flock.</p>
-         
+
+          <h1 className="display">{t("sermon.heroText.title")}</h1>
+          <p>{t("sermon.heroText.description")}</p>
+
         </div>
       </section>
 
       <section className="sermons-section">
         <div className="wrapper">
           <div className="sermons-head">
-            <h2 className="display">Catch up on past sermons</h2>
+            <h2 className="display">{t("sermon.sermons.sectionTitle")}</h2>
           </div>
 
-          {loadingSermons && <p style={{ textAlign: "center" }}>Loading sermons...</p>}
+          {loadingSermons && <p style={{ textAlign: "center" }}>{t("sermon.sermons.loading")}</p>}
           {!loadingSermons && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
           )}
           {!loadingSermons && !error && sermons.length === 0 && (
-            <p style={{ textAlign: "center" }}>No sermons found.</p>
+            <p style={{ textAlign: "center" }}>{t("sermon.sermons.none")}</p>
           )}
 
           {!loadingSermons && !error && sermons.length > 0 && (
-            <div className="sermons-grid">
-              {sermons.map((s, i) => (
-                <button
-                  key={s._id || s.title}
-                  className={`sermon-card${i === sermonIndex && !videoClosed ? " active" : ""}`}
-                  onClick={() => selectSermonFromGrid(i)}
-                >
-                  <div className="sermon-thumb-wrap">
-                    {s.thumbnail ? (
-                      <img src={s.thumbnail} alt={s.title} />
-                    ) : (
-                      <div
-                        style={{
-                          width: "100%",
-                          aspectRatio: "16/9",
-                          background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%)",
-                        }}
-                      />
-                    )}
-                    <div className="sermon-play-badge">
-                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.4" opacity="0.85"/><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor"/></svg>
+            <>
+              {sermonsFallback && (
+                <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
+                  {t("sermon.sermons.fallbackNotice")}
+                </p>
+              )}
+              <div className="sermons-grid">
+                {sermons.map((s, i) => (
+                  <button
+                    key={s._id || s.title}
+                    className={`sermon-card${i === sermonIndex && !videoClosed ? " active" : ""}`}
+                    onClick={() => selectSermonFromGrid(i)}
+                  >
+                    <div className="sermon-thumb-wrap">
+                      {s.thumbnail ? (
+                        <img src={s.thumbnail} alt={s.title} />
+                      ) : (
+                        <div
+                          style={{
+                            width: "100%",
+                            aspectRatio: "16/9",
+                            background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%)",
+                          }}
+                        />
+                      )}
+                      <div className="sermon-play-badge">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.4" opacity="0.85"/><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor"/></svg>
+                      </div>
                     </div>
-                  </div>
-                  <div className="sermon-card-body">
-                    {i === sermonIndex && !videoClosed && <div className="sermon-now-playing">Now Playing</div>}
-                    <h3>{s.title}</h3>
-                  </div>
-                </button>
-              ))}
-            </div>
+                    <div className="sermon-card-body">
+                      {i === sermonIndex && !videoClosed && (
+                        <div className="sermon-now-playing">{t("sermon.sermons.nowPlaying")}</div>
+                      )}
+                      <h3>{s.title}</h3>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </section>
@@ -383,30 +433,47 @@ const Sermon = () => {
       <section className="campuses-section">
         <div className="wrapper">
           <div className="campuses-head">
-            <h2 className="display">The churches I serve</h2>
-            <p>Every Sunday, Priest James moves between three congregations — each with its own rhythm, but the same commitment to the Word.</p>
+            <h2 className="display">{t("sermon.campuses.sectionTitle")}</h2>
+            <p>{t("sermon.campuses.description")}</p>
           </div>
 
           {campusesLoading ? (
-            <p style={{ textAlign: "center" }}>Loading churches...</p>
+            <p style={{ textAlign: "center" }}>{t("sermon.campuses.loading")}</p>
           ) : campusesError ? (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{campusesError}</p>
           ) : campuses.length === 0 ? (
-            <p style={{ textAlign: "center" }}>No churches found.</p>
+            <p style={{ textAlign: "center" }}>{t("sermon.campuses.none")}</p>
           ) : (
-            <div className="campus-grid">
-              {campuses.map((c) => (
-                <div className="campus-card" key={c._id}>
-                  <img src={c.image || ""} alt={c.churchName} />
-                  <div className="campus-card-body">
-                    <div className="campus-role">{c.isPrimary ? "Primary" : c.isFeatured ? "Featured" : ""}</div>
-                    <h3>{c.churchName}</h3>
-                    <div className="campus-line"><strong>Address:</strong> {c.address}</div>
-                    <div className="campus-line"><strong>Service:</strong> {c.serviceDays} · {c.serviceTime}</div>
+            <>
+              {campusesFallback && (
+                <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
+                  {t("sermon.campuses.fallbackNotice")}
+                </p>
+              )}
+              <div className="campus-grid">
+                {campuses.map((c) => (
+                  <div className="campus-card" key={c._id}>
+                    <img src={c.image || ""} alt={c.churchName} />
+                    <div className="campus-card-body">
+                      <div className="campus-role">
+                        {c.isPrimary
+                          ? t("sermon.campuses.tagPrimary")
+                          : c.isFeatured
+                          ? t("sermon.campuses.tagFeatured")
+                          : ""}
+                      </div>
+                      <h3>{c.churchName}</h3>
+                      <div className="campus-line">
+                        <strong>{t("sermon.campuses.address")}</strong> {c.address}
+                      </div>
+                      <div className="campus-line">
+                        <strong>{t("sermon.campuses.service")}</strong> {c.serviceDays} · {c.serviceTime}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </section>

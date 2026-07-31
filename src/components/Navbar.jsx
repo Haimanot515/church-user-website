@@ -4,6 +4,7 @@ import Form from "../pages/Registration/Form";
 import Verify from "../pages/Registration/Verify";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTimes, FaBars } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import "./Navbar.css";
 
 // Crown of thorns logo
@@ -37,6 +38,7 @@ const ThornCrownLogo = () => (
 
 const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -78,6 +80,10 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
     closeMenu();
   };
 
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -88,7 +94,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
         <button
           className="menu-toggle"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle Menu"
+          aria-label={t("navbar.menu.toggle")}
         >
           {isMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
@@ -97,18 +103,18 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
 
           <div className="nav-links-row">
             <div className="nav-links-primary">
-              <Link to="/about" onClick={closeMenu}>About</Link>
-              <Link to="/projects" onClick={closeMenu}>Blogs</Link>
-              <Link to="/services" onClick={closeMenu}>Services</Link>
-              <Link to="/cv" onClick={closeMenu}>Church</Link>
-              <Link to="/skill" onClick={closeMenu}>Sermon</Link>
+              <Link to="/about" onClick={closeMenu}>{t("navbar.links.about")}</Link>
+              <Link to="/projects" onClick={closeMenu}>{t("navbar.links.blogs")}</Link>
+              <Link to="/services" onClick={closeMenu}>{t("navbar.links.services")}</Link>
+              <Link to="/cv" onClick={closeMenu}>{t("navbar.links.church")}</Link>
+              <Link to="/skill" onClick={closeMenu}>{t("navbar.links.sermon")}</Link>
             </div>
 
             <div className="nav-links-secondary">
-              <Link to="/testimonials" onClick={closeMenu}>Travel</Link>
-              <Link to="/contact" onClick={closeMenu}>Contact</Link>
-              <Link to="/media" onClick={closeMenu}>Media</Link>
-              <Link to="/book" onClick={closeMenu}>Books</Link>
+              <Link to="/testimonials" onClick={closeMenu}>{t("navbar.links.travel")}</Link>
+              <Link to="/contact" onClick={closeMenu}>{t("navbar.links.contact")}</Link>
+              <Link to="/media" onClick={closeMenu}>{t("navbar.links.media")}</Link>
+              <Link to="/book" onClick={closeMenu}>{t("navbar.links.books")}</Link>
             </div>
           </div>
 
@@ -117,16 +123,22 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
             {loggedIn ? (
               <>
                 {(isAdmin === true || isAdmin === "true") && (
-                  <Link to="/admin/users/view" onClick={closeMenu}>Admin</Link>
+                  <Link to="/admin/users/view" onClick={closeMenu}>{t("navbar.links.admin")}</Link>
                 )}
-                <button onClick={handleLogout}>Logout</button>
+                <button onClick={handleLogout}>{t("navbar.auth.logout")}</button>
               </>
             ) : (
               <>
-                <button onClick={openLogin}>Login</button>
-                <button onClick={openRegister}>Register</button>
+                <button onClick={openLogin}>{t("navbar.auth.login")}</button>
+                <button onClick={openRegister}>{t("navbar.auth.register")}</button>
               </>
             )}
+
+            <div className="language-switcher">
+              <button onClick={() => changeLanguage("en")}>EN</button>
+              <button onClick={() => changeLanguage("am")}>አማ</button>
+              <button onClick={() => changeLanguage("it")}>IT</button>
+            </div>
           </div>
         </div>
       </nav>

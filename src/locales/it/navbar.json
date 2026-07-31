@@ -1,0 +1,27 @@
+{
+  "logo": {
+    "ariaLabel": "Home"
+  },
+  "menu": {
+    "toggle": "Apri menu",
+    "open": "Apri menu",
+    "close": "Chiudi menu"
+  },
+  "links": {
+    "about": "Chi siamo",
+    "blogs": "Blog",
+    "services": "Servizi",
+    "church": "Chiesa",
+    "sermon": "Sermoni",
+    "travel": "Viaggi",
+    "contact": "Contatti",
+    "media": "Media",
+    "books": "Libri",
+    "admin": "Amministrazione"
+  },
+  "auth": {
+    "login": "Accedi",
+    "register": "Registrati",
+    "logout": "Esci"
+  }
+}

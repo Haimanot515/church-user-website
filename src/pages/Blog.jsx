@@ -1,25 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import "./Blog.css";
 
 const POSTS_PER_PAGE = 10;
 
 const Blog = () => {
-  // === ADDED: fetched posts state (replaces hardcoded array) ===
+  const { t } = useTranslation();
+
+  // === Fetched posts state ===
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  // NEW: true when the posts currently shown came from the English
+  // fallback because the active language had none
+  const [postsFallback, setPostsFallback] = useState(false);
 
   // Category list comes entirely from the backend (fetched below); "All"
   // is the only UI-only entry, prepended so people can clear the filter.
   const [categories, setCategories] = useState(["All"]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState("");
+  // NEW: true when the category list currently shown came from the
+  // English fallback because the active language had none
+  const [categoriesFallback, setCategoriesFallback] = useState(false);
 
-  // === ADDED: which category is currently selected in the nav ===
+  // === which category is currently selected in the nav ===
   const [activeCategory, setActiveCategory] = useState("All");
 
   // ---------- Inlined category nav bar state/refs (formerly CategoryNav.jsx) ----------
@@ -155,10 +164,10 @@ const Blog = () => {
   };
   // ---------- End inlined category nav bar logic ----------
 
-  // ADDED: scroll so the first post lands just below the sticky category
-  // bar. A plain scrollIntoView({block:"start"}) would put the post list's
-  // top edge flush with the very top of the viewport — right where the
-  // sticky bar sits — which hides the first post underneath it instead of
+  // Scroll so the first post lands just below the sticky category bar. A
+  // plain scrollIntoView({block:"start"}) would put the post list's top
+  // edge flush with the very top of the viewport — right where the sticky
+  // bar sits — which hides the first post underneath it instead of
   // revealing it, especially noticeable when scrolling up from the bottom
   // of the page. This measures the bar's real height first and always
   // runs, regardless of where the page currently sits.
@@ -173,85 +182,114 @@ const Blog = () => {
     window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
   };
 
-  // === ADDED: fetch posts, filtered by activeCategory when it isn't "All" — same pattern as Home.jsx sermons ===
-  useEffect(() => {
-    const fetchPosts = async (pageNum) => {
-      try {
-        setLoading(true);
-        setError("");
+  // === Fetch posts, filtered by activeCategory when it isn't "All" —
+  // same Accept-Language fallback pattern as ChurchAboutPage's
+  // fetchChurchPersons/fetchHistory: try the active language first, and
+  // only on a fresh load (page 1) that comes back empty, retry with an
+  // explicit "en" header and flag it. A "Load More" click on page > 1
+  // never silently switches language. ===
+  const fetchPosts = async (pageNum) => {
+    try {
+      setLoading(true);
+      setError("");
+      if (pageNum === 1) setPostsFallback(false);
 
-        const res = await API.get("/posts", {
-          params: {
-            page: pageNum,
-            limit: POSTS_PER_PAGE,
-            ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
-          },
+      const params = {
+        page: pageNum,
+        limit: POSTS_PER_PAGE,
+        ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
+      };
+
+      let res = await API.get("/posts", { params });
+      let postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+      let pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
+
+      if (pageNum === 1 && (!postsData || postsData.length === 0)) {
+        res = await API.get("/posts", {
+          params,
+          headers: { "Accept-Language": "en" },
         });
-
-        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
-        const pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
-
-        // Append on "Load More" (page > 1), replace on first load / reset
-        setPosts((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
-        setTotalPages(pages);
-      } catch (err) {
-        console.log(err);
-        setError(err.response?.data?.message || "Failed to load posts");
-      } finally {
-        setLoading(false);
+        postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
+        if (postsData && postsData.length > 0) setPostsFallback(true);
       }
-    };
+
+      // Append on "Load More" (page > 1), replace on first load / reset
+      setPosts((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
+      setTotalPages(pages);
+    } catch (err) {
+      console.log(err);
+      setError(err.response?.data?.message || t("blog.posts.errorDefault"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts(page);
-  }, [page, activeCategory]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, activeCategory, t]);
 
   const handleLoadMore = () => {
     if (page < totalPages) setPage((p) => p + 1);
   };
 
-  // === ADDED: switching category resets back to page 1 so the fetch above starts fresh ===
+  // === Switching category resets back to page 1 so the fetch above starts fresh ===
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setPage(1);
     scrollToFirstPost();
   };
 
-  // === ADDED: fetch categories from backend, same pattern as Home.jsx ===
+  // === Fetch categories from backend, same Accept-Language fallback
+  // pattern as fetchChurchPersons ===
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setCategoriesLoading(true);
         setCategoriesError("");
+        setCategoriesFallback(false);
 
-        const res = await API.get("/categories");
-        const raw = Array.isArray(res.data) ? res.data : res.data.categories;
-
-        const names = (raw || [])
+        let res = await API.get("/categories");
+        let raw = Array.isArray(res.data) ? res.data : res.data.categories;
+        let names = (raw || [])
           .map((c) => (typeof c === "string" ? c : c?.name))
           .filter(Boolean);
+
+        if (names.length === 0) {
+          res = await API.get("/categories", {
+            headers: { "Accept-Language": "en" },
+          });
+          raw = Array.isArray(res.data) ? res.data : res.data.categories;
+          names = (raw || [])
+            .map((c) => (typeof c === "string" ? c : c?.name))
+            .filter(Boolean);
+          if (names.length > 0) setCategoriesFallback(true);
+        }
 
         if (names.length > 0) {
           setCategories(["All", ...names]);
         }
       } catch (err) {
         console.log(err);
-        setCategoriesError(err.response?.data?.message || "Failed to load categories");
+        setCategoriesError(err.response?.data?.message || t("blog.categoryNav.errorDefault"));
       } finally {
         setCategoriesLoading(false);
       }
     };
     fetchCategories();
-  }, []);
+  }, [t]);
 
-  // === ADDED: helpers to safely read populated fields ===
+  // === Helpers to safely read populated fields ===
   const getCategoryName = (post) =>
     typeof post.category === "object" && post.category !== null
       ? post.category.name
-      : post.category || "General";
+      : post.category || t("blog.posts.defaultCategory");
 
   const getAuthorName = (post) =>
     typeof post.author === "object" && post.author !== null
       ? post.author.name
-      : post.author || "Harbor Light Church";
+      : post.author || t("blog.posts.defaultAuthor");
 
   const getFormattedDate = (post) =>
     post.publishedAt || post.createdAt
@@ -265,7 +303,7 @@ const Blog = () => {
   const getReadTime = (post) => {
     const words = (post.content || post.description || "").split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.round(words / 200));
-    return `${minutes} min read`;
+    return `${minutes} ${t("blog.posts.readTimeSuffix")}`;
   };
 
   return (
@@ -277,13 +315,13 @@ const Blog = () => {
 
       <section className="hero-blog">
         <div className="wrapper">
-          <h1 className="display">Stories, reflections, and updates from Harbor Light</h1>
-          <p>Sermon notes, testimonies, and news from the life of our congregation — written by our pastors and by the people who make up our church</p>
+          <h1 className="display">{t("blog.hero.title")}</h1>
+          <p>{t("blog.hero.description")}</p>
         </div>
       </section>
 
       {/* NAV — inlined (formerly <CategoryNav />) */}
-      <nav className="cat-nav-bar" aria-label="Post categories" ref={catNavBarRef}>
+      <nav className="cat-nav-bar" aria-label={t("blog.categoryNav.ariaLabel")} ref={catNavBarRef}>
         <div
           className="cat-nav-track"
           ref={catViewportRef}
@@ -306,14 +344,31 @@ const Blog = () => {
         </div>
       </nav>
 
+      {/* note shown when the category list fell back to English */}
+      {categoriesFallback && (
+        <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", margin: "10px 0 0 0" }}>
+          {t("blog.categoryNav.fallbackNotice")}
+        </p>
+      )}
+      {categoriesError && (
+        <p style={{ color: "red", textAlign: "center", margin: "10px 0 0 0" }}>{categoriesError}</p>
+      )}
+
       <section className="blog-list-section" ref={postsSectionRef}>
         <div className="wrapper">
           {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
+          {/* note shown when the posts fell back to English */}
+          {postsFallback && (
+            <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
+              {t("blog.posts.fallbackNotice")}
+            </p>
+          )}
+
           {loading && posts.length === 0 ? (
-            <p style={{ textAlign: "center" }}>Loading posts...</p>
+            <p style={{ textAlign: "center" }}>{t("blog.posts.loading")}</p>
           ) : posts.length === 0 ? (
-            <p style={{ textAlign: "center" }}>No posts found.</p>
+            <p style={{ textAlign: "center" }}>{t("blog.posts.none")}</p>
           ) : (
             posts.map((post, index) => (
               <React.Fragment key={post._id || index}>
@@ -333,7 +388,7 @@ const Blog = () => {
                     <p className="desc">{post.description}</p>
                     <p className="byline">By {getAuthorName(post)}</p>
                     <Link to={`/projects/${post._id}`} className="read-more">
-                      Read Full Post
+                      {t("blog.posts.readMoreButton")}
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -357,7 +412,7 @@ const Blog = () => {
           {page < totalPages && (
             <div className="load-more-wrap">
               <button className="load-more-btn" onClick={handleLoadMore} disabled={loading}>
-                {loading ? "Loading..." : "Load More Posts"}
+                {loading ? t("blog.posts.loadingMoreButton") : t("blog.posts.loadMoreButton")}
               </button>
             </div>
           )}

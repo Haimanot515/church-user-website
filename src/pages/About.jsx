@@ -1,53 +1,89 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 
 const CHURCH_NAME = "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine";
 
 const ChurchAboutPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const categories = ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Us", "Contact"];
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [activeFaith, setActiveFaith] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
-  const [activeLang, setActiveLang] = useState("en");
 
-  // === ADDED: About/Hero content fetched from /about ===
+  // === About/Hero content fetched from /about ===
   const [about, setAbout] = useState(null);
+  // NEW: true when the about/hero content currently shown came from the
+  // English fallback because the active language had none
+  const [aboutFallback, setAboutFallback] = useState(false);
 
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const aboutRes = await API.get("/about");
-        const aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
-        const latest = aboutData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-        setAbout(latest);
+        setAboutFallback(false);
+
+        let aboutRes = await API.get("/about");
+        let aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
+        let latest = aboutData
+          .filter(Boolean)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+        if (!latest) {
+          aboutRes = await API.get("/about", {
+            headers: { "Accept-Language": "en" },
+          });
+          aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
+          latest = aboutData
+            .filter(Boolean)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+          if (latest) setAboutFallback(true);
+        }
+
+        setAbout(latest || null);
       } catch (err) { console.error("Error:", err); }
     };
     fetchAbout();
-  }, []);
+  }, [t]);
 
-  // === ADDED: Leadership Team / Special Thanks / Testimonials fetched from /church-persons ===
+  // === Leadership Team / Special Thanks / Testimonials fetched from /church-persons ===
   const [leaders, setLeaders] = useState([]);
   const [thanksList, setThanksList] = useState([]);
   const [testimonialsList, setTestimonialsList] = useState([]);
+  // NEW: true when the respective list currently shown came from the
+  // English fallback because the active language had none
+  const [leadersFallback, setLeadersFallback] = useState(false);
+  const [thanksFallback, setThanksFallback] = useState(false);
+  const [testimonialsFallback, setTestimonialsFallback] = useState(false);
 
   useEffect(() => {
-    const fetchChurchPersons = async (category, setter) => {
+    const fetchChurchPersons = async (category, setter, setFallback) => {
       try {
-        const res = await API.get("/church-persons", { params: { category } });
-        const data = Array.isArray(res.data) ? res.data : [];
+        setFallback(false);
+
+        let res = await API.get("/church-persons", { params: { category } });
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/church-persons", {
+            params: { category },
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setFallback(true);
+        }
+
         setter(data);
       } catch (err) {
         console.error(`Error fetching ${category}:`, err);
       }
     };
 
-    fetchChurchPersons("leader", setLeaders);
-    fetchChurchPersons("specialThanks", setThanksList);
-    fetchChurchPersons("testimony", setTestimonialsList);
-  }, []);
+    fetchChurchPersons("leader", setLeaders, setLeadersFallback);
+    fetchChurchPersons("specialThanks", setThanksList, setThanksFallback);
+    fetchChurchPersons("testimony", setTestimonialsList, setTestimonialsFallback);
+  }, [t]);
 
   // === "Our Church Story" chapters fetched from /church-story (paginated server-side) ===
   const HISTORY_PAGE_SIZE = 10;
@@ -55,17 +91,33 @@ const ChurchAboutPage = () => {
   const [historyPage, setHistoryPage] = useState(1);
   const [historyHasMore, setHistoryHasMore] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
+  // NEW: true when the story chapters currently shown came from the
+  // English fallback because the active language had none
+  const [historyFallback, setHistoryFallback] = useState(false);
 
   const fetchHistory = async (page) => {
     try {
       setHistoryLoading(true);
-      const res = await API.get("/church-story", {
-        params: { page, limit: HISTORY_PAGE_SIZE },
-      });
+      if (page === 1) setHistoryFallback(false);
+
+      const params = { page, limit: HISTORY_PAGE_SIZE };
+      let res = await API.get("/church-story", { params });
 
       // Handle either a raw array response or a { stories, total, pages } shape
-      const data = Array.isArray(res.data) ? res.data : res.data.stories || [];
-      const totalPages = res.data.pages ?? (Array.isArray(res.data) ? 1 : undefined);
+      let data = Array.isArray(res.data) ? res.data : res.data.stories || [];
+      let totalPages = res.data.pages ?? (Array.isArray(res.data) ? 1 : undefined);
+
+      // Only attempt the fallback on a fresh load (page 1) — a "Load More"
+      // click on page > 1 should never silently switch language.
+      if (page === 1 && data.length === 0) {
+        res = await API.get("/church-story", {
+          params,
+          headers: { "Accept-Language": "en" },
+        });
+        data = Array.isArray(res.data) ? res.data : res.data.stories || [];
+        totalPages = res.data.pages ?? (Array.isArray(res.data) ? 1 : undefined);
+        if (data.length > 0) setHistoryFallback(true);
+      }
 
       setHistory((prev) => (page === 1 ? data : [...prev, ...data]));
 
@@ -87,7 +139,7 @@ const ChurchAboutPage = () => {
   useEffect(() => {
     fetchHistory(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [t]);
 
   const handleLoadMoreStory = () => {
     const nextPage = historyPage + 1;
@@ -98,30 +150,25 @@ const ChurchAboutPage = () => {
   const location = {
     city: "Udine, Italy",
     address: `${CHURCH_NAME}`,
-    note: "Our doors are open most mornings, and our office team is usually reachable from the small building behind the sanctuary.",
-    serviceTimes: ["Sunday — 9:00 & 11:00 AM", "Wednesday Prayer — 6:30 PM"]
+    note: t("about.location.note"),
+    serviceTimes: (() => {
+      const raw = t("about.location.serviceTimes", { returnObjects: true });
+      return Array.isArray(raw) ? raw : [];
+    })(),
   };
 
-  // === ADDED: Advanced About-page sections ===
+  // === Advanced About-page sections (translated) ===
 
   const missionVision = [
-    { label: "Our Mission", value: "To help this community know Christ and grow together in faith, one ordinary week at a time." },
-    { label: "Our Vision", value: "A church so rooted in this community that no one nearby has to face hardship, doubt, or celebration alone." }
+    { label: t("about.missionVision.missionLabel"), value: t("about.missionVision.missionValue") },
+    { label: t("about.missionVision.visionLabel"), value: t("about.missionVision.visionValue") },
   ];
 
-  const faithPoints = [
-    { title: "Scripture", desc: "We believe the Bible is God's word, trustworthy and sufficient for how we understand faith and life." },
-    { title: "The Trinity", desc: "We believe in one God who exists eternally as Father, Son, and Holy Spirit." },
-    { title: "Salvation by Grace", desc: "We believe people are reconciled to God by grace through faith, not by works, through the death and resurrection of Jesus." },
-    { title: "The Church", desc: "We believe the church is God's family on earth, called to worship together, serve one another, and reach out to the world." }
-  ];
+  const faithPointsRaw = t("about.faith.points", { returnObjects: true });
+  const faithPoints = Array.isArray(faithPointsRaw) ? faithPointsRaw : [];
 
-  const faqs = [
-    { q: "What should I expect as a first-time visitor?", a: "A warm welcome, a seat wherever you like, and no pressure to sign anything or stand up and introduce yourself." },
-    { q: "Is there a program for kids during the service?", a: "Yes — supervised check-in and age-appropriate programming run alongside both Sunday services." },
-    { q: "Where can I park?", a: "Street parking is available nearby, with additional overflow parking behind the sanctuary." },
-    { q: "Do I need to be a member to join a small group?", a: "Not at all. Small groups are open to anyone, whether you're visiting for the first time or have been here for years." }
-  ];
+  const faqsRaw = t("about.faq.items", { returnObjects: true });
+  const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
 
   return (
     <div className="church-portal">
@@ -640,23 +687,19 @@ const ChurchAboutPage = () => {
             {about?._id ? (
               <Link to={`/about/${about._id}`} style={{ display: 'block', cursor: 'pointer' }}>
                 <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-                  {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
+                  {about?.title || t("about.hero.titleFallback")}
                 </h1>
                 <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-                  {about?.description || (activeLang === 'am'
-                    ? `ላለፉት አምስት አስርት ዓመታት ገደማ፣ ${CHURCH_NAME} እምነት መልስ ከማግኘት ይልቅ መገኘት እንደሆነ የተማረ ማህበረሰብ ነው።`
-                    : `For nearly five decades, ${CHURCH_NAME} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.`)}
+                  {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
                 </p>
               </Link>
             ) : (
               <>
                 <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-                  {about?.title || (activeLang === 'am' ? "ቤተክርስቲያን፣ ከህንፃ በላይ" : "A Church, Not Just a Building")}
+                  {about?.title || t("about.hero.titleFallback")}
                 </h1>
                 <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-                  {about?.description || (activeLang === 'am'
-                    ? `ላለፉት አምስት አስርት ዓመታት ገደማ፣ ${CHURCH_NAME} እምነት መልስ ከማግኘት ይልቅ መገኘት እንደሆነ የተማረ ማህበረሰብ ነው።`
-                    : `For nearly five decades, ${CHURCH_NAME} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.`)}
+                  {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
                 </p>
               </>
             )}
@@ -665,29 +708,35 @@ const ChurchAboutPage = () => {
                 onClick={() => document.getElementById('our-church-story')?.scrollIntoView({ behavior: 'smooth' })}
                 style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
               >
-                Read Our Story Below
+                {t("about.hero.readStoryButton")}
               </button>
               <button
                 onClick={() => navigate('/contact')}
                 style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
               >
-                Say Hello
+                {t("about.hero.sayHelloButton")}
               </button>
             </div>
+            {/* note shown when the about/hero content fell back to English */}
+            {aboutFallback && (
+              <p style={{ fontSize: '0.85rem', color: '#a9c2d3', margin: '18px 0 0 0' }}>
+                {t("about.hero.fallbackNotice")}
+              </p>
+            )}
           </div>
           <div className="about-hero-image-col" style={{ flex: '0 0 340px', minWidth: '280px' }}>
             {about?._id ? (
               <Link to={`/about/${about._id}`}>
                 <img
                   src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
-                  alt={about?.title || `${CHURCH_NAME} sanctuary`}
+                  alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
                   style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', cursor: 'pointer' }}
                 />
               </Link>
             ) : (
               <img
                 src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
-                alt={about?.title || `${CHURCH_NAME} sanctuary`}
+                alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
                 style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
               />
             )}
@@ -697,7 +746,7 @@ const ChurchAboutPage = () => {
                   {about.churchLeader}
                 </p>
                 <p className="eyebrow" style={{ fontSize: '0.72rem', margin: 0 }}>
-                  {activeLang === 'am' ? "የቤተ ክርስቲያን መሪ" : "Church Leader"}
+                  {t("about.hero.churchLeaderLabel")}
                 </p>
               </div>
             )}
@@ -723,8 +772,15 @@ const ChurchAboutPage = () => {
       <section className="about-section" id="our-church-story">
         <div className="about-container">
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            Our Church Story
+            {t("about.story.heading")}
           </h2>
+
+          {/* note shown when the story chapters fell back to English */}
+          {historyFallback && (
+            <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#888', marginTop: '-30px', marginBottom: '40px' }}>
+              {t("about.story.fallbackNotice")}
+            </p>
+          )}
 
           {history.map((item) => (
             <div key={item._id} className="about-item">
@@ -763,23 +819,23 @@ const ChurchAboutPage = () => {
 
                 {/* Read Full Story button — goes to the detail page */}
                 <Link to={`/about/story/${item._id}`} className="read-full-story-btn">
-                  Read Full Story
+                  {t("about.story.readFullStoryButton")}
                 </Link>
               </div>
             </div>
           ))}
 
           {history.length === 0 && historyLoading && (
-            <p style={{ textAlign: 'center', color: 'var(--slate)' }}>Loading our story…</p>
+            <p style={{ textAlign: 'center', color: 'var(--slate)' }}>{t("about.story.loading")}</p>
           )}
 
           {history.length === 0 && !historyLoading && (
             <div style={{ textAlign: 'center', padding: '40px 20px' }}>
               <p className="display" style={{ fontSize: '1.6rem', fontWeight: 600, color: 'var(--navy-deep)', margin: '0 0 8px 0' }}>
-                No story chapters found yet
+                {t("about.story.noneTitle")}
               </p>
               <p style={{ color: 'var(--slate)', fontSize: '1rem', margin: 0 }}>
-                Check back soon — our history is still being written here.
+                {t("about.story.noneSubtitle")}
               </p>
             </div>
           )}
@@ -787,7 +843,7 @@ const ChurchAboutPage = () => {
           {historyHasMore && (
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
               <button className="load-more-btn" onClick={handleLoadMoreStory} disabled={historyLoading}>
-                {historyLoading ? "Loading…" : "Load More"}
+                {historyLoading ? t("about.story.loadingMoreButton") : t("about.story.loadMoreButton")}
               </button>
             </div>
           )}
@@ -797,7 +853,7 @@ const ChurchAboutPage = () => {
       {/* STATEMENT OF FAITH + WHY WE WRITE (combined) */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h3 className="eyebrow" style={{ marginBottom: '30px', fontSize: '0.85rem', textAlign: 'center' }}>What We Believe</h3>
+          <h3 className="eyebrow" style={{ marginBottom: '30px', fontSize: '0.85rem', textAlign: 'center' }}>{t("about.faith.heading")}</h3>
           <div>
             {faithPoints.map((f, i) => (
               <div className="accordion-item" key={i}>
@@ -814,11 +870,9 @@ const ChurchAboutPage = () => {
             ))}
           </div>
 
-          <h3 className="eyebrow" style={{ margin: '70px 0 30px 0', fontSize: '0.85rem', textAlign: 'center' }}>Why We Write This Blog</h3>
+          <h3 className="eyebrow" style={{ margin: '70px 0 30px 0', fontSize: '0.85rem', textAlign: 'center' }}>{t("about.faith.whyWeWriteHeading")}</h3>
           <p className="display" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5, margin: 0 }}>
-            "We gather on Sundays, but a service only holds so much. This is where we put the rest —
-            the doubts we don't always voice out loud, the small mercies we'd otherwise forget, and
-            the ordinary texture of trying to be a church for this community, in this season."
+            "{t("about.faith.whyWeWriteQuote")}"
           </p>
         </div>
       </section>
@@ -828,8 +882,16 @@ const ChurchAboutPage = () => {
         <section>
           <div className="wrapper" style={{ maxWidth: '760px' }}>
             <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 44px 0', color: '#ffffff', textAlign: 'center' }}>
-              Leadership Team
+              {t("about.leadership.heading")}
             </h2>
+
+            {/* note shown when leadership content fell back to English */}
+            {leadersFallback && (
+              <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#f2d9d9', marginTop: '-24px', marginBottom: '30px' }}>
+                {t("about.leadership.fallbackNotice")}
+              </p>
+            )}
+
             <div className="thanks-grid">
               {leaders.map((p) => (
                 <div className="thanks-card" key={p._id}>
@@ -854,19 +916,27 @@ const ChurchAboutPage = () => {
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            In Their Own Words
+            {t("about.testimonials.heading")}
           </h2>
+
+          {/* note shown when testimonials fell back to English */}
+          {testimonialsFallback && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
+              {t("about.testimonials.fallbackNotice")}
+            </p>
+          )}
+
           <div className="testimonial-grid">
-            {testimonialsList.map((t) => (
-              <div className="card testimonial-card" key={t._id}>
+            {testimonialsList.map((person) => (
+              <div className="card testimonial-card" key={person._id}>
                 <img
                   className="testimonial-photo"
-                  src={(t.photos && t.photos[0]) || `https://ui-avatars.com/api/?name=${t.name}&background=0070f3&color=fff`}
-                  alt={t.name}
+                  src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
+                  alt={person.name}
                 />
-                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>"{t.message}"</p>
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{t.name}</p>
-                <p className="testimonial-title">{t.title}</p>
+                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>"{person.message}"</p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
+                <p className="testimonial-title">{person.title}</p>
               </div>
             ))}
           </div>
@@ -877,7 +947,7 @@ const ChurchAboutPage = () => {
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            Common Questions
+            {t("about.faq.heading")}
           </h2>
           <div>
             {faqs.map((f, i) => (
@@ -901,8 +971,16 @@ const ChurchAboutPage = () => {
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            Special Thanks
+            {t("about.specialThanks.heading")}
           </h2>
+
+          {/* note shown when special thanks content fell back to English */}
+          {thanksFallback && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
+              {t("about.specialThanks.fallbackNotice")}
+            </p>
+          )}
+
           <div className="testimonial-grid">
             {thanksList.map((p) => (
               <div className="card testimonial-card" key={p._id}>
@@ -926,13 +1004,13 @@ const ChurchAboutPage = () => {
           <div className="wrapper">
             <div className="location-grid">
               <div>
-                <h3 className="eyebrow" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>Visit Us</h3>
+                <h3 className="eyebrow" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>{t("about.location.eyebrow")}</h3>
                 <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>{location.address}</h2>
                 <p className="body-copy on-dark" style={{ fontSize: '1.2rem', marginBottom: '26px' }}>{location.note}</p>
                 <div>
-                  {location.serviceTimes.map((t, i) => (
+                  {location.serviceTimes.map((time, i) => (
                     <div className="service-time-row" key={i}>
-                      <span style={{ color: '#ffffff' }}>{t}</span>
+                      <span style={{ color: '#ffffff' }}>{time}</span>
                     </div>
                   ))}
                 </div>
@@ -940,7 +1018,7 @@ const ChurchAboutPage = () => {
               <div className="map-frame">
                 <img
                   src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=80"
-                  alt={`Map area near ${CHURCH_NAME}`}
+                  alt={t("about.location.mapAlt", { churchName: CHURCH_NAME })}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </div>
@@ -953,22 +1031,22 @@ const ChurchAboutPage = () => {
       <div style={{ background: 'var(--deep-red)' }}>
         <section>
           <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
-            <h3 className="eyebrow" style={{ marginBottom: '18px', fontSize: '0.85rem' }}>Give Online or In Person</h3>
+            <h3 className="eyebrow" style={{ marginBottom: '18px', fontSize: '0.85rem' }}>{t("about.support.eyebrow")}</h3>
             <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
-              Support the Church
+              {t("about.support.heading")}
             </h2>
             <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
-              Whatever you're able to give helps keep this church's doors — and its outreach to the community — open. You can give in person on Sunday, or send your gift directly using the details below.
+              {t("about.support.description")}
             </p>
             <div className="give-info-box" style={{ display: 'inline-block', textAlign: 'left', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '28px 34px' }}>
-              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>Bank Transfer</p>
+              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>{t("about.support.bankTransferLabel")}</p>
               <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: '0 0 20px 0' }}>
-                Account Name: {CHURCH_NAME}<br />
-                Account Number: 1000 4522 3390 112
+                {t("about.support.accountName", { churchName: CHURCH_NAME })}<br />
+                {t("about.support.accountNumber")}
               </p>
-              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>Online Giving</p>
+              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>{t("about.support.onlineGivingLabel")}</p>
               <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: 0 }}>
-                Merchant Name: {CHURCH_NAME}
+                {t("about.support.merchantName", { churchName: CHURCH_NAME })}
               </p>
             </div>
           </div>
@@ -980,17 +1058,17 @@ const ChurchAboutPage = () => {
         <section className="cta-band">
           <div className="wrapper" style={{ maxWidth: '640px' }}>
             <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>
-              Give or Get Involved
+              {t("about.cta.heading")}
             </h2>
             <p className="body-copy on-red" style={{ margin: '0 auto 30px auto', maxWidth: '520px' }}>
-              Whether it's your time, your gifts, or your generosity, there's a place for it here.
+              {t("about.cta.description")}
             </p>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
-                Give
+                {t("about.cta.giveButton")}
               </button>
               <button style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
-                Volunteer
+                {t("about.cta.volunteerButton")}
               </button>
             </div>
           </div>

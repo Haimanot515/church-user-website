@@ -1,0 +1,73 @@
+{
+  "sponsored": {
+    "adLabel": "ማስታወቂያ",
+    "closeAriaLabel": "የተደገፈ ይዘት ዝጋ",
+    "sponsoredContent": "የተደገፈ ይዘት",
+    "imageAltFallback": "የተደገፈ ይዘት",
+    "openButton": "ክፈት"
+  },
+  "hero": {
+    "titleFallback": "በጸጋ ላይ የተመሰረተ፣ ወደ ብርሃን የሚደርስ",
+    "descriptionFallback": "ከጉባኤያችን የተገኙ ግንዛቤዎች፣ የስብከት ማስታወሻዎች እና ታሪኮች፣ በየሳምንቱ ቅዱስ መጽሐፍን አብረን እየተጓዝን።",
+    "watchSermonButton": "የቅርብ ጊዜ ስብከት ይመልከቱ",
+    "planVisitButton": "ጉብኝት ያቅዱ",
+    "imageAltFallback": "የክርስቶስ የኦርቶዶክስ ምስል በምስለ በዓት ላይ"
+  },
+  "categoryNav": {
+    "ariaLabel": "የልጥፍ ምድቦች",
+    "all": "ሁሉም",
+    "errorDefault": "ምድቦችን መጫን አልተሳካም"
+  },
+  "sermons": {
+    "heading": "የአሁኑ የስብከት ተከታታይ",
+    "loading": "የስብከት ተከታታይ በመጫን ላይ...",
+    "noneAll": "ምንም ስብከቶች አልተገኙም።",
+    "noneCategory": "በ\"{{category}}\" ውስጥ ምንም ልጥፎች አልተገኙም።",
+    "loadingMore": "በመጫን ላይ...",
+    "loadMoreButton": "ተጨማሪ ልጥፎችን ይጫኑ",
+    "errorDefault": "የስብከት ተከታታይን መጫን አልተሳካም"
+  },
+  "trending": {
+    "heading": "ተወዳጅ",
+    "scrollLeftAriaLabel": "ወደ ግራ ያሸብልሉ",
+    "scrollRightAriaLabel": "ወደ ቀኝ ያሸብልሉ",
+    "loading": "ተወዳጅ ልጥፎችን በመጫን ላይ...",
+    "none": "ምንም ተወዳጅ ልጥፎች አልተገኙም።",
+    "errorDefault": "ተወዳጅ ልጥፎችን መጫን አልተሳካም"
+  },
+  "recommended": {
+    "heading": "የተመከሩ",
+    "loading": "የተመከሩ ልጥፎችን በመጫን ላይ...",
+    "none": "ምንም የተመከሩ ልጥፎች አልተገኙም።",
+    "errorDefault": "የተመከሩ ልጥፎችን መጫን አልተሳካም"
+  },
+  "pagination": {
+    "prev": "ቀዳሚ",
+    "next": "ቀጣይ",
+    "pageInfo": "ገጽ {{page}} ከ {{total}}"
+  },
+  "invite": {
+    "line1": "እንዳሉ ይምጡ",
+    "line2": "እዚህ ቦታ አለዎት።"
+  },
+  "priest": {
+    "eyebrow": "ከካህኑ",
+    "titleFallback": "አብረን እየተጓዝን፣ አንድ እሁድ በአንድ ጊዜ",
+    "descriptionFallback": "ሃያ ዓመታት በአገልግሎት ውስጥ ያስተማረኝ እምነት በማህበረሰብ ውስጥ በተሻለ ሁኔታ እንደሚያድግ ነው። ይህ ገጽ እግዚአብሔር የሚያስተምረንን - በስብከቶች፣ በምስክርነቶች እና በቤተክርስቲያናችን ቤተሰብ በዕለት ተዕለት ሕይወት - የምናካፍልበት ነው።",
+    "imageAltFallback": "ካህን በተዋበ ልብስ የስርዓት በትር ይዞ"
+  },
+  "testimonials": {
+    "heading": "ሰዎች ስለ ጸሐፊው የሚሉት",
+    "loading": "ምስክርነቶችን በመጫን ላይ...",
+    "none": "ምንም ምስክርነቶች አልተገኙም።",
+    "errorDefault": "ምስክርነቶችን መጫን አልተሳካም"
+  },
+  "photos": {
+    "heading": "ፎቶዎች",
+    "loading": "ፎቶዎችን በመጫን ላይ...",
+    "none": "ምንም ፎቶዎች አልተገኙም።",
+    "errorDefault": "ፎቶዎችን መጫን አልተሳካም",
+    "prevAriaLabel": "ቀዳሚ ፎቶ",
+    "nextAriaLabel": "ቀጣይ ፎቶ"
+  }
+}

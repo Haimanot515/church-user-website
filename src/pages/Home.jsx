@@ -1,18 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import "./Home.css";
 
 const POSTS_PER_PAGE = 10;
 
 const Home = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [hero, setHero] = useState(null);
+  // NEW: true when the hero currently shown came from the English
+  // fallback because the active language had none
+  const [heroFallback, setHeroFallback] = useState(false);
   const [priest, setPriest] = useState(null);
+  // NEW: true when the priest/about content currently shown came from the
+  // English fallback because the active language had none
+  const [priestFallback, setPriestFallback] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
   const [testimonialsError, setTestimonialsError] = useState("");
+  // NEW: true when testimonials currently shown came from the English
+  // fallback because the active language had none
+  const [testimonialsFallback, setTestimonialsFallback] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [photos, setPhotos] = useState([]);
   const [photosLoading, setPhotosLoading] = useState(true);
@@ -23,24 +34,36 @@ const Home = () => {
 
   const [promotion, setPromotion] = useState(null);
   const [promotionLoading, setPromotionLoading] = useState(true);
+  // NEW: true when the promotion currently shown came from the English
+  // fallback because the active language had none
+  const [promotionFallback, setPromotionFallback] = useState(false);
 
   const [sermons, setSermons] = useState([]);
   const [sermonsLoading, setSermonsLoading] = useState(true);
   const [sermonsError, setSermonsError] = useState("");
   const [sermonsPage, setSermonsPage] = useState(1);
   const [sermonsTotalPages, setSermonsTotalPages] = useState(1);
+  // true when the sermons currently shown came from the English
+  // fallback because the active language/category combo had no posts
+  const [sermonsFallback, setSermonsFallback] = useState(false);
 
   const [trending, setTrending] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(true);
   const [trendingError, setTrendingError] = useState("");
   const [trendingPage, setTrendingPage] = useState(1);
   const [trendingTotalPages, setTrendingTotalPages] = useState(1);
+  // NEW: true when trending posts currently shown came from the English
+  // fallback because the active language had none
+  const [trendingFallback, setTrendingFallback] = useState(false);
 
   const [recommended, setRecommended] = useState([]);
   const [recommendedLoading, setRecommendedLoading] = useState(true);
   const [recommendedError, setRecommendedError] = useState("");
   const [recommendedPage, setRecommendedPage] = useState(1);
   const [recommendedTotalPages, setRecommendedTotalPages] = useState(1);
+  // NEW: true when recommended posts currently shown came from the English
+  // fallback because the active language had none
+  const [recommendedFallback, setRecommendedFallback] = useState(false);
 
   const truncateWords = (text, limit) => {
     if (!text) return text;
@@ -53,6 +76,9 @@ const Home = () => {
   const [categories, setCategories] = useState(["All"]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState("");
+  // true when the categories currently shown came from the English
+  // fallback because the active language had none
+  const [categoriesFallback, setCategoriesFallback] = useState(false);
 
   // default to "All" so the initial render shows every post, no filter
   const [activeCategory, setActiveCategory] = useState("All");
@@ -261,53 +287,111 @@ const Home = () => {
     fetchContent();
   }, []);
 
+  // Hero: try current language first; if none, retry explicitly in English
+  // and flag the fallback so the UI can show a note about it.
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        const heroRes = await API.get("/homeheros");
-        const heroData = Array.isArray(heroRes.data) ? heroRes.data[0] : heroRes.data;
-        setHero(heroData);
+        setHeroFallback(false);
+
+        let heroRes = await API.get("/homeheros");
+        let heroData = Array.isArray(heroRes.data) ? heroRes.data[0] : heroRes.data;
+
+        if (!heroData) {
+          heroRes = await API.get("/homeheros", {
+            headers: { "Accept-Language": "en" },
+          });
+          heroData = Array.isArray(heroRes.data) ? heroRes.data[0] : heroRes.data;
+          if (heroData) setHeroFallback(true);
+        }
+
+        setHero(heroData || null);
       } catch (err) { console.error("Error:", err); }
     };
     fetchHero();
-  }, []);
+  }, [t]);
 
+  // Priest/About: try current language first; if none, retry explicitly in
+  // English and flag the fallback so the UI can show a note about it.
   useEffect(() => {
     const fetchPriest = async () => {
       try {
-        const aboutRes = await API.get("/about");
-        const aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
-        const latest = aboutData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-        setPriest(latest);
+        setPriestFallback(false);
+
+        let aboutRes = await API.get("/about");
+        let aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
+        let latest = aboutData
+          .filter(Boolean)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+        if (!latest) {
+          aboutRes = await API.get("/about", {
+            headers: { "Accept-Language": "en" },
+          });
+          aboutData = Array.isArray(aboutRes.data) ? aboutRes.data : [aboutRes.data];
+          latest = aboutData
+            .filter(Boolean)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+          if (latest) setPriestFallback(true);
+        }
+
+        setPriest(latest || null);
       } catch (err) { console.error("Error:", err); }
     };
     fetchPriest();
-  }, []);
+  }, [t]);
 
+  // Testimonials: try current language first; if none, retry explicitly in
+  // English and flag the fallback so the UI can show a note about it.
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
         setTestimonialsLoading(true);
         setTestimonialsError("");
-        const res = await API.get("/church-persons", { params: { category: "testimony" } });
-        const testimonialsData = Array.isArray(res.data) ? res.data : [];
+        setTestimonialsFallback(false);
+
+        let res = await API.get("/church-persons", { params: { category: "testimony" } });
+        let testimonialsData = Array.isArray(res.data) ? res.data : [];
+
+        if (testimonialsData.length === 0) {
+          res = await API.get("/church-persons", {
+            params: { category: "testimony" },
+            headers: { "Accept-Language": "en" },
+          });
+          testimonialsData = Array.isArray(res.data) ? res.data : [];
+          if (testimonialsData.length > 0) setTestimonialsFallback(true);
+        }
+
         setTestimonials(testimonialsData || []);
       } catch (err) {
         console.log(err);
-        setTestimonialsError(err.response?.data?.message || "Failed to load testimonials");
+        setTestimonialsError(err.response?.data?.message || t("home.testimonials.errorDefault"));
       } finally {
         setTestimonialsLoading(false);
       }
     };
     fetchTestimonials();
-  }, []);
+  }, [t]);
 
+  // Promotion: try current language first; if none, retry explicitly in
+  // English and flag the fallback so the UI can show a note about it.
   useEffect(() => {
     const fetchPromotion = async () => {
       try {
         setPromotionLoading(true);
-        const res = await API.get("/promotions/latest");
-        const latest = Array.isArray(res.data) ? res.data[0] : res.data;
+        setPromotionFallback(false);
+
+        let res = await API.get("/promotions/latest");
+        let latest = Array.isArray(res.data) ? res.data[0] : res.data;
+
+        if (!latest) {
+          res = await API.get("/promotions/latest", {
+            headers: { "Accept-Language": "en" },
+          });
+          latest = Array.isArray(res.data) ? res.data[0] : res.data;
+          if (latest) setPromotionFallback(true);
+        }
+
         setPromotion(latest || null);
       } catch (err) {
         console.log(err);
@@ -317,7 +401,7 @@ const Home = () => {
       }
     };
     fetchPromotion();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const fetchPhotos = async (page) => {
@@ -337,121 +421,179 @@ const Home = () => {
         setPhotosTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
-        setPhotosError(err.response?.data?.message || "Failed to load photos");
+        setPhotosError(err.response?.data?.message || t("home.photos.errorDefault"));
       } finally {
         setPhotosLoading(false);
       }
     };
     fetchPhotos(photosPage);
-  }, [photosPage]);
+  }, [photosPage, t]);
 
-  // "All" fetches every post with no category filter, same limit as every category
+  // "All" fetches every post with no category filter, same limit as every category.
+  // On the first page of a language/category combo, if nothing comes
+  // back, re-fetch that same page explicitly in English and flag the
+  // fallback so the UI can show a note about it.
   useEffect(() => {
     const fetchSermons = async (page) => {
       try {
         setSermonsLoading(true);
         setSermonsError("");
+        if (page === 1) setSermonsFallback(false);
 
-        const res = await API.get("/posts", {
-          params: {
-            page,
-            limit: POSTS_PER_PAGE,
-            ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
-          },
-        });
+        const baseParams = {
+          page,
+          limit: POSTS_PER_PAGE,
+          ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
+        };
 
-        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        let res = await API.get("/posts", { params: baseParams });
+        let postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+
+        // Only attempt the fallback on a fresh load (page 1) — a "Load
+        // More" click on page > 1 should never silently switch language.
+        if (page === 1 && (!postsData || postsData.length === 0)) {
+          res = await API.get("/posts", {
+            params: baseParams,
+            headers: { "Accept-Language": "en" },
+          });
+          postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+
+          if (postsData && postsData.length > 0) {
+            setSermonsFallback(true);
+          }
+        }
+
         // Append on "Load More" (page > 1), replace on first load / category switch
         setSermons((prev) => (page === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
         setSermonsTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
-        setSermonsError(err.response?.data?.message || "Failed to load sermon series");
+        setSermonsError(err.response?.data?.message || t("home.sermons.errorDefault"));
       } finally {
         setSermonsLoading(false);
       }
     };
     fetchSermons(sermonsPage);
-  }, [sermonsPage, activeCategory]);
+  }, [sermonsPage, activeCategory, t]);
 
+  // Trending: try current language first; if page 1 is empty, retry
+  // explicitly in English and flag the fallback so the UI can show a note.
   useEffect(() => {
     const fetchTrending = async (page) => {
       try {
         setTrendingLoading(true);
         setTrendingError("");
+        if (page === 1) setTrendingFallback(false);
 
-        const res = await API.get("/posts/trending", {
-          params: {
-            page,
-            limit: POSTS_PER_PAGE,
-          },
-        });
+        const baseParams = { page, limit: POSTS_PER_PAGE };
 
-        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        let res = await API.get("/posts/trending", { params: baseParams });
+        let postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+
+        if (page === 1 && (!postsData || postsData.length === 0)) {
+          res = await API.get("/posts/trending", {
+            params: baseParams,
+            headers: { "Accept-Language": "en" },
+          });
+          postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+
+          if (postsData && postsData.length > 0) {
+            setTrendingFallback(true);
+          }
+        }
+
         setTrending(postsData || []);
         setTrendingTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
-        setTrendingError(err.response?.data?.message || "Failed to load trending posts");
+        setTrendingError(err.response?.data?.message || t("home.trending.errorDefault"));
       } finally {
         setTrendingLoading(false);
       }
     };
     fetchTrending(trendingPage);
-  }, [trendingPage]);
+  }, [trendingPage, t]);
 
+  // Recommended: try current language first; if page 1 is empty, retry
+  // explicitly in English and flag the fallback so the UI can show a note.
   useEffect(() => {
     const fetchRecommended = async (page) => {
       try {
         setRecommendedLoading(true);
         setRecommendedError("");
+        if (page === 1) setRecommendedFallback(false);
 
-        const res = await API.get("/posts/recommended", {
-          params: {
-            page,
-            limit: POSTS_PER_PAGE,
-          },
-        });
+        const baseParams = { page, limit: POSTS_PER_PAGE };
 
-        const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+        let res = await API.get("/posts/recommended", { params: baseParams });
+        let postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+
+        if (page === 1 && (!postsData || postsData.length === 0)) {
+          res = await API.get("/posts/recommended", {
+            params: baseParams,
+            headers: { "Accept-Language": "en" },
+          });
+          postsData = Array.isArray(res.data) ? res.data : res.data.posts;
+
+          if (postsData && postsData.length > 0) {
+            setRecommendedFallback(true);
+          }
+        }
+
         setRecommended(postsData || []);
         setRecommendedTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
-        setRecommendedError(err.response?.data?.message || "Failed to load recommended posts");
+        setRecommendedError(err.response?.data?.message || t("home.recommended.errorDefault"));
       } finally {
         setRecommendedLoading(false);
       }
     };
     fetchRecommended(recommendedPage);
-  }, [recommendedPage]);
+  }, [recommendedPage, t]);
 
-  // prepend "All" (UI-only, never comes from the DB) before the fetched names
+  // prepend "All" (UI-only, never comes from the DB) before the fetched names.
+  // If the current language has zero categories, re-fetch in English
+  // explicitly and flag the fallback so the UI can show a note about it.
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setCategoriesLoading(true);
         setCategoriesError("");
+        setCategoriesFallback(false);
 
-        const res = await API.get("/categories");
-        const raw = Array.isArray(res.data) ? res.data : res.data.categories;
-
-        const names = (raw || [])
+        let res = await API.get("/categories");
+        let raw = Array.isArray(res.data) ? res.data : res.data.categories;
+        let names = (raw || [])
           .map((c) => (typeof c === "string" ? c : c?.name))
           .filter(Boolean);
+
+        if (names.length === 0) {
+          res = await API.get("/categories", {
+            headers: { "Accept-Language": "en" },
+          });
+          raw = Array.isArray(res.data) ? res.data : res.data.categories;
+          names = (raw || [])
+            .map((c) => (typeof c === "string" ? c : c?.name))
+            .filter(Boolean);
+
+          if (names.length > 0) {
+            setCategoriesFallback(true);
+          }
+        }
 
         if (names.length > 0) {
           setCategories(["All", ...names]);
         }
       } catch (err) {
         console.log(err);
-        setCategoriesError(err.response?.data?.message || "Failed to load categories");
+        setCategoriesError(err.response?.data?.message || t("home.categoryNav.errorDefault"));
       } finally {
         setCategoriesLoading(false);
       }
     };
     fetchCategories();
-  }, []);
+  }, [t]);
 
   // FIX: plain scrollIntoView({block:"start"}) does move the page, but it
   // aligns the section's top edge with the very top of the viewport — right
@@ -546,10 +688,10 @@ const Home = () => {
           justifyContent: 'center'
         }}>
           <div className="sponsored-tag-wrap">
-            <span className="sponsored-ad-label">Ad</span>
+            <span className="sponsored-ad-label">{t("home.sponsored.adLabel")}</span>
             <button
               className="sponsored-close"
-              aria-label="Close sponsored content"
+              aria-label={t("home.sponsored.closeAriaLabel")}
               onClick={() => setShowSponsored(false)}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -558,12 +700,12 @@ const Home = () => {
             </button>
           </div>
           <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#d32f2f', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>
-            Sponsored Content
+            {t("home.sponsored.sponsoredContent")}
           </span>
           <div className="sponsored-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
             <img
               src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
-              alt={promotion?.title || "Sponsored content"}
+              alt={promotion?.title || t("home.sponsored.imageAltFallback")}
               onClick={() => promotion?._id && navigate(`/promotions/${promotion._id}`)}
               style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px', cursor: promotion?._id ? 'pointer' : 'default' }}
             />
@@ -595,8 +737,14 @@ const Home = () => {
                   transition: 'background 0.3s'
                 }} onMouseOver={(e) => e.target.style.backgroundColor = '#b71c1c'}
                 onMouseOut={(e) => e.target.style.backgroundColor = '#d32f2f'}>
-                Open
+                {t("home.sponsored.openButton")}
               </button>
+              {/* NEW: note shown when the promotion fell back to English */}
+              {promotionFallback && (
+                <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#888', margin: '10px 0 0 0' }}>
+                  {t("home.sponsored.fallbackNotice", "Showing this promotion in English.")}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -608,10 +756,10 @@ const Home = () => {
           <div style={{ flex: '1', minWidth: '320px' }}>
             <Link to={`/homeheros/${hero?._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
               <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-                {hero?.title || "Rooted in grace, reaching toward the light"}
+                {hero?.title || t("home.hero.titleFallback")}
               </h1>
               <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-                {truncateWords(hero?.description, 50) || "Reflections, sermon notes, and stories from our congregation as we walk through Scripture together, week by week."}
+                {truncateWords(hero?.description, 50) || t("home.hero.descriptionFallback")}
               </p>
             </Link>
             <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -623,7 +771,7 @@ const Home = () => {
                 }}
                 style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
               >
-                Watch Latest Sermon
+                {t("home.hero.watchSermonButton")}
               </button>
               <button
                 className="hero-cta-btn"
@@ -633,15 +781,21 @@ const Home = () => {
                 }}
                 style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
               >
-                Plan a Visit
+                {t("home.hero.planVisitButton")}
               </button>
             </div>
+            {/* NEW: note shown when the hero fell back to English */}
+            {heroFallback && (
+              <p style={{ fontSize: '0.85rem', color: '#a9c2d3', margin: '18px 0 0 0' }}>
+                {t("home.hero.fallbackNotice", "Showing hero content in English — none available in your selected language yet.")}
+              </p>
+            )}
           </div>
           <div style={{ flex: '0 0 480px', minWidth: '320px' }}>
             <Link to={`/homeheros/${hero?._id}`}>
               <img
                 src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
-                alt={hero?.title || "Orthodox icon of Christ on the iconostasis"}
+                alt={hero?.title || t("home.hero.imageAltFallback")}
                 style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
               />
             </Link>
@@ -650,7 +804,7 @@ const Home = () => {
       </section>
 
       {/* NAV — inlined (formerly <CategoryNav />) */}
-      <nav className="cat-nav-bar" aria-label="Post categories" ref={catNavBarRef}>
+      <nav className="cat-nav-bar" aria-label={t("home.categoryNav.ariaLabel")} ref={catNavBarRef}>
         <div
           className="cat-nav-track"
           ref={catViewportRef}
@@ -666,12 +820,19 @@ const Home = () => {
                 data-cat={cat}
                 className={`cat-nav-item${cat === activeCategory ? " active" : ""}`}
               >
-                {cat}
+                {cat === "All" ? t("home.categoryNav.all") : cat}
               </span>
             ))}
           </div>
         </div>
       </nav>
+
+      {/* note shown when categories fell back to English */}
+      {categoriesFallback && (
+        <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', margin: '8px 0 0 0' }}>
+          {t("home.categoryNav.fallbackNotice", "Showing categories in English — none available in your selected language yet.")}
+        </p>
+      )}
 
       <section ref={sermonSectionRef} style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="hanging-cross left">
@@ -689,17 +850,24 @@ const Home = () => {
           </svg>
         </div>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Current Sermon Series</h3>
+          <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.sermons.heading")}</h3>
 
           {sermonsError && <p style={{ color: 'red', textAlign: 'center' }}>{sermonsError}</p>}
 
+          {/* note shown when sermons fell back to English */}
+          {sermonsFallback && !sermonsError && (
+            <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#888', marginTop: '-24px', marginBottom: '30px' }}>
+              {t("home.sermons.fallbackNotice", "No posts in your selected language yet — showing English instead.")}
+            </p>
+          )}
+
           {sermonsLoading && sermons.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>Loading sermon series...</p>
+            <p style={{ textAlign: 'center' }}>{t("home.sermons.loading")}</p>
           ) : sermons.length === 0 ? (
             <p style={{ textAlign: 'center' }}>
               {activeCategory === "All"
-                ? "No sermons found."
-                : `No Posts found in "${activeCategory}".`}
+                ? t("home.sermons.noneAll")
+                : t("home.sermons.noneCategory", { category: activeCategory })}
             </p>
           ) : (
             sermons.map((item, index, arr) => (
@@ -753,7 +921,7 @@ const Home = () => {
           {sermonsPage < sermonsTotalPages && (
             <div className="load-more-wrap">
               <button className="load-more-btn" onClick={handleLoadMoreSermons} disabled={sermonsLoading}>
-                {sermonsLoading ? "Loading..." : "Load More Posts"}
+                {sermonsLoading ? t("home.sermons.loadingMore") : t("home.sermons.loadMoreButton")}
               </button>
             </div>
           )}
@@ -762,21 +930,28 @@ const Home = () => {
 
       <section className="angel-divider">
         <div className="wrapper">
-          <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: '#ffffff' }}>Trending</h3>
+          <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: '#ffffff' }}>{t("home.trending.heading")}</h3>
 
           {trendingError && <p style={{ color: '#ffb3b3', textAlign: 'center' }}>{trendingError}</p>}
 
+          {/* NEW: note shown when trending fell back to English */}
+          {trendingFallback && !trendingError && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#ddd', marginTop: '-14px', marginBottom: '20px' }}>
+              {t("home.trending.fallbackNotice", "Showing trending posts in English.")}
+            </p>
+          )}
+
           <div className="angel-carousel">
-            <button className="angel-arrow left" aria-label="Scroll left" onClick={() => scrollAngels(-1)}>
+            <button className="angel-arrow left" aria-label={t("home.trending.scrollLeftAriaLabel")} onClick={() => scrollAngels(-1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             <div className="angel-grid" ref={angelScrollRef}>
               {trendingLoading ? (
-                <p style={{ color: '#fff' }}>Loading trending posts...</p>
+                <p style={{ color: '#fff' }}>{t("home.trending.loading")}</p>
               ) : trending.length === 0 ? (
-                <p style={{ color: '#fff' }}>No trending posts found.</p>
+                <p style={{ color: '#fff' }}>{t("home.trending.none")}</p>
               ) : (
                 trending.map((post) => (
                   <Link
@@ -795,7 +970,7 @@ const Home = () => {
                 ))
               )}
             </div>
-            <button className="angel-arrow right" aria-label="Scroll right" onClick={() => scrollAngels(1)}>
+            <button className="angel-arrow right" aria-label={t("home.trending.scrollRightAriaLabel")} onClick={() => scrollAngels(1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -809,17 +984,17 @@ const Home = () => {
                 disabled={trendingPage === 1}
                 style={pageButtonStyle(trendingPage === 1)}
               >
-                Prev
+                {t("home.pagination.prev")}
               </button>
               <span style={{ fontSize: '14px', color: '#fff' }}>
-                Page {trendingPage} of {trendingTotalPages}
+                {t("home.pagination.pageInfo", { page: trendingPage, total: trendingTotalPages })}
               </span>
               <button
                 onClick={() => goToTrendingPage(trendingPage + 1)}
                 disabled={trendingPage === trendingTotalPages}
                 style={pageButtonStyle(trendingPage === trendingTotalPages)}
               >
-                Next
+                {t("home.pagination.next")}
               </button>
             </div>
           )}
@@ -828,14 +1003,21 @@ const Home = () => {
 
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper">
-          <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Recommended</h3>
+          <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.recommended.heading")}</h3>
 
           {recommendedError && <p style={{ color: 'red', textAlign: 'center' }}>{recommendedError}</p>}
 
+          {/* NEW: note shown when recommended fell back to English */}
+          {recommendedFallback && !recommendedError && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-24px', marginBottom: '20px' }}>
+              {t("home.recommended.fallbackNotice", "Showing recommended posts in English.")}
+            </p>
+          )}
+
           {recommendedLoading ? (
-            <p style={{ textAlign: 'center' }}>Loading recommended posts...</p>
+            <p style={{ textAlign: 'center' }}>{t("home.recommended.loading")}</p>
           ) : recommended.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>No recommended posts found.</p>
+            <p style={{ textAlign: 'center' }}>{t("home.recommended.none")}</p>
           ) : (
             <div className="recommended-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
               {recommended.map((post) => (
@@ -859,17 +1041,17 @@ const Home = () => {
                 disabled={recommendedPage === 1}
                 style={pageButtonStyle(recommendedPage === 1)}
               >
-                Prev
+                {t("home.pagination.prev")}
               </button>
               <span style={{ fontSize: '14px', color: '#444' }}>
-                Page {recommendedPage} of {recommendedTotalPages}
+                {t("home.pagination.pageInfo", { page: recommendedPage, total: recommendedTotalPages })}
               </span>
               <button
                 onClick={() => goToRecommendedPage(recommendedPage + 1)}
                 disabled={recommendedPage === recommendedTotalPages}
                 style={pageButtonStyle(recommendedPage === recommendedTotalPages)}
               >
-                Next
+                {t("home.pagination.next")}
               </button>
             </div>
           )}
@@ -898,7 +1080,7 @@ const Home = () => {
         <section style={{ textAlign: 'center' }}>
           <div className="wrapper">
             <h3 className="display" style={{ fontSize: 'clamp(2rem,  4vw, 3.8rem)', fontWeight: 700, margin: 0, color: '#ffffff' }}>
-              Come as you are<br/>There's a place for you here.
+              {t("home.invite.line1")}<br/>{t("home.invite.line2")}
             </h3>
           </div>
         </section>
@@ -920,17 +1102,23 @@ const Home = () => {
           }} className="wrapper" >
             <img
               src={priest?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"}
-              alt={priest?.title || "Priest in ornate robes holding a ceremonial staff"}
+              alt={priest?.title || t("home.priest.imageAltFallback")}
               style={{ width: '260px', height: '320px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0, border: '4px solid #fff', boxShadow: '0 8px 20px rgba(0,0,0,0.25)' }}
             />
             <div style={{ flex: 1, minWidth: '260px' }}>
-              <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem' }}>From the Priest</span>
+              <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem' }}>{t("home.priest.eyebrow")}</span>
               <h3 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '12px 0 14px 0', color: '#ffffff' }}>
-                {priest?.title || "Walking together, one Sunday at a time"}
+                {priest?.title || t("home.priest.titleFallback")}
               </h3>
               <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
-                {truncateWords(priest?.description, 70) || "Twenty years in ministry has taught me that faith grows best in community. This page is where we share what God is teaching us — through sermons, testimonies, and the everyday life of our church family."}
+                {truncateWords(priest?.description, 70) || t("home.priest.descriptionFallback")}
               </p>
+              {/* NEW: note shown when the priest/about content fell back to English */}
+              {priestFallback && (
+                <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', margin: '14px 0 0 0' }}>
+                  {t("home.priest.fallbackNotice", "Showing this content in English — none available in your selected language yet.")}
+                </p>
+              )}
             </div>
           </Link>
         </section>
@@ -939,27 +1127,34 @@ const Home = () => {
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1080px' }}>
           <h3 className="display" style={{ fontSize: '2.6rem', fontWeight: 700, marginBottom: '44px', textAlign: 'center', color: 'var(--navy-deep)' }}>
-            What People Say About the Author
+            {t("home.testimonials.heading")}
           </h3>
           {testimonialsError && <p style={{ color: 'red', textAlign: 'center' }}>{testimonialsError}</p>}
 
+          {/* NEW: note shown when testimonials fell back to English */}
+          {testimonialsFallback && !testimonialsError && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-24px', marginBottom: '30px' }}>
+              {t("home.testimonials.fallbackNotice", "Showing testimonials in English.")}
+            </p>
+          )}
+
           {testimonialsLoading ? (
-            <p style={{ textAlign: 'center' }}>Loading testimonies...</p>
+            <p style={{ textAlign: 'center' }}>{t("home.testimonials.loading")}</p>
           ) : testimonials.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>No testimonies found.</p>
+            <p style={{ textAlign: 'center' }}>{t("home.testimonials.none")}</p>
           ) : (
             <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
-              {testimonials.map((t, i) => (
-                <div key={t._id || i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
+              {testimonials.map((person, i) => (
+                <div key={person._id || i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
                   <img
-                    src={(t.photos && t.photos[0]) || `https://ui-avatars.com/api/?name=${t.name}&background=0070f3&color=fff`}
-                    alt={t.name}
+                    src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
+                    alt={person.name}
                     style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--gold)', margin: '0 auto 18px auto', display: 'block' }}
                   />
-                  <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{t.name}</p>
-                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{t.role || t.title}</p>
+                  <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{person.name}</p>
+                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{person.role || person.title}</p>
                   <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
-                    "{truncateWords(t.message || t.description, 50)}"
+                    "{truncateWords(person.message || person.description, 50)}"
                   </p>
                 </div>
               ))}
@@ -987,16 +1182,16 @@ const Home = () => {
 
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>Photos</h3>
+          <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.photos.heading")}</h3>
           {photosError && <p style={{ color: 'red', textAlign: 'center' }}>{photosError}</p>}
 
           {photosLoading ? (
-            <p style={{ textAlign: 'center' }}>Loading photos...</p>
+            <p style={{ textAlign: 'center' }}>{t("home.photos.loading")}</p>
           ) : photos.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>No photos found.</p>
+            <p style={{ textAlign: 'center' }}>{t("home.photos.none")}</p>
           ) : (
             <div className="photo-carousel">
-              <button className="photo-arrow left" aria-label="Previous photo" onClick={showPrevPhoto} disabled={photoIndex === 0 && photosPage === 1}>
+              <button className="photo-arrow left" aria-label={t("home.photos.prevAriaLabel")} onClick={showPrevPhoto} disabled={photoIndex === 0 && photosPage === 1}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -1030,11 +1225,11 @@ const Home = () => {
                 </div>
                 {photosTotalPages > 1 && (
                   <p style={{ textAlign: 'center', fontSize: '14px', color: '#444', marginTop: '15px' }}>
-                    Page {photosPage} of {photosTotalPages}
+                    {t("home.pagination.pageInfo", { page: photosPage, total: photosTotalPages })}
                   </p>
                 )}
               </div>
-              <button className="photo-arrow right" aria-label="Next photo" onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
+              <button className="photo-arrow right" aria-label={t("home.photos.nextAriaLabel")} onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

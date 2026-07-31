@@ -1,0 +1,23 @@
+{
+  "hero": {
+    "title": "Our Services",
+    "description": "From covenant prayer, to the sacred rhythm of the Liturgy, to the teaching and hymns that carry it through the week — every service is open to all."
+  },
+  "list": {
+    "loading": "Loading services...",
+    "errorDefault": "Failed to load services",
+    "none": "No services found.",
+    "featuredNote": "Featured service",
+    "loadMoreButton": "Load More",
+    "fallbackNotice": "These services are shown in English because they aren't available in your language yet."
+  },
+  "cta": {
+    "title": "Come as you are.",
+    "description": "All are welcome — no invitation needed."
+  },
+  "footer": {
+    "visit": { "title": "Visit", "items": ["Service Times", "Directions", "What to Expect"] },
+    "getInvolved": { "title": "Get Involved", "items": ["Ministries", "Volunteer", "Give", "Missions"] },
+    "connect": { "title": "Connect", "items": ["Facebook", "Instagram", "YouTube"] }
+  }
+}

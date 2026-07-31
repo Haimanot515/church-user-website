@@ -1,0 +1,47 @@
+{
+  "newsletter": {
+    "heading": "A short reflection, delivered every Monday.",
+    "subheading": "One email a week — a verse, a short reflection, and this week's prayer requests.",
+    "placeholder": "you@email.com",
+    "subscribeButton": "Subscribe",
+    "subscribingButton": "Subscribing…",
+    "errorEmpty": "Please enter your email address.",
+    "successDefault": "Thanks for subscribing!",
+    "errorDefault": "Something went wrong. Please try again."
+  },
+  "brand": {
+    "name": "Harbor Light Church",
+    "tagline": "Sunday services at 9:00 & 11:00 AM. All are welcome, always."
+  },
+  "columns": {
+    "visit": {
+      "title": "Visit",
+      "items": {
+        "serviceTimes": "Service Times",
+        "directions": "Directions",
+        "whatToExpect": "What to Expect"
+      }
+    },
+    "getInvolved": {
+      "title": "Get Involved",
+      "items": {
+        "ministries": "Ministries",
+        "volunteer": "Volunteer",
+        "give": "Give",
+        "missions": "Missions"
+      }
+    },
+    "connect": {
+      "title": "Connect",
+      "items": {
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "youtube": "YouTube"
+      }
+    }
+  },
+  "bottom": {
+    "copyright": "© 2026 Harbor Light Church",
+    "privacyPolicy": "Privacy Policy"
+  }
+}

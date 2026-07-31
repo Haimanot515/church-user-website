@@ -1,0 +1,84 @@
+{
+  "hero": {
+    "titleFallback": "A Church, Not Just a Building",
+    "descriptionFallback": "For nearly five decades, {{churchName}} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.",
+    "readStoryButton": "Read Our Story Below",
+    "sayHelloButton": "Say Hello",
+    "imageAltFallback": "{{churchName}} sanctuary",
+    "churchLeaderLabel": "Church Leader",
+    "fallbackNotice": "Showing this content in English — none available in your selected language yet."
+  },
+  "missionVision": {
+    "missionLabel": "Our Mission",
+    "missionValue": "To help this community know Christ and grow together in faith, one ordinary week at a time.",
+    "visionLabel": "Our Vision",
+    "visionValue": "A church so rooted in this community that no one nearby has to face hardship, doubt, or celebration alone."
+  },
+  "story": {
+    "heading": "Our Church Story",
+    "loading": "Loading our story…",
+    "noneTitle": "No story chapters found yet",
+    "noneSubtitle": "Check back soon — our history is still being written here.",
+    "loadMoreButton": "Load More",
+    "loadingMoreButton": "Loading…",
+    "readFullStoryButton": "Read Full Story",
+    "fallbackNotice": "No story chapters in your selected language yet — showing English instead."
+  },
+  "faith": {
+    "heading": "What We Believe",
+    "points": [
+      { "title": "Scripture", "desc": "We believe the Bible is God's word, trustworthy and sufficient for how we understand faith and life." },
+      { "title": "The Trinity", "desc": "We believe in one God who exists eternally as Father, Son, and Holy Spirit." },
+      { "title": "Salvation by Grace", "desc": "We believe people are reconciled to God by grace through faith, not by works, through the death and resurrection of Jesus." },
+      { "title": "The Church", "desc": "We believe the church is God's family on earth, called to worship together, serve one another, and reach out to the world." }
+    ],
+    "whyWeWriteHeading": "Why We Write This Blog",
+    "whyWeWriteQuote": "We gather on Sundays, but a service only holds so much. This is where we put the rest — the doubts we don't always voice out loud, the small mercies we'd otherwise forget, and the ordinary texture of trying to be a church for this community, in this season."
+  },
+  "leadership": {
+    "heading": "Leadership Team",
+    "fallbackNotice": "Showing this content in English."
+  },
+  "testimonials": {
+    "heading": "In Their Own Words",
+    "fallbackNotice": "Showing testimonials in English."
+  },
+  "faq": {
+    "heading": "Common Questions",
+    "items": [
+      { "q": "What should I expect as a first-time visitor?", "a": "A warm welcome, a seat wherever you like, and no pressure to sign anything or stand up and introduce yourself." },
+      { "q": "Is there a program for kids during the service?", "a": "Yes — supervised check-in and age-appropriate programming run alongside both Sunday services." },
+      { "q": "Where can I park?", "a": "Street parking is available nearby, with additional overflow parking behind the sanctuary." },
+      { "q": "Do I need to be a member to join a small group?", "a": "Not at all. Small groups are open to anyone, whether you're visiting for the first time or have been here for years." }
+    ]
+  },
+  "specialThanks": {
+    "heading": "Special Thanks",
+    "fallbackNotice": "Showing this content in English."
+  },
+  "location": {
+    "eyebrow": "Visit Us",
+    "note": "Our doors are open most mornings, and our office team is usually reachable from the small building behind the sanctuary.",
+    "serviceTimes": ["Sunday — 9:00 & 11:00 AM", "Wednesday Prayer — 6:30 PM"],
+    "mapAlt": "Map area near {{churchName}}"
+  },
+  "support": {
+    "eyebrow": "Give Online or In Person",
+    "heading": "Support the Church",
+    "description": "Whatever you're able to give helps keep this church's doors — and its outreach to the community — open. You can give in person on Sunday, or send your gift directly using the details below.",
+    "bankTransferLabel": "Bank Transfer",
+    "accountName": "Account Name: {{churchName}}",
+    "accountNumber": "Account Number: 1000 4522 3390 112",
+    "onlineGivingLabel": "Online Giving",
+    "merchantName": "Merchant Name: {{churchName}}"
+  },
+  "cta": {
+    "heading": "Give or Get Involved",
+    "description": "Whether it's your time, your gifts, or your generosity, there's a place for it here.",
+    "giveButton": "Give",
+    "volunteerButton": "Volunteer"
+  },
+  "nav": {
+    "categories": ["Home", "Reflections", "Sermons", "Journal", "Books I'm Reading", "Family", "Prayer", "Archive", "About Us", "Contact"]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "logo": {
+    "ariaLabel": "መነሻ ገጽ"
+  },
+  "menu": {
+    "toggle": "ምናሌ ክፈት",
+    "open": "ምናሌ ክፈት",
+    "close": "ምናሌ ዝጋ"
+  },
+  "links": {
+    "about": "ስለ እኛ",
+    "blogs": "ብሎጎች",
+    "services": "አገልግሎቶች",
+    "church": "ቤተ ክርስቲያን",
+    "sermon": "ስብከት",
+    "travel": "ጉዞ",
+    "contact": "ያግኙን",
+    "media": "ሚዲያ",
+    "books": "መጻሕፍት",
+    "admin": "አስተዳዳሪ"
+  },
+  "auth": {
+    "login": "ግባ",
+    "register": "ተመዝገብ",
+    "logout": "ውጣ"
+  }
+}
