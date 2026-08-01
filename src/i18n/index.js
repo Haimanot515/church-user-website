@@ -14,6 +14,7 @@ import enServices from "../locales/en/services.json";
 import enChurch from "../locales/en/church.json";
 import enSermon from "../locales/en/sermon.json";
 import enMedia from "../locales/en/media.json";
+import enBook from "../locales/en/book.json";
 
 // Amharic
 import amNavbar from "../locales/am/navbar.json";
@@ -27,6 +28,7 @@ import amServices from "../locales/am/services.json";
 import amChurch from "../locales/am/church.json";
 import amSermon from "../locales/am/sermon.json";
 import amMedia from "../locales/am/media.json";
+import amBook from "../locales/am/book.json";
 
 // Italian
 import itNavbar from "../locales/it/navbar.json";
@@ -40,6 +42,7 @@ import itServices from "../locales/it/services.json";
 import itChurch from "../locales/it/church.json";
 import itSermon from "../locales/it/sermon.json";
 import itMedia from "../locales/it/media.json";
+import itBook from "../locales/it/book.json";
 
 i18n
   .use(LanguageDetector)
@@ -59,6 +62,7 @@ i18n
           church: enChurch,
           sermon: enSermon,
           media: enMedia,
+          book: enBook,
         },
       },
 
@@ -75,6 +79,7 @@ i18n
           church: amChurch,
           sermon: amSermon,
           media: amMedia,
+          book: amBook,
         },
       },
 
@@ -91,6 +96,7 @@ i18n
           church: itChurch,
           sermon: itSermon,
           media: itMedia,
+          book: itBook,
         },
       },
     },

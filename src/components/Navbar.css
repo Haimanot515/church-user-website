@@ -1,3 +1,4 @@
+
 /* =========================
    NAVBAR
 ========================= */
@@ -20,6 +21,46 @@
   align-items: center;
   text-decoration: none;
   color: white;
+}
+
+/* =========================
+   RIGHT GROUP (language select + hamburger)
+========================= */
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1002;
+}
+
+.navbar-language-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  padding: 0 8px;
+}
+
+.navbar-language-icon {
+  color: #fff;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.navbar-language-select {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 6px 4px 6px 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.navbar-language-select option {
+  color: #111;
+  background: #fff;
 }
 
 /* =========================
@@ -364,6 +405,8 @@
   .overlay { padding: 14px; }
   .auth-card { padding: 24px 18px; }
   .close-btn-style { top: 10px; right: 10px; }
+  .navbar-language-select { font-size: 0.85rem; padding: 5px 8px; }
+  .navbar-language-icon { font-size: 0.8rem; }
 }
 
 /* --- Small phones (320px+) -------------------------------------------------- */

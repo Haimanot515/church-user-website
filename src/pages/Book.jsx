@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import "./Book.css";
 
@@ -61,7 +62,7 @@ const Cover = ({ src, alt, iconSize }) => {
   );
 };
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, t }) => {
   const downloadUrl = getDownloadUrl(book.mediaUrl, book.title);
 
   return (
@@ -92,7 +93,7 @@ const BookCard = ({ book }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Read Online
+            {t("book.card.readOnline")}
           </a>
           <a
             className="catalog-card-btn catalog-card-btn-outline"
@@ -100,7 +101,7 @@ const BookCard = ({ book }) => {
             download
           >
             <DownloadIcon />
-            Download
+            {t("book.card.download")}
           </a>
         </div>
       </div>
@@ -109,6 +110,8 @@ const BookCard = ({ book }) => {
 };
 
 const Book = () => {
+  const { t } = useTranslation();
+
   const [bookItems, setBookItems] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -136,7 +139,7 @@ const Book = () => {
 
       setBookItems(mapped);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to load books");
+      setError(err.response?.data?.message || t("book.errors.default"));
     } finally {
       setLoading(false);
     }
@@ -155,7 +158,8 @@ const Book = () => {
   useEffect(() => {
     fetchBooks();
     fetchCategories();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
   // Category tabs come from the backend category list (so every
   // category shows up, even ones with zero published books right
@@ -205,12 +209,6 @@ const Book = () => {
 
   const visible = filtered.slice(0, visibleCount);
 
-  const footerColumns = [
-    { title: "Visit", items: ["Service Times", "Directions", "What to Expect"] },
-    { title: "Get Involved", items: ["Ministries", "Volunteer", "Give", "Missions"] },
-    { title: "Connect", items: ["Facebook", "Instagram", "YouTube"] },
-  ];
-
   return (
     <div className="book-portal">
       <div className="cloud-layer">
@@ -221,15 +219,15 @@ const Book = () => {
 
       <section className="book-hero">
         <div className="wrapper">
-          <span className="eyebrow">Library</span>
-          <h1 className="display">Books and PDFs</h1>
-          <p>Study guides, booklets, and reading materials from our church family. Read online or download to keep.</p>
+          <span className="eyebrow">{t("book.hero.eyebrow")}</span>
+          <h1 className="display">{t("book.hero.title")}</h1>
+          <p>{t("book.hero.description")}</p>
 
           <div className="book-search-wrap">
             <input
               className="book-search-input"
               type="text"
-              placeholder="Search by title, author, or topic"
+              placeholder={t("book.hero.searchPlaceholder")}
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -243,7 +241,7 @@ const Book = () => {
       <section className="book-catalog">
         <div className="wrapper">
           {loading && (
-            <p style={{ textAlign: "center" }}>Loading catalog...</p>
+            <p style={{ textAlign: "center" }}>{t("book.common.loading")}</p>
           )}
 
           {!loading && error && (
@@ -252,7 +250,6 @@ const Book = () => {
 
           {!loading && !error && (
             <>
-              {/* Category filter tabs */}
               {categories.length > 0 && (
                 <div className="catalog-filters">
                   <button
@@ -262,7 +259,7 @@ const Book = () => {
                       setVisibleCount(PAGE_SIZE);
                     }}
                   >
-                    All <span className="filter-count">{bookItems.length}</span>
+                    {t("book.filters.all")} <span className="filter-count">{bookItems.length}</span>
                   </button>
                   {categories.map(([name, count]) => (
                     <button
@@ -279,39 +276,38 @@ const Book = () => {
                 </div>
               )}
 
-              {/* Result count + sort */}
               <div className="catalog-toolbar">
                 <p className="catalog-result-count">
-                  {filtered.length} {filtered.length === 1 ? "title" : "titles"}
-                  {activeCategory !== "all" ? ` in ${activeCategory}` : ""}
+                  {filtered.length} {filtered.length === 1 ? t("book.common.title") : t("book.common.titles")}
+                  {activeCategory !== "all" ? ` ${t("book.common.inCategory", { category: activeCategory })}` : ""}
                 </p>
                 <select
                   className="catalog-sort-select"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >
-                  <option value="newest">Newest</option>
-                  <option value="title">Title A-Z</option>
-                  <option value="author">Author A-Z</option>
+                  <option value="newest">{t("book.sort.newest")}</option>
+                  <option value="title">{t("book.sort.title")}</option>
+                  <option value="author">{t("book.sort.author")}</option>
                 </select>
               </div>
 
               {filtered.length === 0 && (
-                <p style={{ textAlign: "center" }}>No books found.</p>
+                <p style={{ textAlign: "center" }}>{t("book.common.none")}</p>
               )}
 
               {filtered.length > 0 && (
                 <>
                   <div className="book-catalog-grid">
                     {visible.map((b, i) => (
-                      <BookCard key={b._id || i} book={b} />
+                      <BookCard key={b._id || i} book={b} t={t} />
                     ))}
                   </div>
 
                   {filtered.length > visibleCount && (
                     <div className="load-more-wrap">
                       <button className="load-more-btn" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
-                        Load More
+                        {t("book.common.loadMore")}
                       </button>
                     </div>
                   )}

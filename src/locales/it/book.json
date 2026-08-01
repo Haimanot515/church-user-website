@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "eyebrow": "Biblioteca",
+    "title": "Libri e PDF",
+    "description": "Guide di studio, opuscoli e materiali di lettura della nostra famiglia parrocchiale. Leggi online o scarica per conservarli.",
+    "searchPlaceholder": "Cerca per titolo, autore o argomento"
+  },
+  "filters": {
+    "all": "Tutti"
+  },
+  "sort": {
+    "newest": "Più recenti",
+    "title": "Titolo A-Z",
+    "author": "Autore A-Z"
+  },
+  "common": {
+    "loading": "Caricamento catalogo...",
+    "none": "Nessun libro trovato.",
+    "title": "titolo",
+    "titles": "titoli",
+    "inCategory": "in {{category}}",
+    "loadMore": "Carica altri"
+  },
+  "card": {
+    "readOnline": "Leggi online",
+    "download": "Scarica"
+  },
+  "errors": {
+    "default": "Impossibile caricare i libri"
+  }
+}

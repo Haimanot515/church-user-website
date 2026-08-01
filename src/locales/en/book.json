@@ -1,0 +1,31 @@
+{
+  "hero": {
+    "eyebrow": "Library",
+    "title": "Books and PDFs",
+    "description": "Study guides, booklets, and reading materials from our church family. Read online or download to keep.",
+    "searchPlaceholder": "Search by title, author, or topic"
+  },
+  "filters": {
+    "all": "All"
+  },
+  "sort": {
+    "newest": "Newest",
+    "title": "Title A-Z",
+    "author": "Author A-Z"
+  },
+  "common": {
+    "loading": "Loading catalog...",
+    "none": "No books found.",
+    "title": "title",
+    "titles": "titles",
+    "inCategory": "in {{category}}",
+    "loadMore": "Load More"
+  },
+  "card": {
+    "readOnline": "Read Online",
+    "download": "Download"
+  },
+  "errors": {
+    "default": "Failed to load books"
+  }
+}

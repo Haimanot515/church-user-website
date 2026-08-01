@@ -3,7 +3,7 @@ import Login from "../pages/Login";
 import Form from "../pages/Registration/Form";
 import Verify from "../pages/Registration/Verify";
 import { Link, useNavigate } from "react-router-dom";
-import { FaTimes, FaBars } from "react-icons/fa";
+import { FaTimes, FaBars, FaGlobe } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "./Navbar.css";
 
@@ -91,13 +91,29 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
           <ThornCrownLogo />
         </Link>
 
-        <button
-          className="menu-toggle"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={t("navbar.menu.toggle")}
-        >
-          {isMenuOpen ? <FaTimes /> : <FaBars />}
-        </button>
+        <div className="navbar-right">
+          <div className="navbar-language-group">
+            <FaGlobe className="navbar-language-icon" aria-hidden="true" />
+            <select
+              className="navbar-language-select"
+              value={i18n.language}
+              onChange={(e) => changeLanguage(e.target.value)}
+              aria-label="Language"
+            >
+              <option value="en">EN</option>
+              <option value="am">አማ</option>
+              <option value="it">IT</option>
+            </select>
+          </div>
+
+          <button
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={t("navbar.menu.toggle")}
+          >
+            {isMenuOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
 
         <div className={`nav-content ${isMenuOpen ? "active" : ""}`}>
 
