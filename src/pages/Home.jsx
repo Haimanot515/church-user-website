@@ -14,10 +14,12 @@ const Home = () => {
   // NEW: true when the hero currently shown came from the English
   // fallback because the active language had none
   const [heroFallback, setHeroFallback] = useState(false);
+  const [heroLoading, setHeroLoading] = useState(true);
   const [priest, setPriest] = useState(null);
   // NEW: true when the priest/about content currently shown came from the
   // English fallback because the active language had none
   const [priestFallback, setPriestFallback] = useState(false);
+  const [priestLoading, setPriestLoading] = useState(true);
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
   const [testimonialsError, setTestimonialsError] = useState("");
@@ -71,6 +73,15 @@ const Home = () => {
     if (words.length <= limit) return text;
     return words.slice(0, limit).join(" ") + "…";
   };
+
+  // Reusable inline loading spinner — shown while a section's data is
+  // being fetched from the backend so the user never sees hardcoded
+  // frontend placeholder content before the real data arrives.
+  const Spinner = ({ light }) => (
+    <div className="loading-spinner-wrap">
+      <div className={`loading-spinner${light ? " light" : ""}`} />
+    </div>
+  );
 
   // "All" is always first, so users can clear the category filter
   const [categories, setCategories] = useState(["All"]);
@@ -292,6 +303,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHero = async () => {
       try {
+        setHeroLoading(true);
         setHeroFallback(false);
 
         let heroRes = await API.get("/homeheros");
@@ -306,7 +318,11 @@ const Home = () => {
         }
 
         setHero(heroData || null);
-      } catch (err) { console.error("Error:", err); }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setHeroLoading(false);
+      }
     };
     fetchHero();
   }, [t]);
@@ -316,6 +332,7 @@ const Home = () => {
   useEffect(() => {
     const fetchPriest = async () => {
       try {
+        setPriestLoading(true);
         setPriestFallback(false);
 
         let aboutRes = await API.get("/about");
@@ -336,7 +353,11 @@ const Home = () => {
         }
 
         setPriest(latest || null);
-      } catch (err) { console.error("Error:", err); }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setPriestLoading(false);
+      }
     };
     fetchPriest();
   }, [t]);
@@ -752,54 +773,62 @@ const Home = () => {
       )}
 
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
-        <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1', minWidth: '320px' }}>
-            <Link to={`/homeheros/${hero?._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
-              <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-                {hero?.title || t("home.hero.titleFallback")}
-              </h1>
-              <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-                {truncateWords(hero?.description, 50) || t("home.hero.descriptionFallback")}
-              </p>
-            </Link>
-            <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <button
-                className="hero-cta-btn"
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                  navigate('/skill');
-                }}
-                style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
-              >
-                {t("home.hero.watchSermonButton")}
-              </button>
-              <button
-                className="hero-cta-btn"
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                  navigate('/contact');
-                }}
-                style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
-              >
-                {t("home.hero.planVisitButton")}
-              </button>
+        <div className="wrapper" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap', minHeight: heroLoading ? '320px' : 'auto' }}>
+          {heroLoading ? (
+            <div style={{ width: '100%' }}>
+              <Spinner light />
             </div>
-            {/* NEW: note shown when the hero fell back to English */}
-            {heroFallback && (
-              <p style={{ fontSize: '0.85rem', color: '#a9c2d3', margin: '18px 0 0 0' }}>
-                {t("home.hero.fallbackNotice", "Showing hero content in English — none available in your selected language yet.")}
-              </p>
-            )}
-          </div>
-          <div style={{ flex: '0 0 480px', minWidth: '320px' }}>
-            <Link to={`/homeheros/${hero?._id}`}>
-              <img
-                src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
-                alt={hero?.title || t("home.hero.imageAltFallback")}
-                style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
-              />
-            </Link>
-          </div>
+          ) : (
+            <>
+              <div style={{ flex: '1', minWidth: '320px' }}>
+                <Link to={`/homeheros/${hero?._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                  <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+                    {hero?.title || t("home.hero.titleFallback")}
+                  </h1>
+                  <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                    {truncateWords(hero?.description, 50) || t("home.hero.descriptionFallback")}
+                  </p>
+                </Link>
+                <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <button
+                    className="hero-cta-btn"
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      navigate('/skill');
+                    }}
+                    style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
+                  >
+                    {t("home.hero.watchSermonButton")}
+                  </button>
+                  <button
+                    className="hero-cta-btn"
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      navigate('/contact');
+                    }}
+                    style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
+                  >
+                    {t("home.hero.planVisitButton")}
+                  </button>
+                </div>
+                {/* NEW: note shown when the hero fell back to English */}
+                {heroFallback && (
+                  <p style={{ fontSize: '0.85rem', color: '#a9c2d3', margin: '18px 0 0 0' }}>
+                    {t("home.hero.fallbackNotice", "Showing hero content in English — none available in your selected language yet.")}
+                  </p>
+                )}
+              </div>
+              <div style={{ flex: '0 0 480px', minWidth: '320px' }}>
+                <Link to={`/homeheros/${hero?._id}`}>
+                  <img
+                    src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
+                    alt={hero?.title || t("home.hero.imageAltFallback")}
+                    style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
+                  />
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -862,7 +891,7 @@ const Home = () => {
           )}
 
           {sermonsLoading && sermons.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>{t("home.sermons.loading")}</p>
+            <Spinner />
           ) : sermons.length === 0 ? (
             <p style={{ textAlign: 'center' }}>
               {activeCategory === "All"
@@ -941,6 +970,9 @@ const Home = () => {
             </p>
           )}
 
+          {trendingLoading ? (
+            <Spinner light />
+          ) : (
           <div className="angel-carousel">
             <button className="angel-arrow left" aria-label={t("home.trending.scrollLeftAriaLabel")} onClick={() => scrollAngels(-1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -948,9 +980,7 @@ const Home = () => {
               </svg>
             </button>
             <div className="angel-grid" ref={angelScrollRef}>
-              {trendingLoading ? (
-                <p style={{ color: '#fff' }}>{t("home.trending.loading")}</p>
-              ) : trending.length === 0 ? (
+              {trending.length === 0 ? (
                 <p style={{ color: '#fff' }}>{t("home.trending.none")}</p>
               ) : (
                 trending.map((post) => (
@@ -976,6 +1006,7 @@ const Home = () => {
               </svg>
             </button>
           </div>
+          )}
 
           {trendingTotalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
@@ -1015,7 +1046,7 @@ const Home = () => {
           )}
 
           {recommendedLoading ? (
-            <p style={{ textAlign: 'center' }}>{t("home.recommended.loading")}</p>
+            <Spinner />
           ) : recommended.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.recommended.none")}</p>
           ) : (
@@ -1086,6 +1117,11 @@ const Home = () => {
         </section>
 
         <section>
+          {priestLoading ? (
+            <div className="wrapper">
+              <Spinner light />
+            </div>
+          ) : (
           <Link to={`/about/${priest?._id}`} style={{
             maxWidth: '880px',
             display: 'flex',
@@ -1106,7 +1142,7 @@ const Home = () => {
               style={{ width: '260px', height: '320px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0, border: '4px solid #fff', boxShadow: '0 8px 20px rgba(0,0,0,0.25)' }}
             />
             <div style={{ flex: 1, minWidth: '260px' }}>
-              <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem' }}>{t("home.priest.eyebrow")}</span>
+              <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem', display: 'block', textAlign: 'center' }}>{t("home.priest.eyebrow")}</span>
               <h3 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '12px 0 14px 0', color: '#ffffff' }}>
                 {priest?.title || t("home.priest.titleFallback")}
               </h3>
@@ -1121,6 +1157,7 @@ const Home = () => {
               )}
             </div>
           </Link>
+          )}
         </section>
       </div>
 
@@ -1139,17 +1176,18 @@ const Home = () => {
           )}
 
           {testimonialsLoading ? (
-            <p style={{ textAlign: 'center' }}>{t("home.testimonials.loading")}</p>
+            <Spinner />
           ) : testimonials.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.testimonials.none")}</p>
           ) : (
             <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
               {testimonials.map((person, i) => (
-                <div key={person._id || i} style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'center' }}>
+                <div key={person._id || i} className="testimonial-card" style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'left' }}>
                   <img
                     src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
                     alt={person.name}
-                    style={{ width: '110px', height: '110px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--gold)', margin: '0 auto 18px auto', display: 'block' }}
+                    className="testimonial-photo"
+                    style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '10px', objectFit: 'cover', border: '3px solid var(--gold)', marginBottom: '18px', display: 'block' }}
                   />
                   <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{person.name}</p>
                   <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{person.role || person.title}</p>
@@ -1181,28 +1219,35 @@ const Home = () => {
       </div>
 
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
-        <div className="wrapper" style={{ maxWidth: '1000px' }}>
+        <div className="wrapper photo-wrapper" style={{ maxWidth: '1000px' }}>
           <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.photos.heading")}</h3>
           {photosError && <p style={{ color: 'red', textAlign: 'center' }}>{photosError}</p>}
 
           {photosLoading ? (
-            <p style={{ textAlign: 'center' }}>{t("home.photos.loading")}</p>
+            <Spinner />
           ) : photos.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.photos.none")}</p>
           ) : (
             <div className="photo-carousel">
-              <button className="photo-arrow left" aria-label={t("home.photos.prevAriaLabel")} onClick={showPrevPhoto} disabled={photoIndex === 0 && photosPage === 1}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
               <div className="photo-carousel-frame">
-                <img
-                  src={photos[photoIndex]?.mediaUrl}
-                  alt={photos[photoIndex]?.title}
-                  onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
-                  style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
-                />
+                <div className="photo-image-wrap">
+                  <button className="photo-arrow left" aria-label={t("home.photos.prevAriaLabel")} onClick={showPrevPhoto} disabled={photoIndex === 0 && photosPage === 1}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <img
+                    src={photos[photoIndex]?.mediaUrl}
+                    alt={photos[photoIndex]?.title}
+                    onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
+                    style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
+                  />
+                  <button className="photo-arrow right" aria-label={t("home.photos.nextAriaLabel")} onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
                 <div
                   style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
                   onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
@@ -1229,11 +1274,6 @@ const Home = () => {
                   </p>
                 )}
               </div>
-              <button className="photo-arrow right" aria-label={t("home.photos.nextAriaLabel")} onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
             </div>
           )}
         </div>

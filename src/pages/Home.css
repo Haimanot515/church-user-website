@@ -358,6 +358,20 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   gap: 24px;
 }
 .photo-carousel-frame { flex: 1; min-width: 0; }
+
+/* Wraps just the image (not the title/description/dots below it), so
+   the arrows can be positioned relative to the photo itself. On desktop
+   this lays out arrow / image / arrow in a row, same as the original
+   look. On mobile/tablet (below) it switches to the arrows overlaid on
+   the image edges, vertically centered on the photo. */
+.photo-image-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.photo-image-wrap img { flex: 1; min-width: 0; }
+
 .photo-arrow {
   flex-shrink: 0;
   width: 52px; height: 52px;
@@ -375,11 +389,34 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   color: var(--navy-deep);
   transform: translateY(-2px);
 }
+.photo-arrow:disabled { opacity: 0.4; cursor: not-allowed; }
 .photo-arrow.left { margin-right: 4px; }
 .photo-arrow.right { margin-left: 4px; }
+
+/* ---------- Mobile & tablet: arrows sit at the left/right edges,
+   vertically centered on the photo itself (not below it, not at the
+   bottom of the whole card). photo-image-wrap is position:relative and
+   sized to the image only, so top:50% centers exactly on the photo. ---------- */
+@media (max-width: 1024px) {
+  .photo-image-wrap { display: block; }
+  .photo-image-wrap img { width: 100%; }
+  .photo-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    z-index: 5;
+  }
+  .photo-arrow:hover { transform: translateY(-50%); }
+  .photo-arrow.left { left: 10px; }
+  .photo-arrow.right { right: 10px; }
+}
+
 @media (max-width: 700px) {
   .photo-carousel { gap: 10px; }
   .photo-arrow { width: 40px; height: 40px; }
+  .photo-arrow.left { left: 8px; }
+  .photo-arrow.right { right: 8px; }
 }
 .photo-dots {
   display: flex; justify-content: center; gap: 9px;
@@ -524,6 +561,41 @@ img, video { max-width: 100%; height: auto; }
 .home-testimonial-grid { }
 .sponsored-grid { }
 
+/* ---------- Loading spinner (shown while a section's data is being
+   fetched from the backend, so no hardcoded frontend placeholder
+   content is ever visible before the real data arrives) ---------- */
+.loading-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 0;
+  width: 100%;
+}
+.loading-spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(28, 58, 82, 0.15);
+  border-top-color: var(--gold);
+  animation: spin 0.85s linear infinite;
+}
+.loading-spinner.light {
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--gold);
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Testimonial cards: photo width matches the title/
+   description block below it, and both start at the same left
+   edge (parallel arrangement) instead of the old centered layout ---------- */
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
 /* ---------- ≤1024px (small laptop / landscape tablet) ---------- */
 @media (max-width: 1024px) {
   .wrapper { padding: 0 20px; }
@@ -571,7 +643,10 @@ img, video { max-width: 100%; height: auto; }
   .video-thumb-wrap { width: 110px; height: 76px; }
 
   .angel-divider { padding: 36px 0; }
-  .photo-carousel { flex-wrap: wrap; }
+
+  /* Give the photo section a little extra edge-to-edge room on mobile
+     so the photo itself renders bigger */
+  .photo-wrapper { padding: 0 10px; }
 }
 
 /* ---------- ≤600px (large phone) ---------- */
@@ -586,13 +661,14 @@ img, video { max-width: 100%; height: auto; }
   .recommended-grid { grid-template-columns: 1fr !important; }
   .home-testimonial-grid { grid-template-columns: 1fr !important; }
 
-  .angel-box { width: 150px; }
+  .angel-box { width: 190px; }
   .angel-box-overlay h4 { font-size: 1.2rem; }
   .angel-box-overlay p { font-size: 0.8rem; }
   .angel-arrow { width: 34px; height: 34px; }
 
   .photo-arrow { width: 36px; height: 36px; }
   .photo-carousel { gap: 8px; }
+  .photo-wrapper { padding: 0 8px; }
 
   .video-list-item { gap: 10px; }
   .video-thumb-wrap { width: 92px; height: 64px; }
@@ -623,10 +699,11 @@ img, video { max-width: 100%; height: auto; }
   .sponsored-block { padding: 16px !important; }
   .sponsored-ad-label { font-size: 0.6rem; }
 
-  .angel-box { width: 130px; }
+  .angel-box { width: 170px; }
   .angel-grid { gap: 14px; }
 
   .video-thumb-wrap { width: 80px; height: 56px; }
+  .photo-wrapper { padding: 0 6px; }
 }
 
 /* ---------- ≤360px / ≥320px (small phone) ---------- */
@@ -637,9 +714,10 @@ img, video { max-width: 100%; height: auto; }
   .nav-bar { gap: 10px; padding: 0 12px; }
   .nav-item { font-size: 0.78rem; }
 
-  .angel-box { width: 110px; }
+  .angel-box { width: 150px; }
   .photo-arrow { width: 32px; height: 32px; }
   .video-thumb-wrap { width: 68px; height: 48px; }
+  .photo-wrapper { padding: 0 4px; }
 }
 
 /* ---------- Hero: image first on tablet/mobile, text first on desktop ---------- */
@@ -669,10 +747,13 @@ img, video { max-width: 100%; height: auto; }
     max-width: none !important;
   }
 }
-/* Body text: justified, flush on both edges, all sections, all devices */
+/* Body text: left-aligned on all sections/devices. Justify was
+   previously used here, but justify stretches word-spacing unevenly
+   line to line (especially on narrow/short lines), which is what made
+   spacing look inconsistent across lines. Left align keeps natural,
+   even word-spacing throughout. */
 .church-portal section p {
-  text-align: justify;
-  text-align-last: left;
+  text-align: left;
 }
 
 /* ============================================================
@@ -733,35 +814,39 @@ img, video { max-width: 100%; height: auto; }
 .cat-nav-item.active { color: var(--gold); }
 
 /* ---------- Tablet landscape ---------- */
+/* Desktop/PC size (no media query) is unchanged above. On mobile/tablet
+   the nav was too small, so each breakpoint below is bumped up a bit
+   from before, while remaining clearly scaled down from desktop. */
 @media (max-width: 900px) {
-  .cat-nav-track { height: 80px; }
-  .cat-nav-scroll { gap: 20px; padding: 0 16px; }
-  .cat-nav-item { font-size: 0.95rem; }
+  .cat-nav-track { height: 88px; }
+  .cat-nav-scroll { gap: 22px; padding: 0 16px; }
+  .cat-nav-item { font-size: 1.02rem; }
 }
 
 /* ---------- Tablet portrait / large phone ---------- */
 @media (max-width: 768px) {
-  .cat-nav-track { height: 72px; }
-  .cat-nav-scroll { gap: 18px; padding: 0 16px; }
-  .cat-nav-item { font-size: 0.92rem; padding: 8px 0; }
+  .cat-nav-track { height: 80px; }
+  .cat-nav-scroll { gap: 20px; padding: 0 16px; }
+  .cat-nav-item { font-size: 0.98rem; padding: 8px 0; }
 }
 
 /* ---------- Standard phone ---------- */
 @media (max-width: 600px) {
-  .cat-nav-track { height: 64px; }
-  .cat-nav-scroll { gap: 16px; padding: 0 14px; }
-  .cat-nav-item { font-size: 0.85rem; }
+  .cat-nav-track { height: 70px; }
+  .cat-nav-scroll { gap: 18px; padding: 0 14px; }
+  .cat-nav-item { font-size: 0.92rem; }
 }
 
 /* ---------- Small phone ---------- */
 @media (max-width: 480px) {
-  .cat-nav-track { height: 56px; }
-  .cat-nav-scroll { gap: 12px; }
+  .cat-nav-track { height: 62px; }
+  .cat-nav-scroll { gap: 14px; }
+  .cat-nav-item { font-size: 0.88rem; }
 }
 
 @media (max-width: 360px) {
-  .cat-nav-scroll { gap: 10px; padding: 0 12px; }
-  .cat-nav-item { font-size: 0.78rem; }
+  .cat-nav-scroll { gap: 12px; padding: 0 12px; }
+  .cat-nav-item { font-size: 0.85rem; }
 }
 
 /* Bigger tap targets on touch devices */
