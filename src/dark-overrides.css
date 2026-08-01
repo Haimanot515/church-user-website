@@ -1,20 +1,36 @@
+/* ---------- Page shell: fixes the white strip visible below the
+   footer. .site-footer itself is already dark (navy-deep), but
+   html/body/#root are never touched by dark mode, so any leftover
+   viewport height below the footer falls back to the default white
+   page background. ---------- */
+[data-theme="dark"] html,
+[data-theme="dark"] body,
+[data-theme="dark"] #root {
+  background: #1a1a1a !important;
+}
+
 /* ============================================================
-   DARK MODE PAGE OVERRIDES
+   DARK MODE PAGE OVERRIDES  (fixed)
    Import this ONCE, globally, after theme.css and after every
    page's own CSS file (so it always loads last and wins).
 
-   Why this file exists: several pages (Blog/Home's ".church-portal"
-   /".church-page" and About's ".about-section") define their own
-   complete color palette with hardcoded hex values and never
-   reference the shared --bg-color / --text-color / data-theme
-   system at all. Toggling dark mode has zero effect on them
-   because nothing in those files is theme-aware.
+   ------------------------------------------------------------
+   ROOT CAUSE OF THE BUG YOU HIT ON TRAVEL:
+   Rules like `section[style*="#ffffff"]`, `p[style*="color: red"]`
+   and `p[style*="color: #888"]` were written against the hex /
+   keyword strings you typed in JSX. But when React sets an inline
+   style, the browser re-serializes the color into the DOM as
+   rgb(...) — it does NOT keep "#ffffff" or "red" as literal text.
+   So those attribute selectors never matched at all: the section
+   background stayed white, while class-based rules (.display,
+   .church-portal color, etc.) still correctly turned the text
+   white — giving you invisible white-on-white text and
+   "untargeted" white sections.
 
-   Rather than rewriting every hardcoded color inside each page's
-   own CSS (risking breaking the light-mode design), this file adds
-   [data-theme="dark"]-scoped overrides for each page's root class
-   and its major surfaces only. Light mode is completely untouched
-   since none of these rules exist outside [data-theme="dark"].
+   FIX: every inline-color attribute selector below now matches
+   the actual rendered rgb() value instead of the hex/keyword.
+   Everything else is unchanged from your file.
+   ------------------------------------------------------------
 ============================================================ */
 
 /* ---------- Blog / Home: ".church-portal" root ---------- */
@@ -39,13 +55,17 @@
   color: #f8fafc !important;
 }
 
-/* ---------- Contact (shares ".church-portal" root with Blog) ---------- */
-
-/* Any section left on its light hardcoded background (Ways to Reach,
-   FAQ) — these are plain white sections with no dedicated class, so
-   they're targeted structurally as direct section children. */
-[data-theme="dark"] .church-portal section[style*="#ffffff"] {
+/* ---------- Contact / Travel / Home shared white sections ----------
+   FIXED: was section[style*="#ffffff"] — browsers serialize
+   background:#ffffff as rgb(255, 255, 255), so the old selector
+   never matched. This one catches every inline white section
+   (Contact's "Ways to Reach"/FAQ, Travel's "Upcoming Trips",
+   "Kinds of Trips", and FAQ sections, etc). */
+[data-theme="dark"] .church-portal section[style*="rgb(255, 255, 255)"] {
   background: #1a1a1a !important;
+}
+[data-theme="dark"] .church-portal section[style*="rgb(255, 255, 255)"] p {
+  color: #cbd5e1 !important;
 }
 
 /* Hero + quick-facts band, form section, location section keep their
@@ -57,9 +77,6 @@
 [data-theme="dark"] .church-portal h4.display,
 [data-theme="dark"] .church-portal .display {
   color: #f8fafc !important;
-}
-[data-theme="dark"] .church-portal section[style*="#ffffff"] p {
-  color: #cbd5e1 !important;
 }
 
 /* .fact-item (deep-red) and .reach-card / .form-card (navy gradient)
@@ -104,10 +121,6 @@
 [data-theme="dark"] .church-portal .map-frame iframe {
   filter: grayscale(0.25) brightness(0.85) contrast(1.05) !important;
 }
-
-/* ---------- Blog: ".church-portal" (post rows / newsletter kept
-   on the navy gradient by design — no change needed there since
-   it's already dark) ---------- */
 
 /* ---------- Home: ".church-page" root ---------- */
 [data-theme="dark"] .church-page {
@@ -311,6 +324,27 @@
   color: #cbd5e1 !important;
 }
 
+/* ---------- Travel: "Four kinds of trip, four different reasons" section ----------
+   Direct :has(.reach-grid) targeting, same reliable pattern used for
+   Upcoming Trips / FAQ below — don't depend solely on the rgb()
+   background match or the page-wide :has(.trip-layout) scoping. */
+[data-theme="dark"] section:has(.reach-grid) {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] section:has(.reach-grid) .reach-card {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+[data-theme="dark"] section:has(.reach-grid) .reach-card h4 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] section:has(.reach-grid) .reach-value {
+  color: #e6c67a !important;
+}
+[data-theme="dark"] section:has(.reach-grid) .reach-card p {
+  color: #cbd5e1 !important;
+}
+
 /* Upcoming Trips cards — title/desc are hardcoded dark-on-white text */
 [data-theme="dark"] .church-portal .upcoming-card-title {
   color: #f8fafc !important;
@@ -320,32 +354,35 @@
 }
 
 /* Inline-styled bits with no class: fallback-language notice and the
-   fetch error message */
-[data-theme="dark"] .church-portal p[style*="color: #888"] {
+   fetch error message.
+   FIXED: was p[style*="color: #888"] / p[style*="color: red"] —
+   browsers serialize these to rgb(), so the hex/keyword string never
+   appeared in the DOM and these never matched. */
+[data-theme="dark"] .church-portal p[style*="rgb(136, 136, 136)"] {
   color: #9ca3af !important;
 }
-[data-theme="dark"] .church-portal p[style*="color: red"] {
+[data-theme="dark"] .church-portal p[style*="rgb(255, 0, 0)"] {
   color: #fca5a5 !important;
 }
 
 /* ---------- Home (shares ".church-portal" root) ---------- */
 
 /* Testimonial role / any other p.eyebrow inside a white section was
-   getting swept up by the generic "section[style*=#ffffff] p" rule
-   above and turned grey, losing its gold accent — restore it. */
-[data-theme="dark"] .church-portal section[style*="#ffffff"] p.eyebrow {
+   getting swept up by the generic white-section paragraph rule above
+   and turned grey, losing its gold accent — restore it.
+   FIXED same rgb() issue as above. */
+[data-theme="dark"] .church-portal section[style*="rgb(255, 255, 255)"] p.eyebrow {
   color: var(--gold, #cf9f3f) !important;
 }
 
 /* Recommended/Photos pagination page-info text is a <span>, not a
-   <p>, so the generic paragraph rule never reached it. */
-[data-theme="dark"] .church-portal span[style*="color: #444"] {
+   <p>, so the generic paragraph rule never reached it.
+   FIXED: was span[style*="color: #444"] → real DOM value is rgb(68, 68, 68). */
+[data-theme="dark"] .church-portal span[style*="rgb(68, 68, 68)"] {
   color: #cbd5e1 !important;
 }
 
-/* ---------- Home: Promotion / Sponsored block ----------
-   .sponsored-block is a permanently white ad card with its own
-   class — nothing above ever targeted it directly. */
+/* ---------- Home: Promotion / Sponsored block ---------- */
 [data-theme="dark"] .sponsored-block {
   background: #1f1f1f !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
@@ -365,11 +402,7 @@
   color: #cbd5e1 !important;
 }
 
-/* ---------- Home: Sermons / Recommended / Testimonials sections ----------
-   Direct background overrides scoped by a unique child class inside
-   each section, instead of relying on matching the section's own
-   inline style substring — belt-and-suspenders in case that
-   attribute match was ever the actual point of failure. */
+/* ---------- Home: Sermons / Recommended / Testimonials sections ---------- */
 [data-theme="dark"] section:has(.hanging-cross) {
   background: #1a1a1a !important;
 }
@@ -381,12 +414,13 @@
 }
 
 /* Recommended pagination prev/next buttons — JS-computed inline
-   colors (#e5e7eb / #2563eb / #999 / #fff), never touched before. */
-[data-theme="dark"] section:has(.recommended-grid) button[style*="#e5e7eb"] {
+   colors. FIXED: were button[style*="#e5e7eb"] / button[style*="#2563eb"],
+   which never match because the DOM serializes hex to rgb(). */
+[data-theme="dark"] section:has(.recommended-grid) button[style*="rgb(229, 231, 235)"] {
   background: #374151 !important;
   color: #9ca3af !important;
 }
-[data-theme="dark"] section:has(.recommended-grid) button[style*="#2563eb"] {
+[data-theme="dark"] section:has(.recommended-grid) button[style*="rgb(37, 99, 235)"] {
   background: #3b82f6 !important;
   color: #ffffff !important;
 }
@@ -411,15 +445,10 @@
   background: var(--gold, #cf9f3f) !important;
 }
 
-/* ---------- Travel: Upcoming Trips section ("A few trips already
-   on the calendar") ---------- */
+/* ---------- Travel: Upcoming Trips section ---------- */
 [data-theme="dark"] section:has(.upcoming-grid) {
   background: #1a1a1a !important;
 }
-/* .upcoming-card-title / .upcoming-card-desc are plain h4/p styled
-   directly in Travel.css with hardcoded navy/slate colors — they
-   don't carry the .display class, so no existing rule ever reached
-   them. Once the section goes dark these were near-invisible. */
 [data-theme="dark"] .upcoming-card-title {
   color: #f8fafc !important;
 }
@@ -427,7 +456,7 @@
   color: #cbd5e1 !important;
 }
 
-/* ---------- Travel: FAQ section ("A Few Common Questions") ---------- */
+/* ---------- Travel: FAQ section ---------- */
 [data-theme="dark"] section:has(.faq-item) {
   background: #1a1a1a !important;
 }
