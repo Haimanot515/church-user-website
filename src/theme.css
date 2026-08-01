@@ -1,0 +1,183 @@
+/* ============================================================
+   DARK MODE PAGE OVERRIDES
+   Import this ONCE, globally, after theme.css and after every
+   page's own CSS file (so it always loads last and wins).
+
+   Why this file exists: several pages (Blog/Home's ".church-portal"
+   /".church-page" and About's ".about-section") define their own
+   complete color palette with hardcoded hex values and never
+   reference the shared --bg-color / --text-color / data-theme
+   system at all. Toggling dark mode has zero effect on them
+   because nothing in those files is theme-aware.
+
+   Rather than rewriting every hardcoded color inside each page's
+   own CSS (risking breaking the light-mode design), this file adds
+   [data-theme="dark"]-scoped overrides for each page's root class
+   and its major surfaces only. Light mode is completely untouched
+   since none of these rules exist outside [data-theme="dark"].
+============================================================ */
+
+/* ---------- Blog / Home: ".church-portal" root ---------- */
+[data-theme="dark"] .church-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .blog-list-section,
+[data-theme="dark"] .church-portal .video-section,
+[data-theme="dark"] .church-portal .section-cross-divider {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .church-portal .post-copy p.desc,
+[data-theme="dark"] .church-portal .video-list-item p,
+[data-theme="dark"] .church-portal .video-heading h3,
+[data-theme="dark"] .church-portal .video-view-all {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .card,
+[data-theme="dark"] .church-portal .angel-box-overlay {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+
+/* ---------- Blog: ".church-portal" (post rows / newsletter kept
+   on the navy gradient by design — no change needed there since
+   it's already dark) ---------- */
+
+/* ---------- Home: ".church-page" root ---------- */
+[data-theme="dark"] .church-page {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .serve-now-card,
+[data-theme="dark"] .church-page .blog-card,
+[data-theme="dark"] .church-page .construction-ad {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .serve-now-body h2,
+[data-theme="dark"] .church-page .blog-card h3,
+[data-theme="dark"] .church-page .construction-ad-body h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .serve-now-desc,
+[data-theme="dark"] .church-page .blog-card p,
+[data-theme="dark"] .church-page .serve-now-line,
+[data-theme="dark"] .church-page .construction-ad-body p {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .church-page .serve-now-line strong {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .construction-ad-close {
+  background: #242424 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+[data-theme="dark"] .church-page .ad-progress-track {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ---------- About: ".about-section" root ---------- */
+[data-theme="dark"] .about-section {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .about-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .about-description {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .about-art-accent {
+  background: #242424 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .about-image {
+  border-color: #1a1a1a !important;
+}
+[data-theme="dark"] .about-tag {
+  background: #242424 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Media: ".media-portal" root ---------- */
+[data-theme="dark"] .media-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .grid-card,
+[data-theme="dark"] .media-portal .lightbox-inner {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .grid-card-title,
+[data-theme="dark"] .media-portal .lightbox-caption h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .lightbox-caption p,
+[data-theme="dark"] .media-portal .audio-artist,
+[data-theme="dark"] .media-portal .section-intro {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .media-portal .media-section:not(:last-child) {
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ---------- Media Detail (renders inside .media-portal) ---------- */
+[data-theme="dark"] .media-portal .media-detail-audio-card,
+[data-theme="dark"] .media-portal .media-detail-document {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .media-detail-document-icon {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .media-portal .media-detail-description {
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Sermons: ".shepherd-page" root ---------- */
+[data-theme="dark"] .shepherd-page {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .sermon-card,
+[data-theme="dark"] .shepherd-page .campus-card {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .sermon-card h3,
+[data-theme="dark"] .shepherd-page .campus-card h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .campus-line {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .shepherd-page .campus-line strong {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .sermons-head h2,
+[data-theme="dark"] .shepherd-page .campuses-head h2 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .campuses-head p {
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Services: ".services-portal" root ---------- */
+[data-theme="dark"] .services-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .services-portal .service-copy h2 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .services-portal .service-copy p.desc {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .services-portal .service-copy p.note {
+  color: #a9c2d3 !important;
+}
+[data-theme="dark"] .services-portal .service-row:not(:last-child) {
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}

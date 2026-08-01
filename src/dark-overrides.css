@@ -1,0 +1,433 @@
+/* ============================================================
+   DARK MODE PAGE OVERRIDES
+   Import this ONCE, globally, after theme.css and after every
+   page's own CSS file (so it always loads last and wins).
+
+   Why this file exists: several pages (Blog/Home's ".church-portal"
+   /".church-page" and About's ".about-section") define their own
+   complete color palette with hardcoded hex values and never
+   reference the shared --bg-color / --text-color / data-theme
+   system at all. Toggling dark mode has zero effect on them
+   because nothing in those files is theme-aware.
+
+   Rather than rewriting every hardcoded color inside each page's
+   own CSS (risking breaking the light-mode design), this file adds
+   [data-theme="dark"]-scoped overrides for each page's root class
+   and its major surfaces only. Light mode is completely untouched
+   since none of these rules exist outside [data-theme="dark"].
+============================================================ */
+
+/* ---------- Blog / Home: ".church-portal" root ---------- */
+[data-theme="dark"] .church-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .blog-list-section,
+[data-theme="dark"] .church-portal .video-section,
+[data-theme="dark"] .church-portal .section-cross-divider {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .church-portal .post-copy p.desc,
+[data-theme="dark"] .church-portal .video-list-item p,
+[data-theme="dark"] .church-portal .video-heading h3,
+[data-theme="dark"] .church-portal .video-view-all {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .card,
+[data-theme="dark"] .church-portal .angel-box-overlay {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+
+/* ---------- Contact (shares ".church-portal" root with Blog) ---------- */
+
+/* Any section left on its light hardcoded background (Ways to Reach,
+   FAQ) — these are plain white sections with no dedicated class, so
+   they're targeted structurally as direct section children. */
+[data-theme="dark"] .church-portal section[style*="#ffffff"] {
+  background: #1a1a1a !important;
+}
+
+/* Hero + quick-facts band, form section, location section keep their
+   navy/red gradients by design — text stays light already, no change
+   needed there. */
+
+[data-theme="dark"] .church-portal h1.display,
+[data-theme="dark"] .church-portal h2.display,
+[data-theme="dark"] .church-portal h4.display,
+[data-theme="dark"] .church-portal .display {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal section[style*="#ffffff"] p {
+  color: #cbd5e1 !important;
+}
+
+/* .fact-item (deep-red) and .reach-card / .form-card (navy gradient)
+   are already dark surfaces by design in light mode too — leave them
+   alone rather than flattening them to the generic dark-mode gray. */
+
+/* .field-input / .field-select / .field-textarea / .contact-input /
+   .contact-textarea are deliberately LIGHT fields sitting inside the
+   already-dark .form-card, for contrast — also left as-is. */
+
+[data-theme="dark"] .church-portal .contact-btn:disabled {
+  opacity: 0.6 !important;
+}
+
+[data-theme="dark"] .church-portal .faq-question {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .faq-answer {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .church-portal .faq-item,
+[data-theme="dark"] .church-portal .faq-item:first-child {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .church-portal .faq-toggle {
+  color: #e6c67a !important;
+}
+
+[data-theme="dark"] .church-portal .pull-quote {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal section[style*="var(--sky-mid)"] {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .church-portal section[style*="var(--sky-mid)"] p:not(.pull-quote) {
+  color: #cbd5e1 !important;
+}
+
+/* .map-frame's own container (deep-red section) and .service-time-row
+   (dashed white border) are already dark; .eyebrow's gold color from
+   theme.css works on both light and dark sections. No overrides needed. */
+[data-theme="dark"] .church-portal .map-frame iframe {
+  filter: grayscale(0.25) brightness(0.85) contrast(1.05) !important;
+}
+
+/* ---------- Blog: ".church-portal" (post rows / newsletter kept
+   on the navy gradient by design — no change needed there since
+   it's already dark) ---------- */
+
+/* ---------- Home: ".church-page" root ---------- */
+[data-theme="dark"] .church-page {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .serve-now-card,
+[data-theme="dark"] .church-page .blog-card,
+[data-theme="dark"] .church-page .construction-ad {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .serve-now-body h2,
+[data-theme="dark"] .church-page .blog-card h3,
+[data-theme="dark"] .church-page .construction-ad-body h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .serve-now-desc,
+[data-theme="dark"] .church-page .blog-card p,
+[data-theme="dark"] .church-page .serve-now-line,
+[data-theme="dark"] .church-page .construction-ad-body p {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .church-page .serve-now-line strong {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-page .construction-ad-close {
+  background: #242424 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+[data-theme="dark"] .church-page .ad-progress-track {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ---------- About: ".about-section" root ---------- */
+[data-theme="dark"] .about-section {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .about-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .about-description {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .about-art-accent {
+  background: #242424 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .about-image {
+  border-color: #1a1a1a !important;
+}
+[data-theme="dark"] .about-tag {
+  background: #242424 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Media: ".media-portal" root ---------- */
+[data-theme="dark"] .media-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .grid-card,
+[data-theme="dark"] .media-portal .lightbox-inner {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .grid-card-title,
+[data-theme="dark"] .media-portal .lightbox-caption h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .lightbox-caption p,
+[data-theme="dark"] .media-portal .audio-artist,
+[data-theme="dark"] .media-portal .section-intro {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .media-portal .media-section:not(:last-child) {
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ---------- Media Detail (renders inside .media-portal) ---------- */
+[data-theme="dark"] .media-portal .media-detail-audio-card,
+[data-theme="dark"] .media-portal .media-detail-document {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .media-portal .media-detail-document-icon {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .media-portal .media-detail-description {
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Sermons: ".shepherd-page" root ---------- */
+[data-theme="dark"] .shepherd-page {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .sermon-card,
+[data-theme="dark"] .shepherd-page .campus-card {
+  background: #242424 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .sermon-card h3,
+[data-theme="dark"] .shepherd-page .campus-card h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .campus-line {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .shepherd-page .campus-line strong {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .sermons-head h2,
+[data-theme="dark"] .shepherd-page .campuses-head h2 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .shepherd-page .campuses-head p {
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Services: ".services-portal" root ---------- */
+[data-theme="dark"] .services-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .services-portal .service-copy h2 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .services-portal .service-copy p.desc {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .services-portal .service-copy p.note {
+  color: #a9c2d3 !important;
+}
+[data-theme="dark"] .services-portal .service-row:not(:last-child) {
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ---------- Book: ".book-portal" root ---------- */
+[data-theme="dark"] .book-portal {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .book-portal .filter-tab,
+[data-theme="dark"] .book-portal .catalog-sort-select,
+[data-theme="dark"] .book-portal .catalog-card {
+  background: #242424 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .book-portal .filter-tab.active {
+  background: var(--gold, #cf9f3f) !important;
+  border-color: var(--gold, #cf9f3f) !important;
+  color: #1a1a1a !important;
+}
+[data-theme="dark"] .book-portal .catalog-toolbar {
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .book-portal .catalog-card-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .book-portal .catalog-card-author,
+[data-theme="dark"] .book-portal .catalog-card-desc,
+[data-theme="dark"] .book-portal .catalog-result-count,
+[data-theme="dark"] .book-portal .filter-count {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .book-portal .tag-language {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .book-portal .tag-category {
+  background: rgba(207, 159, 63, 0.22) !important;
+  color: #e6c67a !important;
+}
+[data-theme="dark"] .book-portal .catalog-card-btn-outline {
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+[data-theme="dark"] .book-portal .catalog-card-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #f8fafc !important;
+}
+
+/* ---------- Travel (shares ".church-portal" root; scoped via
+   :has(.trip-layout) since .reach-card/.reach-value here are a light
+   glass card, unlike Contact's already-dark .reach-card) ---------- */
+[data-theme="dark"] .church-portal:has(.trip-layout) .reach-card {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+[data-theme="dark"] .church-portal:has(.trip-layout) .reach-card h4 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal:has(.trip-layout) .reach-value {
+  color: #e6c67a !important;
+}
+[data-theme="dark"] .church-portal:has(.trip-layout) .reach-card p {
+  color: #cbd5e1 !important;
+}
+
+/* Upcoming Trips cards — title/desc are hardcoded dark-on-white text */
+[data-theme="dark"] .church-portal .upcoming-card-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .upcoming-card-desc {
+  color: #cbd5e1 !important;
+}
+
+/* Inline-styled bits with no class: fallback-language notice and the
+   fetch error message */
+[data-theme="dark"] .church-portal p[style*="color: #888"] {
+  color: #9ca3af !important;
+}
+[data-theme="dark"] .church-portal p[style*="color: red"] {
+  color: #fca5a5 !important;
+}
+
+/* ---------- Home (shares ".church-portal" root) ---------- */
+
+/* Testimonial role / any other p.eyebrow inside a white section was
+   getting swept up by the generic "section[style*=#ffffff] p" rule
+   above and turned grey, losing its gold accent — restore it. */
+[data-theme="dark"] .church-portal section[style*="#ffffff"] p.eyebrow {
+  color: var(--gold, #cf9f3f) !important;
+}
+
+/* Recommended/Photos pagination page-info text is a <span>, not a
+   <p>, so the generic paragraph rule never reached it. */
+[data-theme="dark"] .church-portal span[style*="color: #444"] {
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Home: Promotion / Sponsored block ----------
+   .sponsored-block is a permanently white ad card with its own
+   class — nothing above ever targeted it directly. */
+[data-theme="dark"] .sponsored-block {
+  background: #1f1f1f !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+[data-theme="dark"] .sponsored-block h3 {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .sponsored-block > div p {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .sponsored-ad-label {
+  color: #cbd5e1 !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+[data-theme="dark"] .sponsored-close {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Home: Sermons / Recommended / Testimonials sections ----------
+   Direct background overrides scoped by a unique child class inside
+   each section, instead of relying on matching the section's own
+   inline style substring — belt-and-suspenders in case that
+   attribute match was ever the actual point of failure. */
+[data-theme="dark"] section:has(.hanging-cross) {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] section:has(.recommended-grid) {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] section:has(.home-testimonial-grid) {
+  background: #1a1a1a !important;
+}
+
+/* Recommended pagination prev/next buttons — JS-computed inline
+   colors (#e5e7eb / #2563eb / #999 / #fff), never touched before. */
+[data-theme="dark"] section:has(.recommended-grid) button[style*="#e5e7eb"] {
+  background: #374151 !important;
+  color: #9ca3af !important;
+}
+[data-theme="dark"] section:has(.recommended-grid) button[style*="#2563eb"] {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* ---------- Home: Photos section ---------- */
+[data-theme="dark"] section:has(.photo-carousel) {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .photo-arrow {
+  background: #242424 !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+[data-theme="dark"] .photo-arrow:hover {
+  background: var(--gold, #cf9f3f) !important;
+  color: var(--navy-deep, #0f2438) !important;
+}
+[data-theme="dark"] .photo-dot {
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+[data-theme="dark"] .photo-dot.active {
+  background: var(--gold, #cf9f3f) !important;
+}
+
+/* ---------- Travel: Upcoming Trips section ("A few trips already
+   on the calendar") ---------- */
+[data-theme="dark"] section:has(.upcoming-grid) {
+  background: #1a1a1a !important;
+}
+/* .upcoming-card-title / .upcoming-card-desc are plain h4/p styled
+   directly in Travel.css with hardcoded navy/slate colors — they
+   don't carry the .display class, so no existing rule ever reached
+   them. Once the section goes dark these were near-invisible. */
+[data-theme="dark"] .upcoming-card-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .upcoming-card-desc {
+  color: #cbd5e1 !important;
+}
+
+/* ---------- Travel: FAQ section ("A Few Common Questions") ---------- */
+[data-theme="dark"] section:has(.faq-item) {
+  background: #1a1a1a !important;
+}

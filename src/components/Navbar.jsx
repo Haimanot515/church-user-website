@@ -3,7 +3,7 @@ import Login from "../pages/Login";
 import Form from "../pages/Registration/Form";
 import Verify from "../pages/Registration/Verify";
 import { Link, useNavigate } from "react-router-dom";
-import { FaTimes, FaBars, FaGlobe } from "react-icons/fa";
+import { FaTimes, FaBars, FaGlobe, FaSun, FaMoon } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "./Navbar.css";
 
@@ -43,12 +43,24 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showVerify, setShowVerify] = useState(false);
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "light"
+  );
 
   useEffect(() => {
     if (loggedIn) {
       closeModals();
     }
   }, [loggedIn]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -107,6 +119,14 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
           </div>
 
           <button
+            className="navbar-theme-toggle"
+            onClick={toggleTheme}
+            aria-label={t("navbar.theme.toggle", "Toggle theme")}
+          >
+            {theme === "light" ? <FaMoon /> : <FaSun />}
+          </button>
+
+          <button
             className="menu-toggle"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={t("navbar.menu.toggle")}
@@ -155,6 +175,14 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
               <button onClick={() => changeLanguage("am")}>አማ</button>
               <button onClick={() => changeLanguage("it")}>IT</button>
             </div>
+
+            <button
+              className="theme-switcher"
+              onClick={toggleTheme}
+            >
+              {theme === "light" ? <FaMoon /> : <FaSun />}
+              {theme === "light" ? t("navbar.theme.dark", "Dark mode") : t("navbar.theme.light", "Light mode")}
+            </button>
           </div>
         </div>
       </nav>
