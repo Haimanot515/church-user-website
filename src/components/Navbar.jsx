@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Login from "../pages/Login";
 import Form from "../pages/Registration/Form";
 import Verify from "../pages/Registration/Verify";
 import { Link, useNavigate } from "react-router-dom";
-import { FaTimes, FaBars, FaGlobe, FaSun, FaMoon } from "react-icons/fa";
+import { FaTimes, FaBars, FaGlobe, FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import "./Navbar.css";
 
@@ -36,6 +36,16 @@ const ThornCrownLogo = () => (
   </svg>
 );
 
+// Was a native <select> — on mobile that opens the OS's own full-screen
+// picker/popup, which is what you were seeing and wanted changed.
+// Replaced with a plain button + list so it renders as an inline
+// dropdown everywhere (desktop and mobile alike).
+const LANGUAGES = [
+  { code: "en", label: "EN" },
+  { code: "am", label: "አማ" },
+  { code: "it", label: "IT" },
+];
+
 const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -43,9 +53,11 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showVerify, setShowVerify] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
   );
+  const langGroupRef = useRef(null);
 
   useEffect(() => {
     if (loggedIn) {
@@ -57,6 +69,30 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  // Close the language dropdown on outside click / Escape, same
+  // behavior users expect from a normal dropdown.
+  useEffect(() => {
+    if (!isLangOpen) return;
+
+    const handleClickOutside = (e) => {
+      if (langGroupRef.current && !langGroupRef.current.contains(e.target)) {
+        setIsLangOpen(false);
+      }
+    };
+    const handleEscape = (e) => {
+      if (e.key === "Escape") setIsLangOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isLangOpen]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
@@ -94,7 +130,11 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
+    setIsLangOpen(false);
   };
+
+  const currentLanguageLabel =
+    LANGUAGES.find((l) => l.code === i18n.language)?.label || "EN";
 
   return (
     <>
@@ -104,18 +144,40 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
         </Link>
 
         <div className="navbar-right">
-          <div className="navbar-language-group">
-            <FaGlobe className="navbar-language-icon" aria-hidden="true" />
-            <select
-              className="navbar-language-select"
-              value={i18n.language}
-              onChange={(e) => changeLanguage(e.target.value)}
-              aria-label="Language"
+          <div
+            className={`navbar-language-group${isLangOpen ? " open" : ""}`}
+            ref={langGroupRef}
+          >
+            <button
+              type="button"
+              className="navbar-language-trigger"
+              onClick={() => setIsLangOpen((open) => !open)}
+              aria-haspopup="listbox"
+              aria-expanded={isLangOpen}
+              aria-label={t("navbar.language.toggle", "Change language")}
             >
-              <option value="en">EN</option>
-              <option value="am">አማ</option>
-              <option value="it">IT</option>
-            </select>
+              <FaGlobe className="navbar-language-icon" aria-hidden="true" />
+              <span className="navbar-language-current">{currentLanguageLabel}</span>
+              <FaChevronDown className="navbar-language-arrow" aria-hidden="true" />
+            </button>
+
+            {isLangOpen && (
+              <ul className="navbar-language-dropdown" role="listbox">
+                {LANGUAGES.map((lng) => (
+                  <li key={lng.code}>
+                    <button
+                      type="button"
+                      className={`navbar-language-option${i18n.language === lng.code ? " active" : ""}`}
+                      onClick={() => changeLanguage(lng.code)}
+                      role="option"
+                      aria-selected={i18n.language === lng.code}
+                    >
+                      {lng.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <button
