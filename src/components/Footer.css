@@ -460,3 +460,37 @@
 @media (hover: none) and (pointer: coarse) {
   .footer-quicklink-item { padding: 4px 0; }
 }
+
+
+/* --- Mobile/tablet: floating buttons centered together at the bottom --- */
+@media (max-width: 1024px) {
+  .footer-contact-fab,
+  .footer-back-to-top {
+    bottom: 0;
+    right: auto;
+  }
+  .footer-contact-fab {
+    left: calc(50% - 60px); /* 52px button + 8px half-gap left of center */
+  }
+  .footer-back-to-top {
+    left: calc(50% + 8px);  /* 8px half-gap right of center */
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-contact-fab {
+    left: calc(50% - 54px); /* 46px button + 8px half-gap */
+  }
+  .footer-back-to-top {
+    left: calc(50% + 8px);
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-contact-fab {
+    left: calc(50% - 52px); /* 44px button + 8px half-gap */
+  }
+  .footer-back-to-top {
+    left: calc(50% + 8px);
+  }
+}
