@@ -83,16 +83,20 @@ const Home = () => {
     </div>
   );
 
-  // "All" is always first, so users can clear the category filter
-  const [categories, setCategories] = useState(["All"]);
+  // "All" is always first, so users can clear the category filter.
+  // Each entry is now { name, slug } — slug is the language-independent
+  // key sent to the backend, name is the translated label shown in the UI.
+  const [categories, setCategories] = useState([{ name: "All", slug: "all" }]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState("");
   // true when the categories currently shown came from the English
   // fallback because the active language had none
   const [categoriesFallback, setCategoriesFallback] = useState(false);
 
-  // default to "All" so the initial render shows every post, no filter
-  const [activeCategory, setActiveCategory] = useState("All");
+  // default to "all" so the initial render shows every post, no filter.
+  // activeCategory now stores the SLUG (language-independent), not the
+  // translated display name.
+  const [activeCategory, setActiveCategory] = useState("all");
 
   // ---------- Inlined category nav bar state/refs (formerly CategoryNav.jsx) ----------
   const catNavBarRef = useRef(null); // the sticky <nav> itself — used to measure its height so scrolling to a section doesn't leave it hidden underneath the sticky bar
@@ -187,6 +191,7 @@ const Home = () => {
       moved: false,
       startX: e.clientX,
       startPos: catPosRef.current,
+      // data-cat now holds the SLUG, see render below
       downCat: itemEl ? itemEl.dataset.cat : null,
     };
     pauseCatAutoScroll();
@@ -450,7 +455,7 @@ const Home = () => {
     fetchPhotos(photosPage);
   }, [photosPage, t]);
 
-  // "All" fetches every post with no category filter, same limit as every category.
+  // "all" fetches every post with no category filter, same limit as every category.
   // On the first page of a language/category combo, if nothing comes
   // back, re-fetch that same page explicitly in English and flag the
   // fallback so the UI can show a note about it.
@@ -464,7 +469,9 @@ const Home = () => {
         const baseParams = {
           page,
           limit: POSTS_PER_PAGE,
-          ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
+          // slug is language-independent — this is what the backend
+          // now expects instead of a translated category name
+          ...(activeCategory && activeCategory !== "all" ? { categorySlug: activeCategory } : {}),
         };
 
         let res = await API.get("/posts", { params: baseParams });
@@ -573,7 +580,10 @@ const Home = () => {
     fetchRecommended(recommendedPage);
   }, [recommendedPage, t]);
 
-  // prepend "All" (UI-only, never comes from the DB) before the fetched names.
+  // prepend "All" (UI-only, never comes from the DB) before the fetched
+  // categories. Each entry is stored as { name, slug } — slug is the
+  // language-independent key ("travel") used for filtering, name is the
+  // translated label ("Travel" / "Viaggi" / "ጉዞ") shown in the nav bar.
   // If the current language has zero categories, re-fetch in English
   // explicitly and flag the fallback so the UI can show a note about it.
   useEffect(() => {
@@ -585,26 +595,26 @@ const Home = () => {
 
         let res = await API.get("/categories");
         let raw = Array.isArray(res.data) ? res.data : res.data.categories;
-        let names = (raw || [])
-          .map((c) => (typeof c === "string" ? c : c?.name))
+        let cats = (raw || [])
+          .map((c) => (c && c.name && c.slug ? { name: c.name, slug: c.slug } : null))
           .filter(Boolean);
 
-        if (names.length === 0) {
+        if (cats.length === 0) {
           res = await API.get("/categories", {
             headers: { "Accept-Language": "en" },
           });
           raw = Array.isArray(res.data) ? res.data : res.data.categories;
-          names = (raw || [])
-            .map((c) => (typeof c === "string" ? c : c?.name))
+          cats = (raw || [])
+            .map((c) => (c && c.name && c.slug ? { name: c.name, slug: c.slug } : null))
             .filter(Boolean);
 
-          if (names.length > 0) {
+          if (cats.length > 0) {
             setCategoriesFallback(true);
           }
         }
 
-        if (names.length > 0) {
-          setCategories(["All", ...names]);
+        if (cats.length > 0) {
+          setCategories([{ name: "All", slug: "all" }, ...cats]);
         }
       } catch (err) {
         console.log(err);
@@ -636,6 +646,7 @@ const Home = () => {
     window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
   };
 
+  // cat is now the SLUG (language-independent), read from data-cat
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setSermonsPage(1);
@@ -666,6 +677,11 @@ const Home = () => {
   });
 
   const shouldShowSponsored = showSponsored && !promotionLoading && !!promotion;
+
+  // Translated display name for the currently active category slug —
+  // used only for the "no posts in <category>" message below.
+  const activeCategoryLabel =
+    categories.find((c) => c.slug === activeCategory)?.name || activeCategory;
 
   return (
     <div className="church-portal">
@@ -845,11 +861,11 @@ const Home = () => {
           <div className="cat-nav-scroll" ref={catTrackRef}>
             {catLoopItems.map((cat, i) => (
               <span
-                key={`${cat}-${i}`}
-                data-cat={cat}
-                className={`cat-nav-item${cat === activeCategory ? " active" : ""}`}
+                key={`${cat.slug}-${i}`}
+                data-cat={cat.slug}
+                className={`cat-nav-item${cat.slug === activeCategory ? " active" : ""}`}
               >
-                {cat === "All" ? t("home.categoryNav.all") : cat}
+                {cat.slug === "all" ? t("home.categoryNav.all") : cat.name}
               </span>
             ))}
           </div>
@@ -894,9 +910,9 @@ const Home = () => {
             <Spinner />
           ) : sermons.length === 0 ? (
             <p style={{ textAlign: 'center' }}>
-              {activeCategory === "All"
+              {activeCategory === "all"
                 ? t("home.sermons.noneAll")
-                : t("home.sermons.noneCategory", { category: activeCategory })}
+                : t("home.sermons.noneCategory", { category: activeCategoryLabel })}
             </p>
           ) : (
             sermons.map((item, index, arr) => (

@@ -4,11 +4,17 @@ import API from "../api/api";
 import "./Sermon.css";
 
 /**
- * Sermons are now fetched from the Media API (`/media/type/video`,
- * same endpoint the public Media page uses) instead of a hardcoded
- * YouTube list. Each media doc's uploaded file is played with a plain
- * HTML5 <video> element rather than the YouTube iframe API — there's no
+ * Sermons are fetched from the Media API (`/media/type/video`, same
+ * endpoint the public Media page uses) instead of a hardcoded YouTube
+ * list. Each media doc's uploaded file is played with a plain HTML5
+ * <video> element rather than the YouTube iframe API — there's no
  * YouTube video ID for self-hosted uploads.
+ *
+ * NOTE (changed): this version shows every published video from the
+ * Media table, regardless of category — it no longer filters down to
+ * only items tagged "Sermons". If you want to go back to showing only
+ * a specific category, reintroduce the SERMON_CATEGORY check inside
+ * filterSermons.
  *
  * Both the sermons list and the campuses list follow the same
  * Accept-Language fallback pattern used elsewhere on the site
@@ -33,13 +39,6 @@ const getMediaUrl = (mediaUrl) => {
   const path = mediaUrl.startsWith("/") ? mediaUrl : `/uploads/${mediaUrl}`;
   return `${base}${path}`;
 };
-
-// Only show videos tagged with this category — other video-type media
-// (e.g. worship clips, testimonies) won't show up on the Sermons page.
-// NOTE: `category` on the Media schema is a ref to the Category model, so
-// this assumes your GET /media/type/video route populates it (e.g.
-// `.populate("category", "name")`) so each item has `category.name`.
-const SERMON_CATEGORY = "Sermons";
 
 const Sermon = () => {
   const { t } = useTranslation();
@@ -82,21 +81,20 @@ const Sermon = () => {
 
   const currentSermon = sermons[sermonIndex];
 
+  // CHANGED: no longer filters by category — every published video-type
+  // media document is included.
   const filterSermons = (data) =>
     (data || [])
       .filter((m) => m.status === "published")
-      .filter((m) => {
-        const categoryName = typeof m.category === "string" ? m.category : m.category?.name;
-        return (categoryName || "").toLowerCase() === SERMON_CATEGORY.toLowerCase();
-      })
       .map((m) => ({
         ...m,
         mediaUrl: getMediaUrl(m.mediaUrl),
         thumbnail: getMediaUrl(m.thumbnail),
       }));
 
-  // Fetch sermon videos from the Media API on mount (and whenever the
-  // active language changes, so titles/descriptions come back localized).
+  // Fetch all published video media from the Media API on mount (and
+  // whenever the active language changes, so titles/descriptions come
+  // back localized).
   useEffect(() => {
     const fetchSermons = async () => {
       try {

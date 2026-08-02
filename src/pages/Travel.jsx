@@ -6,6 +6,11 @@ import "./Travel.css";
 
 const TRAVEL_ITEM_LIMIT = 10;
 
+// Language-independent slug for this page's category — matches the
+// `slug` field stored on the Travel / Viaggi / ጉዞ Category documents,
+// so the backend resolves the right one for whatever language is active.
+const TRAVEL_CATEGORY_SLUG = "travel";
+
 const Travel = () => {
   const { t } = useTranslation();
 
@@ -43,8 +48,11 @@ const Travel = () => {
       setUpcomingError("");
       if (pageNum === 1) setUpcomingFallback(false);
 
+      // categorySlug is language-independent — the backend resolves it
+      // to the Travel (EN) / Viaggi (IT) / ጉዞ (AM) category doc based on
+      // Accept-Language, so this never breaks when switching language.
       const params = {
-        category: "Travel",
+        categorySlug: TRAVEL_CATEGORY_SLUG,
         limit: TRAVEL_ITEM_LIMIT,
         page: pageNum,
       };
