@@ -523,6 +523,25 @@
   display: contents;
 }
 
+/* Show/hide slide animation (mobile/tablet only — see the flex layout
+   inside the media query below). Hidden by default (translated fully off
+   screen); Footer.jsx toggles the --visible class based on scroll
+   direction: hidden on load and while scrolling down, slides in while
+   scrolling up. transform on a display:contents element has no effect,
+   so this is inert on desktop regardless of the class. */
+.footer-bottom-navbar {
+  transform: translateY(100%);
+  transition: transform 0.28s ease;
+}
+
+.footer-bottom-navbar.footer-bottom-navbar--visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-bottom-navbar { transition: none; }
+}
+
 @media (max-width: 1024px) {
   .footer-bottom-navbar {
     display: flex;

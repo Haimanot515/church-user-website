@@ -145,6 +145,34 @@ const Footer = () => {
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [feedback, setFeedback] = useState("");
 
+  // Bottom nav bar visibility (mobile/tablet only — see .footer-bottom-navbar
+  // in Footer.css). Hidden on initial page load / while at the very top of
+  // the page. Hides while the user scrolls down, slides back in while
+  // scrolling up — same pattern as LinkedIn's mobile bottom bar.
+  const [navVisible, setNavVisible] = useState(false);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+
+      if (currentScrollY <= 10) {
+        setNavVisible(false); // back at the top — stay hidden
+      } else if (delta > 5) {
+        setNavVisible(false); // scrolling down
+      } else if (delta < -5) {
+        setNavVisible(true); // scrolling up
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // Categories for the top-of-footer bar. Same source/fallback pattern as
   // Home's category nav (src/pages/Home.jsx, fetchCategories), fetched
   // independently so the footer works even if Home hasn't loaded
@@ -296,7 +324,10 @@ const Footer = () => {
           bar; the label is aria-hidden since the button's own
           aria-label already announces the full action to screen
           readers. */}
-      <nav className="footer-bottom-navbar" aria-label={t("footer.mobileNav", "Quick actions")}>
+      <nav
+        className={`footer-bottom-navbar${navVisible ? " footer-bottom-navbar--visible" : ""}`}
+        aria-label={t("footer.mobileNav", "Quick actions")}
+      >
         <Link
           to="/contact#contact-form"
           className="footer-contact-fab"
