@@ -70,6 +70,16 @@ const Sermon = () => {
   const [campusesError, setCampusesError] = useState("");
   const [campusesFallback, setCampusesFallback] = useState(false);
 
+  // Reusable inline loading spinner — shown while a section's data is
+  // being fetched from the backend, so no hardcoded frontend placeholder
+  // content is ever visible before the real data arrives. Same
+  // markup/classes as Home.jsx's Spinner, so it renders identically.
+  const Spinner = ({ light }) => (
+    <div className="loading-spinner-wrap">
+      <div className={`loading-spinner${light ? " light" : ""}`} />
+    </div>
+  );
+
   const currentSermon = sermons[sermonIndex];
 
   const filterSermons = (data) =>
@@ -239,7 +249,7 @@ const Sermon = () => {
       <section className={`video-hero${expanded ? " expanded" : ""}`} ref={videoHeroRef}>
         {loadingSermons ? (
           <div className="video-closed-panel">
-            <span className="eyebrow">{t("sermon.videoHero.loading")}</span>
+            <Spinner light />
           </div>
         ) : error ? (
           <div className="video-closed-panel">
@@ -378,7 +388,7 @@ const Sermon = () => {
             <h2 className="display">{t("sermon.sermons.sectionTitle")}</h2>
           </div>
 
-          {loadingSermons && <p style={{ textAlign: "center" }}>{t("sermon.sermons.loading")}</p>}
+          {loadingSermons && <Spinner />}
           {!loadingSermons && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
           )}
@@ -438,7 +448,7 @@ const Sermon = () => {
           </div>
 
           {campusesLoading ? (
-            <p style={{ textAlign: "center" }}>{t("sermon.campuses.loading")}</p>
+            <Spinner />
           ) : campusesError ? (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{campusesError}</p>
           ) : campuses.length === 0 ? (

@@ -21,6 +21,16 @@ const Travel = () => {
   // English fallback because the active language had none
   const [upcomingFallback, setUpcomingFallback] = useState(false);
 
+  // Reusable inline loading spinner — shown while a section's data is
+  // being fetched from the backend, so no hardcoded frontend placeholder
+  // content is ever visible before the real data arrives. Same
+  // markup/classes as Home.jsx's Spinner, so it renders identically.
+  const Spinner = ({ light }) => (
+    <div className="loading-spinner-wrap">
+      <div className={`loading-spinner${light ? " light" : ""}`} />
+    </div>
+  );
+
   // === Fetch travel posts, same Accept-Language fallback pattern as
   // ChurchAboutPage's fetchChurchPersons/fetchHistory and Blog's
   // fetchPosts: try the active language first, and only on a fresh load
@@ -140,7 +150,7 @@ const Travel = () => {
           )}
 
           {upcomingLoading ? (
-            <p>{t("travel.upcoming.loading")}</p>
+            <Spinner />
           ) : upcomingTrips.length === 0 ? (
             <p>{t("travel.upcoming.none")}</p>
           ) : (
@@ -225,10 +235,13 @@ const Travel = () => {
 
       <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <div className="fixed-cross left">
+          {/* FIX: was two horizontal crossbars (an Orthodox-style cross) —
+              simplified to a single horizontal crossbar (a plain Latin
+              cross), matching the single-crossbar style used elsewhere
+              on the site. */}
           <svg width="46" height="64" viewBox="0 0 46 64" xmlns="http://www.w3.org/2000/svg">
             <rect x="19" y="0" width="8" height="64" fill="var(--gold)" />
-            <rect x="4" y="12" width="38" height="8" fill="var(--gold)" />
-            <rect x="9" y="38" width="28" height="8" fill="var(--gold)" />
+            <rect x="4" y="20" width="38" height="8" fill="var(--gold)" />
           </svg>
         </div>
         <section>

@@ -216,6 +216,37 @@
 }
 .video-closed-panel button.reopen-toggle-btn svg { width: 18px; height: 18px; }
 
+/* ---------- Loading spinner (shown while a section's data is being
+   fetched from the backend, so no hardcoded frontend placeholder
+   content is ever visible before the real data arrives) — same
+   markup/classes as Home.css so it renders identically. align-self +
+   text-align keep it truly centered even inside a flex parent like
+   .video-closed-panel ---------- */
+.loading-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 0;
+  width: 100%;
+  align-self: center;
+  text-align: center;
+}
+.loading-spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(28, 58, 82, 0.15);
+  border-top-color: var(--gold);
+  animation: spin 0.85s linear infinite;
+}
+.loading-spinner.light {
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--gold);
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ---- HERO TEXT (below video) ---- */
 .hero-text-section {
   background: var(--navy-deep);

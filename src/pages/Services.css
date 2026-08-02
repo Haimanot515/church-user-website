@@ -142,6 +142,33 @@ a { color: inherit; text-decoration: none; }
   color: var(--navy-deep);
 }
 
+/* ---------- Loading spinner (shown while a section's data is being
+   fetched from the backend, so no hardcoded frontend placeholder
+   content is ever visible before the real data arrives) — same
+   markup/classes as Home.css so it renders identically ---------- */
+.loading-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 0;
+  width: 100%;
+}
+.loading-spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(28, 58, 82, 0.15);
+  border-top-color: var(--gold);
+  animation: spin 0.85s linear infinite;
+}
+.loading-spinner.light {
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--gold);
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .services-cta {
   background: var(--deep-red);
   text-align: center;

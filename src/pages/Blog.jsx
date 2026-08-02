@@ -31,6 +31,16 @@ const Blog = () => {
   // === which category is currently selected in the nav ===
   const [activeCategory, setActiveCategory] = useState("All");
 
+  // Reusable inline loading spinner — shown while a section's data is
+  // being fetched from the backend, so no hardcoded frontend placeholder
+  // content is ever visible before the real data arrives. Same markup
+  // and classes as the one in Home.jsx, so it matches exactly.
+  const Spinner = ({ light }) => (
+    <div className="loading-spinner-wrap">
+      <div className={`loading-spinner${light ? " light" : ""}`} />
+    </div>
+  );
+
   // ---------- Inlined category nav bar state/refs (formerly CategoryNav.jsx) ----------
   const catNavBarRef = useRef(null); // the sticky <nav> itself — measured for its height so scrolling to the post list doesn't leave the first post hidden underneath it
   const catViewportRef = useRef(null); // clipped outer window
@@ -114,13 +124,6 @@ const Blog = () => {
   useEffect(() => () => clearTimeout(catResumeTimeout.current), []);
 
   const startCatDrag = (e) => {
-    // Capture which category (if any) sits under the pointer right now.
-    // We can't rely on the span's own onClick firing later, because
-    // setPointerCapture below redirects the pointerup (and the click the
-    // browser synthesizes from it) to the track div, not to the span —
-    // so a plain tap on a category was silently swallowed. Grabbing the
-    // category here, and firing selection manually from endCatDrag,
-    // sidesteps that entirely.
     const itemEl = e.target.closest?.(".cat-nav-item");
     catDrag.current = {
       active: true,
@@ -130,10 +133,6 @@ const Blog = () => {
       downCat: itemEl ? itemEl.dataset.cat : null,
     };
     pauseCatAutoScroll();
-    // Pointer capture keeps move/up events firing on this element even if
-    // the pointer drifts outside its (fairly thin) bounds mid-drag — on
-    // mouse, touch, or pen alike — so a fast or slightly-off-axis drag
-    // never gets cut short before reaching the edges.
     e.currentTarget.setPointerCapture?.(e.pointerId);
   };
   const moveCatDrag = (e) => {
@@ -153,8 +152,6 @@ const Blog = () => {
         // no-op: pointer may already be released
       }
     }
-    // Fire the selection here instead of via the span's onClick — this is
-    // the event that actually reaches us reliably.
     if (!catDrag.current.moved && catDrag.current.downCat) {
       handleCategoryClick(catDrag.current.downCat);
     }
@@ -164,13 +161,6 @@ const Blog = () => {
   };
   // ---------- End inlined category nav bar logic ----------
 
-  // Scroll so the first post lands just below the sticky category bar. A
-  // plain scrollIntoView({block:"start"}) would put the post list's top
-  // edge flush with the very top of the viewport — right where the sticky
-  // bar sits — which hides the first post underneath it instead of
-  // revealing it, especially noticeable when scrolling up from the bottom
-  // of the page. This measures the bar's real height first and always
-  // runs, regardless of where the page currently sits.
   const scrollToFirstPost = () => {
     if (!postsSectionRef.current) return;
     const navHeight = catNavBarRef.current?.getBoundingClientRect().height || 0;
@@ -178,16 +168,10 @@ const Blog = () => {
       postsSectionRef.current.getBoundingClientRect().top +
       window.scrollY -
       navHeight -
-      12; // small breathing room below the bar
+      12;
     window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
   };
 
-  // === Fetch posts, filtered by activeCategory when it isn't "All" —
-  // same Accept-Language fallback pattern as ChurchAboutPage's
-  // fetchChurchPersons/fetchHistory: try the active language first, and
-  // only on a fresh load (page 1) that comes back empty, retry with an
-  // explicit "en" header and flag it. A "Load More" click on page > 1
-  // never silently switches language. ===
   const fetchPosts = async (pageNum) => {
     try {
       setLoading(true);
@@ -214,7 +198,6 @@ const Blog = () => {
         if (postsData && postsData.length > 0) setPostsFallback(true);
       }
 
-      // Append on "Load More" (page > 1), replace on first load / reset
       setPosts((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
       setTotalPages(pages);
     } catch (err) {
@@ -234,15 +217,12 @@ const Blog = () => {
     if (page < totalPages) setPage((p) => p + 1);
   };
 
-  // === Switching category resets back to page 1 so the fetch above starts fresh ===
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setPage(1);
     scrollToFirstPost();
   };
 
-  // === Fetch categories from backend, same Accept-Language fallback
-  // pattern as fetchChurchPersons ===
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -280,7 +260,6 @@ const Blog = () => {
     fetchCategories();
   }, [t]);
 
-  // === Helpers to safely read populated fields ===
   const getCategoryName = (post) =>
     typeof post.category === "object" && post.category !== null
       ? post.category.name
@@ -366,7 +345,7 @@ const Blog = () => {
           )}
 
           {loading && posts.length === 0 ? (
-            <p style={{ textAlign: "center" }}>{t("blog.posts.loading")}</p>
+            <Spinner />
           ) : posts.length === 0 ? (
             <p style={{ textAlign: "center" }}>{t("blog.posts.none")}</p>
           ) : (

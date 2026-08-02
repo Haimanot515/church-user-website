@@ -18,10 +18,14 @@ const ChurchAboutPage = () => {
   // NEW: true when the about/hero content currently shown came from the
   // English fallback because the active language had none
   const [aboutFallback, setAboutFallback] = useState(false);
+  // NEW: true while the hero content is being fetched — shows the
+  // circular spinner instead of any content until data arrives
+  const [aboutLoading, setAboutLoading] = useState(true);
 
   useEffect(() => {
     const fetchAbout = async () => {
       try {
+        setAboutLoading(true);
         setAboutFallback(false);
 
         let aboutRes = await API.get("/about");
@@ -42,7 +46,11 @@ const ChurchAboutPage = () => {
         }
 
         setAbout(latest || null);
-      } catch (err) { console.error("Error:", err); }
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setAboutLoading(false);
+      }
     };
     fetchAbout();
   }, [t]);
@@ -56,10 +64,16 @@ const ChurchAboutPage = () => {
   const [leadersFallback, setLeadersFallback] = useState(false);
   const [thanksFallback, setThanksFallback] = useState(false);
   const [testimonialsFallback, setTestimonialsFallback] = useState(false);
+  // NEW: true while each list is being fetched — shows the circular
+  // spinner instead of any content until data arrives
+  const [leadersLoading, setLeadersLoading] = useState(true);
+  const [thanksLoading, setThanksLoading] = useState(true);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchChurchPersons = async (category, setter, setFallback) => {
+    const fetchChurchPersons = async (category, setter, setFallback, setLoading) => {
       try {
+        setLoading(true);
         setFallback(false);
 
         let res = await API.get("/church-persons", { params: { category } });
@@ -77,12 +91,14 @@ const ChurchAboutPage = () => {
         setter(data);
       } catch (err) {
         console.error(`Error fetching ${category}:`, err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchChurchPersons("leader", setLeaders, setLeadersFallback);
-    fetchChurchPersons("specialThanks", setThanksList, setThanksFallback);
-    fetchChurchPersons("testimony", setTestimonialsList, setTestimonialsFallback);
+    fetchChurchPersons("leader", setLeaders, setLeadersFallback, setLeadersLoading);
+    fetchChurchPersons("specialThanks", setThanksList, setThanksFallback, setThanksLoading);
+    fetchChurchPersons("testimony", setTestimonialsList, setTestimonialsFallback, setTestimonialsLoading);
   }, [t]);
 
   // === "Our Church Story" chapters fetched from /church-story (paginated server-side) ===
@@ -169,6 +185,13 @@ const ChurchAboutPage = () => {
 
   const faqsRaw = t("about.faq.items", { returnObjects: true });
   const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
+
+  // NEW: circular loading spinner, matching the one used on the Home page
+  const Spinner = ({ light }) => (
+    <div className="loading-spinner-wrap">
+      <div className={`loading-spinner${light ? " light" : ""}`} />
+    </div>
+  );
 
   return (
     <div className="church-portal">
@@ -323,8 +346,8 @@ const ChurchAboutPage = () => {
           padding: 26px;
         }
         .thanks-photo {
-          width: 140px; height: 140px; border-radius: 12px; object-fit: cover;
-          flex-shrink: 0; border: 3px solid var(--gold);
+          width: 100%; aspect-ratio: 1 / 1; border-radius: 12px; object-fit: cover;
+          flex-shrink: 0; border: 3px solid var(--gold); display: block;
         }
 
         /* DREAM CARDS */
@@ -416,10 +439,11 @@ const ChurchAboutPage = () => {
         @media (max-width: 800px) { .testimonial-grid { grid-template-columns: 1fr; } }
         .testimonial-card { padding: 30px; border-radius: 12px; }
         .testimonial-photo {
-          width: 96px; height: 96px;
+          width: 100%;
+          aspect-ratio: 1 / 1;
           object-fit: cover;
           border-radius: 10px;
-          border: 2px solid var(--gold);
+          border: 3px solid var(--gold);
           margin-bottom: 18px;
           display: block;
         }
@@ -608,7 +632,6 @@ const ChurchAboutPage = () => {
           .give-info-box p { word-break: break-word; }
 
           .thanks-card { padding: 20px; }
-          .thanks-photo { width: 110px; height: 110px; }
 
           .testimonial-card { padding: 22px; }
         }
@@ -652,9 +675,6 @@ const ChurchAboutPage = () => {
           .give-info-box { padding: 18px !important; }
           .give-info-box p { font-size: 1rem !important; }
 
-          .testimonial-photo { width: 76px; height: 76px; }
-          .thanks-photo { width: 96px; height: 96px; }
-
           .service-time-row { font-size: 0.92rem; }
         }
 
@@ -669,8 +689,58 @@ const ChurchAboutPage = () => {
           .nav-item { font-size: 0.78rem; }
 
           .about-image { height: 300px; }
-          .thanks-photo { width: 84px; height: 84px; }
-          .testimonial-photo { width: 68px; height: 68px; }
+        }
+
+        /* ============================================================
+           NEW ADDITIONS ONLY — nothing above this line was changed
+           except the testimonial-photo/thanks-photo size rules further
+           up (explicitly requested to match the Home page sizing).
+           ============================================================ */
+
+        /* Circular loading spinner — identical to the one used on the
+           Home page, shown instead of any content until the backend
+           data for a section has arrived. */
+        .loading-spinner-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 70px 0;
+          width: 100%;
+        }
+        .loading-spinner {
+          width: 46px;
+          height: 46px;
+          border-radius: 50%;
+          border: 4px solid rgba(28, 58, 82, 0.15);
+          border-top-color: var(--gold);
+          animation: spin 0.85s linear infinite;
+        }
+        .loading-spinner.light {
+          border: 4px solid rgba(255, 255, 255, 0.2);
+          border-top-color: var(--gold);
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* "Read Our Story" / "Say Hello" buttons — keep them side by
+           side on mobile instead of stacking, same as the Home page. */
+        @media (max-width: 600px) {
+          .hero-cta-row { flex-wrap: nowrap !important; gap: 10px !important; align-items: stretch; }
+          .hero-cta-btn {
+            flex: 1 1 0;
+            min-width: 0;
+            padding: 13px 10px !important;
+            font-size: 0.92rem !important;
+            white-space: normal;
+            line-height: 1.2;
+          }
+        }
+
+        /* Role/leader tag ("Our Story" section) — centered below the
+           photo once the layout stacks vertically on tablet/mobile. */
+        @media (max-width: 900px) {
+          .about-label { display: block; text-align: center; }
         }
       `}</style>
 
@@ -683,6 +753,12 @@ const ChurchAboutPage = () => {
       {/* HERO */}
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper about-hero-flex" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
+          {aboutLoading ? (
+            <div style={{ width: '100%' }}>
+              <Spinner light />
+            </div>
+          ) : (
+          <>
           <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px' }}>
             {about?._id ? (
               <Link to={`/about/${about._id}`} style={{ display: 'block', cursor: 'pointer' }}>
@@ -703,14 +779,16 @@ const ChurchAboutPage = () => {
                 </p>
               </>
             )}
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
               <button
+                className="hero-cta-btn"
                 onClick={() => document.getElementById('our-church-story')?.scrollIntoView({ behavior: 'smooth' })}
                 style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
               >
                 {t("about.hero.readStoryButton")}
               </button>
               <button
+                className="hero-cta-btn"
                 onClick={() => navigate('/contact')}
                 style={{ backgroundColor: 'transparent', color: '#eaf3f8', border: '1.5px solid #eaf3f8', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}
               >
@@ -751,6 +829,8 @@ const ChurchAboutPage = () => {
               </div>
             )}
           </div>
+          </>
+          )}
         </div>
       </section>
 
@@ -826,7 +906,7 @@ const ChurchAboutPage = () => {
           ))}
 
           {history.length === 0 && historyLoading && (
-            <p style={{ textAlign: 'center', color: 'var(--slate)' }}>{t("about.story.loading")}</p>
+            <Spinner />
           )}
 
           {history.length === 0 && !historyLoading && (
@@ -886,12 +966,15 @@ const ChurchAboutPage = () => {
             </h2>
 
             {/* note shown when leadership content fell back to English */}
-            {leadersFallback && (
+            {leadersFallback && !leadersLoading && (
               <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#f2d9d9', marginTop: '-24px', marginBottom: '30px' }}>
                 {t("about.leadership.fallbackNotice")}
               </p>
             )}
 
+            {leadersLoading ? (
+              <Spinner light />
+            ) : (
             <div className="thanks-grid">
               {leaders.map((p) => (
                 <div className="thanks-card" key={p._id}>
@@ -908,6 +991,7 @@ const ChurchAboutPage = () => {
                 </div>
               ))}
             </div>
+            )}
           </div>
         </section>
       </div>
@@ -920,12 +1004,15 @@ const ChurchAboutPage = () => {
           </h2>
 
           {/* note shown when testimonials fell back to English */}
-          {testimonialsFallback && (
+          {testimonialsFallback && !testimonialsLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
               {t("about.testimonials.fallbackNotice")}
             </p>
           )}
 
+          {testimonialsLoading ? (
+            <Spinner />
+          ) : (
           <div className="testimonial-grid">
             {testimonialsList.map((person) => (
               <div className="card testimonial-card" key={person._id}>
@@ -940,6 +1027,7 @@ const ChurchAboutPage = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -975,12 +1063,15 @@ const ChurchAboutPage = () => {
           </h2>
 
           {/* note shown when special thanks content fell back to English */}
-          {thanksFallback && (
+          {thanksFallback && !thanksLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
               {t("about.specialThanks.fallbackNotice")}
             </p>
           )}
 
+          {thanksLoading ? (
+            <Spinner />
+          ) : (
           <div className="testimonial-grid">
             {thanksList.map((p) => (
               <div className="card testimonial-card" key={p._id}>
@@ -995,6 +1086,7 @@ const ChurchAboutPage = () => {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 

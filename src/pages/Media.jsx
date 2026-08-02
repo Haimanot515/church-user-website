@@ -28,6 +28,11 @@ import "./Media.css";
  *
  * Same outer shell as Home/Services (cloud layer, footer).
  * Styles live in Media.css (imported above).
+ *
+ * NEW: while the initial fetch is in flight, this shows the same
+ * circular loading spinner used on Home.jsx instead of any hardcoded
+ * placeholder text/content, so nothing but real backend data is ever
+ * shown to the user.
  */
 const PAGE_SIZE = 10;
 
@@ -47,6 +52,16 @@ const mapItems = (data) =>
       mediaUrl: getMediaUrl(m.mediaUrl),
       thumbnail: getMediaUrl(m.thumbnail),
     }));
+
+// Reusable inline loading spinner — same markup/classes as Home.jsx's
+// Spinner, shown while data is being fetched from the backend so the
+// user never sees hardcoded frontend placeholder content before the
+// real data arrives.
+const Spinner = ({ light }) => (
+  <div className="loading-spinner-wrap">
+    <div className={`loading-spinner${light ? " light" : ""}`} />
+  </div>
+);
 
 const VideoSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -290,7 +305,10 @@ const Media = () => {
 
       <section className="media-sections">
         <div className="wrapper">
-          {loading && <p style={{ textAlign: "center" }}>{t("media.common.loading")}</p>}
+          {/* NEW: circular spinner (same as Home.jsx) while the initial
+              fetch is in flight — replaces the old plain-text
+              "Loading..." message, no placeholder content shown. */}
+          {loading && <Spinner />}
           {!loading && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
           )}

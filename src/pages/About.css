@@ -20,10 +20,25 @@
   height: 80vh;
 }
 
+/* UPDATED: was plain colored text; now a circular loading spinner,
+   identical in behavior to the one used on the Home page, per request */
+.loading-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 0;
+  width: 100%;
+}
 .loading-spinner {
-  color: #2563eb;
-  font-weight: 600;
-  letter-spacing: 1px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(37, 99, 235, 0.15);
+  border-top-color: #2563eb;
+  animation: spin 0.85s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* FLEX ITEM LAYOUT */
@@ -121,6 +136,21 @@
   font-weight: 600;
 }
 
+/* NEW: hero CTA buttons — kept side by side on mobile instead of
+   stacking, matching the Home page layout, per request */
+.hero-cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .hero-cta-row { flex-wrap: nowrap; gap: 10px; align-items: stretch; }
+  .hero-cta-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 13px 10px !important;
+    font-size: 0.92rem !important;
+    white-space: normal;
+    line-height: 1.2;
+  }
+}
+
 /* RESPONSIVE QUERIES */
 @media (max-width: 900px) {
   .about-item {
@@ -145,6 +175,13 @@
 
   .about-title {
     font-size: 2.2rem;
+  }
+
+  /* NEW: role/leader tag centered below the photo once the layout
+     stacks vertically, per request */
+  .about-label {
+    display: block;
+    text-align: center;
   }
 }
 

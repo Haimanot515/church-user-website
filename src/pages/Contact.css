@@ -20,6 +20,11 @@
   background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-low) 100%);
   color: var(--navy);
   -webkit-font-smoothing: antialiased;
+  /* Contains the absolutely-positioned .cloud-layer to this element's
+     actual content height, instead of the page's initial containing
+     block. Without this, cloud-layer's inset:0 can stretch past where
+     it's meant to and drift clouds into later sections. */
+  position: relative;
 }
 .wrapper { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
 .display { font-family: 'Cormorant Garamond', serif; }
@@ -46,7 +51,15 @@ a { color: inherit; text-decoration: none; }
 @keyframes drift { from { transform: translateX(0); } to { transform: translateX(160vw); } }
 @media (prefers-reduced-motion: reduce) { .cloud { animation: none !important; } }
 
-section { padding: 90px 0; position: relative; z-index: 1; }
+section {
+  padding: 90px 0;
+  position: relative;
+  z-index: 1;
+  /* Forces a fresh stacking context per section, so section content
+     (and its solid background) always paints above .cloud-layer —
+     text can no longer visually overlap/blur against the clouds. */
+  isolation: isolate;
+}
 
 .nav-bar {
   position: sticky; top: 0; z-index: 40;
@@ -163,3 +176,51 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   font-size: 1.2rem; font-family: 'IBM Plex Mono', monospace;
 }
 .faq-answer { padding: 0 0 26px 0; font-size: 1.2rem; color: #3d5a6c; line-height: 1.8; max-width: 640px; }
+
+/* ===== LOOP STRIP — shared infinite drift/drag mechanics =====
+   Used by the Quick Facts band and the Social Icons row, mirroring
+   the same translateX-drift + drag pattern as the category nav on
+   the Blog page. */
+.loop-strip-viewport {
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.loop-strip-viewport:active { cursor: grabbing; }
+.loop-strip-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.fact-strip-track { gap: 10px; }
+.fact-strip-track .fact-item { flex-shrink: 0; width: 260px; }
+
+.social-viewport { flex: 1; min-width: 200px; }
+.social-strip-track { gap: 12px; align-items: center; }
+
+/* SOCIAL ICONS */
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 34px;
+}
+.social-icon {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #eaf3f8;
+  border: 1px solid rgba(207,159,63,0.4);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+  user-select: none;
+}
+.social-icon:hover {
+  background: var(--gold);
+  color: var(--navy-deep);
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}

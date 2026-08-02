@@ -43,6 +43,16 @@ const DownloadIcon = ({ size = 14 }) => (
   </svg>
 );
 
+// Reusable inline loading spinner — same markup/classes as Home.jsx and
+// Media.jsx's Spinner, shown while data is being fetched from the
+// backend so the user never sees hardcoded frontend placeholder
+// content before the real data arrives.
+const Spinner = ({ light }) => (
+  <div className="loading-spinner-wrap">
+    <div className={`loading-spinner${light ? " light" : ""}`} />
+  </div>
+);
+
 // Reusable cover image with graceful fallback to BookIcon
 // if the thumbnail URL is missing or fails to load.
 const Cover = ({ src, alt, iconSize }) => {
@@ -240,9 +250,10 @@ const Book = () => {
 
       <section className="book-catalog">
         <div className="wrapper">
-          {loading && (
-            <p style={{ textAlign: "center" }}>{t("book.common.loading")}</p>
-          )}
+          {/* NEW: circular spinner (same as Home.jsx / Media.jsx) while
+              the initial fetch is in flight — replaces the old plain-text
+              "Loading..." message, no placeholder content shown. */}
+          {loading && <Spinner />}
 
           {!loading && error && (
             <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>

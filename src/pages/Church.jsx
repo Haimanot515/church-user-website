@@ -31,6 +31,16 @@ const Church = () => {
 
   const BLOG_LIMIT = 20;
 
+  // Reusable inline loading spinner — shown while a section's data is
+  // being fetched from the backend, so no hardcoded frontend placeholder
+  // content is ever visible before the real data arrives. Same
+  // markup/classes as Home.jsx's Spinner, so it renders identically.
+  const Spinner = ({ light }) => (
+    <div className="loading-spinner-wrap">
+      <div className={`loading-spinner${light ? " light" : ""}`} />
+    </div>
+  );
+
   useEffect(() => {
     const timer = setTimeout(() => setShowConstructionAd(true), 5000);
     return () => clearTimeout(timer);
@@ -180,7 +190,9 @@ const Church = () => {
           <div className="church-hero-text">
             <span className="eyebrow">{t("church.hero.eyebrow")}</span>
             {primaryLoading ? (
-              <h1 className="display">{t("church.hero.loading")}</h1>
+              <div style={{ width: "100%" }}>
+                <Spinner light />
+              </div>
             ) : primaryError ? (
               <p style={{ color: "red" }}>{primaryError}</p>
             ) : primaryChurch ? (
@@ -259,7 +271,7 @@ const Church = () => {
       <section className="serve-now-section">
         <div className="wrapper">
           {currentLoading ? (
-            <p>{t("church.serveNow.loading")}</p>
+            <Spinner />
           ) : currentError ? (
             <p style={{ color: "red" }}>{currentError}</p>
           ) : !currentChurch ? (
@@ -344,7 +356,7 @@ const Church = () => {
           </div>
 
           {blogLoading ? (
-            <p>{t("church.blog.loading")}</p>
+            <Spinner />
           ) : blogError ? (
             <p style={{ color: "red" }}>{blogError}</p>
           ) : visibleBlogChurches.length === 0 ? (
