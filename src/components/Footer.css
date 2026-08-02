@@ -487,10 +487,10 @@
    colors and corner positions at 1024px and up.
 
    Below 1024px the two buttons sit inside this bar instead of floating
-   independently. The BAR gets a black background; the buttons themselves
-   keep their original gold/navy colors from above — only the strip behind
-   them is black. Every page also gets bottom padding so content scrolls
-   freely behind the bar instead of being hidden under it.
+   independently. The BAR gets a pure white background; the buttons
+   themselves keep their original gold/navy colors from above — only the
+   strip behind them is white. Every page also gets bottom padding so
+   content scrolls freely behind the bar instead of being hidden under it.
    ========================================================================= */
 
 .footer-bottom-navbar {
@@ -514,9 +514,9 @@
     right: 0;
     bottom: 0;
     height: 64px;
-    background: #000;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.25);
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.15);
     z-index: 50;
     padding-bottom: env(safe-area-inset-bottom, 0); /* clears iPhone home-bar */
   }
@@ -540,11 +540,11 @@
 }
 
 @media (max-width: 768px) {
-  .footer-bottom-navbar { height: 58px; background: #000; }
+  .footer-bottom-navbar { height: 58px; background: #ffffff; }
   body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
 }
 
 @media (max-width: 480px) {
-  .footer-bottom-navbar { height: 54px; background: #000; }
+  .footer-bottom-navbar { height: 54px; background: #ffffff; }
   body { padding-bottom: calc(54px + env(safe-area-inset-bottom, 0)); }
 }
