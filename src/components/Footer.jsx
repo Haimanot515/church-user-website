@@ -250,30 +250,35 @@ const Footer = () => {
         )}
       </div>
 
-      <Link
-        to="/contact#contact-form"
-        className="footer-contact-fab"
-        aria-label={t("footer.contactFab", "Send us a message")}
-      >
-        <FaEnvelope aria-hidden="true" />
-        <span className="footer-fab-tooltip" aria-hidden="true">
-          {t("footer.contactFab", "Send us a message")}
-        </span>
-        <span className="visually-hidden">{t("footer.contactFab", "Send us a message")}</span>
-      </Link>
+      {/* Mobile/tablet bottom nav bar — houses both floating buttons.
+          Hidden on desktop, where the two buttons stay as independent
+          corner FABs (see Footer.css). */}
+      <nav className="footer-bottom-navbar" aria-label={t("footer.mobileNav", "Quick actions")}>
+        <Link
+          to="/contact#contact-form"
+          className="footer-contact-fab"
+          aria-label={t("footer.contactFab", "Send us a message")}
+        >
+          <FaEnvelope aria-hidden="true" />
+          <span className="footer-fab-tooltip" aria-hidden="true">
+            {t("footer.contactFab", "Send us a message")}
+          </span>
+          <span className="visually-hidden">{t("footer.contactFab", "Send us a message")}</span>
+        </Link>
 
-      <button
-        type="button"
-        className="footer-back-to-top"
-        onClick={scrollToTop}
-        aria-label={t("footer.backToTop", "Back to top")}
-      >
-        <FaArrowUp aria-hidden="true" />
-        <span className="footer-fab-tooltip" aria-hidden="true">
-          {t("footer.backToTop", "Back to top")}
-        </span>
-        <span className="visually-hidden">{t("footer.backToTop", "Back to top")}</span>
-      </button>
+        <button
+          type="button"
+          className="footer-back-to-top"
+          onClick={scrollToTop}
+          aria-label={t("footer.backToTop", "Back to top")}
+        >
+          <FaArrowUp aria-hidden="true" />
+          <span className="footer-fab-tooltip" aria-hidden="true">
+            {t("footer.backToTop", "Back to top")}
+          </span>
+          <span className="visually-hidden">{t("footer.backToTop", "Back to top")}</span>
+        </button>
+      </nav>
 
       <section style={{ background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)', color: '#eaf3f8' }}>
         <div className="wrapper" style={{ maxWidth: '640px', textAlign: 'center' }}>
