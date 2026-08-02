@@ -146,10 +146,17 @@ const Footer = () => {
   const [feedback, setFeedback] = useState("");
 
   // Categories for the top-of-footer bar. Same source/fallback pattern as
-  // Home's category nav, fetched independently so the footer works even
-  // if Home hasn't loaded categories yet in this session.
+  // Home's category nav (src/pages/Home.jsx, fetchCategories), fetched
+  // independently so the footer works even if Home hasn't loaded
+  // categories yet in this session. Re-fetches whenever the active
+  // language (t) changes, and falls back to English if the active
+  // language currently has zero categories — exactly like Home.
   const [footerCategories, setFooterCategories] = useState(["All"]);
   const [footerCategoriesLoading, setFooterCategoriesLoading] = useState(true);
+  const [footerCategoriesError, setFooterCategoriesError] = useState("");
+  // true when the categories currently shown came from the English
+  // fallback because the active language had none (mirrors Home)
+  const [footerCategoriesFallback, setFooterCategoriesFallback] = useState(false);
 
   useEffect(() => {
     if (!feedback) return;
@@ -164,6 +171,9 @@ const Footer = () => {
     const fetchFooterCategories = async () => {
       try {
         setFooterCategoriesLoading(true);
+        setFooterCategoriesError("");
+        setFooterCategoriesFallback(false);
+
         let res = await API.get("/categories");
         let raw = Array.isArray(res.data) ? res.data : res.data.categories;
         let names = (raw || [])
@@ -171,22 +181,34 @@ const Footer = () => {
           .filter(Boolean);
 
         if (names.length === 0) {
-          res = await API.get("/categories", { headers: { "Accept-Language": "en" } });
+          res = await API.get("/categories", {
+            headers: { "Accept-Language": "en" },
+          });
           raw = Array.isArray(res.data) ? res.data : res.data.categories;
           names = (raw || [])
             .map((c) => (typeof c === "string" ? c : c?.name))
             .filter(Boolean);
+
+          if (names.length > 0) {
+            setFooterCategoriesFallback(true);
+          }
         }
 
-        if (names.length > 0) setFooterCategories(["All", ...names]);
+        if (names.length > 0) {
+          setFooterCategories(["All", ...names]);
+        }
       } catch (err) {
         console.error("Error fetching footer categories:", err);
+        setFooterCategoriesError(
+          err.response?.data?.message ||
+            t("footer.categoryNav.errorDefault", "Unable to load categories.")
+        );
       } finally {
         setFooterCategoriesLoading(false);
       }
     };
     fetchFooterCategories();
-  }, []);
+  }, [t]);
 
   // Navigate to the Blog page with the chosen category in router state;
   // Blog picks this up on mount, applies the filter, and scrolls to the
@@ -232,7 +254,10 @@ const Footer = () => {
     <footer className="site-footer">
       {/* Categories bar — fills the strip at the top of the footer.
           Clicking a chip sends the user to Home already filtered to
-          that category, scrolled to the sermons section. */}
+          that category, scrolled to the sermons section. Same fetch/
+          fallback logic as Home's category nav (see fetchFooterCategories
+          above): retries in English if the active language has none, and
+          re-fetches whenever the active language changes. */}
       <div className="footer-categories-bar" aria-label={t("home.categoryNav.ariaLabel")}>
         {footerCategoriesLoading ? (
           <span className="footer-categories-loading" />
@@ -249,6 +274,20 @@ const Footer = () => {
           ))
         )}
       </div>
+
+      {/* note shown when the categories request failed outright */}
+      {footerCategoriesError && (
+        <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#ffb4b4', margin: '8px 0 0 0' }}>
+          {footerCategoriesError}
+        </p>
+      )}
+
+      {/* note shown when categories fell back to English (mirrors Home) */}
+      {footerCategoriesFallback && !footerCategoriesError && (
+        <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#a9c2d3', margin: '8px 0 0 0' }}>
+          {t("home.categoryNav.fallbackNotice", "Showing categories in English — none available in your selected language yet.")}
+        </p>
+      )}
 
       {/* Mobile/tablet bottom nav bar — houses both floating buttons.
           Hidden on desktop, where the two buttons stay as independent
