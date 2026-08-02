@@ -532,12 +532,13 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: -1px; /* tiny overlap so no subpixel gap exposes whatever
+                     sits behind the bar in the safe-area strip */
     height: 68px;
     background: #ffffff;
     z-index: 50;
     padding: 0 20px;
-    padding-bottom: env(safe-area-inset-bottom, 0); /* clears iPhone home-bar */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 1px); /* clears iPhone home-bar, +1px to offset the bottom: -1px overlap above */
   }
 
   /* Buttons live inside the flex bar now — drop their own fixed
@@ -581,6 +582,7 @@
      than body. */
   body {
     padding-bottom: calc(68px + env(safe-area-inset-bottom, 0));
+    background-color: #ffffff;
   }
 }
 
