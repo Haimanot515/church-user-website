@@ -182,7 +182,15 @@
     width: 100% !important;
     max-width: 320px !important;
   }
-  .site-footer form button { width: 100%; max-width: 320px; }
+  /* Subscribe button stays visibly shorter than the input above it,
+     rather than matching its full width, so the two don't read as one
+     solid block once the form stacks on narrower screens. */
+  .site-footer form button {
+    width: auto;
+    min-width: 140px;
+    max-width: 200px;
+    margin: 0 auto;
+  }
   .footer-grid { justify-items: center; }
   .footer-tagline, .footer-link { font-size: 1rem; }
   .footer-bottom { text-align: center; justify-content: center; gap: 8px 20px; }
@@ -201,8 +209,8 @@
 
 @media (max-width: 380px) {
   .site-footer > section h3.display { font-size: 1.4rem !important; }
-  .site-footer form input,
-  .site-footer form button { max-width: 100% !important; }
+  .site-footer form input { max-width: 100% !important; }
+  .site-footer form button { max-width: 160px !important; }
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -410,25 +418,28 @@
 }
 
 /* --- Quick Links column ----------------------------------------------------
-   Vertical list, added as a 5th item inside the existing .footer-grid. */
+   Vertical list, added as a 5th item inside the existing .footer-grid.
+   Positioned at the left edge (not centered) on desktop/tablet; only
+   switches to centered on small mobile, where a single-column list reads
+   better centered than left-hugging the edge. */
 .footer-quicklinks-col {
   width: 100%;
   max-width: 580px;
-  margin: 0 auto 30px auto;
-  text-align: center;
+  margin: 0 0 30px 0;
+  text-align: left;
 }
 
 .footer-quicklinks-col .footer-col-title {
-  text-align: center;
+  text-align: left;
 }
 
 .footer-quicklinks {
   list-style: none;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(2, auto);
-  justify-content: center;
+  justify-content: start;
   column-gap: 24px;
   row-gap: 0;
 }
@@ -451,8 +462,16 @@
 }
 
 @media (max-width: 480px) {
+  .footer-quicklinks-col {
+    margin: 0 auto 30px auto;
+    text-align: center;
+  }
+  .footer-quicklinks-col .footer-col-title {
+    text-align: center;
+  }
   .footer-quicklinks {
     grid-template-columns: 1fr;
+    justify-content: center;
     justify-items: center;
   }
 }
