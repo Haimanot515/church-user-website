@@ -409,6 +409,14 @@
   border: 0;
 }
 
+/* Text label under the icon inside the mobile/tablet bottom nav bar
+   (e.g. "Send", "Top"). Hidden everywhere by default so the desktop
+   circular FABs stay icon-only and unchanged; only switched on inside
+   .footer-bottom-navbar's own media query below. */
+.footer-nav-label {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .footer-back-to-top { width: 44px; height: 44px; }
 }
@@ -525,7 +533,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: 64px;
+    height: 68px;
     background: #ffffff;
     z-index: 50;
     padding: 0 20px;
@@ -537,14 +545,34 @@
      Colors are untouched, inherited from the original rules above.
      justify-content: space-between above pushes contact to the left
      edge and back-to-top to the right edge of the bar. flex-shrink: 0
-     stops flex from compressing their width and turning the circle
-     into an ellipse. */
+     stops flex from compressing their width and turning the square
+     into a rectangle. flex-direction: column stacks the icon above
+     the label text turned on just below. */
   .footer-bottom-navbar .footer-contact-fab,
   .footer-bottom-navbar .footer-back-to-top {
     position: static;
     box-shadow: none;
     flex-shrink: 0;
+    flex-direction: column;
+    gap: 3px;
+    width: 58px;
+    height: 52px;
     border-radius: 12px;
+  }
+
+  /* Icon shrinks slightly so it sits comfortably above the label
+     inside the same fixed button height. */
+  .footer-bottom-navbar .footer-contact-fab svg,
+  .footer-bottom-navbar .footer-back-to-top svg {
+    font-size: 1rem;
+  }
+
+  .footer-bottom-navbar .footer-nav-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.01em;
   }
 
   /* Every page needs room at the bottom so content isn't hidden behind
@@ -552,16 +580,37 @@
      (e.g. #root or <main>) if your layout scrolls a container other
      than body. */
   body {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0));
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0));
   }
 }
 
 @media (max-width: 768px) {
-  .footer-bottom-navbar { height: 58px; background: #ffffff; padding: 0 16px; }
-  body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
+  .footer-bottom-navbar { height: 62px; background: #ffffff; padding: 0 16px; }
+  .footer-bottom-navbar .footer-contact-fab,
+  .footer-bottom-navbar .footer-back-to-top {
+    width: 52px;
+    height: 48px;
+  }
+  .footer-bottom-navbar .footer-contact-fab svg,
+  .footer-bottom-navbar .footer-back-to-top svg {
+    font-size: 0.95rem;
+  }
+  .footer-bottom-navbar .footer-nav-label { font-size: 0.65rem; }
+  body { padding-bottom: calc(62px + env(safe-area-inset-bottom, 0)); }
 }
 
 @media (max-width: 480px) {
-  .footer-bottom-navbar { height: 54px; background: #ffffff; padding: 0 12px; }
-  body { padding-bottom: calc(54px + env(safe-area-inset-bottom, 0)); }
+  .footer-bottom-navbar { height: 58px; background: #ffffff; padding: 0 12px; }
+  .footer-bottom-navbar .footer-contact-fab,
+  .footer-bottom-navbar .footer-back-to-top {
+    width: 48px;
+    height: 44px;
+    border-radius: 10px;
+  }
+  .footer-bottom-navbar .footer-contact-fab svg,
+  .footer-bottom-navbar .footer-back-to-top svg {
+    font-size: 0.9rem;
+  }
+  .footer-bottom-navbar .footer-nav-label { font-size: 0.6rem; }
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
 }

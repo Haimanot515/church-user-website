@@ -291,7 +291,11 @@ const Footer = () => {
 
       {/* Mobile/tablet bottom nav bar — houses both floating buttons.
           Hidden on desktop, where the two buttons stay as independent
-          corner FABs (see Footer.css). */}
+          corner FABs (see Footer.css). Each button now shows a short
+          text label ("Send" / "Top") stacked under its icon inside the
+          bar; the label is aria-hidden since the button's own
+          aria-label already announces the full action to screen
+          readers. */}
       <nav className="footer-bottom-navbar" aria-label={t("footer.mobileNav", "Quick actions")}>
         <Link
           to="/contact#contact-form"
@@ -299,6 +303,9 @@ const Footer = () => {
           aria-label={t("footer.contactFab", "Send us a message")}
         >
           <FaEnvelope aria-hidden="true" />
+          <span className="footer-nav-label" aria-hidden="true">
+            {t("footer.contactFabShort", "Send")}
+          </span>
           <span className="footer-fab-tooltip" aria-hidden="true">
             {t("footer.contactFab", "Send us a message")}
           </span>
@@ -312,6 +319,9 @@ const Footer = () => {
           aria-label={t("footer.backToTop", "Back to top")}
         >
           <FaArrowUp aria-hidden="true" />
+          <span className="footer-nav-label" aria-hidden="true">
+            {t("footer.backToTopShort", "Top")}
+          </span>
           <span className="footer-fab-tooltip" aria-hidden="true">
             {t("footer.backToTop", "Back to top")}
           </span>
