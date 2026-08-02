@@ -635,3 +635,36 @@
   .footer-bottom-navbar .footer-nav-label { font-size: 0.6rem; }
   body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
 }
+
+/* =========================================================================
+   DESKTOP SCROLL SHOW/HIDE — new, additive only.
+   Below 1024px the whole bar already hides/shows as a unit via the
+   .footer-bottom-navbar transform rules above. On desktop that transform
+   is inert (the nav is display:contents there), so the two corner FABs
+   have stayed permanently visible until now. This extends the exact same
+   navVisible logic from Footer.jsx to the desktop buttons individually:
+   hidden on first load, hidden while scrolling down, shown while
+   scrolling up. Nothing else on desktop (position, colors, hover states)
+   is touched.
+   ========================================================================= */
+@media (min-width: 1025px) {
+  .footer-contact-fab,
+  .footer-back-to-top {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0.28s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .footer-bottom-navbar.footer-bottom-navbar--visible .footer-contact-fab,
+  .footer-bottom-navbar.footer-bottom-navbar--visible .footer-back-to-top {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-contact-fab,
+    .footer-back-to-top {
+      transition: opacity 0.01ms, visibility 0.01ms;
+    }
+  }
+}
