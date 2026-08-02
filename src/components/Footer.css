@@ -342,16 +342,20 @@
   .footer-fab-tooltip { display: none; }
 }
 
+@media (max-width: 1024px) {
+  .footer-contact-fab { width: 44px; height: 44px; }
+}
+
 @media (max-width: 768px) {
-  .footer-contact-fab { width: 46px; height: 46px; right: 1px; bottom: 69px; }
+  .footer-contact-fab { width: 40px; height: 40px; right: 1px; bottom: 69px; }
 }
 
 @media (max-width: 480px) {
-  .footer-contact-fab { width: 44px; height: 44px; right: 0px; bottom: 65px; }
+  .footer-contact-fab { width: 36px; height: 36px; right: 0px; bottom: 65px; }
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .footer-contact-fab { min-height: 44px; }
+  .footer-contact-fab { min-height: 40px; }
 }
 
 /* --- Back to top bar ------------------------------------------------------
@@ -405,16 +409,20 @@
   border: 0;
 }
 
+@media (max-width: 1024px) {
+  .footer-back-to-top { width: 44px; height: 44px; }
+}
+
 @media (max-width: 768px) {
-  .footer-back-to-top { width: 46px; height: 46px; right: 1px; bottom: 11px; }
+  .footer-back-to-top { width: 40px; height: 40px; right: 1px; bottom: 11px; }
 }
 
 @media (max-width: 480px) {
-  .footer-back-to-top { width: 44px; height: 44px; right: 0px; bottom: 9px; }
+  .footer-back-to-top { width: 36px; height: 36px; right: 0px; bottom: 9px; }
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .footer-back-to-top { min-height: 44px; }
+  .footer-back-to-top { min-height: 40px; }
 }
 
 /* --- Quick Links column ----------------------------------------------------
