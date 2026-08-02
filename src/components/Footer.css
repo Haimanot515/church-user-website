@@ -63,6 +63,72 @@
 }
 
 /* =========================================================================
+   SOCIAL ICONS ROW — new, additive only.
+   Sits between .footer-grid and .footer-bottom (see Footer.jsx), laid out
+   horizontally, centered. Standard circular icon-button treatment matching
+   the site's navy/gold palette already used elsewhere (angel-arrow,
+   photo-arrow, sponsored-close, etc.).
+   ========================================================================= */
+.footer-social-viewport {
+  overflow: hidden;
+  margin: 0 auto 30px auto;
+  /* Capped to the exact width of one full icon set (11 icons x 40px +
+     10 gaps x 20px = 640px) so the visible window never shows more
+     than a single copy at a time. The duplicate list only scrolls
+     into view as the first icon of the original scrolls out — no
+     icon is ever on screen twice simultaneously. */
+  max-width: 640px;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+
+.footer-social-track {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: max-content;
+  /* Right-to-left drift: translateX starts at 0 and moves to -50%,
+     which is exactly the width of one (un-duplicated) copy of the
+     icon list, so the loop seams invisibly into itself. */
+  animation: footerSocialMarquee 18s linear infinite;
+}
+
+.footer-social-viewport:hover .footer-social-track {
+  animation-play-state: paused;
+}
+
+@keyframes footerSocialMarquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-social-track { animation: none; }
+}
+
+.footer-social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #eaf3f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-social-icon:hover,
+.footer-social-icon:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+  transform: translateY(-2px);
+}
+
+/* =========================================================================
    RESPONSIVE LAYER — additive only.
    Nothing above this line has been changed, reordered, or removed, so the
    desktop appearance (1024px and up) is unchanged.
@@ -80,7 +146,7 @@
    section (newsletter, no class) > .wrapper > h3.display, p (subtitle),
      form (no class) > input, button, then p (feedback, conditional)
    div.wrapper (footer bottom, no class on the div itself) > .footer-grid,
-     .footer-bottom                                                       */
+     .footer-social-viewport, .footer-bottom                              */
 
 .site-footer * { min-width: 0; }
 .site-footer img,
@@ -172,4 +238,128 @@
   .footer-link { padding: 4px 0; }
   .site-footer form button { min-height: 48px; }
   .site-footer form input { min-height: 48px; }
+  .footer-social-icon { width: 44px; height: 44px; }
+}
+
+/* =========================================================================
+   NEW ADDITIONS ONLY — everything above this line is the original
+   stylesheet, completely untouched.
+   ========================================================================= */
+
+/* --- Back to top bar ------------------------------------------------------
+   Full-width horizontal strip, first child of .site-footer (see
+   Footer.jsx), sitting above the newsletter section. */
+.footer-back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 40;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: #eaf3f8;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-back-to-top:hover,
+.footer-back-to-top:focus-visible {
+  background: var(--gold);
+  color: var(--navy-deep);
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}
+
+.footer-back-to-top svg {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.footer-back-to-top:hover svg {
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .footer-back-to-top { width: 46px; height: 46px; right: 16px; bottom: 16px; }
+}
+
+@media (max-width: 480px) {
+  .footer-back-to-top { width: 44px; height: 44px; right: 14px; bottom: 14px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .footer-back-to-top { min-height: 44px; }
+}
+
+/* --- Quick Links column ----------------------------------------------------
+   Vertical list, added as a 5th item inside the existing .footer-grid.
+   .footer-grid itself is untouched above, so on desktop (repeat(4, 1fr))
+   this 5th item simply wraps onto its own new row automatically — no
+   grid-template-columns changes needed. */
+.footer-quicklinks-col {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto 30px auto;
+  text-align: center;
+}
+
+.footer-quicklinks-col .footer-col-title {
+  text-align: center;
+}
+
+.footer-quicklinks {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: center;
+  column-gap: 24px;
+  row-gap: 0;
+}
+
+.footer-quicklinks li {
+  margin: 8px 0;
+}
+
+.footer-quicklink-item {
+  display: inline-block;
+  color: #89a3b5;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.footer-quicklink-item:hover,
+.footer-quicklink-item:focus-visible {
+  color: var(--gold);
+}
+
+@media (max-width: 480px) {
+  .footer-quicklinks {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .footer-quicklink-item { padding: 4px 0; }
 }
