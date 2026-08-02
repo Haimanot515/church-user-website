@@ -495,10 +495,12 @@
    colors and corner positions at 1024px and up.
 
    Below 1024px the two buttons sit inside this bar instead of floating
-   independently. The BAR gets a pure white background; the buttons
-   themselves keep their original gold/navy colors from above — only the
-   strip behind them is white. Every page also gets bottom padding so
-   content scrolls freely behind the bar instead of being hidden under it.
+   independently, spaced to opposite ends (contact on the left, back-to-top
+   on the right) with horizontal padding off the screen edges. The BAR gets
+   a pure white background; the buttons themselves keep their original
+   gold/navy colors from above — only the strip behind them is white. Every
+   page also gets bottom padding so content scrolls freely behind the bar
+   instead of being hidden under it.
    ========================================================================= */
 
 .footer-bottom-navbar {
@@ -515,7 +517,7 @@
   .footer-bottom-navbar {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 24px;
     position: fixed;
     left: 0;
@@ -524,12 +526,15 @@
     height: 64px;
     background: #ffffff;
     z-index: 50;
+    padding: 0 20px;
     padding-bottom: env(safe-area-inset-bottom, 0); /* clears iPhone home-bar */
   }
 
   /* Buttons live inside the flex bar now — drop their own fixed
      positioning/shadow so they sit inline instead of double-floating.
-     Colors are untouched, inherited from the original rules above. */
+     Colors are untouched, inherited from the original rules above.
+     justify-content: space-between above pushes contact to the left
+     edge and back-to-top to the right edge of the bar. */
   .footer-bottom-navbar .footer-contact-fab,
   .footer-bottom-navbar .footer-back-to-top {
     position: static;
@@ -546,11 +551,11 @@
 }
 
 @media (max-width: 768px) {
-  .footer-bottom-navbar { height: 58px; background: #ffffff; }
+  .footer-bottom-navbar { height: 58px; background: #ffffff; padding: 0 16px; }
   body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
 }
 
 @media (max-width: 480px) {
-  .footer-bottom-navbar { height: 54px; background: #ffffff; }
+  .footer-bottom-navbar { height: 54px; background: #ffffff; padding: 0 12px; }
   body { padding-bottom: calc(54px + env(safe-area-inset-bottom, 0)); }
 }
