@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api/api.jsx";
 import { useTranslation } from "react-i18next";
-import { FaArrowUp } from "react-icons/fa";
+import { FaArrowUp, FaEnvelope } from "react-icons/fa";
 import "./Footer.css";
 
 const footerColumns = [
@@ -11,10 +11,6 @@ const footerColumns = [
   { key: "connect", items: ["facebook", "instagram", "youtube"] }
 ];
 
-// NEW: Quick Links — vertical list, pulled straight from Navbar.jsx's
-// nav-links-primary / nav-links-secondary so routes and labels always
-// match the real navbar. Reuses the existing navbar.links.* translation
-// keys, so no new i18n entries are required for this part.
 const quickLinks = [
   { to: "/about", key: "about" },
   { to: "/projects", key: "blogs" },
@@ -27,10 +23,6 @@ const quickLinks = [
   { to: "/book", key: "books" },
 ];
 
-// Standard, recognizable social icons (Facebook, Instagram, YouTube) —
-// simple inline SVGs so no icon library/dependency is needed. Links are
-// left as "#" placeholders since no URLs were supplied; swap the href
-// values for the real profile links whenever they're available.
 const socialLinks = [
   {
     key: "facebook",
@@ -148,9 +140,16 @@ const socialLinks = [
 
 const Footer = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [feedback, setFeedback] = useState("");
+
+  // Categories for the top-of-footer bar. Same source/fallback pattern as
+  // Home's category nav, fetched independently so the footer works even
+  // if Home hasn't loaded categories yet in this session.
+  const [footerCategories, setFooterCategories] = useState(["All"]);
+  const [footerCategoriesLoading, setFooterCategoriesLoading] = useState(true);
 
   useEffect(() => {
     if (!feedback) return;
@@ -160,6 +159,42 @@ const Footer = () => {
     }, 5000);
     return () => clearTimeout(timer);
   }, [feedback]);
+
+  useEffect(() => {
+    const fetchFooterCategories = async () => {
+      try {
+        setFooterCategoriesLoading(true);
+        let res = await API.get("/categories");
+        let raw = Array.isArray(res.data) ? res.data : res.data.categories;
+        let names = (raw || [])
+          .map((c) => (typeof c === "string" ? c : c?.name))
+          .filter(Boolean);
+
+        if (names.length === 0) {
+          res = await API.get("/categories", { headers: { "Accept-Language": "en" } });
+          raw = Array.isArray(res.data) ? res.data : res.data.categories;
+          names = (raw || [])
+            .map((c) => (typeof c === "string" ? c : c?.name))
+            .filter(Boolean);
+        }
+
+        if (names.length > 0) setFooterCategories(["All", ...names]);
+      } catch (err) {
+        console.error("Error fetching footer categories:", err);
+      } finally {
+        setFooterCategoriesLoading(false);
+      }
+    };
+    fetchFooterCategories();
+  }, []);
+
+  // Navigate to the Blog page with the chosen category in router state;
+  // Blog picks this up on mount, applies the filter, and scrolls to the
+  // top of the post list once it's loaded. Note: the Blog component
+  // (src/pages/Blog.jsx) is mounted at "/projects" in App.jsx, not "/blog".
+  const handleFooterCategoryClick = (cat) => {
+    navigate("/projects", { state: { category: cat } });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -174,7 +209,6 @@ const Footer = () => {
     setFeedback("");
 
     try {
-      // Matches: app.use("/api/subscribers", subscriberRoutes) -> POST "/"
       const res = await API.post("/subscribers", { email });
       setStatus("success");
       setFeedback(res.data?.msg || t("footer.newsletter.successDefault"));
@@ -186,22 +220,48 @@ const Footer = () => {
     }
   };
 
-  // NEW: back-to-top handler (smooth, for the dedicated button)
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // NEW: instant top-scroll for quick link clicks, so navigating to a new
-  // page always lands at the top of it instead of keeping the footer's
-  // scroll position.
   const scrollToTopOnNavigate = () => {
     window.scrollTo(0, 0);
   };
 
   return (
     <footer className="site-footer">
-      {/* NEW: back-to-top bar. Everything below this button is completely
-          unchanged from the original. */}
+      {/* Categories bar — fills the strip at the top of the footer.
+          Clicking a chip sends the user to Home already filtered to
+          that category, scrolled to the sermons section. */}
+      <div className="footer-categories-bar" aria-label={t("home.categoryNav.ariaLabel")}>
+        {footerCategoriesLoading ? (
+          <span className="footer-categories-loading" />
+        ) : (
+          footerCategories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              className="footer-category-chip"
+              onClick={() => handleFooterCategoryClick(cat)}
+            >
+              {cat === "All" ? t("home.categoryNav.all") : cat}
+            </button>
+          ))
+        )}
+      </div>
+
+      <Link
+        to="/contact#contact-form"
+        className="footer-contact-fab"
+        aria-label={t("footer.contactFab", "Send us a message")}
+      >
+        <FaEnvelope aria-hidden="true" />
+        <span className="footer-fab-tooltip" aria-hidden="true">
+          {t("footer.contactFab", "Send us a message")}
+        </span>
+        <span className="visually-hidden">{t("footer.contactFab", "Send us a message")}</span>
+      </Link>
+
       <button
         type="button"
         className="footer-back-to-top"
@@ -209,7 +269,10 @@ const Footer = () => {
         aria-label={t("footer.backToTop", "Back to top")}
       >
         <FaArrowUp aria-hidden="true" />
-        <span className="visually-hidden">{t("footer.backToTop", "Back to Top")}</span>
+        <span className="footer-fab-tooltip" aria-hidden="true">
+          {t("footer.backToTop", "Back to top")}
+        </span>
+        <span className="visually-hidden">{t("footer.backToTop", "Back to top")}</span>
       </button>
 
       <section style={{ background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)', color: '#eaf3f8' }}>
@@ -271,9 +334,6 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* NEW: Quick Links — now its own full-width row (outside the
-            footer-grid) so it centers horizontally across the whole
-            screen instead of sitting inside one grid column. */}
         <div className="footer-quicklinks-col">
           <h5 className="eyebrow footer-col-title">{t("footer.columns.quickLinks.title", "Quick Links")}</h5>
           <ul className="footer-quicklinks">
@@ -291,11 +351,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Original: standard social icons, animated as a continuous
-            right-to-left marquee, above the copyright line. The list is
-            rendered twice back-to-back so the loop is seamless; the
-            second copy is hidden from assistive tech since it's a
-            visual duplicate. Unchanged. */}
         <div className="footer-social-viewport">
           <div className="footer-social-track">
             {socialLinks.map((s) => (

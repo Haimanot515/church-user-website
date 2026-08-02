@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import "./Blog.css";
@@ -8,6 +8,8 @@ const POSTS_PER_PAGE = 10;
 
 const Blog = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // === Fetched posts state ===
   const [posts, setPosts] = useState([]);
@@ -30,6 +32,12 @@ const Blog = () => {
 
   // === which category is currently selected in the nav ===
   const [activeCategory, setActiveCategory] = useState("All");
+
+  // NEW: set when the footer's category bar sent us here — tells the
+  // "posts finished loading" effect below that a scroll-to-top-of-list
+  // is still owed, so it fires once the requested category's posts (not
+  // just whatever was loading before) have actually arrived.
+  const pendingFooterScroll = useRef(false);
 
   // Reusable inline loading spinner — shown while a section's data is
   // being fetched from the backend, so no hardcoded frontend placeholder
@@ -161,14 +169,15 @@ const Blog = () => {
   };
   // ---------- End inlined category nav bar logic ----------
 
+  // Scrolls so the post list's top edge lands right below the sticky
+  // category bar — no extra breathing-room offset, so it's the true top.
   const scrollToFirstPost = () => {
     if (!postsSectionRef.current) return;
     const navHeight = catNavBarRef.current?.getBoundingClientRect().height || 0;
     const targetY =
       postsSectionRef.current.getBoundingClientRect().top +
       window.scrollY -
-      navHeight -
-      12;
+      navHeight;
     window.scrollTo({ top: Math.max(targetY, 0), behavior: "smooth" });
   };
 
@@ -259,6 +268,33 @@ const Blog = () => {
     };
     fetchCategories();
   }, [t]);
+
+  // NEW: pick up a category passed in via router state — e.g. from the
+  // footer's category bar (navigate("/projects", { state: { category } })).
+  // Applies the filter and marks a scroll as pending until that
+  // category's posts have actually finished loading.
+  useEffect(() => {
+    if (location.state?.category) {
+      setActiveCategory(location.state.category);
+      setPage(1);
+      pendingFooterScroll.current = true;
+      // Clear the state so refreshing or navigating back doesn't re-trigger it.
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
+
+  // NEW: once the requested category's posts have actually loaded, scroll
+  // to the very top of the post list. Waiting on `loading` (rather than a
+  // fixed timeout) means the landing spot is accurate no matter how long
+  // the fetch takes.
+  useEffect(() => {
+    if (pendingFooterScroll.current && !loading) {
+      pendingFooterScroll.current = false;
+      requestAnimationFrame(() => scrollToFirstPost());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   const getCategoryName = (post) =>
     typeof post.category === "object" && post.category !== null

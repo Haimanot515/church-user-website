@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import "./Contact.css";
@@ -226,6 +227,7 @@ function useLoopStrip({ itemCount, onItemClick, speed = 0.45 }) {
 
 const Contact = () => {
   const { t } = useTranslation();
+  const location = useLocation();
 
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -245,11 +247,31 @@ const Contact = () => {
   const serviceTimesRaw = t("contact.location.serviceTimes", { returnObjects: true });
   const serviceTimes = Array.isArray(serviceTimesRaw) ? serviceTimesRaw : [];
 
-  const location = {
+  const location_ = {
     address: t("contact.location.address"),
     note: t("contact.location.note"),
     serviceTimes,
   };
+
+  // NEW: if we arrive here via a #contact-form hash (e.g. from the
+  // footer's floating "Contact" button), scroll so the whole form
+  // section is visible — centered in the viewport, so it isn't clipped
+  // by a fixed navbar at the top or run off the bottom of the screen.
+  useEffect(() => {
+    if (location.hash === "#contact-form") {
+      const scrollToForm = () => {
+        const el = document.getElementById("contact-form");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      };
+      // Two passes: once on the next frame (fast path), and once after a
+      // short delay in case fonts/images are still shifting layout.
+      requestAnimationFrame(scrollToForm);
+      const timer = setTimeout(scrollToForm, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   const handleChange = (field) => (e) => {
     setFormState((prev) => ({ ...prev, [field]: e.target.value }));
@@ -382,8 +404,9 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* CONTACT FORM */}
-      <section style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden" }}>
+      {/* CONTACT FORM — id added so it can be deep-linked to directly
+          (e.g. /contact#contact-form from the footer's floating button) */}
+      <section id="contact-form" style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden", scrollMarginTop: "24px" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <h2 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", fontWeight: 700, margin: "0 0 34px 0", color: "#ffffff" }}>
             {t("contact.form.heading")}
@@ -478,8 +501,8 @@ const Contact = () => {
                 />
               </div>
               <div>
-                <p style={{ fontSize: "1.4rem", color: "#eaf3f8", lineHeight: 1.75, marginBottom: "12px" }}>{location.address}</p>
-                <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.75, marginBottom: "20px", maxWidth: "460px" }}>{location.note}</p>
+                <p style={{ fontSize: "1.4rem", color: "#eaf3f8", lineHeight: 1.75, marginBottom: "12px" }}>{location_.address}</p>
+                <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.75, marginBottom: "20px", maxWidth: "460px" }}>{location_.note}</p>
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Harbor+Light+Church+Bole+Road+Addis+Ababa"
                   target="_blank"
@@ -490,7 +513,7 @@ const Contact = () => {
                   {t("contact.location.getDirections")}
                 </a>
                 <div>
-                  {location.serviceTimes.map((time, i) => {
+                  {location_.serviceTimes.map((time, i) => {
                     const [label, timeValue] = time.split(" — ");
                     return (
                       <div className="service-time-row" key={i} style={{ color: "#eaf3f8" }}>

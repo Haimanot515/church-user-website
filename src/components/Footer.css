@@ -72,11 +72,6 @@
 .footer-social-viewport {
   overflow: hidden;
   margin: 0 auto 30px auto;
-  /* Capped to the exact width of one full icon set (11 icons x 40px +
-     10 gaps x 20px = 640px) so the visible window never shows more
-     than a single copy at a time. The duplicate list only scrolls
-     into view as the first icon of the original scrolls out — no
-     icon is ever on screen twice simultaneously. */
   max-width: 640px;
   width: 100%;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
@@ -88,9 +83,6 @@
   align-items: center;
   gap: 20px;
   width: max-content;
-  /* Right-to-left drift: translateX starts at 0 and moves to -50%,
-     which is exactly the width of one (un-duplicated) copy of the
-     icon list, so the loop seams invisibly into itself. */
   animation: footerSocialMarquee 18s linear infinite;
 }
 
@@ -132,21 +124,7 @@
    RESPONSIVE LAYER — additive only.
    Nothing above this line has been changed, reordered, or removed, so the
    desktop appearance (1024px and up) is unchanged.
-
-   Footer.jsx needs ZERO markup changes. Selectors below reuse the classes
-   already in the markup (.wrapper, .footer-grid, .footer-link, etc.) or
-   target the un-classed newsletter elements (h3, p, form, input, button)
-   structurally, scoped under .site-footer so nothing outside this
-   component is affected. Because those un-classed elements carry inline
-   styles in the JSX, a few rules use !important — the only way to win
-   against an inline style without touching the component file.
    ========================================================================= */
-
-/* Structural map inside .site-footer:
-   section (newsletter, no class) > .wrapper > h3.display, p (subtitle),
-     form (no class) > input, button, then p (feedback, conditional)
-   div.wrapper (footer bottom, no class on the div itself) > .footer-grid,
-     .footer-social-viewport, .footer-bottom                              */
 
 .site-footer * { min-width: 0; }
 .site-footer img,
@@ -169,24 +147,21 @@
 .site-footer form input {
   min-width: 0;
   box-sizing: border-box;
-  font-size: 16px !important; /* prevents iOS auto-zoom on focus, still ~1.1rem visually */
+  font-size: 16px !important;
 }
 .site-footer form button {
   box-sizing: border-box;
 }
 
-/* --- Large desktop / ultra-wide (1920px+) ------------------------------- */
 @media (min-width: 1920px) {
   .footer-grid { gap: 48px; }
 }
 
-/* --- Laptops / small desktops -------------------------------------------- */
 @media (max-width: 1024px) {
   .site-footer { padding: 52px 0 26px 0; }
   .site-footer > section h3.display { font-size: 2.4rem !important; }
 }
 
-/* --- Tablets (landscape & portrait) -------------------------------------- */
 @media (max-width: 900px) {
   .footer-grid { gap: 28px; text-align: center; }
 }
@@ -198,7 +173,6 @@
   .footer-grid { gap: 24px; margin-bottom: 34px; justify-items: center; }
 }
 
-/* --- Large phones --------------------------------------------------------- */
 @media (max-width: 600px) {
   .site-footer { padding: 40px 0 20px 0; }
   .site-footer > section h3.display { font-size: 1.8rem !important; line-height: 1.25 !important; }
@@ -214,7 +188,6 @@
   .footer-bottom { text-align: center; justify-content: center; gap: 8px 20px; }
 }
 
-/* --- Standard phones ------------------------------------------------------- */
 @media (max-width: 480px) {
   .site-footer { padding: 36px 0 18px 0; }
   .site-footer > section h3.display { font-size: 1.55rem !important; }
@@ -226,14 +199,12 @@
   .footer-link { margin: 6px 0; }
 }
 
-/* --- Small phones (320px+) -------------------------------------------------- */
 @media (max-width: 380px) {
   .site-footer > section h3.display { font-size: 1.4rem !important; }
   .site-footer form input,
   .site-footer form button { max-width: 100% !important; }
 }
 
-/* --- Touch target polish (applies alongside, not instead of, desktop rules) */
 @media (hover: none) and (pointer: coarse) {
   .footer-link { padding: 4px 0; }
   .site-footer form button { min-height: 48px; }
@@ -246,13 +217,142 @@
    stylesheet, completely untouched.
    ========================================================================= */
 
+/* --- Categories bar (fills the empty strip at the top of the footer) --- */
+.footer-categories-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 20px;
+  background: var(--deep-red);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  min-height: 44px;
+  align-items: center;
+}
+
+.footer-category-chip {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-category-chip:hover,
+.footer-category-chip:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+  transform: translateY(-2px);
+}
+
+.footer-categories-loading {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--gold);
+  animation: footerCatSpin 0.8s linear infinite;
+}
+
+@keyframes footerCatSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .footer-categories-bar { gap: 8px; padding: 16px 12px; }
+  .footer-category-chip { padding: 7px 14px; font-size: 0.85rem; }
+}
+
+/* --- Floating contact button ----------------------------------------------
+   Stacked directly above the back-to-top button, same right-edge offsets. */
+.footer-contact-fab {
+  position: fixed;
+  right: 9px;
+  bottom: 80px;
+  z-index: 40;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold);
+  color: var(--navy-deep);
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-contact-fab:hover,
+.footer-contact-fab:focus-visible {
+  background: var(--navy);
+  color: #eaf3f8;
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-3px);
+}
+
+.footer-contact-fab svg {
+  font-size: 1.1rem;
+}
+
+.footer-fab-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+  background: var(--navy);
+  color: #eaf3f8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.footer-contact-fab:hover .footer-fab-tooltip,
+.footer-contact-fab:focus-visible .footer-fab-tooltip,
+.footer-back-to-top:hover .footer-fab-tooltip,
+.footer-back-to-top:focus-visible .footer-fab-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .footer-fab-tooltip { display: none; }
+}
+
+@media (max-width: 768px) {
+  .footer-contact-fab { width: 46px; height: 46px; right: 1px; bottom: 69px; }
+}
+
+@media (max-width: 480px) {
+  .footer-contact-fab { width: 44px; height: 44px; right: 0px; bottom: 65px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .footer-contact-fab { min-height: 44px; }
+}
+
 /* --- Back to top bar ------------------------------------------------------
    Full-width horizontal strip, first child of .site-footer (see
    Footer.jsx), sitting above the newsletter section. */
 .footer-back-to-top {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: 9px;
+  bottom: 19px;
   z-index: 40;
   width: 52px;
   height: 52px;
@@ -298,11 +398,11 @@
 }
 
 @media (max-width: 768px) {
-  .footer-back-to-top { width: 46px; height: 46px; right: 16px; bottom: 16px; }
+  .footer-back-to-top { width: 46px; height: 46px; right: 1px; bottom: 11px; }
 }
 
 @media (max-width: 480px) {
-  .footer-back-to-top { width: 44px; height: 44px; right: 14px; bottom: 14px; }
+  .footer-back-to-top { width: 44px; height: 44px; right: 0px; bottom: 9px; }
 }
 
 @media (hover: none) and (pointer: coarse) {
@@ -310,10 +410,7 @@
 }
 
 /* --- Quick Links column ----------------------------------------------------
-   Vertical list, added as a 5th item inside the existing .footer-grid.
-   .footer-grid itself is untouched above, so on desktop (repeat(4, 1fr))
-   this 5th item simply wraps onto its own new row automatically — no
-   grid-template-columns changes needed. */
+   Vertical list, added as a 5th item inside the existing .footer-grid. */
 .footer-quicklinks-col {
   width: 100%;
   max-width: 580px;
