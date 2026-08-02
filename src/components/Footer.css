@@ -496,11 +496,13 @@
 
    Below 1024px the two buttons sit inside this bar instead of floating
    independently, spaced to opposite ends (contact on the left, back-to-top
-   on the right) with horizontal padding off the screen edges. The BAR gets
-   a pure white background; the buttons themselves keep their original
-   gold/navy colors from above — only the strip behind them is white. Every
-   page also gets bottom padding so content scrolls freely behind the bar
-   instead of being hidden under it.
+   on the right) with horizontal padding off the screen edges. flex-shrink:
+   0 on the buttons keeps them true circles instead of getting squashed
+   into ellipses by the flex layout. The BAR gets a pure white background;
+   the buttons themselves keep their original gold/navy colors from above —
+   only the strip behind them is white. Every page also gets bottom padding
+   so content scrolls freely behind the bar instead of being hidden under
+   it.
    ========================================================================= */
 
 .footer-bottom-navbar {
@@ -534,11 +536,15 @@
      positioning/shadow so they sit inline instead of double-floating.
      Colors are untouched, inherited from the original rules above.
      justify-content: space-between above pushes contact to the left
-     edge and back-to-top to the right edge of the bar. */
+     edge and back-to-top to the right edge of the bar. flex-shrink: 0
+     stops flex from compressing their width and turning the circle
+     into an ellipse. */
   .footer-bottom-navbar .footer-contact-fab,
   .footer-bottom-navbar .footer-back-to-top {
     position: static;
     box-shadow: none;
+    flex-shrink: 0;
+    border-radius: 12px;
   }
 
   /* Every page needs room at the bottom so content isn't hidden behind
