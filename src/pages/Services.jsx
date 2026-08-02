@@ -52,6 +52,12 @@ const Services = () => {
   // elsewhere on the site (Blog, Travel, About): try the active language
   // first, and if it comes back with no active services, retry with an
   // explicit "en" header and flag it. ===
+  //
+  // FIX: GET /services returns a paginated wrapper object —
+  // { services, currentPage, totalPages, totalServices } — not a bare
+  // array. This was reading res.data directly and calling .filter() on
+  // that object, which threw (objects have no .filter) and silently
+  // killed the fetch, so nothing ever rendered. Now reads res.data.services.
   const fetchServices = async () => {
     try {
       setLoading(true);
@@ -59,7 +65,7 @@ const Services = () => {
       setServicesFallback(false);
 
       let res = await API.get("/services");
-      let active = (res.data || [])
+      let active = (res.data?.services || [])
         .filter((s) => s.status === "active")
         .map((s) => ({ ...s, resolvedImageUrl: getImageUrl(s.imageUrl) }));
 
@@ -67,7 +73,7 @@ const Services = () => {
         res = await API.get("/services", {
           headers: { "Accept-Language": "en" },
         });
-        active = (res.data || [])
+        active = (res.data?.services || [])
           .filter((s) => s.status === "active")
           .map((s) => ({ ...s, resolvedImageUrl: getImageUrl(s.imageUrl) }));
         if (active.length > 0) setServicesFallback(true);
