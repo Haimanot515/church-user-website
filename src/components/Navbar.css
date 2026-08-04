@@ -558,3 +558,45 @@
     font-size: 1.1rem;
   }
 }
+
+.navbar-auth-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-auth-top-btn {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.navbar-auth-top-btn:hover {
+  background: #fff;
+  color: #111;
+}
+
+.navbar-auth-top-btn--primary {
+  background: #fff;
+  color: #4d0000;
+}
+
+.navbar-auth-top-btn--primary:hover {
+  background: #ffe5e5;
+  color: #4d0000;
+}
+
+/* On small screens the top bar gets crowded fast (logo, language,
+   theme, login, register, hamburger) — hide the top auth buttons
+   and rely on the ones inside the mobile dropdown instead. */
+@media (max-width: 700px) {
+  .navbar-auth-top {
+    display: none;
+  }
+}

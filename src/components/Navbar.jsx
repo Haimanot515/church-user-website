@@ -131,6 +131,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     setIsLangOpen(false);
+    closeMenu();
   };
 
   const currentLanguageLabel =
@@ -188,6 +189,26 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
             {theme === "light" ? <FaMoon /> : <FaSun />}
           </button>
 
+          {/* Top-level auth buttons — only shown when logged out.
+              Same openLogin/openRegister handlers as the mobile
+              nav-auth buttons below, so both trigger the same modal. */}
+          {!loggedIn && (
+            <div className="navbar-auth-top">
+              <button
+                className="navbar-auth-top-btn"
+                onClick={() => { openLogin(); closeMenu(); }}
+              >
+                {t("navbar.auth.login")}
+              </button>
+              <button
+                className="navbar-auth-top-btn navbar-auth-top-btn--primary"
+                onClick={() => { openRegister(); closeMenu(); }}
+              >
+                {t("navbar.auth.register")}
+              </button>
+            </div>
+          )}
+
           <button
             className="menu-toggle"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -223,12 +244,12 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
                 {(isAdmin === true || isAdmin === "true") && (
                   <Link to="/admin/users/view" onClick={closeMenu}>{t("navbar.links.admin")}</Link>
                 )}
-                <button onClick={handleLogout}>{t("navbar.auth.logout")}</button>
+                <button className="logout-btn" onClick={handleLogout}>{t("navbar.auth.logout")}</button>
               </>
             ) : (
               <>
-                <button onClick={openLogin}>{t("navbar.auth.login")}</button>
-                <button onClick={openRegister}>{t("navbar.auth.register")}</button>
+                <button onClick={() => { openLogin(); closeMenu(); }}>{t("navbar.auth.login")}</button>
+                <button onClick={() => { openRegister(); closeMenu(); }}>{t("navbar.auth.register")}</button>
               </>
             )}
 
@@ -240,7 +261,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
 
             <button
               className="theme-switcher"
-              onClick={toggleTheme}
+              onClick={() => { toggleTheme(); closeMenu(); }}
             >
               {theme === "light" ? <FaMoon /> : <FaSun />}
               {theme === "light" ? t("navbar.theme.dark", "Dark mode") : t("navbar.theme.light", "Light mode")}
