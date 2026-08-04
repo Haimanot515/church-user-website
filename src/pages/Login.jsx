@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
-import "./login.css";
+import "./Login.css";
 
 const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
   const { t } = useTranslation();
