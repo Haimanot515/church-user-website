@@ -1,0 +1,33 @@
+{
+  "title": "ተመዝገብ",
+  "placeholders": {
+    "name": "ስም",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል"
+  },
+  "passwordChecks": {
+    "minLength": "ቢያንስ 8 ፊደሎች",
+    "uppercase": "ቢያንስ አንድ አቢይ ፊደል (A-Z)",
+    "lowercase": "ቢያንስ አንድ ታናሽ ፊደል (a-z)",
+    "special": "ቢያንስ አንድ ልዩ ምልክት (ለምሳሌ !@#$%)"
+  },
+  "buttons": {
+    "submit": "ተመዝገብ",
+    "submitting": "በመመዝገብ ላይ..."
+  },
+  "messages": {
+    "allFieldsRequired": "ሁሉም መስኮች ያስፈልጋሉ።",
+    "nameTooShort": "ስም ቢያንስ 2 ፊደላት መሆን አለበት።",
+    "invalidEmail": "እባክዎ ትክክለኛ ኢሜይል ያስገቡ።",
+    "passwordTooShort": "የይለፍ ቃል ቢያንስ {{min}} ፊደላት መሆን አለበት።",
+    "passwordNeedsUppercase": "የይለፍ ቃል ቢያንስ አንድ አቢይ ፊደል ሊኖረው ይገባል።",
+    "passwordNeedsLowercase": "የይለፍ ቃል ቢያንስ አንድ ታናሽ ፊደል ሊኖረው ይገባል።",
+    "passwordNeedsSpecial": "የይለፍ ቃል ቢያንስ አንድ ልዩ ምልክት ሊኖረው ይገባል።",
+    "verificationSent": "የማረጋገጫ ኮድ ተልኳል! በመቀየር ላይ...",
+    "genericError": "የሆነ ችግር ተፈጥሯል"
+  },
+  "footer": {
+    "haveAccount": "አካውንት አለዎት?",
+    "loginLink": "እዚህ ይግቡ"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Verify Your Account",
+  "label": "Enter 6-digit code",
+  "placeholder": "123456",
+  "buttons": {
+    "submit": "Verify"
+  },
+  "messages": {
+    "noRegistrationData": "No registration data found.",
+    "verificationFailed": "Verification failed. Try again."
+  }
+}

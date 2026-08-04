@@ -1,28 +1,129 @@
-/* Form.css */
+/* ===== Base / mobile-first ===== */
+.register-form-wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
 .form-title {
     color: #111;
     margin-bottom: 20px;
+    font-size: clamp(20px, 5vw, 28px);
+    text-align: center;
 }
 
 .form-register-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     margin: 0;
     padding: 0;
+    width: 100%;
+}
+
+.form-register-container input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-register-container input:focus {
+    border-color: #0077ff;
+    box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.15);
+}
+
+.form-password-hint {
+    list-style: none;
+    margin: -4px 0 4px 0;
+    padding: 0;
+    font-size: 12.5px;
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.form-password-hint li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s ease;
+    word-break: break-word;
+}
+
+.requirement-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+.requirement-met {
+    color: #16a34a;
+}
+
+.requirement-met .requirement-icon {
+    color: #16a34a;
+}
+
+.requirement-unmet {
+    color: #9ca3af;
+}
+
+.requirement-unmet .requirement-icon {
+    color: #dc2626;
+}
+
+.form-register-container button[type="submit"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #0077ff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.form-register-container button[type="submit"]:hover:not(:disabled) {
+    background-color: #0066dd;
+}
+
+.form-register-container button[type="submit"]:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 .form-success-msg {
     color: green;
     margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
 }
 
 .form-error-msg {
     color: red;
     margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
 }
 
 .form-footer {
     margin-top: 20px;
     font-size: 14px;
     color: #666;
+    text-align: center;
 }
 
 .form-link-btn {
@@ -34,4 +135,47 @@
     font-weight: bold;
     padding: 0;
     font-size: 14px;
+}
+
+/* ===== Small phones ===== */
+@media (max-width: 360px) {
+    .register-form-wrapper {
+        padding: 12px;
+    }
+
+    .form-register-container input,
+    .form-register-container button[type="submit"] {
+        padding: 10px 12px;
+    }
+}
+
+/* ===== Tablets ===== */
+@media (min-width: 600px) {
+    .register-form-wrapper {
+        max-width: 440px;
+        padding: 24px;
+    }
+
+    .form-register-container {
+        gap: 14px;
+    }
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 1024px) {
+    .register-form-wrapper {
+        max-width: 460px;
+        padding: 32px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+    }
+
+    .form-register-container input {
+        padding: 13px 16px;
+    }
+
+    .form-register-container button[type="submit"] {
+        padding: 13px 16px;
+        font-size: 16px;
+    }
 }

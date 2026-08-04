@@ -1,0 +1,19 @@
+{
+  "title": "Login",
+  "placeholders": {
+    "email": "Email",
+    "password": "Password"
+  },
+  "buttons": {
+    "submit": "Login"
+  },
+  "messages": {
+    "loginSuccess": "Login successful!",
+    "accountNotFound": "Account not found. Redirecting to Register...",
+    "genericError": "Something went wrong"
+  },
+  "footer": {
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register here"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "title": "ግባ",
+  "placeholders": {
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል"
+  },
+  "buttons": {
+    "submit": "ግባ"
+  },
+  "messages": {
+    "loginSuccess": "በተሳካ ሁኔታ ገብተዋል!",
+    "accountNotFound": "አካውንት አልተገኘም። ወደ ምዝገባ በማዘዋወር ላይ...",
+    "genericError": "የሆነ ችግር ተፈጥሯል"
+  },
+  "footer": {
+    "noAccount": "አካውንት የለዎትም?",
+    "registerLink": "እዚህ ይመዝገቡ"
+  }
+}

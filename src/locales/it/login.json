@@ -1,0 +1,19 @@
+{
+  "title": "Accedi",
+  "placeholders": {
+    "email": "Email",
+    "password": "Password"
+  },
+  "buttons": {
+    "submit": "Accedi"
+  },
+  "messages": {
+    "loginSuccess": "Accesso effettuato con successo!",
+    "accountNotFound": "Account non trovato. Reindirizzamento alla Registrazione...",
+    "genericError": "Qualcosa è andato storto"
+  },
+  "footer": {
+    "noAccount": "Non hai un account?",
+    "registerLink": "Registrati qui"
+  }
+}

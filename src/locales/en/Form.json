@@ -1,0 +1,33 @@
+{
+  "title": "Register",
+  "placeholders": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password"
+  },
+  "passwordChecks": {
+    "minLength": "At least 8 characters",
+    "uppercase": "At least one uppercase letter (A-Z)",
+    "lowercase": "At least one lowercase letter (a-z)",
+    "special": "At least one special character (e.g. !@#$%)"
+  },
+  "buttons": {
+    "submit": "Register",
+    "submitting": "Registering..."
+  },
+  "messages": {
+    "allFieldsRequired": "All fields are required.",
+    "nameTooShort": "Name must be at least 2 characters.",
+    "invalidEmail": "Please enter a valid email address.",
+    "passwordTooShort": "Password must be at least {{min}} characters.",
+    "passwordNeedsUppercase": "Password must contain at least one uppercase letter.",
+    "passwordNeedsLowercase": "Password must contain at least one lowercase letter.",
+    "passwordNeedsSpecial": "Password must contain at least one special character.",
+    "verificationSent": "Verification code sent! Switching...",
+    "genericError": "Something went wrong"
+  },
+  "footer": {
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login here"
+  }
+}

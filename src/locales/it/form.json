@@ -1,0 +1,33 @@
+{
+  "title": "Registrati",
+  "placeholders": {
+    "name": "Nome",
+    "email": "Email",
+    "password": "Password"
+  },
+  "passwordChecks": {
+    "minLength": "Almeno 8 caratteri",
+    "uppercase": "Almeno una lettera maiuscola (A-Z)",
+    "lowercase": "Almeno una lettera minuscola (a-z)",
+    "special": "Almeno un carattere speciale (es. !@#$%)"
+  },
+  "buttons": {
+    "submit": "Registrati",
+    "submitting": "Registrazione in corso..."
+  },
+  "messages": {
+    "allFieldsRequired": "Tutti i campi sono obbligatori.",
+    "nameTooShort": "Il nome deve contenere almeno 2 caratteri.",
+    "invalidEmail": "Inserisci un indirizzo email valido.",
+    "passwordTooShort": "La password deve contenere almeno {{min}} caratteri.",
+    "passwordNeedsUppercase": "La password deve contenere almeno una lettera maiuscola.",
+    "passwordNeedsLowercase": "La password deve contenere almeno una lettera minuscola.",
+    "passwordNeedsSpecial": "La password deve contenere almeno un carattere speciale.",
+    "verificationSent": "Codice di verifica inviato! Reindirizzamento...",
+    "genericError": "Qualcosa è andato storto"
+  },
+  "footer": {
+    "haveAccount": "Hai già un account?",
+    "loginLink": "Accedi qui"
+  }
+}

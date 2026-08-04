@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import API from "../api/api";
+import { useTranslation } from "react-i18next";
+import API from "../api/api.jsx";
+import "./login.css";
 
 const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -22,7 +25,7 @@ const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
       setLoggedIn(true);
       setIsAdmin(adminFlag);
 
-      setSuccess("Login successful!");
+      setSuccess(t("login.messages.loginSuccess"));
       setError("");
 
       // Close the popup only (NO REDIRECT)
@@ -32,7 +35,7 @@ const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
 
     } catch (err) {
       const errorMsg =
-        err.response?.data?.msg || "Something went wrong";
+        err.response?.data?.msg || t("login.messages.genericError");
 
       setSuccess("");
 
@@ -40,7 +43,7 @@ const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
         errorMsg.toLowerCase().includes("user not found") ||
         errorMsg.toLowerCase().includes("not registered")
       ) {
-        setError("Account not found. Redirecting to Register...");
+        setError(t("login.messages.accountNotFound"));
 
         setTimeout(() => {
           if (switchToRegister) switchToRegister();
@@ -52,51 +55,17 @@ const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        background: "rgba(0, 0, 0, 0.65)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 999999,
-        padding: "20px",
-      }}
-      onClick={closeModal}
-    >
-      <div
-        style={{
-          position: "relative",
-          background: "#fff",
-          color: "#111",
-          borderRadius: "10px",
-          padding: "30px 25px",
-          width: "100%",
-          maxWidth: "400px",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-          zIndex: 1000000,
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h1 style={{ color: "#111", marginBottom: "20px" }}>Login</h1>
+    <div className="login-overlay" onClick={closeModal}>
+      <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+        <h1 className="login-title">{t("login.title")}</h1>
 
-        <form
-          className="login-form"
-          onSubmit={handleSubmit}
-          style={{ margin: 0, padding: 0 }}
-        >
+        <form className="login-form" onSubmit={handleSubmit}>
           <input
             name="email"
             type="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="Email"
+            placeholder={t("login.placeholders.email")}
             required
           />
 
@@ -105,39 +74,24 @@ const Login = ({ setLoggedIn, setIsAdmin, closeModal, switchToRegister }) => {
             name="password"
             value={form.password}
             onChange={handleChange}
-            placeholder="Password"
+            placeholder={t("login.placeholders.password")}
             required
           />
 
-          <button type="submit">Login</button>
+          <button type="submit">{t("login.buttons.submit")}</button>
         </form>
 
-        {success && <p className="success">{success}</p>}
-        {error && <p className="error">{error}</p>}
+        {success && <p className="success login-success-msg">{success}</p>}
+        {error && <p className="error login-error-msg">{error}</p>}
 
-        <div
-          style={{
-            marginTop: "20px",
-            fontSize: "14px",
-            color: "#666",
-          }}
-        >
-          Don't have an account?{" "}
+        <div className="login-footer">
+          {t("login.footer.noAccount")}{" "}
           <button
             type="button"
             onClick={switchToRegister}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#0077ff",
-              textDecoration: "underline",
-              cursor: "pointer",
-              fontWeight: "bold",
-              padding: 0,
-              fontSize: "14px",
-            }}
+            className="login-link-btn"
           >
-            Register here
+            {t("login.footer.registerLink")}
           </button>
         </div>
       </div>

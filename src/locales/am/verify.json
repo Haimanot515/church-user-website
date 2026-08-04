@@ -1,0 +1,12 @@
+{
+  "title": "አካውንትዎን ያረጋግጡ",
+  "label": "የ6 አሃዝ ኮድ ያስገቡ",
+  "placeholder": "123456",
+  "buttons": {
+    "submit": "አረጋግጥ"
+  },
+  "messages": {
+    "noRegistrationData": "የምዝገባ መረጃ አልተገኘም።",
+    "verificationFailed": "ማረጋገጫ አልተሳካም። እንደገና ይሞክሩ።"
+  }
+}

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../../api/api"; 
-import { FaTimes } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import API from "../../api/api";
 
 const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
+  const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -17,7 +18,7 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
     try {
       const pendingUser = localStorage.getItem("pendingUser");
       if (!pendingUser) {
-        setError("No registration data found.");
+        setError(t("verify.messages.noRegistrationData"));
         return;
       }
 
@@ -44,17 +45,17 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
 
       // 4. Update the global states
       setLoggedIn(true);
-      setIsAdmin(adminFlag); 
+      setIsAdmin(adminFlag);
       setSuccess(msg);
 
       // Successfully verified: close the box and navigate home
       setTimeout(() => {
         if (closeModal) closeModal();
-        navigate("/home"); 
+        navigate("/home");
       }, 1500);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.msg || "Verification failed. Try again.");
+      setError(err.response?.data?.msg || t("verify.messages.verificationFailed"));
     }
   };
 
@@ -70,7 +71,7 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
       }}
     >
       <h2 style={{ marginBottom: "20px", color: "#333", fontWeight: 600 }}>
-        Verify Your Account
+        {t("verify.title")}
       </h2>
 
       <form
@@ -86,7 +87,7 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
             textAlign: "left",
           }}
         >
-          Enter 6-digit code
+          {t("verify.label")}
         </label>
 
         <input
@@ -98,7 +99,7 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
           maxLength={6}
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          placeholder="123456"
+          placeholder={t("verify.placeholder")}
           required
           style={{
             padding: "12px 15px",
@@ -128,14 +129,12 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
           onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
           onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
         >
-          Verify
+          {t("verify.buttons.submit")}
         </button>
 
         {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
         {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       </form>
-
-     
     </div>
   );
 };

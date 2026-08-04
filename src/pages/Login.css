@@ -1,0 +1,155 @@
+/* ===== Overlay ===== */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* ===== Modal (mobile-first) ===== */
+.login-modal {
+    position: relative;
+    background: #fff;
+    color: #111;
+    border-radius: 10px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000000;
+    box-sizing: border-box;
+}
+
+.login-title {
+    color: #111;
+    margin: 0 0 20px 0;
+    font-size: clamp(20px, 5vw, 28px);
+    text-align: center;
+}
+
+/* ===== Form ===== */
+.login-form {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-form input:focus {
+    border-color: #0077ff;
+    box-shadow: 0 0 0 3px rgba(0, 119, 255, 0.15);
+}
+
+.login-form button[type="submit"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #0077ff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.login-form button[type="submit"]:hover {
+    background-color: #0066dd;
+}
+
+/* ===== Messages ===== */
+.login-success-msg {
+    color: green;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.login-error-msg {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* ===== Footer ===== */
+.login-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+.login-link-btn {
+    background: none;
+    border: none;
+    color: #0077ff;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0;
+    font-size: 14px;
+}
+
+/* ===== Small phones ===== */
+@media (max-width: 360px) {
+    .login-modal {
+        padding: 18px 16px;
+    }
+
+    .login-form input,
+    .login-form button[type="submit"] {
+        padding: 10px 12px;
+    }
+}
+
+/* ===== Tablets ===== */
+@media (min-width: 600px) {
+    .login-modal {
+        max-width: 440px;
+        padding: 32px;
+    }
+
+    .login-form {
+        gap: 14px;
+    }
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 1024px) {
+    .login-modal {
+        max-width: 440px;
+        padding: 36px;
+    }
+
+    .login-form input {
+        padding: 13px 16px;
+    }
+
+    .login-form button[type="submit"] {
+        padding: 13px 16px;
+        font-size: 16px;
+    }
+}
