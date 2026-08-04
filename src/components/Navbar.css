@@ -22,6 +22,10 @@
   color: white;
 }
 
+.navbar-logo:visited {
+  color: white;
+}
+
 /* =========================
    RIGHT GROUP (language dropdown + theme toggle + hamburger)
 ========================= */
@@ -35,10 +39,6 @@
 
 /* =========================
    LANGUAGE DROPDOWN
-   Was a native <select> — on mobile that opens the OS's own
-   full-screen picker instead of an inline dropdown. Replaced with a
-   button + absolutely-positioned list, so behavior is identical and
-   controllable on every screen size.
 ========================= */
 
 .navbar-language-group {
@@ -91,7 +91,6 @@
   transform: rotate(180deg);
 }
 
-/* Opens downward from the trigger, list top sits just below the button. */
 .navbar-language-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -189,8 +188,6 @@
   z-index: 1001;
 }
 
-/* Open Menu */
-
 .nav-content.active {
   max-height: 800px;
   opacity: 1;
@@ -199,8 +196,6 @@
 
 /* =========================
    LINK COLUMNS
-   Both columns live in one row so they start on the same
-   top line, side by side. Auth row sits full width below.
 ========================= */
 
 .nav-links-row {
@@ -242,6 +237,10 @@
   width: 100%;
 }
 
+.nav-content a:visited {
+  color: white;
+}
+
 .nav-links-primary a:last-child,
 .nav-links-secondary a:last-child {
   border-bottom: none;
@@ -258,7 +257,7 @@
 }
 
 /* =========================
-   AUTH ROW (full width, below both columns)
+   AUTH ROW
 ========================= */
 
 .nav-auth {
@@ -301,15 +300,58 @@
   color: #111;
 }
 
-/* Optional: make Logout stand out slightly differently */
-.nav-auth button:last-child {
+/* Logout — targeted by its own class, not :last-child, so it can
+   never accidentally match IT/theme-switcher/etc. */
+.nav-auth .logout-btn {
   border-color: #e63946;
   color: #e63946;
 }
 
-.nav-auth button:last-child:hover {
+.nav-auth .logout-btn:hover {
   background: #e63946;
   color: #fff;
+}
+
+/* Mobile language switcher buttons — same white style as other nav-auth buttons */
+.language-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.language-switcher button {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.language-switcher button:hover {
+  background: #fff;
+  color: #111;
+}
+
+/* Mobile theme switcher button — same white style, no red */
+.theme-switcher {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-switcher:hover {
+  background: #fff;
+  color: #111;
 }
 
 /* Admin link inside the auth row shouldn't look like a menu row item */
@@ -319,6 +361,11 @@
   border-radius: 6px;
   border-bottom: 1px solid #fff;
   width: auto;
+  color: #fff;
+}
+
+.nav-auth a:visited {
+  color: #fff;
 }
 
 .nav-auth a:hover {
@@ -402,31 +449,23 @@
 }
 
 /* =========================================================================
-   RESPONSIVE LAYER — additive only.
-   Nothing above this line has been changed, reordered, or removed, so
-   desktop appearance (1024px and up) is unchanged. Navbar.jsx needs ZERO
-   markup changes: every element already carries a class name, so every
-   rule below targets an existing selector — no structural hacks or
-   !important needed anywhere in this file.
+   RESPONSIVE LAYER
    ========================================================================= */
 
 .navbar-logo svg { flex-shrink: 0; }
 
-/* --- Large desktop / ultra-wide (1920px+) ------------------------------- */
 @media (min-width: 1920px) {
   .navbar { padding: 18px 60px; }
   .nav-links-primary { margin-left: 100px; }
   .nav-links-secondary { margin-right: 100px; }
 }
 
-/* --- Laptops / small desktops -------------------------------------------- */
 @media (max-width: 1024px) {
   .nav-links-primary { margin-left: 30px; }
   .nav-links-secondary { margin-right: 30px; }
   .nav-content a { padding: 16px 22px; font-size: 17px; }
 }
 
-/* --- Tablets (landscape & portrait) -------------------------------------- */
 @media (max-width: 800px) {
   .navbar { padding: 14px 20px; }
   .nav-links-primary { margin-left: 16px; }
@@ -434,9 +473,6 @@
   .nav-content a { padding: 15px 18px; font-size: 16px; }
 }
 
-/* Below this point the two link groups no longer have room to sit
-   side by side without cramping or overlapping, so they stack and
-   center for mobile. */
 @media (max-width: 700px) {
   .nav-links-row {
     flex-direction: column;
@@ -463,7 +499,6 @@
   }
 }
 
-/* --- Large phones --------------------------------------------------------- */
 @media (max-width: 600px) {
   .navbar { padding: 12px 16px; }
   .navbar-logo svg { width: 40px; height: 40px; }
@@ -481,7 +516,6 @@
   }
 }
 
-/* --- Standard phones ------------------------------------------------------- */
 @media (max-width: 480px) {
   .navbar { padding: 10px 14px; }
   .navbar-logo svg { width: 34px; height: 34px; }
@@ -499,7 +533,6 @@
   .navbar-theme-toggle { font-size: 0.85rem; padding: 5px 10px; }
 }
 
-/* --- Small phones (320px+) -------------------------------------------------- */
 @media (max-width: 380px) {
   .navbar { padding: 10px 12px; }
   .navbar-logo svg { width: 30px; height: 30px; }
@@ -510,7 +543,6 @@
   .auth-card { padding: 20px 14px; }
 }
 
-/* --- Touch target polish (applies alongside, not instead of, desktop rules) */
 @media (hover: none) and (pointer: coarse) {
   .menu-toggle { padding: 8px; }
   .nav-content a { min-height: 44px; display: flex; align-items: center; justify-content: center; }

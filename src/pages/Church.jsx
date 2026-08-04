@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import API from "../api/api";
 import "./Church.css";
 
@@ -8,19 +9,16 @@ const Church = () => {
 
   const [showConstructionAd, setShowConstructionAd] = useState(false);
 
-  // --- Hero: GET /api/churches/primary (the one church with isPrimary: true) ---
   const [primaryChurch, setPrimaryChurch] = useState(null);
   const [primaryLoading, setPrimaryLoading] = useState(true);
   const [primaryError, setPrimaryError] = useState("");
   const [primaryFallback, setPrimaryFallback] = useState(false);
 
-  // --- Where The Leader Serves Now: GET /api/churches/current (public, no userId) ---
   const [currentChurch, setCurrentChurch] = useState(null);
   const [currentLoading, setCurrentLoading] = useState(true);
   const [currentError, setCurrentError] = useState("");
   const [currentFallback, setCurrentFallback] = useState(false);
 
-  // --- "The church in Ethiopia" blog grid: GET /api/churches?page=&limit=20, with Load More ---
   const [blogChurches, setBlogChurches] = useState([]);
   const [blogPage, setBlogPage] = useState(1);
   const [blogLoading, setBlogLoading] = useState(true);
@@ -31,10 +29,6 @@ const Church = () => {
 
   const BLOG_LIMIT = 20;
 
-  // Reusable inline loading spinner — shown while a section's data is
-  // being fetched from the backend, so no hardcoded frontend placeholder
-  // content is ever visible before the real data arrives. Same
-  // markup/classes as Home.jsx's Spinner, so it renders identically.
   const Spinner = ({ light }) => (
     <div className="loading-spinner-wrap">
       <div className={`loading-spinner${light ? " light" : ""}`} />
@@ -52,11 +46,6 @@ const Church = () => {
     fetchBlogChurches(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
-
-  // === Same Accept-Language fallback pattern used in Services.jsx / Blog /
-  // Travel / About: try the active language first, and if it comes back
-  // empty, retry with an explicit "en" header and flag it so the UI can
-  // show a small "showing English content" notice. ===
 
   const fetchPrimaryChurch = async () => {
     try {
@@ -175,9 +164,6 @@ const Church = () => {
     return fallback;
   };
 
-  // Exclude the "Where I Serve Now" church from the blog grid so it
-  // isn't shown twice on the page. currentChurch is a ChurchAssignment,
-  // so the church id lives at currentChurch.church._id.
   const currentChurchId = currentChurch?.church?._id;
   const visibleBlogChurches = currentChurchId
     ? blogChurches.filter((c) => c._id !== currentChurchId)
@@ -214,13 +200,25 @@ const Church = () => {
             <button className="hero-cta">{t("church.hero.cta")}</button>
           </div>
           <div className="church-hero-media">
-            <img
-              src={
-                primaryChurch?.image ||
-                "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
-              }
-              alt={primaryChurch?.churchName || t("church.hero.imageAlt")}
-            />
+            {primaryChurch?._id ? (
+              <Link to={`/churches/${primaryChurch._id}`}>
+                <img
+                  src={
+                    primaryChurch?.image ||
+                    "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
+                  }
+                  alt={primaryChurch?.churchName || t("church.hero.imageAlt")}
+                />
+              </Link>
+            ) : (
+              <img
+                src={
+                  primaryChurch?.image ||
+                  "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
+                }
+                alt={primaryChurch?.churchName || t("church.hero.imageAlt")}
+              />
+            )}
           </div>
         </div>
       </section>
@@ -279,15 +277,29 @@ const Church = () => {
           ) : (
             <div className="serve-now-card">
               <div className="serve-now-img-wrap">
-                <img
-                  src={
-                    currentChurch.image ||
-                    currentChurch.user?.image ||
-                    currentChurch.church?.image ||
-                    ""
-                  }
-                  alt={currentChurch.user?.name || "Leader"}
-                />
+                {currentChurchId ? (
+                  <Link to={`/churches/${currentChurchId}`}>
+                    <img
+                      src={
+                        currentChurch.image ||
+                        currentChurch.user?.image ||
+                        currentChurch.church?.image ||
+                        ""
+                      }
+                      alt={currentChurch.user?.name || "Leader"}
+                    />
+                  </Link>
+                ) : (
+                  <img
+                    src={
+                      currentChurch.image ||
+                      currentChurch.user?.image ||
+                      currentChurch.church?.image ||
+                      ""
+                    }
+                    alt={currentChurch.user?.name || "Leader"}
+                  />
+                )}
                 <span className="serve-now-badge">{t("church.serveNow.badge")}</span>
               </div>
               <div className="serve-now-body">
@@ -315,7 +327,7 @@ const Church = () => {
                   </p>
                 )}
                 {currentChurchId ? (
-                  <a className="serve-now-cta" href={`/churches/${currentChurchId}`}>
+                  <Link className="serve-now-cta" to={`/churches/${currentChurchId}`}>
                     {t("church.serveNow.cta")}
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -326,7 +338,7 @@ const Church = () => {
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </a>
+                  </Link>
                 ) : (
                   <button className="serve-now-cta" disabled>
                     {t("church.serveNow.cta")}
@@ -371,7 +383,9 @@ const Church = () => {
               <div className="blog-grid">
                 {visibleBlogChurches.map((c) => (
                   <div className="blog-card" key={c._id}>
-                    <img src={c.image || ""} alt={c.churchName} />
+                    <Link to={`/churches/${c._id}`}>
+                      <img src={c.image || ""} alt={c.churchName} />
+                    </Link>
                     <div className="blog-card-body">
                       <div className="blog-tag">
                         {c.isPrimary
@@ -382,7 +396,7 @@ const Church = () => {
                       </div>
                       <h3>{c.churchName}</h3>
                       <p>{c.shortDescription || c.description}</p>
-                      <a className="read-more" href={`/churches/${c._id}`}>
+                      <Link className="read-more" to={`/churches/${c._id}`}>
                         {t("church.blog.readMore")}
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
@@ -393,7 +407,7 @@ const Church = () => {
                             strokeLinejoin="round"
                           />
                         </svg>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 ))}
