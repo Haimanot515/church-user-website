@@ -29,7 +29,25 @@ const MediaDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [audioError, setAudioError] = useState("");
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isMuted, setIsMuted] = useState(false);
+  const [relatedItems, setRelatedItems] = useState([]);
   const audioRef = useRef(null);
+  const rafRef = useRef(null);
+
+  const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+
+  const formatTime = (secs) => {
+    if (!Number.isFinite(secs) || secs < 0) return "0:00";
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${s}`;
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -57,16 +75,104 @@ const MediaDetail = () => {
     fetchEntry();
   }, [id]);
 
+  useEffect(() => {
+    const fetchRelated = async () => {
+      try {
+        const res = await API.get("/media");
+        const all = Array.isArray(res.data) ? res.data : res.data?.items || [];
+        const currentId = String(id);
+        const sameType = all.filter(
+          (m) => (m._id || m.id) && String(m._id || m.id) !== currentId && m.mediaType === entry?.mediaType
+        );
+        const pool = sameType.length >= 3
+          ? sameType
+          : all.filter((m) => (m._id || m.id) && String(m._id || m.id) !== currentId);
+        const picks = pool.slice(0, 4).map((m) => ({
+          ...m,
+          id: m._id || m.id,
+          thumbnail: getMediaUrl(m.thumbnail || m.mediaUrl),
+        }));
+        setRelatedItems(picks);
+      } catch (err) {
+        console.log("Failed to load related items:", err);
+        setRelatedItems([]);
+      }
+    };
+    if (entry) fetchRelated();
+  }, [entry, id]);
+
+  // Backup ticker: some audio sources fire `timeupdate` inconsistently
+  // (throttled background tabs, certain streamed formats), so while
+  // playing we also poll currentTime directly via requestAnimationFrame.
+  useEffect(() => {
+    const tick = () => {
+      const el = audioRef.current;
+      if (el) {
+        setCurrentTime(el.currentTime);
+        if (Number.isFinite(el.duration) && el.duration !== duration) {
+          setDuration(el.duration);
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    if (isPlaying) {
+      rafRef.current = requestAnimationFrame(tick);
+    }
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isPlaying]);
+
   const toggleAudio = () => {
+    console.log("Play button clicked, isPlaying:", isPlaying);
     const el = audioRef.current;
-    if (!el) return;
+    if (!el) {
+      console.log("audioRef.current is null — audio element not mounted yet");
+      return;
+    }
     if (isPlaying) {
       el.pause();
       setIsPlaying(false);
     } else {
-      el.play();
-      setIsPlaying(true);
+      setAudioError("");
+      const playPromise = el.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.log("Audio play failed:", err);
+            setAudioError("Couldn't play audio. Try tapping play again.");
+            setIsPlaying(false);
+          });
+      } else {
+        setIsPlaying(true);
+      }
     }
+  };
+
+  const handleSeek = (e) => {
+    const el = audioRef.current;
+    if (!el) return;
+    const value = Number(e.target.value);
+    el.currentTime = value;
+    setCurrentTime(value);
+  };
+
+  const cycleSpeed = () => {
+    const el = audioRef.current;
+    if (!el) return;
+    const idx = SPEED_OPTIONS.indexOf(playbackRate);
+    const next = SPEED_OPTIONS[(idx + 1) % SPEED_OPTIONS.length];
+    el.playbackRate = next;
+    setPlaybackRate(next);
+  };
+
+  const toggleMute = () => {
+    const el = audioRef.current;
+    if (!el) return;
+    const next = !isMuted;
+    el.muted = next;
+    setIsMuted(next);
   };
 
   const BackButton = () => (
@@ -122,7 +228,6 @@ const MediaDetail = () => {
       <section className="media-detail-hero">
         <div className="wrapper">
           <span className="eyebrow">{eyebrowByType[entry.mediaType] || "Media"}</span>
-          <h1>{entry.title}</h1>
         </div>
       </section>
 
@@ -130,17 +235,46 @@ const MediaDetail = () => {
         <div className="wrapper">
           <div className="media-detail-body">
             {entry.mediaType === "video" && (
-              <div className="media-detail-video">
-                <video src={entry.mediaUrl} controls autoPlay />
-              </div>
+              <>
+                <div className="media-detail-video">
+                  <video src={entry.mediaUrl} controls autoPlay />
+                </div>
+                <a className="media-detail-download-btn media-detail-download-standalone" href={entry.mediaUrl} download aria-label="Download video">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3v12" />
+                    <path d="M7 10l5 5 5-5" />
+                    <path d="M5 21h14" />
+                  </svg>
+                  Download
+                </a>
+              </>
             )}
 
             {entry.mediaType === "photo" && (
-              <img src={entry.mediaUrl} alt={entry.title} className="media-detail-photo" />
+              <>
+                <img src={entry.mediaUrl} alt={entry.title} className="media-detail-photo" />
+                <a className="media-detail-download-btn media-detail-download-standalone" href={entry.mediaUrl} download aria-label="Download photo">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3v12" />
+                    <path d="M7 10l5 5 5-5" />
+                    <path d="M5 21h14" />
+                  </svg>
+                  Download
+                </a>
+              </>
             )}
 
             {entry.mediaType === "audio" && (
               <div className="media-detail-audio-card">
+                {/* TEMP DEBUG: bare-bones native player to isolate whether
+                    the issue is the audio source or our custom player logic.
+                    Remove this block once diagnosed. */}
+                <audio
+                  src={entry.mediaUrl}
+                  controls
+                  autoPlay
+                  style={{ width: "100%", marginBottom: "16px" }}
+                />
                 <button
                   className="media-detail-audio-play-btn"
                   onClick={toggleAudio}
@@ -152,11 +286,106 @@ const MediaDetail = () => {
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                   )}
                 </button>
+                <div className="media-detail-audio-progress">
+                  <input
+                    type="range"
+                    min="0"
+                    max={Number.isFinite(duration) ? duration : 0}
+                    value={Number.isFinite(currentTime) ? currentTime : 0}
+                    step="0.1"
+                    onChange={handleSeek}
+                    className="media-detail-audio-seek"
+                    aria-label="Seek"
+                  />
+                  <div className="media-detail-audio-time">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                </div>
+                <div className="media-detail-audio-toolbar">
+                  <button
+                    type="button"
+                    className="media-detail-mute-btn"
+                    onClick={toggleMute}
+                    aria-label={isMuted ? "Unmute" : "Mute"}
+                  >
+                    {isMuted ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+                        <line x1="23" y1="9" x2="17" y2="15" />
+                        <line x1="17" y1="9" x2="23" y2="15" />
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+                        <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                        <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+                      </svg>
+                    )}
+                    {isMuted ? "Unmute" : "Mute"}
+                  </button>
+                  <button
+                    type="button"
+                    className="media-detail-speed-btn"
+                    onClick={cycleSpeed}
+                    aria-label="Change playback speed"
+                  >
+                    {playbackRate}x
+                  </button>
+                  <a
+                    className="media-detail-download-btn"
+                    href={entry.mediaUrl}
+                    download
+                    aria-label="Download audio"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3v12" />
+                      <path d="M7 10l5 5 5-5" />
+                      <path d="M5 21h14" />
+                    </svg>
+                    Download
+                  </a>
+                </div>
                 <audio
                   ref={audioRef}
                   src={entry.mediaUrl}
+                  preload="auto"
+                  muted={isMuted}
                   onEnded={() => setIsPlaying(false)}
+                  onPlay={() => {
+                    console.log("PLAY");
+                    console.log("muted:", audioRef.current?.muted);
+                    console.log("volume:", audioRef.current?.volume);
+                    setIsPlaying(true);
+                  }}
+                  onPause={() => {
+                    console.log("PAUSE");
+                    setIsPlaying(false);
+                  }}
+                  onLoadedMetadata={(e) => {
+                    if (Number.isFinite(e.target.duration)) {
+                      setDuration(e.target.duration);
+                    }
+                    e.target.playbackRate = playbackRate;
+                  }}
+                  onDurationChange={(e) => {
+                    if (Number.isFinite(e.target.duration)) {
+                      setDuration(e.target.duration);
+                    }
+                  }}
+                  onTimeUpdate={(e) => {
+                    console.log("TIME:", e.target.currentTime);
+                    setCurrentTime(e.target.currentTime);
+                  }}
+                  onError={(e) => {
+                    console.log("ERROR:", e.target.error);
+                    console.log("Audio failed to load:", entry.mediaUrl);
+                    setAudioError("This audio file couldn't be loaded.");
+                  }}
                 />
+                {audioError && (
+                  <p className="media-detail-audio-error">{audioError}</p>
+                )}
               </div>
             )}
 
@@ -183,10 +412,39 @@ const MediaDetail = () => {
               </div>
             )}
 
+            <h1 className="media-detail-title">{entry.title}</h1>
+
             {entry.description && (
               <p className="media-detail-description">{entry.description}</p>
             )}
           </div>
+
+          {relatedItems.length > 0 && (
+            <div className="media-detail-related">
+              <h2 className="media-detail-related-heading">You May Also Like</h2>
+              <div className="media-detail-related-grid">
+                {relatedItems.map((item) => (
+                  <Link
+                    to={`/media/${item.id}`}
+                    key={item.id}
+                    className="media-detail-related-card"
+                  >
+                    <div className="media-detail-related-thumb">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.title} />
+                      ) : (
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
+                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="media-detail-related-title">{item.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </Shell>

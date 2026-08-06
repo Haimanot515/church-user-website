@@ -1198,12 +1198,12 @@ const Home = () => {
           ) : (
             <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
               {testimonials.map((person, i) => (
-                <Link
-                  key={person._id || i}
-                  to={`/testimonials/${person._id}`}
-                  className="testimonial-card"
-                  style={{ paddingTop: '28px', textAlign: 'left', textDecoration: 'none', color: 'inherit' }}
-                >
+          <Link
+  key={person._id || i}
+  to={`/church-persons/${person._id}`}
+  className="testimonial-card"
+  style={{ paddingTop: '28px', textAlign: 'left', textDecoration: 'none', color: 'inherit' }}
+>
                   <img
                     src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
                     alt={person.name}

@@ -4,6 +4,7 @@
    Cormorant Garamond display font, IBM Plex Mono eyebrow, cloud
    layer background. Renders whichever media type the item is
    (video / photo / audio / document) inside a single detail view.
+   Title + description now sit below the media element itself.
    ============================================================ */
 
 .media-detail-back-btn {
@@ -32,37 +33,27 @@
 
 .media-detail-hero {
   background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-  padding: 90px 0 60px 0;
+  padding: 70px 0 40px 0;
   text-align: center;
-}
-.media-detail-hero h1 {
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  font-weight: 700;
-  color: #eaf3f8;
-  margin: 16px 0 12px 0;
-}
-.media-detail-hero p {
-  font-size: 1.05rem;
-  color: #a9c2d3;
-  max-width: 620px;
-  margin: 0 auto;
-  line-height: 1.6;
 }
 
 .media-detail-section {
-  padding: 70px 0 90px 0;
+  padding: 50px 0 90px 0;
 }
 
 .media-detail-body {
   max-width: 820px;
   margin: 0 auto;
+  text-align: center;
 }
 
-/* Video */
+/* Video — standard 16:9 frame on desktop, full-bleed vertical frame
+   on mobile (TikTok-style), capped so it doesn't dominate large screens */
 .media-detail-video {
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto 30px auto;
+  max-width: 520px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto 26px auto;
   border-radius: 10px;
   overflow: hidden;
   background: #000;
@@ -70,33 +61,42 @@
 }
 .media-detail-video video {
   width: 100%;
+  height: 100%;
   display: block;
+  object-fit: contain;
 }
 
-/* Photo */
+/* Photo — bigger standard cap, doesn't grow past this box */
 .media-detail-photo {
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
+  max-height: 520px;
   height: auto;
+  object-fit: contain;
   display: block;
-  margin: 0 auto 30px auto;
+  margin: 0 auto 26px auto;
   border-radius: 10px;
   box-shadow: 0 12px 26px rgba(15,36,56,0.15);
 }
 
 /* Audio */
 .media-detail-audio-card {
+  position: relative;
+  z-index: 2;
   background: #fff;
   border: 1px solid rgba(28,58,82,0.12);
   border-radius: 10px;
   box-shadow: 0 8px 18px rgba(15,36,56,0.06);
-  padding: 34px 28px;
+  padding: 30px 28px;
   text-align: center;
-  margin-bottom: 30px;
+  margin: 0 auto 26px auto;
+  max-width: 420px;
 }
 .media-detail-audio-play-btn {
-  width: 64px;
-  height: 64px;
+  position: relative;
+  z-index: 3;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: var(--gold);
   color: var(--navy-deep);
@@ -107,9 +107,199 @@
   cursor: pointer;
   margin: 0 auto 18px auto;
 }
-.media-detail-audio-card audio {
+
+/* Progress bar + time readout */
+.media-detail-audio-progress {
   width: 100%;
-  margin-top: 16px;
+}
+.media-detail-audio-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(28,58,82,0.15);
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+}
+.media-detail-audio-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(15,36,56,0.3);
+  cursor: pointer;
+  margin-top: -5px;
+}
+.media-detail-audio-seek::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(15,36,56,0.3);
+  cursor: pointer;
+}
+.media-detail-audio-seek::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(28,58,82,0.15);
+}
+.media-detail-audio-time {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--slate);
+  margin-top: 8px;
+}
+.media-detail-audio-error {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: #dc2626;
+}
+
+/* Speed + download toolbar — matches the navy/gold pill button style
+   used elsewhere (e.g. .media-detail-open-btn) */
+.media-detail-audio-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.media-detail-speed-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--navy);
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 11px 22px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.media-detail-speed-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+}
+.media-detail-mute-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--navy);
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 11px 22px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.media-detail-mute-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+}
+.media-detail-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--navy);
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 11px 22px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.media-detail-download-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+}
+.media-detail-download-standalone {
+  display: inline-flex;
+  margin: 0 auto 26px auto;
+}
+
+/* You May Also Like */
+.media-detail-related {
+  max-width: 820px;
+  margin: 60px auto 0 auto;
+  padding-top: 40px;
+  border-top: 1px solid rgba(28,58,82,0.12);
+}
+.media-detail-related-heading {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-align: center;
+  margin: 0 0 24px 0;
+}
+.media-detail-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 18px;
+}
+.media-detail-related-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+.media-detail-related-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eef3f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy);
+  box-shadow: 0 6px 14px rgba(15,36,56,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.media-detail-related-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.media-detail-related-card:hover .media-detail-related-thumb {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(15,36,56,0.14);
+}
+.media-detail-related-title {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy-deep);
+  text-align: center;
+  line-height: 1.4;
 }
 
 /* Document / book */
@@ -118,9 +308,10 @@
   border: 1px solid rgba(28,58,82,0.12);
   border-radius: 10px;
   box-shadow: 0 8px 18px rgba(15,36,56,0.06);
-  padding: 40px 28px;
+  padding: 36px 28px;
   text-align: center;
-  margin-bottom: 30px;
+  margin: 0 auto 26px auto;
+  max-width: 420px;
 }
 .media-detail-document-icon {
   color: var(--navy);
@@ -148,25 +339,61 @@
   color: var(--navy-deep);
 }
 
+/* Title + description, now below the media block */
+.media-detail-title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  color: var(--navy-deep);
+  margin: 0 0 14px 0;
+}
+
 .media-detail-description {
   font-size: 1.1rem;
   color: var(--slate);
   line-height: 1.7;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 /* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
 @media (max-width: 768px) {
-  .media-detail-hero { padding: 70px 0 46px 0; }
-  .media-detail-section { padding: 50px 0 70px 0; }
+  .media-detail-hero { padding: 56px 0 30px 0; }
+  .media-detail-section { padding: 36px 0 70px 0; }
   .media-detail-back-btn { top: 18px; left: 18px; width: 36px; height: 36px; }
 }
 
 /* --- Large phones (max-width: 600px) -------------------------------------- */
 @media (max-width: 600px) {
-  .media-detail-hero { padding: 56px 0 36px 0; }
-  .media-detail-section { padding: 40px 0 60px 0; }
+  .media-detail-hero { padding: 44px 0 24px 0; }
+  .media-detail-section { padding: 28px 0 60px 0; }
   .media-detail-audio-card,
   .media-detail-document { padding: 26px 18px; }
+  .media-detail-related-grid { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 14px; }
+
+  /* TikTok-style immersive frame: edge-to-edge, tall, never hidden
+     behind other page chrome (back button sits above it via z-index) */
+  .media-detail-video {
+    max-width: none;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    aspect-ratio: auto;
+    height: calc(100vh - 140px);
+    max-height: 80vh;
+    border-radius: 0;
+  }
+  .media-detail-video video {
+    object-fit: cover;
+  }
+  .media-detail-photo {
+    max-width: none;
+    max-height: none;
+    width: 100vw;
+    height: calc(100vh - 140px);
+    max-height: 80vh;
+    object-fit: cover;
+    margin-left: calc(50% - 50vw);
+    border-radius: 0;
+  }
 }
 
 /* --- Standard phones (max-width: 480px) ------------------------------------ */
