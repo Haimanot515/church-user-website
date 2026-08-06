@@ -193,6 +193,14 @@ const ChurchAboutPage = () => {
     </div>
   );
 
+  // Truncates description text to a set word limit, adding "..." if cut off
+const truncateWords = (text, limit = 20) => {
+  if (!text) return "";
+  const words = text.trim().split(/\s+/);
+  if (words.length <= limit) return text;
+  return words.slice(0, limit).join(" ") + "...";
+};
+
   return (
     <div className="church-portal">
       <style>{`
@@ -977,19 +985,26 @@ const ChurchAboutPage = () => {
             ) : (
             <div className="thanks-grid">
               {leaders.map((p) => (
-                <div className="thanks-card" key={p._id}>
-                  <img
-                    className="thanks-photo"
-                    src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
-                    alt={p.name}
-                  />
-                  <div>
-                    <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
-                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
-                    <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>{p.description}</p>
-                  </div>
-                </div>
-              ))}
+  <Link
+    to={`/church-persons/${p._id}`}
+    className="thanks-card"
+    key={p._id}
+    style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
+  >
+    <img
+      className="thanks-photo"
+      src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
+      alt={p.name}
+    />
+    <div>
+      <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
+      <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
+      <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>
+        {truncateWords(p.description, 20)}
+      </p>
+    </div>
+  </Link>
+))}
             </div>
             )}
           </div>
@@ -1015,17 +1030,24 @@ const ChurchAboutPage = () => {
           ) : (
           <div className="testimonial-grid">
             {testimonialsList.map((person) => (
-              <div className="card testimonial-card" key={person._id}>
-                <img
-                  className="testimonial-photo"
-                  src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
-                  alt={person.name}
-                />
-                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>"{person.message}"</p>
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
-                <p className="testimonial-title">{person.title}</p>
-              </div>
-            ))}
+  <Link
+    to={`/church-persons/${person._id}`}
+    className="card testimonial-card"
+    key={person._id}
+    style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
+  >
+    <img
+      className="testimonial-photo"
+      src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
+      alt={person.name}
+    />
+    <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
+      "{truncateWords(person.message, 20)}"
+    </p>
+    <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
+    <p className="testimonial-title">{person.title}</p>
+  </Link>
+))}
           </div>
           )}
         </div>
@@ -1074,17 +1096,24 @@ const ChurchAboutPage = () => {
           ) : (
           <div className="testimonial-grid">
             {thanksList.map((p) => (
-              <div className="card testimonial-card" key={p._id}>
-                <img
-                  className="testimonial-photo"
-                  src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
-                  alt={p.name}
-                />
-                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>{p.description}</p>
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
-                <p className="testimonial-title">{p.role || p.title}</p>
-              </div>
-            ))}
+  <Link
+    to={`/church-persons/${p._id}`}
+    className="card testimonial-card"
+    key={p._id}
+    style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
+  >
+    <img
+      className="testimonial-photo"
+      src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
+      alt={p.name}
+    />
+    <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
+      {truncateWords(p.description, 20)}
+    </p>
+    <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
+    <p className="testimonial-title">{p.role || p.title}</p>
+  </Link>
+))}
           </div>
           )}
         </div>
