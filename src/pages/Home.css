@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap');
 
 :root {
   --sky-top: #a9d3e8;
@@ -87,10 +87,6 @@ section { padding: 90px 0; position: relative; z-index: 1; }
 }
 .nav-marquee-viewport {
   flex: 1; min-width: 0;
-  /* Same working setup as Blog.css's .cat-nav-track: a plain bounded
-     scroll container, no animation running on top of it. That's what
-     was fighting the drag before — an active transform-animation and
-     a manual scrollLeft update competing for the same element. */
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
@@ -359,11 +355,6 @@ section { padding: 90px 0; position: relative; z-index: 1; }
 }
 .photo-carousel-frame { flex: 1; min-width: 0; }
 
-/* Wraps just the image (not the title/description/dots below it), so
-   the arrows can be positioned relative to the photo itself. On desktop
-   this lays out arrow / image / arrow in a row, same as the original
-   look. On mobile/tablet (below) it switches to the arrows overlaid on
-   the image edges, vertically centered on the photo. */
 .photo-image-wrap {
   position: relative;
   display: flex;
@@ -393,10 +384,6 @@ section { padding: 90px 0; position: relative; z-index: 1; }
 .photo-arrow.left { margin-right: 4px; }
 .photo-arrow.right { margin-left: 4px; }
 
-/* ---------- Mobile & tablet: arrows sit at the left/right edges,
-   vertically centered on the photo itself (not below it, not at the
-   bottom of the whole card). photo-image-wrap is position:relative and
-   sized to the image only, so top:50% centers exactly on the photo. ---------- */
 @media (max-width: 1024px) {
   .photo-image-wrap { display: block; }
   .photo-image-wrap img { width: 100%; }
@@ -531,39 +518,17 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   padding-top: 16px; cursor: pointer;
 }
 
-/* ============================================================
-   RESPONSIVE ADDITIONS
-   Nothing above this line was modified except the two fixes
-   marked inline above (.nav-bar overflow/scroll behavior) and
-   below (html overflow-x).
-
-   FIX #1 (sticky nav): "html { overflow-x: hidden; }" implicitly
-   sets overflow-y to "auto" per the CSS Overflow spec whenever
-   only one axis is set to a non-visible value. That silently turns
-   <html> into a scroll container, and any position:sticky element
-   nested inside it (like .nav-bar under .church-portal) loses its
-   stickiness relative to the real viewport. Switched to
-   "overflow-x: clip" which blocks horizontal scroll without
-   triggering that auto-conversion, so .nav-bar can stick again.
-   ============================================================ */
-
 /* Global safety net: never allow horizontal scroll / overflow */
-/* html/body overflow-x is now centralized in src/styles.css — do not
-   redeclare it here (see comment there for why: a conflicting copy in
-   another page's CSS was overriding this one and breaking sticky nav). */
 img, video { max-width: 100%; height: auto; }
 *, *::before, *::after { min-width: 0; }
 
-/* Hooks for the 4 inline-grid elements — requires the 4 className
-   additions listed above; harmless if not added (desktop unaffected) */
+/* Hooks for the 4 inline-grid elements */
 .sermon-item-grid { }
 .recommended-grid { }
 .home-testimonial-grid { }
 .sponsored-grid { }
 
-/* ---------- Loading spinner (shown while a section's data is being
-   fetched from the backend, so no hardcoded frontend placeholder
-   content is ever visible before the real data arrives) ---------- */
+/* ---------- Loading spinner ---------- */
 .loading-spinner-wrap {
   display: flex;
   align-items: center;
@@ -587,13 +552,27 @@ img, video { max-width: 100%; height: auto; }
   to { transform: rotate(360deg); }
 }
 
-/* ---------- Testimonial cards: photo width matches the title/
-   description block below it, and both start at the same left
-   edge (parallel arrangement) instead of the old centered layout ---------- */
+/* ---------- "What people say" testimonial cards ----------
+   No gold border-top rule, no gold ring around the photo — a plain
+   small circular avatar sized to the standard 96px used elsewhere on
+   the site, so nothing outshines the quote itself. ---------- */
 .testimonial-card {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.testimonial-photo {
+  width: 140px;
+  height: 140px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 6px 14px rgba(15,36,56,0.15);
+  margin-bottom: 16px;
+  display: block;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 /* ---------- ≤1024px (small laptop / landscape tablet) ---------- */
@@ -644,9 +623,10 @@ img, video { max-width: 100%; height: auto; }
 
   .angel-divider { padding: 36px 0; }
 
-  /* Give the photo section a little extra edge-to-edge room on mobile
-     so the photo itself renders bigger */
   .photo-wrapper { padding: 0 10px; }
+
+  .testimonial-card { align-items: center; text-align: center !important; }
+  .testimonial-photo { margin-left: auto; margin-right: auto; }
 }
 
 /* ---------- ≤600px (large phone) ---------- */
@@ -686,6 +666,8 @@ img, video { max-width: 100%; height: auto; }
     white-space: normal;
     line-height: 1.2;
   }
+
+  .testimonial-photo { width: 110px; height: 110px; aspect-ratio: 1 / 1; }
 }
 
 /* ---------- ≤480px (standard phone) ---------- */
@@ -718,6 +700,8 @@ img, video { max-width: 100%; height: auto; }
   .photo-arrow { width: 32px; height: 32px; }
   .video-thumb-wrap { width: 68px; height: 48px; }
   .photo-wrapper { padding: 0 4px; }
+
+  .testimonial-photo { width: 96px; height: 96px; aspect-ratio: 1 / 1; }
 }
 
 /* ---------- Hero: image first on tablet/mobile, text first on desktop ---------- */
@@ -730,39 +714,69 @@ img, video { max-width: 100%; height: auto; }
     width: 100% !important;
     min-width: 0 !important;
   }
-}
-
-/* ---------- Hero: image first on tablet/mobile, text first on desktop ---------- */
-@media (max-width: 1024px) {
-  .church-portal > section:first-of-type > .wrapper {
-    flex-direction: column-reverse !important;
-  }
-  .church-portal > section:first-of-type > .wrapper > div {
-    flex: 1 1 auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-  /* text block: match the image's full width, no inline max-width cap */
   .church-portal > section:first-of-type > .wrapper > div p {
     max-width: none !important;
   }
 }
-/* Body text: left-aligned on all sections/devices. Justify was
-   previously used here, but justify stretches word-spacing unevenly
-   line to line (especially on narrow/short lines), which is what made
-   spacing look inconsistent across lines. Left align keeps natural,
-   even word-spacing throughout. */
+
+/* Body text: left-aligned on all sections/devices — justify stretches
+   word-spacing unevenly line to line (especially on narrow/short
+   lines), which is what made spacing look inconsistent across lines.
+   Left align keeps natural, even word-spacing throughout — this also
+   applies to Amharic below, where justify is even more disruptive
+   since Ge'ez script has no word-break/hyphenation support in
+   browsers. */
 .church-portal section p {
   text-align: left;
 }
 
 /* ============================================================
+   CONSISTENT TEXT SPACING ACROSS LANGUAGES (incl. Amharic)
+   Latin/Italic fonts (Cormorant Garamond, Nunito Sans) don't include
+   Ge'ez glyphs, so Amharic text was silently falling back to the
+   browser default font — a different x-height, line-height and
+   word-spacing than the rest of the site, which is what made
+   Amharic paragraphs look uneven/misaligned next to English ones.
+   Loading Noto Sans Ethiopic and applying it (plus normalized
+   line-height/letter-spacing) whenever the active language is
+   Amharic fixes that without touching any other language's styles.
+============================================================ */
+.church-portal.lang-am,
+.church-portal.lang-am .display,
+:lang(am) {
+  font-family: 'Noto Sans Ethiopic', 'Nunito Sans', sans-serif;
+  letter-spacing: 0;
+  line-height: 1.85;
+}
+/* Headings set in the display serif elsewhere on the site have no
+   Ge'ez glyphs either — fall back to Noto Sans Ethiopic specifically
+   for Amharic headings so title weight/size stays consistent with
+   the rest of the page instead of using the browser's default serif. */
+.church-portal.lang-am h1,
+.church-portal.lang-am h2,
+.church-portal.lang-am h3,
+.church-portal.lang-am h4 {
+  font-family: 'Noto Sans Ethiopic', 'Cormorant Garamond', serif;
+  line-height: 1.35;
+}
+.church-portal.lang-am p {
+  line-height: 1.85;
+}
+
+/* Keep letter-spacing consistent (no accidental inherited tracking)
+   across every language, not just Amharic, so paragraph rhythm reads
+   the same regardless of active locale. */
+.church-portal p,
+.church-portal h1,
+.church-portal h2,
+.church-portal h3,
+.church-portal h4 {
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+/* ============================================================
    INLINE CATEGORY NAV (formerly CategoryNav.css)
-   Scoped, self-contained styles for the category nav bar now
-   rendered directly inside Home.jsx (the old .nav-bar /
-   .nav-marquee-* rules above are no longer used by Home.jsx and
-   are left in place untouched). Own class names on purpose so
-   this can never collide with another page's ".nav-bar".
 ============================================================ */
 
 .cat-nav-bar {
@@ -772,17 +786,13 @@ img, video { max-width: 100%; height: auto; }
   background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(10px);
-  /* No edge mask/fade here on purpose — a fade-to-transparent mask
-     let the page's lighter background show through as a stray
-     white sliver at the edges. The bar's own background gradient
-     now runs solid, edge to edge. */
 }
 
 .cat-nav-track {
   height: 100px;
   display: flex;
   align-items: center;
-  overflow: hidden; /* clipped window — never shows more than one container-width slice */
+  overflow: hidden;
   cursor: grab;
   touch-action: pan-y;
 }
@@ -813,31 +823,24 @@ img, video { max-width: 100%; height: auto; }
 .cat-nav-item:hover { color: var(--gold); }
 .cat-nav-item.active { color: var(--gold); }
 
-/* ---------- Tablet landscape ---------- */
-/* Desktop/PC size (no media query) is unchanged above. On mobile/tablet
-   the nav was too small, so each breakpoint below is bumped up a bit
-   from before, while remaining clearly scaled down from desktop. */
 @media (max-width: 900px) {
   .cat-nav-track { height: 88px; }
   .cat-nav-scroll { gap: 22px; padding: 0 16px; }
   .cat-nav-item { font-size: 1.02rem; }
 }
 
-/* ---------- Tablet portrait / large phone ---------- */
 @media (max-width: 768px) {
   .cat-nav-track { height: 80px; }
   .cat-nav-scroll { gap: 20px; padding: 0 16px; }
   .cat-nav-item { font-size: 0.98rem; padding: 8px 0; }
 }
 
-/* ---------- Standard phone ---------- */
 @media (max-width: 600px) {
   .cat-nav-track { height: 70px; }
   .cat-nav-scroll { gap: 18px; padding: 0 14px; }
   .cat-nav-item { font-size: 0.92rem; }
 }
 
-/* ---------- Small phone ---------- */
 @media (max-width: 480px) {
   .cat-nav-track { height: 62px; }
   .cat-nav-scroll { gap: 14px; }
@@ -849,7 +852,6 @@ img, video { max-width: 100%; height: auto; }
   .cat-nav-item { font-size: 0.85rem; }
 }
 
-/* Bigger tap targets on touch devices */
 @media (hover: none) and (pointer: coarse) {
   .cat-nav-item { padding-top: 10px; padding-bottom: 10px; }
 }

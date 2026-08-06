@@ -12,6 +12,7 @@ import Skill from "./pages/Sermon";
 import Testimonials from "./pages/Travel";
 import Church from "./pages/Church";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import Media from "./pages/Media";
 import Book from "./pages/Book";
 import Detail from "./pages/Detail";
@@ -48,6 +49,7 @@ function App() {
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/cv" element={<Church />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/services/:id" element={<ServiceDetail />} />
         <Route path="/media" element={<Media />} />
         <Route path="/book" element={<Book />} />
         <Route path="/projects/:id" element={<Detail />} />

@@ -7,7 +7,7 @@ import "./Home.css";
 const POSTS_PER_PAGE = 10;
 
 const Home = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [hero, setHero] = useState(null);
@@ -684,7 +684,7 @@ const Home = () => {
     categories.find((c) => c.slug === activeCategory)?.name || activeCategory;
 
   return (
-    <div className="church-portal">
+    <div className={`church-portal lang-${i18n.language}`}>
       <div className="cloud-layer">
         <div className="cloud cloud-a" />
         <div className="cloud cloud-b" />
@@ -1198,19 +1198,23 @@ const Home = () => {
           ) : (
             <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
               {testimonials.map((person, i) => (
-                <div key={person._id || i} className="testimonial-card" style={{ borderTop: '2px solid var(--gold)', paddingTop: '28px', textAlign: 'left' }}>
+                <Link
+                  key={person._id || i}
+                  to={`/testimonials/${person._id}`}
+                  className="testimonial-card"
+                  style={{ paddingTop: '28px', textAlign: 'left', textDecoration: 'none', color: 'inherit' }}
+                >
                   <img
                     src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
                     alt={person.name}
                     className="testimonial-photo"
-                    style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '10px', objectFit: 'cover', border: '3px solid var(--gold)', marginBottom: '18px', display: 'block' }}
                   />
                   <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{person.name}</p>
                   <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{person.role || person.title}</p>
                   <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
                     "{truncateWords(person.message || person.description, 50)}"
                   </p>
-                </div>
+                </Link>
               ))}
             </div>
           )}
@@ -1255,7 +1259,7 @@ const Home = () => {
                   <img
                     src={photos[photoIndex]?.mediaUrl}
                     alt={photos[photoIndex]?.title}
-                    onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
+                    onClick={() => photos[photoIndex]?._id && navigate(`/media/${photos[photoIndex]._id}`)}
                     style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
                   />
                   <button className="photo-arrow right" aria-label={t("home.photos.nextAriaLabel")} onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
@@ -1266,7 +1270,7 @@ const Home = () => {
                 </div>
                 <div
                   style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
-                  onClick={() => photos[photoIndex]?._id && navigate(`/projects/${photos[photoIndex]._id}`)}
+                  onClick={() => photos[photoIndex]?._id && navigate(`/media/${photos[photoIndex]._id}`)}
                 >
                   <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
                     {photos[photoIndex]?.title}

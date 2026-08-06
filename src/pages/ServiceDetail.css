@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --navy: #1c3a52;
+  --navy-deep: #0f2438;
+  --slate: #3d5a6c;
+  --gold: #cf9f3f;
+  --white: #ffffff;
+  --deep-red: #7a1010;
+}
+* { box-sizing: border-box; }
+.service-detail-portal {
+  font-family: 'Nunito Sans', sans-serif;
+  background: #f3f8fa;
+  color: var(--navy);
+  position: relative;
+}
+.display { font-family: 'Cormorant Garamond', serif; }
+a { color: inherit; text-decoration: none; }
+.wrapper { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+/* Drifting cloud layer - same as Services.jsx / home page */
+.cloud-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.cloud {
+  position: absolute; background: rgba(255,255,255,0.75);
+  border-radius: 100px; filter: blur(1px);
+}
+.cloud::before, .cloud::after {
+  content: ''; position: absolute; background: inherit; border-radius: 100px;
+}
+.cloud-a { width: 180px; height: 55px; top: 8%; left: -10%; animation: drift 70s linear infinite; }
+.cloud-a::before { width: 90px; height: 90px; top: -45px; left: 25px; }
+.cloud-a::after { width: 70px; height: 70px; top: -30px; left: 90px; }
+.cloud-b { width: 130px; height: 40px; top: 22%; left: -15%; animation: drift 95s linear infinite; animation-delay: -20s; opacity: 0.6; }
+.cloud-b::before { width: 65px; height: 65px; top: -32px; left: 18px; }
+.cloud-b::after { width: 50px; height: 50px; top: -22px; left: 65px; }
+.cloud-c { width: 220px; height: 60px; top: 4%; left: -20%; animation: drift 120s linear infinite; animation-delay: -50s; opacity: 0.5; }
+.cloud-c::before { width: 100px; height: 100px; top: -50px; left: 30px; }
+.cloud-c::after { width: 80px; height: 80px; top: -35px; left: 110px; }
+@keyframes drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(160vw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cloud { animation: none !important; }
+}
+
+.service-detail-loading { padding: 120px 0; }
+
+.service-detail-hero {
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  padding: 90px 0 60px 0;
+  text-align: center;
+}
+.service-detail-hero .service-cross { margin-bottom: 18px; }
+.service-detail-hero h1 {
+  font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+  font-weight: 700; color: #eaf3f8; margin: 0 0 14px 0;
+}
+.service-detail-hero .time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gold); margin: 0;
+}
+.service-detail-hero .note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem; color: #a9c2d3;
+  margin: 14px 0 0 0; font-style: italic;
+}
+.fallback-notice {
+  font-size: 0.85rem; color: #a9c2d3;
+  margin: 14px 0 0 0;
+}
+.service-detail-error {
+  color: #dc2626; font-size: 1.1rem; margin: 0 0 24px 0;
+}
+
+.back-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 10px 24px;
+  cursor: pointer;
+  margin-bottom: 28px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.back-btn:hover {
+  background: var(--gold);
+  color: var(--navy-deep);
+}
+
+.service-detail-body { padding: 70px 0; }
+.service-detail-img img {
+  width: 100%; aspect-ratio: 16/9; object-fit: cover;
+  border-radius: 10px; box-shadow: 0 16px 30px rgba(15,36,56,0.18);
+  margin-bottom: 40px;
+}
+.service-img-placeholder {
+  width: 100%; aspect-ratio: 16/9;
+  border-radius: 10px; box-shadow: 0 16px 30px rgba(15,36,56,0.18);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+  margin-bottom: 40px;
+}
+.service-detail-copy p.desc {
+  font-size: 1.12rem; line-height: 1.8; color: #33475a; margin: 0;
+}
+
+/* ---------- Loading spinner — same markup/classes as Services.css ---------- */
+.loading-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 0;
+  width: 100%;
+}
+.loading-spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(28, 58, 82, 0.15);
+  border-top-color: var(--gold);
+  animation: spin 0.85s linear infinite;
+}
+.loading-spinner.light {
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--gold);
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.service-detail-cta {
+  background: var(--deep-red);
+  text-align: center;
+  padding: 70px 0;
+}
+.service-detail-cta h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700; color: #fff; margin: 0 0 14px 0;
+}
+.service-detail-cta p { color: rgba(255,255,255,0.85); font-size: 1.1rem; margin: 0; }
+
+/* ============================================================
+   RESPONSIVE ENHANCEMENTS
+============================================================ */
+
+html, body { overflow-x: hidden; }
+.service-detail-portal {
+  overflow-x: hidden;
+  width: 100%;
+}
+.service-detail-portal img { max-width: 100%; height: auto; }
+.service-detail-portal h1,
+.service-detail-portal h3,
+.service-detail-portal p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+@media (min-width: 1920px) {
+  .wrapper { max-width: 1040px; }
+}
+
+@media (max-width: 1024px) {
+  .wrapper { padding: 0 20px; }
+  .service-detail-hero { padding: 74px 0 48px 0; }
+  .service-detail-body { padding: 56px 0; }
+  .service-detail-cta { padding: 56px 0; }
+}
+
+@media (max-width: 768px) {
+  .wrapper { padding: 0 18px; }
+  .service-detail-hero { padding: 56px 0 40px 0; }
+  .service-detail-body { padding: 46px 0; }
+  .service-detail-copy p.desc { font-size: 1.02rem; }
+  .service-detail-cta { padding: 46px 0; }
+  .service-detail-cta p { font-size: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .wrapper { padding: 0 16px; }
+  .service-detail-hero { padding: 44px 0 32px 0; }
+  .service-detail-body { padding: 36px 0; }
+}
+
+@media (max-width: 400px) {
+  .wrapper { padding: 0 14px; }
+  .service-detail-copy p.desc { font-size: 0.95rem; }
+}
+
+@media (max-width: 320px) {
+  .wrapper { padding: 0 12px; }
+  .back-btn { padding: 9px 18px; font-size: 0.75rem; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .back-btn { min-height: 40px; }
+}

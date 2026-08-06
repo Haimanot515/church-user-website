@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import API from "../api/api";
 import "./Services.css";
 
@@ -16,9 +17,13 @@ import "./Services.css";
  *
  * Styles live in Services.css (imported above) rather than an inline
  * <style> block.
+ *
+ * Clicking a service's photo or text navigates to its detail page
+ * (/services/:id), handled by ServiceDetail.jsx.
  */
 const Services = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +103,10 @@ const Services = () => {
     { title: t("services.footer.connect.title"), items: t("services.footer.connect.items", { returnObjects: true }) },
   ];
 
+  const goToDetail = (id) => {
+    if (id) navigate(`/services/${id}`);
+  };
+
   return (
     <div className="services-portal">
       <div className="cloud-layer">
@@ -133,14 +142,30 @@ const Services = () => {
 
           {!loading && !error && services.slice(0, visibleCount).map((s, i) => (
             <div className={`service-row${i % 2 === 1 ? " reverse" : ""}`} key={s._id || i}>
-              <div className="service-img">
+              <div
+                className="service-img"
+                onClick={() => goToDetail(s._id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") goToDetail(s._id);
+                }}
+              >
                 {s.resolvedImageUrl ? (
                   <img src={s.resolvedImageUrl} alt={s.title} />
                 ) : (
                   <div className="service-img-placeholder" aria-hidden="true" />
                 )}
               </div>
-              <div className="service-copy">
+              <div
+                className="service-copy"
+                onClick={() => goToDetail(s._id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") goToDetail(s._id);
+                }}
+              >
                 <svg className="service-cross" width="22" height="32" viewBox="0 0 22 32" xmlns="http://www.w3.org/2000/svg">
                   <rect x="9" y="0" width="4" height="32" fill="var(--gold)" />
                   <rect x="1" y="12" width="20" height="4" fill="var(--gold)" />
