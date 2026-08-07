@@ -59,8 +59,11 @@ const Sermon = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(false);
-  // Whether the video hero is shown in its "widened" (taller) layout or
-  // the default "narrow" layout. Toggled from the expand/collapse icon.
+  // Whether the video hero is shown in its "widened" fullscreen layout or
+  // the default "narrow" layout. Toggled from the expand/collapse icon,
+  // and kept in sync with the browser's real Fullscreen API state (see
+  // the fullscreenchange listener below) so it stays correct even if the
+  // user exits via Escape or the browser's own UI.
   const [expanded, setExpanded] = useState(false);
 
   // --- "The churches I serve": GET /churches (Church table) ---
@@ -228,11 +231,46 @@ const Sermon = () => {
     setShowControls((v) => !v);
   };
 
-  // Widen/narrow the video hero. Purely a layout toggle — doesn't touch
-  // playback state.
+  // Widen/narrow the video hero. Uses the real browser Fullscreen API so
+  // it covers the ENTIRE screen — including the browser's own tabs and
+  // address bar — the same way YouTube's fullscreen button does. CSS
+  // alone (100vw/100vh/position:fixed) can only ever fill the browser's
+  // content area, never actual browser chrome, so this has to happen
+  // here in JS via requestFullscreen()/exitFullscreen().
   const toggleExpand = () => {
-    setExpanded((v) => !v);
+    const el = videoHeroRef.current;
+    if (!el) return;
+
+    if (!document.fullscreenElement) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen(); // Safari
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen(); // Safari
+      }
+    }
   };
+
+  // Keep `expanded` state in sync with the actual fullscreen state, so
+  // the expand/collapse icon (and the .expanded CSS class) stay correct
+  // even if the user exits fullscreen via the Escape key or the
+  // browser's own UI instead of our button.
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setExpanded(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+    };
+  }, []);
 
   const selectSermonFromGrid = (index) => {
     setSermonIndex(index);

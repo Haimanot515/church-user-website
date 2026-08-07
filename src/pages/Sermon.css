@@ -37,10 +37,21 @@
   background: var(--navy-deep);
   transition: height 0.35s ease;
 }
-/* "Widen" state toggled by the expand-btn — makes the video area taller
-   so it reads as a bigger, more immersive player. */
-.video-hero.expanded {
-  height: 94vh;
+/* "Widen" state now uses the real browser Fullscreen API (triggered in
+   Sermon.jsx via requestFullscreen()), which covers the ENTIRE screen —
+   including the browser's tabs/address bar — the same way YouTube's
+   fullscreen button does. The browser applies :fullscreen to the element
+   automatically once that API is active, so we style off that instead of
+   faking it with position:fixed/100vw/100vh (which can only ever fill the
+   browser's content area, never real screen chrome). */
+.video-hero:fullscreen,
+.video-hero:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+}
+.video-hero:fullscreen .yt-bg-wrap video,
+.video-hero:-webkit-full-screen .yt-bg-wrap video {
+  height: 100%;
 }
 .yt-bg-wrap {
   position: absolute; inset: 0;
@@ -361,7 +372,8 @@
 
 /* ============================================================
    RESPONSIVE ENHANCEMENTS
-   Everything above this line is untouched from the original file.
+   Everything above this line is untouched from the original file,
+   aside from the fullscreen .video-hero.expanded rule above.
    Desktop appearance (min-width: 1025px) is unaffected by anything
    below — these rules only kick in at smaller viewport widths, or
    add safe, non-visual overflow protections.
@@ -394,7 +406,6 @@ html, body { overflow-x: hidden; }
   .wrapper { padding: 0 20px; }
 
   .video-hero { height: 58vh; min-height: 380px; }
-  .video-hero.expanded { height: 80vh; }
 
   .hero-text-section { padding: 48px 20px 56px 20px; }
   .sermons-section { padding: 60px 0 72px 0; }
@@ -406,7 +417,6 @@ html, body { overflow-x: hidden; }
   .wrapper { padding: 0 18px; }
 
   .video-hero { height: 50vh; min-height: 320px; }
-  .video-hero.expanded { height: 70vh; }
 
   .nav-arrow { width: 42px; height: 42px; }
   .nav-arrow.prev { left: 14px; }
@@ -443,7 +453,6 @@ html, body { overflow-x: hidden; }
   .wrapper { padding: 0 16px; }
 
   .video-hero { height: 42vh; min-height: 280px; }
-  .video-hero.expanded { height: 58vh; }
 
   .nav-arrow { width: 38px; height: 38px; }
   .nav-arrow svg { width: 15px; height: 15px; }
@@ -498,7 +507,6 @@ html, body { overflow-x: hidden; }
 /* ===== Short-height mobile devices in landscape orientation ===== */
 @media (max-height: 480px) and (orientation: landscape) {
   .video-hero { height: 100vh; min-height: 260px; }
-  .video-hero.expanded { height: 100vh; }
   .hero-text-section { padding: 32px 20px 40px 20px; }
   .sermons-section { padding: 40px 0 48px 0; }
   .campuses-section { padding: 48px 0; }
