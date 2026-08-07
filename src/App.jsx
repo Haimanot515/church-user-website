@@ -24,6 +24,7 @@ import MediaDetail from "./pages/MediaDetail";
 import ChurchDetail from "./pages/ChurchDetail";
 import PersonDetail from "./pages/PersonDetail";
 
+import useDocumentMeta from "./hooks/useDocumentMeta";
 
 import "./styles.css";
 
@@ -31,6 +32,11 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(
     !!localStorage.getItem("token")
   );
+
+  // Keeps <title> and the head <meta> tags (description, og:*, twitter:*)
+  // in sync with the active i18next language — re-runs on every language
+  // switch, same as the fetch effects in Home.jsx.
+  useDocumentMeta();
 
   return (
     <>

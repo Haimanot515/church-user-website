@@ -18,6 +18,7 @@ import enBook from "../locales/en/book.json";
 import enForm from "../locales/en/form.json";
 import enLogin from "../locales/en/login.json";
 import enVerify from "../locales/en/verify.json";
+import enMeta from "../locales/en/meta.json";
 
 // Amharic
 import amNavbar from "../locales/am/navbar.json";
@@ -35,6 +36,7 @@ import amBook from "../locales/am/book.json";
 import amForm from "../locales/am/form.json";
 import amLogin from "../locales/am/login.json";
 import amVerify from "../locales/am/verify.json";
+import amMeta from "../locales/am/meta.json";
 
 // Italian
 import itNavbar from "../locales/it/navbar.json";
@@ -52,6 +54,7 @@ import itBook from "../locales/it/book.json";
 import itForm from "../locales/it/form.json";
 import itLogin from "../locales/it/login.json";
 import itVerify from "../locales/it/verify.json";
+import itMeta from "../locales/it/meta.json";
 
 i18n
   .use(LanguageDetector)
@@ -75,6 +78,7 @@ i18n
           form: enForm,
           login: enLogin,
           verify: enVerify,
+          meta: enMeta,
         },
       },
 
@@ -95,6 +99,7 @@ i18n
           form: amForm,
           login: amLogin,
           verify: amVerify,
+          meta: amMeta,
         },
       },
 
@@ -115,6 +120,7 @@ i18n
           form: itForm,
           login: itLogin,
           verify: itVerify,
+          meta: itMeta,
         },
       },
     },

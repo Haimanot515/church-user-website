@@ -1,0 +1,21 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="16" fill="#4d0000" />
+
+  <circle cx="50" cy="50" r="30" fill="none" stroke="#fff" stroke-width="4" />
+
+  <line x1="50" y1="20" x2="50" y2="27.94" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="65.98" y1="24.02" x2="61.98" y2="30.96" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="78.6" y1="34.02" x2="72.75" y2="39.06" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="86.6" y1="50" x2="78.66" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="78.6" y1="65.98" x2="72.75" y2="60.94" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="65.98" y1="75.98" x2="61.98" y2="69.04" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="50" y1="80" x2="50" y2="72.06" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="34.02" y1="75.98" x2="38.02" y2="69.04" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="21.4" y1="65.98" x2="27.25" y2="60.94" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="13.4" y1="50" x2="21.34" y2="50" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="21.4" y1="34.02" x2="27.25" y2="39.06" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+  <line x1="34.02" y1="24.02" x2="38.02" y2="30.96" stroke="#fff" stroke-width="3" stroke-linecap="round" />
+
+  <line x1="50" y1="30" x2="50" y2="70" stroke="#fff" stroke-width="4" />
+  <line x1="38" y1="42" x2="62" y2="42" stroke="#fff" stroke-width="4" />
+</svg>
