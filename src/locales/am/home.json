@@ -19,8 +19,8 @@
     "errorDefault": "ምድቦችን መጫን አልተሳካም"
   },
   "sermons": {
-    "heading": "የአሁኑ የስብከት ተከታታይ",
-    "loading": "የስብከት ተከታታይ በመጫን ላይ...",
+    "heading": "የአሁን ተከታታይ ",
+    "loading": "የአሁንተከታታይ በመጫን ላይ...",
     "noneAll": "ምንም ስብከቶች አልተገኙም።",
     "noneCategory": "በ\"{{category}}\" ውስጥ ምንም ልጥፎች አልተገኙም።",
     "loadingMore": "በመጫን ላይ...",

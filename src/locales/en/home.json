@@ -19,9 +19,9 @@
     "errorDefault": "Failed to load categories"
   },
   "sermons": {
-    "heading": "Current Sermon Series",
-    "loading": "Loading sermon series...",
-    "noneAll": "No sermons found.",
+    "heading": "Current Series",
+    "loading": "Loading series...",
+    "noneAll": "No latest found.",
     "noneCategory": "No Posts found in \"{{category}}\".",
     "loadingMore": "Loading...",
     "loadMoreButton": "Load More Posts",
@@ -48,7 +48,7 @@
   },
   "invite": {
     "line1": "Come as you are",
-    "line2": "There's a place for you here."
+    "line2": "There's a place for you here"
   },
   "priest": {
     "eyebrow": "From the Priest",

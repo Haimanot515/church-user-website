@@ -10,7 +10,7 @@
     "errorDefault": "Something went wrong. Please try again."
   },
   "brand": {
-    "name": "Harbor Light Church",
+    "name": "Debre Selam Abune Gebre Menfes Kidus Church",
     "tagline": "Sunday services at 9:00 & 11:00 AM. All are welcome, always."
   },
   "columns": {
@@ -41,7 +41,7 @@
     }
   },
   "bottom": {
-    "copyright": "© 2026 Harbor Light Church",
+    "copyright": "© 2026 Debre Selam Abune Gebre Menfes Kidus Church",
     "privacyPolicy": "Privacy Policy"
   }
 }

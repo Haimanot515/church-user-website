@@ -15,11 +15,7 @@ const ChurchAboutPage = () => {
 
   // === About/Hero content fetched from /about ===
   const [about, setAbout] = useState(null);
-  // NEW: true when the about/hero content currently shown came from the
-  // English fallback because the active language had none
   const [aboutFallback, setAboutFallback] = useState(false);
-  // NEW: true while the hero content is being fetched — shows the
-  // circular spinner instead of any content until data arrives
   const [aboutLoading, setAboutLoading] = useState(true);
 
   useEffect(() => {
@@ -59,13 +55,9 @@ const ChurchAboutPage = () => {
   const [leaders, setLeaders] = useState([]);
   const [thanksList, setThanksList] = useState([]);
   const [testimonialsList, setTestimonialsList] = useState([]);
-  // NEW: true when the respective list currently shown came from the
-  // English fallback because the active language had none
   const [leadersFallback, setLeadersFallback] = useState(false);
   const [thanksFallback, setThanksFallback] = useState(false);
   const [testimonialsFallback, setTestimonialsFallback] = useState(false);
-  // NEW: true while each list is being fetched — shows the circular
-  // spinner instead of any content until data arrives
   const [leadersLoading, setLeadersLoading] = useState(true);
   const [thanksLoading, setThanksLoading] = useState(true);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
@@ -107,8 +99,6 @@ const ChurchAboutPage = () => {
   const [historyPage, setHistoryPage] = useState(1);
   const [historyHasMore, setHistoryHasMore] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
-  // NEW: true when the story chapters currently shown came from the
-  // English fallback because the active language had none
   const [historyFallback, setHistoryFallback] = useState(false);
 
   const fetchHistory = async (page) => {
@@ -119,12 +109,9 @@ const ChurchAboutPage = () => {
       const params = { page, limit: HISTORY_PAGE_SIZE };
       let res = await API.get("/church-story", { params });
 
-      // Handle either a raw array response or a { stories, total, pages } shape
       let data = Array.isArray(res.data) ? res.data : res.data.stories || [];
       let totalPages = res.data.pages ?? (Array.isArray(res.data) ? 1 : undefined);
 
-      // Only attempt the fallback on a fresh load (page 1) — a "Load More"
-      // click on page > 1 should never silently switch language.
       if (page === 1 && data.length === 0) {
         res = await API.get("/church-story", {
           params,
@@ -140,7 +127,6 @@ const ChurchAboutPage = () => {
       if (typeof totalPages === "number") {
         setHistoryHasMore(page < totalPages);
       } else {
-        // Fallback: if we got a full page, assume there might be more
         setHistoryHasMore(data.length === HISTORY_PAGE_SIZE);
       }
     } catch (err) {
@@ -173,8 +159,6 @@ const ChurchAboutPage = () => {
     })(),
   };
 
-  // === Advanced About-page sections (translated) ===
-
   const missionVision = [
     { label: t("about.missionVision.missionLabel"), value: t("about.missionVision.missionValue") },
     { label: t("about.missionVision.visionLabel"), value: t("about.missionVision.visionValue") },
@@ -186,20 +170,18 @@ const ChurchAboutPage = () => {
   const faqsRaw = t("about.faq.items", { returnObjects: true });
   const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
 
-  // NEW: circular loading spinner, matching the one used on the Home page
   const Spinner = ({ light }) => (
     <div className="loading-spinner-wrap">
       <div className={`loading-spinner${light ? " light" : ""}`} />
     </div>
   );
 
-  // Truncates description text to a set word limit, adding "..." if cut off
-const truncateWords = (text, limit = 20) => {
-  if (!text) return "";
-  const words = text.trim().split(/\s+/);
-  if (words.length <= limit) return text;
-  return words.slice(0, limit).join(" ") + "...";
-};
+  const truncateWords = (text, limit = 20) => {
+    if (!text) return "";
+    const words = text.trim().split(/\s+/);
+    if (words.length <= limit) return text;
+    return words.slice(0, limit).join(" ") + "...";
+  };
 
   return (
     <div className="church-portal">
@@ -309,7 +291,6 @@ const truncateWords = (text, limit = 20) => {
 
         .pull-quote { border-left: 4px solid var(--gold); padding-left: 30px; margin: 0; }
 
-        /* EDUCATION */
         .edu-row {
           display: grid;
           grid-template-columns: 160px 1fr;
@@ -326,7 +307,6 @@ const truncateWords = (text, limit = 20) => {
         }
         @media (max-width: 600px) { .edu-row { grid-template-columns: 1fr; gap: 6px; } }
 
-        /* JOURNEY PATH */
         .journey-path { position: relative; }
         .journey-line {
           position: absolute; left: 21px; top: 12px; bottom: 12px; width: 2px;
@@ -343,7 +323,6 @@ const truncateWords = (text, limit = 20) => {
           border: 2px solid var(--gold);
         }
 
-        /* SPECIAL THANKS */
         .thanks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         @media (max-width: 650px) { .thanks-grid { grid-template-columns: 1fr; } }
         .thanks-card {
@@ -358,7 +337,6 @@ const truncateWords = (text, limit = 20) => {
           flex-shrink: 0; border: 3px solid var(--gold); display: block;
         }
 
-        /* DREAM CARDS */
         .dream-card {
           padding: 32px;
           border-radius: 12px;
@@ -368,7 +346,6 @@ const truncateWords = (text, limit = 20) => {
         .dream-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
         @media (max-width: 650px) { .dream-grid { grid-template-columns: 1fr; } }
 
-        /* FAMILY PHOTO CARD */
         .photo-card {
           overflow: hidden;
           background: #ffffff;
@@ -381,7 +358,6 @@ const truncateWords = (text, limit = 20) => {
         .photo-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
         .photo-card-body { padding: 18px 20px 22px 20px; }
 
-        /* LOCATION */
         .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; align-items: center; }
         @media (max-width: 800px) { .location-grid { grid-template-columns: 1fr; } }
         .map-frame {
@@ -395,7 +371,6 @@ const truncateWords = (text, limit = 20) => {
         }
         .service-time-row:last-child { border-bottom: none; }
 
-        /* UNIFIED BODY TEXT (matches "Why We Write" pull-quote treatment) */
         .body-copy {
           font-family: 'Cormorant Garamond', serif;
           font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -407,7 +382,6 @@ const truncateWords = (text, limit = 20) => {
         .body-copy.on-dark { color: #ffffff; }
         .body-copy.on-red { color: rgba(255,255,255,0.9); }
 
-        /* BADGE */
         .badge {
           display: inline-block;
           font-family: 'IBM Plex Mono', monospace;
@@ -419,7 +393,6 @@ const truncateWords = (text, limit = 20) => {
           margin-bottom: 20px;
         }
 
-        /* ACCORDION (Statement of Faith / FAQ) */
         .accordion-item { border-bottom: 1px solid rgba(28,58,82,0.14); }
         .accordion-item:first-child { border-top: 1px solid rgba(28,58,82,0.14); }
         .accordion-head {
@@ -431,7 +404,6 @@ const truncateWords = (text, limit = 20) => {
         .accordion-icon { font-family: 'IBM Plex Mono', monospace; color: var(--gold); font-size: 1.2rem; flex-shrink: 0; margin-left: 20px; }
         .accordion-body { padding: 0 4px 24px 4px; max-width: 640px; }
 
-        /* SIMPLE LIST CARDS (Small Groups / Volunteer / Sermons) */
         .list-card {
           display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
           padding: 20px 24px; border-radius: 10px;
@@ -442,7 +414,6 @@ const truncateWords = (text, limit = 20) => {
         .list-card-title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.3rem; color: #ffffff; }
         .list-card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--gold); }
 
-        /* TESTIMONIALS */
         .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
         @media (max-width: 800px) { .testimonial-grid { grid-template-columns: 1fr; } }
         .testimonial-card { padding: 30px; border-radius: 12px; }
@@ -461,15 +432,12 @@ const truncateWords = (text, limit = 20) => {
           color: var(--deep-red); margin: 2px 0 0 0;
         }
 
-        /* LANGUAGE TOGGLE */
         .lang-toggle { display: inline-flex; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.3); overflow: hidden; margin-bottom: 24px; }
         .lang-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; padding: 8px 16px; background: transparent; border: none; color: #eaf3f8; cursor: pointer; }
         .lang-btn.active { background: var(--gold); color: var(--navy-deep); font-weight: 700; }
 
-        /* CTA BAND */
         .cta-band { text-align: center; }
 
-        /* ABOUT-STYLE PHOTO + TEXT LAYOUT (for Our Story) */
         .about-section {
           width: 100%;
           background: #ffffff;
@@ -599,19 +567,11 @@ const truncateWords = (text, limit = 20) => {
           .about-title { font-size: 1.8rem; }
         }
 
-        /* ============================================================
-           RESPONSIVE ADDITIONS
-           Nothing above this line was modified.
-           Desktop (≥1025px) renders identically to before — every rule
-           below only takes effect at ≤1024px and narrower breakpoints.
-           ============================================================ */
-
         html, body { overflow-x: hidden; width: 100%; }
         .church-portal { overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; }
         *, *::before, *::after { min-width: 0; }
 
-        /* ---------- ≤1024px ---------- */
         @media (max-width: 1024px) {
           .wrapper { padding: 0 20px; }
           .about-container { padding: 0 20px; }
@@ -619,7 +579,6 @@ const truncateWords = (text, limit = 20) => {
           .about-section { padding: 70px 0; }
         }
 
-        /* ---------- ≤900px (tablet portrait) ---------- */
         @media (max-width: 900px) {
           section { padding: 60px 0; }
           .about-section { padding: 60px 0; }
@@ -629,7 +588,6 @@ const truncateWords = (text, limit = 20) => {
           .about-hero-flex { gap: 36px !important; }
         }
 
-        /* ---------- ≤768px ---------- */
         @media (max-width: 768px) {
           .wrapper { padding: 0 18px; }
           .about-container { padding: 0 18px; }
@@ -644,7 +602,6 @@ const truncateWords = (text, limit = 20) => {
           .testimonial-card { padding: 22px; }
         }
 
-        /* ---------- ≤600px (large phone) ---------- */
         @media (max-width: 600px) {
           section { padding: 40px 0; }
           .about-section { padding: 40px 0; }
@@ -666,7 +623,6 @@ const truncateWords = (text, limit = 20) => {
           .lang-btn { padding: 7px 13px; font-size: 0.72rem; }
         }
 
-        /* ---------- ≤480px (standard phone) ---------- */
         @media (max-width: 480px) {
           section { padding: 32px 0; }
           .about-section { padding: 32px 0; }
@@ -686,7 +642,6 @@ const truncateWords = (text, limit = 20) => {
           .service-time-row { font-size: 0.92rem; }
         }
 
-        /* ---------- ≤360px (small phone) ---------- */
         @media (max-width: 360px) {
           .wrapper { padding: 0 12px; }
           .about-container { padding: 0 12px; }
@@ -699,15 +654,6 @@ const truncateWords = (text, limit = 20) => {
           .about-image { height: 300px; }
         }
 
-        /* ============================================================
-           NEW ADDITIONS ONLY — nothing above this line was changed
-           except the testimonial-photo/thanks-photo size rules further
-           up (explicitly requested to match the Home page sizing).
-           ============================================================ */
-
-        /* Circular loading spinner — identical to the one used on the
-           Home page, shown instead of any content until the backend
-           data for a section has arrived. */
         .loading-spinner-wrap {
           display: flex;
           align-items: center;
@@ -731,8 +677,6 @@ const truncateWords = (text, limit = 20) => {
           to { transform: rotate(360deg); }
         }
 
-        /* "Read Our Story" / "Say Hello" buttons — keep them side by
-           side on mobile instead of stacking, same as the Home page. */
         @media (max-width: 600px) {
           .hero-cta-row { flex-wrap: nowrap !important; gap: 10px !important; align-items: stretch; }
           .hero-cta-btn {
@@ -745,8 +689,6 @@ const truncateWords = (text, limit = 20) => {
           }
         }
 
-        /* Role/leader tag ("Our Story" section) — centered below the
-           photo once the layout stacks vertically on tablet/mobile. */
         @media (max-width: 900px) {
           .about-label { display: block; text-align: center; }
         }
@@ -803,7 +745,6 @@ const truncateWords = (text, limit = 20) => {
                 {t("about.hero.sayHelloButton")}
               </button>
             </div>
-            {/* note shown when the about/hero content fell back to English */}
             {aboutFallback && (
               <p style={{ fontSize: '0.85rem', color: '#a9c2d3', margin: '18px 0 0 0' }}>
                 {t("about.hero.fallbackNotice")}
@@ -863,7 +804,6 @@ const truncateWords = (text, limit = 20) => {
             {t("about.story.heading")}
           </h2>
 
-          {/* note shown when the story chapters fell back to English */}
           {historyFallback && (
             <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#888', marginTop: '-30px', marginBottom: '40px' }}>
               {t("about.story.fallbackNotice")}
@@ -873,7 +813,6 @@ const truncateWords = (text, limit = 20) => {
           {history.map((item) => (
             <div key={item._id} className="about-item">
 
-              {/* PHOTO SIDE — clicking the photo goes to the detail page */}
               <div className="about-photo-side">
                 {item.photo && (
                   <Link to={`/about/story/${item._id}`} className="about-img-wrapper">
@@ -887,7 +826,6 @@ const truncateWords = (text, limit = 20) => {
                 <div className="about-art-accent"></div>
               </div>
 
-              {/* TEXT SIDE */}
               <div className="about-text-side">
                 <span className="about-label">
                   {item.leaderRole} · Led {item.range}
@@ -905,7 +843,6 @@ const truncateWords = (text, limit = 20) => {
                   <div className="about-tag">{item.servedBy}</div>
                 </div>
 
-                {/* Read Full Story button — goes to the detail page */}
                 <Link to={`/about/story/${item._id}`} className="read-full-story-btn">
                   {t("about.story.readFullStoryButton")}
                 </Link>
@@ -973,7 +910,6 @@ const truncateWords = (text, limit = 20) => {
               {t("about.leadership.heading")}
             </h2>
 
-            {/* note shown when leadership content fell back to English */}
             {leadersFallback && !leadersLoading && (
               <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#f2d9d9', marginTop: '-24px', marginBottom: '30px' }}>
                 {t("about.leadership.fallbackNotice")}
@@ -985,26 +921,26 @@ const truncateWords = (text, limit = 20) => {
             ) : (
             <div className="thanks-grid">
               {leaders.map((p) => (
-  <Link
-    to={`/church-persons/${p._id}`}
-    className="thanks-card"
-    key={p._id}
-    style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
-  >
-    <img
-      className="thanks-photo"
-      src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
-      alt={p.name}
-    />
-    <div>
-      <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
-      <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
-      <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>
-        {truncateWords(p.description, 20)}
-      </p>
-    </div>
-  </Link>
-))}
+                <Link
+                  to={`/church-persons/${p._id}`}
+                  className="thanks-card"
+                  key={p._id}
+                  style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
+                >
+                  <img
+                    className="thanks-photo"
+                    src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
+                    alt={p.name}
+                  />
+                  <div>
+                    <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
+                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
+                    <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>
+                      {truncateWords(p.description, 20)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
             </div>
             )}
           </div>
@@ -1018,7 +954,6 @@ const truncateWords = (text, limit = 20) => {
             {t("about.testimonials.heading")}
           </h2>
 
-          {/* note shown when testimonials fell back to English */}
           {testimonialsFallback && !testimonialsLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
               {t("about.testimonials.fallbackNotice")}
@@ -1030,24 +965,24 @@ const truncateWords = (text, limit = 20) => {
           ) : (
           <div className="testimonial-grid">
             {testimonialsList.map((person) => (
-  <Link
-    to={`/church-persons/${person._id}`}
-    className="card testimonial-card"
-    key={person._id}
-    style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
-  >
-    <img
-      className="testimonial-photo"
-      src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
-      alt={person.name}
-    />
-    <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
-      "{truncateWords(person.message, 20)}"
-    </p>
-    <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
-    <p className="testimonial-title">{person.title}</p>
-  </Link>
-))}
+              <Link
+                to={`/church-persons/${person._id}`}
+                className="card testimonial-card"
+                key={person._id}
+                style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
+              >
+                <img
+                  className="testimonial-photo"
+                  src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
+                  alt={person.name}
+                />
+                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
+                  "{truncateWords(person.message, 20)}"
+                </p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
+                <p className="testimonial-title">{person.title}</p>
+              </Link>
+            ))}
           </div>
           )}
         </div>
@@ -1084,7 +1019,6 @@ const truncateWords = (text, limit = 20) => {
             {t("about.specialThanks.heading")}
           </h2>
 
-          {/* note shown when special thanks content fell back to English */}
           {thanksFallback && !thanksLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
               {t("about.specialThanks.fallbackNotice")}
@@ -1096,24 +1030,24 @@ const truncateWords = (text, limit = 20) => {
           ) : (
           <div className="testimonial-grid">
             {thanksList.map((p) => (
-  <Link
-    to={`/church-persons/${p._id}`}
-    className="card testimonial-card"
-    key={p._id}
-    style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
-  >
-    <img
-      className="testimonial-photo"
-      src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
-      alt={p.name}
-    />
-    <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
-      {truncateWords(p.description, 20)}
-    </p>
-    <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
-    <p className="testimonial-title">{p.role || p.title}</p>
-  </Link>
-))}
+              <Link
+                to={`/church-persons/${p._id}`}
+                className="card testimonial-card"
+                key={p._id}
+                style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
+              >
+                <img
+                  className="testimonial-photo"
+                  src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
+                  alt={p.name}
+                />
+                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
+                  {truncateWords(p.description, 20)}
+                </p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
+                <p className="testimonial-title">{p.role || p.title}</p>
+              </Link>
+            ))}
           </div>
           )}
         </div>

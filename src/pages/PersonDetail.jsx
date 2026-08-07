@@ -13,12 +13,17 @@ const PersonDetail = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
+  // FIX: leaders, special-thanks, and testimonials on ChurchAboutPage.jsx
+  // all now link to /church-persons/:id — but this was only ever fetching
+  // the "testimony" category, so any leader or specialThanks id came back
+  // as "not found" (404). Fetching every category (no params) and finding
+  // by id resolves all three link sources correctly.
   useEffect(() => {
     const fetchEntry = async () => {
       try {
         setLoading(true);
         setError("");
-        const res = await API.get("/church-persons", { params: { category: "testimony" } });
+        const res = await API.get("/church-persons");
         const list = Array.isArray(res.data) ? res.data : [res.data];
         const match = (list || []).find((p) => p._id === id);
         setEntry(match || null);
@@ -67,20 +72,39 @@ const PersonDetail = () => {
     (entry.photos && entry.photos[0]) ||
     `https://ui-avatars.com/api/?name=${entry.name}&background=0070f3&color=fff`;
 
+  // Category-aware label + body text, since a leader, a special-thanks
+  // entry, and a testimony all land on this same page but shape their
+  // content a little differently (leaders/thanks use description,
+  // testimonies use a quoted message).
+  const labelByCategory = {
+    leader: "Leadership Team",
+    specialThanks: "Special Thanks",
+    testimony: "Testimony",
+  };
+  const label = labelByCategory[entry.category] || "Church Family";
+  const bodyText = entry.message || entry.description;
+  const isQuote = entry.category === "testimony";
+
   return (
     <div className="church-portal">
       <BackButton />
 
       <section className="person-detail-section">
         <div className="wrapper" style={{ maxWidth: "760px" }}>
-          <span className="person-detail-label">Testimony</span>
+          <span className="person-detail-label">{label}</span>
 
           <img src={photo} alt={entry.name} className="person-detail-photo" />
 
-          <p className="person-detail-quote">"{entry.message}"</p>
+          {bodyText && (
+            <p className="person-detail-quote">
+              {isQuote ? `"${bodyText}"` : bodyText}
+            </p>
+          )}
 
           <h1 className="person-detail-name">{entry.name}</h1>
-          {entry.title && <p className="person-detail-title-tag">{entry.title}</p>}
+          {(entry.role || entry.title) && (
+            <p className="person-detail-title-tag">{entry.role || entry.title}</p>
+          )}
         </div>
       </section>
     </div>

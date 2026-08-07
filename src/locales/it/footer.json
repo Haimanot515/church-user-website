@@ -10,7 +10,7 @@
     "errorDefault": "Qualcosa è andato storto. Riprova."
   },
   "brand": {
-    "name": "Harbor Light Church",
+    "name": "Chiesa di Debre Selam Abune Gebre Menfes Kidus",
     "tagline": "Funzioni domenicali alle 9:00 e alle 11:00. Tutti sono sempre benvenuti."
   },
   "columns": {
@@ -41,7 +41,7 @@
     }
   },
   "bottom": {
-    "copyright": "© 2026 Harbor Light Church",
+    "copyright": "© 2026 Chiesa di Debre Selam Abune Gebre Menfes Kidus",
     "privacyPolicy": "Informativa sulla privacy"
   }
 }
