@@ -241,9 +241,6 @@ const Contact = () => {
   const reachMethodsRaw = t("contact.reachMethods.items", { returnObjects: true });
   const reachMethods = Array.isArray(reachMethodsRaw) ? reachMethodsRaw : [];
 
-  const faqsRaw = t("contact.faq.items", { returnObjects: true });
-  const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
-
   const serviceTimesRaw = t("contact.location.serviceTimes", { returnObjects: true });
   const serviceTimes = Array.isArray(serviceTimesRaw) ? serviceTimesRaw : [];
 
@@ -253,10 +250,47 @@ const Contact = () => {
     serviceTimes,
   };
 
-  // NEW: if we arrive here via a #contact-form hash (e.g. from the
-  // footer's floating "Contact" button), scroll so the whole form
-  // section is visible — centered in the viewport, so it isn't clipped
-  // by a fixed navbar at the top or run off the bottom of the screen.
+  // === FAQ fetched from /faq?category=Contact ===
+  const [faqs, setFaqs] = useState([]);
+  const [faqLoading, setFaqLoading] = useState(true);
+  const [faqFallback, setFaqFallback] = useState(false);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        setFaqLoading(true);
+        setFaqFallback(false);
+
+        let res = await API.get("/faq", { params: { category: "Contact" } });
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/faq", {
+            params: { category: "Contact" },
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setFaqFallback(true);
+        }
+
+        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        setFaqs(
+          sorted.map((item) => ({
+            q: item.question,
+            a: item.answer,
+          }))
+        );
+      } catch (err) {
+        console.error("Error fetching FAQs:", err);
+        setFaqs([]);
+      } finally {
+        setFaqLoading(false);
+      }
+    };
+    fetchFaqs();
+  }, [t]);
+
   useEffect(() => {
     if (location.hash === "#contact-form") {
       const scrollToForm = () => {
@@ -265,8 +299,6 @@ const Contact = () => {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       };
-      // Two passes: once on the next frame (fast path), and once after a
-      // short delay in case fonts/images are still shifting layout.
       requestAnimationFrame(scrollToForm);
       const timer = setTimeout(scrollToForm, 300);
       return () => clearTimeout(timer);
@@ -294,11 +326,9 @@ const Contact = () => {
     }
   };
 
-  // === Quick Facts looping strip ===
   const factsLoop = useLoopStrip({ itemCount: quickFacts.length });
   const factsLoopItems = factsLoop.canLoop ? [...quickFacts, ...quickFacts] : quickFacts;
 
-  // === Social Icons looping strip ===
   const socialLoop = useLoopStrip({
     itemCount: socialLinks.length,
     onItemClick: (i) => {
@@ -316,7 +346,6 @@ const Contact = () => {
         <div className="cloud cloud-c" />
       </div>
 
-      {/* HERO */}
       <section style={{ padding: "100px 0 80px 0", background: "linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <h1 className="display" style={{ fontSize: "clamp(3rem, 7vw, 5rem)", fontWeight: 700, lineHeight: 1.12, margin: "0 0 26px 0", color: "#eaf3f8" }}>
@@ -328,7 +357,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* QUICK FACTS BAND — infinite drift/drag strip */}
       <div style={{ background: "linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)", position: "relative", overflow: "hidden" }}>
         <section style={{ padding: "64px 0" }}>
           <div className="wrapper">
@@ -353,7 +381,6 @@ const Contact = () => {
         </section>
       </div>
 
-      {/* WAYS TO REACH ME */}
       <section style={{ background: "#ffffff" }}>
         <div className="wrapper" style={{ maxWidth: "1000px" }}>
           <h2 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", fontWeight: 700, margin: "0 0 34px 0", color: "var(--navy-deep)" }}>
@@ -376,7 +403,6 @@ const Contact = () => {
             ))}
           </div>
 
-          {/* SOCIAL ICONS — infinite drift/drag strip */}
           <div className="social-row">
             <div
               className="loop-strip-viewport social-viewport"
@@ -404,8 +430,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* CONTACT FORM — id added so it can be deep-linked to directly
-          (e.g. /contact#contact-form from the footer's floating button) */}
       <section id="contact-form" style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden", scrollMarginTop: "24px" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <h2 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", fontWeight: 700, margin: "0 0 34px 0", color: "#ffffff" }}>
@@ -453,27 +477,38 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* FAQ */}
       <section style={{ background: "#ffffff" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <h2 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", fontWeight: 700, margin: "0 0 20px 0", color: "var(--navy-deep)" }}>
             {t("contact.faq.heading")}
           </h2>
-          <div>
-            {faqs.map((f, i) => (
-              <div className="faq-item" key={i}>
-                <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
-                  <span>{f.q}</span>
-                  <span className="faq-toggle">{openFaq === i ? "–" : "+"}</span>
-                </button>
-                {openFaq === i && <p className="faq-answer">{f.a}</p>}
-              </div>
-            ))}
-          </div>
+
+          {faqFallback && !faqLoading && (
+            <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "20px" }}>
+              {t("contact.faq.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+
+          {faqLoading ? (
+            <div className="loading-spinner-wrap">
+              <div className="loading-spinner" />
+            </div>
+          ) : (
+            <div>
+              {faqs.map((f, i) => (
+                <div className="faq-item" key={i}>
+                  <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
+                    <span>{f.q}</span>
+                    <span className="faq-toggle">{openFaq === i ? "–" : "+"}</span>
+                  </button>
+                  {openFaq === i && <p className="faq-answer">{f.a}</p>}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* PULL QUOTE */}
       <section style={{ background: "linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <p className="pull-quote display" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.4rem)", fontWeight: 600, color: "var(--navy-deep)", lineHeight: 1.55 }}>
@@ -483,7 +518,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* LOCATION & SERVICE TIMES */}
       <div style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden" }}>
         <section>
           <div className="wrapper">
@@ -498,7 +532,7 @@ const Contact = () => {
                   style={{ width: "100%", height: "100%", border: 0 }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                />
+                ></iframe>
               </div>
               <div>
                 <p style={{ fontSize: "1.4rem", color: "#eaf3f8", lineHeight: 1.75, marginBottom: "12px" }}>{location_.address}</p>
