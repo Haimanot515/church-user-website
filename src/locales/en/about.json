@@ -1,12 +1,12 @@
 {
   "hero": {
     "titleFallback": "A Church, Not Just a Building",
-    "descriptionFallback": "For nearly five decades, {{churchName}} has been a community learning that faith is less about having answers and more about showing up — for God, for each other, and for our neighborhood. This is where we tell that story, honestly.",
+    "descriptionFallback": "For nearly five decades, {{churchName}} has been a community learning that faith is less about having answers and more about showing up for God, for each other, and for our neighborhood. This is where we tell that story, honestly.",
     "readStoryButton":  "Read Our Story Below",
     "sayHelloButton": "Say Hello",
     "imageAltFallback": "{{churchName}} sanctuary",
     "churchLeaderLabel": "Church Leader",
-    "fallbackNotice": "Showing this content in English — none available in your selected language yet."
+    "fallbackNotice": "Showing this content in English none available in your selected language yet."
   },
   "missionVision": {
     "missionLabel": "Our Mission",
@@ -59,7 +59,7 @@
   "location": {
     "eyebrow": "Visit Us",
     "note": "Our doors are open most mornings, and our office team is usually reachable from the small building behind the sanctuary.",
-    "serviceTimes": ["Sunday — 9:00 & 11:00 AM", "Wednesday Prayer — 6:30 PM"],
+    "serviceTimes": ["Sunday  9:00 & 11:00 AM", "Wednesday Prayer — 6:30 PM"],
     "mapAlt": "Map area near {{churchName}}"
   },
   "support": {
