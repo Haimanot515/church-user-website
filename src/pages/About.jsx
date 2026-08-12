@@ -149,6 +149,128 @@ const ChurchAboutPage = () => {
     fetchHistory(nextPage);
   };
 
+  // === Mission & Vision fetched from /mission-vision ===
+  const [missionVision, setMissionVision] = useState([]);
+  const [missionVisionLoading, setMissionVisionLoading] = useState(true);
+  const [missionVisionFallback, setMissionVisionFallback] = useState(false);
+
+  useEffect(() => {
+    const fetchMissionVision = async () => {
+      try {
+        setMissionVisionLoading(true);
+        setMissionVisionFallback(false);
+
+        let res = await API.get("/mission-vision");
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/mission-vision", {
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setMissionVisionFallback(true);
+        }
+
+        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        setMissionVision(
+          sorted.map((mv) => ({
+            label: mv.title,
+            value: mv.desc,
+          }))
+        );
+      } catch (err) {
+        console.error("Error fetching mission/vision:", err);
+        setMissionVision([]);
+      } finally {
+        setMissionVisionLoading(false);
+      }
+    };
+    fetchMissionVision();
+  }, [t]);
+
+  // === Statement of Faith accordion fetched from /faq?category=Faith ===
+  const [faithPoints, setFaithPoints] = useState([]);
+  const [faithLoading, setFaithLoading] = useState(true);
+  const [faithFallback, setFaithFallback] = useState(false);
+
+  useEffect(() => {
+    const fetchFaith = async () => {
+      try {
+        setFaithLoading(true);
+        setFaithFallback(false);
+
+        let res = await API.get("/faq", { params: { category: "Faith" } });
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/faq", {
+            params: { category: "Faith" },
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setFaithFallback(true);
+        }
+
+        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        setFaithPoints(
+          sorted.map((item) => ({
+            title: item.question,
+            desc: item.answer,
+          }))
+        );
+      } catch (err) {
+        console.error("Error fetching faith points:", err);
+        setFaithPoints([]);
+      } finally {
+        setFaithLoading(false);
+      }
+    };
+    fetchFaith();
+  }, [t]);
+
+  // === FAQ accordion fetched from /faq?category=Information ===
+  const [faqs, setFaqs] = useState([]);
+  const [faqLoading, setFaqLoading] = useState(true);
+  const [faqFallback, setFaqFallback] = useState(false);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        setFaqLoading(true);
+        setFaqFallback(false);
+
+        let res = await API.get("/faq", { params: { category: "Information" } });
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/faq", {
+            params: { category: "Information" },
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setFaqFallback(true);
+        }
+
+        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        setFaqs(
+          sorted.map((item) => ({
+            q: item.question,
+            a: item.answer,
+          }))
+        );
+      } catch (err) {
+        console.error("Error fetching FAQs:", err);
+        setFaqs([]);
+      } finally {
+        setFaqLoading(false);
+      }
+    };
+    fetchFaqs();
+  }, [t]);
+
   const location = {
     city: "Udine, Italy",
     address: `${CHURCH_NAME}`,
@@ -158,17 +280,6 @@ const ChurchAboutPage = () => {
       return Array.isArray(raw) ? raw : [];
     })(),
   };
-
-  const missionVision = [
-    { label: t("about.missionVision.missionLabel"), value: t("about.missionVision.missionValue") },
-    { label: t("about.missionVision.visionLabel"), value: t("about.missionVision.visionValue") },
-  ];
-
-  const faithPointsRaw = t("about.faith.points", { returnObjects: true });
-  const faithPoints = Array.isArray(faithPointsRaw) ? faithPointsRaw : [];
-
-  const faqsRaw = t("about.faq.items", { returnObjects: true });
-  const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
 
   const Spinner = ({ light }) => (
     <div className="loading-spinner-wrap">
@@ -786,14 +897,23 @@ const ChurchAboutPage = () => {
       {/* MISSION & VISION */}
       <section style={{ background: 'var(--navy-deep)', paddingTop: '60px', paddingBottom: '60px' }}>
         <div className="wrapper">
-          <div className="fact-grid">
-            {missionVision.map((m, i) => (
-              <div className="fact-item" key={i}>
-                <p className="fact-label">{m.label}</p>
-                <p className="fact-value">{m.value}</p>
-              </div>
-            ))}
-          </div>
+          {missionVisionFallback && !missionVisionLoading && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#a9c2d3', marginBottom: '20px' }}>
+              {t("about.missionVision.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+          {missionVisionLoading ? (
+            <Spinner light />
+          ) : (
+            <div className="fact-grid">
+              {missionVision.map((m, i) => (
+                <div className="fact-item" key={i}>
+                  <p className="fact-label">{m.label}</p>
+                  <p className="fact-value">{m.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -875,25 +995,36 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* STATEMENT OF FAITH + WHY WE WRITE (combined) */}
+      {/* STATEMENT OF FAITH (የምናምንበት) + WHY WE WRITE */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h3 className="eyebrow" style={{ marginBottom: '30px', fontSize: '0.85rem', textAlign: 'center' }}>{t("about.faith.heading")}</h3>
-          <div>
-            {faithPoints.map((f, i) => (
-              <div className="accordion-item" key={i}>
-                <button className="accordion-head" onClick={() => setActiveFaith(activeFaith === i ? -1 : i)}>
-                  {f.title}
-                  <span className="accordion-icon">{activeFaith === i ? '−' : '+'}</span>
-                </button>
-                {activeFaith === i && (
-                  <div className="accordion-body">
-                    <p className="body-copy">{f.desc}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+
+          {faithFallback && !faithLoading && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
+              {t("about.faith.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+
+          {faithLoading ? (
+            <Spinner />
+          ) : (
+            <div>
+              {faithPoints.map((f, i) => (
+                <div className="accordion-item" key={i}>
+                  <button className="accordion-head" onClick={() => setActiveFaith(activeFaith === i ? -1 : i)}>
+                    {f.title}
+                    <span className="accordion-icon">{activeFaith === i ? '−' : '+'}</span>
+                  </button>
+                  {activeFaith === i && (
+                    <div className="accordion-body">
+                      <p className="body-copy">{f.desc}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           <h3 className="eyebrow" style={{ margin: '70px 0 30px 0', fontSize: '0.85rem', textAlign: 'center' }}>{t("about.faith.whyWeWriteHeading")}</h3>
           <p className="display" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5, margin: 0 }}>
@@ -988,27 +1119,38 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* FAQ (የተለመዱ ጥያቄዎች) */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
             {t("about.faq.heading")}
           </h2>
-          <div>
-            {faqs.map((f, i) => (
-              <div className="accordion-item" key={i}>
-                <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === i ? -1 : i)}>
-                  {f.q}
-                  <span className="accordion-icon">{activeFaq === i ? '−' : '+'}</span>
-                </button>
-                {activeFaq === i && (
-                  <div className="accordion-body">
-                    <p className="body-copy" style={{ fontSize: '1.2rem' }}>{f.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+
+          {faqFallback && !faqLoading && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
+              {t("about.faq.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+
+          {faqLoading ? (
+            <Spinner />
+          ) : (
+            <div>
+              {faqs.map((f, i) => (
+                <div className="accordion-item" key={i}>
+                  <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === i ? -1 : i)}>
+                    {f.q}
+                    <span className="accordion-icon">{activeFaq === i ? '−' : '+'}</span>
+                  </button>
+                  {activeFaq === i && (
+                    <div className="accordion-body">
+                      <p className="body-copy" style={{ fontSize: '1.2rem' }}>{f.a}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
