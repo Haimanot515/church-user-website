@@ -8,13 +8,16 @@
     "loading": "ሚዲያን በመጫን ላይ...",
     "none": "ምንም ሚዲያ አልተገኘም።",
     "loadMore": "ተጨማሪ ይጫኑ",
-    "fallbackNotice": "የእንግሊዝኛ ይዘት እየታየ ነው"
+    "fallbackNotice": "የእንግሊዝኛ ይዘት እየታየ ነው",
+    "download": "አውርድ",
+    "moreOptions": "ተጨማሪ አማራጮች"
   },
   "video": {
     "eyebrow": "ይመልከቱ",
     "title": "ቪዲዮ",
     "intro": "ከቤተ ክርስቲያናችን ቤተሰብ የስብከት እና የአምልኮ ጊዜያት።",
-    "openAria": "{{title}}ን ይክፈቱ"
+    "openAria": "{{title}}ን ይክፈቱ",
+    "downloadAria": "{{title}}ን አውርድ"
   },
   "photo": {
     "eyebrow": "ትዝታ",

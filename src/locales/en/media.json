@@ -8,13 +8,16 @@
     "loading": "Loading media...",
     "none": "No media found.",
     "loadMore": "Load More",
-    "fallbackNotice": "Showing English content"
+    "fallbackNotice": "Showing English content",
+    "download": "Download",
+    "moreOptions": "More options"
   },
   "video": {
     "eyebrow": "Watch",
     "title": "Video",
     "intro": "Sermons and worship moments from our church family.",
-    "openAria": "Open {{title}}"
+    "openAria": "Open {{title}}",
+    "downloadAria": "Download {{title}}"
   },
   "photo": {
     "eyebrow": "Look Back",

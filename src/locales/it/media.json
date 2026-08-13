@@ -8,13 +8,16 @@
     "loading": "Caricamento dei contenuti multimediali...",
     "none": "Nessun contenuto multimediale trovato.",
     "loadMore": "Carica Altro",
-    "fallbackNotice": "Contenuto in inglese mostrato"
+    "fallbackNotice": "Contenuto in inglese mostrato",
+    "download": "Scarica",
+    "moreOptions": "Altre opzioni"
   },
   "video": {
     "eyebrow": "Guarda",
     "title": "Video",
     "intro": "Predicazioni e momenti di culto della nostra famiglia parrocchiale.",
-    "openAria": "Apri {{title}}"
+    "openAria": "Apri {{title}}",
+    "downloadAria": "Scarica {{title}}"
   },
   "photo": {
     "eyebrow": "Ricordi",

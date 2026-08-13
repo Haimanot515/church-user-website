@@ -37,6 +37,15 @@ import "./Media.css";
  * circular loading spinner used on Home.jsx instead of any hardcoded
  * placeholder text/content, so nothing but real backend data is ever
  * shown to the user.
+ *
+ * FIX: video playback now happens inline within the card (same
+ * pattern as audio) instead of a fixed fullscreen overlay, so
+ * clicking play no longer "widens"/takes over the screen — it plays
+ * right where the thumbnail was, same footprint.
+ *
+ * FIX: audio cards now use the same three-dot (⋮) menu pattern as
+ * video cards for downloading, replacing the old separate inline
+ * download link/button.
  */
 const PAGE_SIZE = 10;
 
@@ -46,6 +55,33 @@ const getMediaUrl = (mediaUrl) => {
   const base = (API.defaults.baseURL || "").replace(/\/api\/?$/, "");
   const path = mediaUrl.startsWith("/") ? mediaUrl : `/uploads/${mediaUrl}`;
   return `${base}${path}`;
+};
+
+// Forces a real file download instead of the browser navigating to /
+// opening the file. Using the `download` attribute on an <a> only
+// works when the file is same-origin; since media files are usually
+// served from a different host/CDN, we fetch the bytes as a blob and
+// download from that instead, which works regardless of origin.
+const handleDownload = async (url, title) => {
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const ext = (url.split(".").pop() || "").split("?")[0];
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = ext ? `${title || "download"}.${ext}` : title || "download";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    // Fallback: if fetching as a blob fails (e.g. CORS blocked at the
+    // network level), open the file in a new tab so the user can at
+    // least save it manually from there.
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 };
 
 const mapItems = (data) =>
@@ -71,8 +107,19 @@ const VideoSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   // Tracks which video is currently playing inline (by id), so the
   // play button plays the video right where it is instead of
-  // navigating away.
+  // navigating away or taking over the screen.
   const [playingId, setPlayingId] = useState(null);
+  // Tracks which card's three-dot (⋮) menu is currently open, so only
+  // one menu shows at a time.
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  // Close any open menu when clicking anywhere else on the page.
+  useEffect(() => {
+    if (openMenuId === null) return undefined;
+    const closeMenu = () => setOpenMenuId(null);
+    document.addEventListener("click", closeMenu);
+    return () => document.removeEventListener("click", closeMenu);
+  }, [openMenuId]);
 
   if (items.length === 0) return null;
   const visible = items.slice(0, visibleCount);
@@ -90,55 +137,16 @@ const VideoSection = ({ items, fallback, t }) => {
           const id = v._id || i;
           const isPlaying = playingId === id;
           return (
-            <div className="grid-card video-card" key={id}>
-              {isPlaying && (
-                <div
-                  className="video-fullscreen-overlay"
-                  style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100vw",
-                    height: "100vh",
-                    background: "#000",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 9999,
-                  }}
-                  onClick={(e) => {
-                    if (e.target === e.currentTarget) setPlayingId(null);
-                  }}
-                >
-                  <button
-                    type="button"
-                    aria-label="Close"
-                    onClick={() => setPlayingId(null)}
-                    style={{
-                      position: "absolute",
-                      top: 16,
-                      right: 20,
-                      background: "transparent",
-                      border: "none",
-                      color: "#fff",
-                      fontSize: "2.2rem",
-                      lineHeight: 1,
-                      cursor: "pointer",
-                      zIndex: 10000,
-                    }}
-                  >
-                    &times;
-                  </button>
-                  <video
-                    src={v.mediaUrl}
-                    controls
-                    autoPlay
-                    onEnded={() => setPlayingId(null)}
-                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                  />
-                </div>
-              )}
-              {!isPlaying && (
+            <div className="grid-card video-card" style={{ position: "relative" }} key={id}>
+              {isPlaying ? (
+                <video
+                  className="video-thumb-btn"
+                  src={v.mediaUrl}
+                  controls
+                  autoPlay
+                  onEnded={() => setPlayingId(null)}
+                />
+              ) : (
                 <button
                   type="button"
                   className="video-thumb-btn"
@@ -158,6 +166,82 @@ const VideoSection = ({ items, fallback, t }) => {
               <Link to={`/media/${v._id}`}>
                 <p className="grid-card-title">{v.title}</p>
               </Link>
+              <button
+                type="button"
+                className="video-menu-btn"
+                aria-label={t("media.common.moreOptions")}
+                style={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  border: "none",
+                  background: "rgba(0,0,0,0.55)",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  zIndex: 2,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenMenuId((cur) => (cur === id ? null : id));
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="5" r="1.7" />
+                  <circle cx="12" cy="12" r="1.7" />
+                  <circle cx="12" cy="19" r="1.7" />
+                </svg>
+              </button>
+              {openMenuId === id && (
+                <div
+                  className="video-menu-dropdown"
+                  style={{
+                    position: "absolute",
+                    top: 42,
+                    right: 8,
+                    background: "#fff",
+                    borderRadius: 8,
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+                    overflow: "hidden",
+                    zIndex: 3,
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="video-menu-item"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      width: "100%",
+                      padding: "8px 14px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#222",
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                    onClick={() => {
+                      handleDownload(v.mediaUrl, v.title);
+                      setOpenMenuId(null);
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M12 3v12" />
+                      <path d="M7 10l5 5 5-5" />
+                      <path d="M5 21h14" />
+                    </svg>
+                    {t("media.common.download")}
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}
@@ -213,6 +297,17 @@ const AudioSection = ({ items, fallback, t }) => {
   // the play button plays the audio right where it is instead of
   // navigating away.
   const [playingId, setPlayingId] = useState(null);
+  // Tracks which card's three-dot (⋮) menu is currently open, so only
+  // one menu shows at a time — same pattern as VideoSection.
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  // Close any open menu when clicking anywhere else on the page.
+  useEffect(() => {
+    if (openMenuId === null) return undefined;
+    const closeMenu = () => setOpenMenuId(null);
+    document.addEventListener("click", closeMenu);
+    return () => document.removeEventListener("click", closeMenu);
+  }, [openMenuId]);
 
   if (items.length === 0) return null;
   const visible = items.slice(0, visibleCount);
@@ -230,7 +325,7 @@ const AudioSection = ({ items, fallback, t }) => {
           const id = a._id || i;
           const isPlaying = playingId === id;
           return (
-            <div className="grid-card audio-card" key={id}>
+            <div className="grid-card audio-card" style={{ position: "relative" }} key={id}>
               {isPlaying ? (
                 <audio
                   className="audio-play-btn"
@@ -253,6 +348,82 @@ const AudioSection = ({ items, fallback, t }) => {
                 <p className="grid-card-title">{a.title}</p>
               </Link>
               <p className="audio-artist">{a.description}</p>
+              <button
+                type="button"
+                className="audio-menu-btn"
+                aria-label={t("media.common.moreOptions")}
+                style={{
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  border: "none",
+                  background: "rgba(0,0,0,0.55)",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  zIndex: 2,
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenMenuId((cur) => (cur === id ? null : id));
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="5" r="1.7" />
+                  <circle cx="12" cy="12" r="1.7" />
+                  <circle cx="12" cy="19" r="1.7" />
+                </svg>
+              </button>
+              {openMenuId === id && (
+                <div
+                  className="audio-menu-dropdown"
+                  style={{
+                    position: "absolute",
+                    top: 42,
+                    right: 8,
+                    background: "#fff",
+                    borderRadius: 8,
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+                    overflow: "hidden",
+                    zIndex: 3,
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="audio-menu-item"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      width: "100%",
+                      padding: "8px 14px",
+                      border: "none",
+                      background: "transparent",
+                      color: "#222",
+                      fontSize: "0.9rem",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                    onClick={() => {
+                      handleDownload(a.mediaUrl, a.title);
+                      setOpenMenuId(null);
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M12 3v12" />
+                      <path d="M7 10l5 5 5-5" />
+                      <path d="M5 21h14" />
+                    </svg>
+                    {t("media.common.download")}
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}
