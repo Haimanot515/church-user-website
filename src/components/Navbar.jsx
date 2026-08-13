@@ -223,17 +223,17 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
           <div className="nav-links-row">
             <div className="nav-links-primary">
               <Link to="/about" onClick={closeMenu}>{t("navbar.links.about")}</Link>
-              <Link to="/projects" onClick={closeMenu}>{t("navbar.links.blogs")}</Link>
-              <Link to="/services" onClick={closeMenu}>{t("navbar.links.services")}</Link>
               <Link to="/cv" onClick={closeMenu}>{t("navbar.links.church")}</Link>
               <Link to="/skill" onClick={closeMenu}>{t("navbar.links.sermon")}</Link>
+              <Link to="/services" onClick={closeMenu}>{t("navbar.links.services")}</Link>
+              <Link to="/projects" onClick={closeMenu}>{t("navbar.links.blogs")}</Link>
             </div>
 
             <div className="nav-links-secondary">
-              <Link to="/testimonials" onClick={closeMenu}>{t("navbar.links.travel")}</Link>
-              <Link to="/contact" onClick={closeMenu}>{t("navbar.links.contact")}</Link>
               <Link to="/media" onClick={closeMenu}>{t("navbar.links.media")}</Link>
               <Link to="/book" onClick={closeMenu}>{t("navbar.links.books")}</Link>
+              <Link to="/testimonials" onClick={closeMenu}>{t("navbar.links.travel")}</Link>
+              <Link to="/contact" onClick={closeMenu}>{t("navbar.links.contact")}</Link>
             </div>
           </div>
 
