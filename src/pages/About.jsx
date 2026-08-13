@@ -824,7 +824,8 @@ const ChurchAboutPage = () => {
           .list-card { justify-content: center; }
           .accordion-head { justify-content: center; text-align: center; }
           .accordion-body { text-align: center; margin: 0 auto; }
-          .fact-item { text-align: center; }
+          .fact-item { text-align: center !important; }
+          .fact-label, .fact-value { width: 100%; text-align: center !important; }
         }
       `}</style>
 
@@ -904,11 +905,11 @@ const ChurchAboutPage = () => {
               )}
             </div>
             {about?.churchLeader && (
-              <div style={{ width: '100%', textAlign: 'center', marginTop: '14px' }}>
-                <p className="display" style={{ width: '100%', textAlign: 'center', fontSize: '1.3rem', fontWeight: 700, color: '#eaf3f8', margin: '0 0 2px 0' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '14px' }}>
+                <p className="display" style={{ textAlign: 'center', fontSize: '1.3rem', fontWeight: 700, color: '#eaf3f8', margin: '0 0 2px 0' }}>
                   {about.churchLeader}
                 </p>
-                <p className="eyebrow" style={{ width: '100%', textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
+                <p className="eyebrow" style={{ textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
                   {t("about.hero.churchLeaderLabel")}
                 </p>
               </div>
@@ -932,9 +933,9 @@ const ChurchAboutPage = () => {
           ) : (
             <div className="fact-grid">
               {missionVision.map((m, i) => (
-                <div className="fact-item" key={i}>
-                  <p className="fact-label">{m.label}</p>
-                  <p className="fact-value">{m.value}</p>
+                <div className="fact-item" key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <p className="fact-label" style={{ textAlign: 'center' }}>{m.label}</p>
+                  <p className="fact-value" style={{ textAlign: 'center' }}>{m.value}</p>
                 </div>
               ))}
             </div>
