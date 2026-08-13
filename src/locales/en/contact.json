@@ -33,7 +33,7 @@
       },
       {
         "title": "Mail",
-        "value": "Harbor Light Church, Bole Road, Addis Ababa",
+        "value": "Debre Selam Abune Gebre Menfes Kidus Church, Bole Road, Addis Ababa",
         "desc": "For letters, cards, or anything that deserves a stamp instead of a send button."
       }
     ]
@@ -75,10 +75,10 @@
   },
   "location": {
     "heading": "Visit In Person",
-    "address": "Harbor Light Church, Bole Road, Addis Ababa, Ethiopia",
+    "address": "Debre Selam Abune Gebre Menfes Kidus Church, Bole Road, Addis Ababa, Ethiopia",
     "note": "My office sits behind the sanctuary. If the door's open, so am I — no appointment required most weekday mornings.",
     "getDirections": "Get Directions →",
-    "mapIframeTitle": "Harbor Light Church location",
+    "mapIframeTitle": "Debre Selam Abune Gebre Menfes Kidus Church location",
     "serviceTimes": [
       "Sunday — 9:00 & 11:00 AM",
       "Wednesday Prayer — 6:30 PM",
