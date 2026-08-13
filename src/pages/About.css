@@ -142,6 +142,38 @@
   font-weight: 600;
 }
 
+/* LEADER / TESTIMONIAL / SPECIAL-THANKS CARDS
+   (name + role live inside these) */
+.thanks-card,
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.thanks-card h4,
+.testimonial-card p:first-of-type {
+  margin: 0;
+}
+
+.leader-name,
+.testimonial-name {
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+}
+
+.leader-role,
+.testimonial-role {
+  color: #2563eb;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
 /* Hero CTA buttons — kept side by side on mobile instead of stacking,
    matching the Home page layout */
 .hero-cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -181,12 +213,31 @@
 
   .about-title {
     font-size: 1.8rem;
+    text-align: center;
   }
 
   /* Role/leader tag centered below the photo once the layout stacks
      vertically */
   .about-label {
     display: block;
+    text-align: center;
+  }
+
+  /* Every heading, body paragraph, leader name, and role centers on
+     tablet and mobile */
+  h1, h2, h3, h4, h5, h6 {
+    text-align: center;
+  }
+
+  .about-container p,
+  .about-item p {
+    text-align: center;
+  }
+
+  .leader-name,
+  .leader-role,
+  .testimonial-name,
+  .testimonial-role {
     text-align: center;
   }
 }

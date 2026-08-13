@@ -714,6 +714,19 @@ const ChurchAboutPage = () => {
           .about-hero-flex { gap: 28px !important; }
           .about-hero-image-col { flex: 0 1 260px !important; min-width: 220px !important; }
 
+          .hero-title { margin-bottom: 20px !important; }
+          .hero-desc { font-size: 1.05rem !important; line-height: 1.55 !important; margin-bottom: 20px !important; max-width: none !important; }
+
+          /* Same fix applied to every description/body paragraph on the page,
+             not just the hero: oversized text and uneven spacing on mobile */
+          .body-copy,
+          .about-description,
+          .fact-value {
+            font-size: 1.05rem !important;
+            line-height: 1.55 !important;
+          }
+          .about-description { margin-bottom: 20px !important; }
+
           .fact-item { padding: 20px; }
           .accordion-head { font-size: 1.25rem; padding: 20px 4px; }
           .accordion-body { padding: 0 4px 20px 4px; }
@@ -734,6 +747,17 @@ const ChurchAboutPage = () => {
           .about-hero-flex { gap: 22px !important; }
           .about-hero-text-col { min-width: 0 !important; }
           .about-hero-image-col { flex: 0 1 100% !important; min-width: 0 !important; width: 100% !important; }
+
+          .hero-title { font-size: 1.7rem !important; margin-bottom: 16px !important; }
+          .hero-desc { font-size: 1rem !important; margin-bottom: 16px !important; }
+
+          .body-copy,
+          .about-description,
+          .fact-value {
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+          }
+          .about-description { margin-bottom: 16px !important; }
 
           .give-info-box { padding: 18px !important; }
           .give-info-box p { font-size: 1rem !important; }
@@ -790,9 +814,17 @@ const ChurchAboutPage = () => {
           .about-label { display: block; text-align: center; }
         }
 
-        /* Center all section/hero titles on tablet and mobile */
+        /* Center all titles, body text, leader names/roles, and tags on tablet and mobile */
         @media (max-width: 900px) {
           h1.display, h2.display, h4.display { text-align: center !important; }
+          .body-copy { text-align: center; }
+          .eyebrow { display: block; text-align: center; }
+          .about-tags { justify-content: center; }
+          .thanks-card, .testimonial-card, .list-card, .dream-card { text-align: center; }
+          .list-card { justify-content: center; }
+          .accordion-head { justify-content: center; text-align: center; }
+          .accordion-body { text-align: center; margin: 0 auto; }
+          .fact-item { text-align: center; }
         }
       `}</style>
 
@@ -814,19 +846,19 @@ const ChurchAboutPage = () => {
           <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px', textAlign: 'left' }}>
             {about?._id ? (
               <Link to={`/about/${about._id}`} style={{ display: 'block', cursor: 'pointer' }}>
-                <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
+                <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   {about?.title || t("about.hero.titleFallback")}
                 </h1>
-                <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
+                <p className="hero-desc" style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
                   {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
                 </p>
               </Link>
             ) : (
               <>
-                <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
+                <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   {about?.title || t("about.hero.titleFallback")}
                 </h1>
-                <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
+                <p className="hero-desc" style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
                   {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
                 </p>
               </>
@@ -870,34 +902,17 @@ const ChurchAboutPage = () => {
                   style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', display: 'block' }}
                 />
               )}
-              {about?.churchLeader && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    borderRadius: '0 0 18px 18px',
-                    background: 'linear-gradient(180deg, rgba(15,36,56,0) 0%, rgba(15,36,56,0.75) 55%, rgba(15,36,56,0.9) 100%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                    padding: '0 16px 20px 16px',
-                    pointerEvents: 'none',
-                  }}
-                >
-                  <p className="display" style={{ width: '100%', textAlign: 'center', fontSize: '1.3rem', fontWeight: 700, color: '#ffffff', margin: '0 0 2px 0' }}>
-                    {about.churchLeader}
-                  </p>
-                  <p className="eyebrow" style={{ width: '100%', textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
-                    {t("about.hero.churchLeaderLabel")}
-                  </p>
-                </div>
-              )}
             </div>
+            {about?.churchLeader && (
+              <div style={{ width: '100%', textAlign: 'center', marginTop: '14px' }}>
+                <p className="display" style={{ width: '100%', textAlign: 'center', fontSize: '1.3rem', fontWeight: 700, color: '#eaf3f8', margin: '0 0 2px 0' }}>
+                  {about.churchLeader}
+                </p>
+                <p className="eyebrow" style={{ width: '100%', textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
+                  {t("about.hero.churchLeaderLabel")}
+                </p>
+              </div>
+            )}
           </div>
           </>
           )}
