@@ -273,7 +273,7 @@ const ChurchAboutPage = () => {
 
   const location = {
     city: "Udine, Italy",
-    address: `${CHURCH_NAME}`,
+    address: t("about.location.churchName", { defaultValue: CHURCH_NAME }),
     note: t("about.location.note"),
     serviceTimes: (() => {
       const raw = t("about.location.serviceTimes", { returnObjects: true });
@@ -395,8 +395,8 @@ const ChurchAboutPage = () => {
         .chapter-tab.active { background: var(--navy-deep); border-color: var(--navy-deep); color: #eaf3f8; }
 
         .fact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.14); border-radius: 12px; overflow: hidden; }
-        .fact-item { background: rgba(255,255,255,0.06); padding: 26px 28px; }
-        .fact-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin: 0 0 8px 0; }
+        .fact-item { background: rgba(255,255,255,0.06); padding: 26px 28px; text-align: center; }
+        .fact-label { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 2.8vw, 2rem); font-weight: 700; letter-spacing: 0.01em; text-transform: none; color: var(--gold); margin: 0 0 10px 0; }
         .fact-value { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; color: #eaf3f8; margin: 0; line-height: 1.5; }
         @media (max-width: 600px) { .fact-grid { grid-template-columns: 1fr; } }
 
@@ -434,8 +434,9 @@ const ChurchAboutPage = () => {
           border: 2px solid var(--gold);
         }
 
-        .thanks-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        @media (max-width: 650px) { .thanks-grid { grid-template-columns: 1fr; } }
+        .thanks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .thanks-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px) { .thanks-grid { grid-template-columns: 1fr; } }
         .thanks-card {
           display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center;
           background: rgba(255,255,255,0.06);
@@ -637,7 +638,7 @@ const ChurchAboutPage = () => {
         }
         .read-full-story-btn {
           display: inline-block;
-          margin-top: 26px;
+          margin-left: 4px;
           font-family: 'IBM Plex Mono', monospace;
           font-size: 0.85rem;
           font-weight: 700;
@@ -645,7 +646,7 @@ const ChurchAboutPage = () => {
           color: #ffffff;
           background: var(--deep-red);
           border: 1.5px solid var(--deep-red);
-          padding: 12px 30px;
+          padding: 8px 18px;
           border-radius: 30px;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -863,31 +864,50 @@ const ChurchAboutPage = () => {
             )}
           </div>
           <div className="about-hero-image-col" style={{ flex: '0 0 340px', minWidth: '280px' }}>
-            {about?._id ? (
-              <Link to={`/about/${about._id}`}>
+            <div style={{ position: 'relative', width: '100%' }}>
+              {about?._id ? (
+                <Link to={`/about/${about._id}`} style={{ display: 'block', width: '100%' }}>
+                  <img
+                    src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
+                    alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
+                    style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', cursor: 'pointer', display: 'block' }}
+                  />
+                </Link>
+              ) : (
                 <img
                   src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
                   alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
-                  style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', cursor: 'pointer' }}
+                  style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', display: 'block' }}
                 />
-              </Link>
-            ) : (
-              <img
-                src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
-                alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
-                style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
-              />
-            )}
-            {about?.churchLeader && (
-              <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                <p className="display" style={{ fontSize: '1.3rem', fontWeight: 700, color: '#ffffff', margin: '0 0 2px 0' }}>
-                  {about.churchLeader}
-                </p>
-                <p className="eyebrow" style={{ fontSize: '0.72rem', margin: 0 }}>
-                  {t("about.hero.churchLeaderLabel")}
-                </p>
-              </div>
-            )}
+              )}
+              {about?.churchLeader && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: '0 0 18px 18px',
+                    background: 'linear-gradient(180deg, rgba(15,36,56,0) 0%, rgba(15,36,56,0.75) 55%, rgba(15,36,56,0.9) 100%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    padding: '0 16px 20px 16px',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <p className="display" style={{ width: '100%', textAlign: 'center', fontSize: '1.3rem', fontWeight: 700, color: '#ffffff', margin: '0 0 2px 0' }}>
+                    {about.churchLeader}
+                  </p>
+                  <p className="eyebrow" style={{ width: '100%', textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
+                    {t("about.hero.churchLeaderLabel")}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
           </>
           )}
@@ -895,7 +915,7 @@ const ChurchAboutPage = () => {
       </section>
 
       {/* MISSION & VISION */}
-      <section style={{ background: 'var(--navy-deep)', paddingTop: '60px', paddingBottom: '60px' }}>
+      <section style={{ background: 'var(--deep-red)', paddingTop: '60px', paddingBottom: '60px' }}>
         <div className="wrapper">
           {missionVisionFallback && !missionVisionLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#a9c2d3', marginBottom: '20px' }}>
@@ -961,11 +981,10 @@ const ChurchAboutPage = () => {
                   <div className="about-tag">{item.leader}</div>
                   <div className="about-tag">{item.range}</div>
                   <div className="about-tag">{item.servedBy}</div>
+                  <Link to={`/about/story/${item._id}`} className="read-full-story-btn">
+                    {t("about.story.readFullStoryButton")}
+                  </Link>
                 </div>
-
-                <Link to={`/about/story/${item._id}`} className="read-full-story-btn">
-                  {t("about.story.readFullStoryButton")}
-                </Link>
               </div>
             </div>
           ))}
@@ -998,7 +1017,7 @@ const ChurchAboutPage = () => {
       {/* STATEMENT OF FAITH (የምናምንበት) + WHY WE WRITE */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h3 className="eyebrow" style={{ marginBottom: '30px', fontSize: '0.85rem', textAlign: 'center' }}>{t("about.faith.heading")}</h3>
+          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>{t("about.faith.heading")}</h2>
 
           {faithFallback && !faithLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
@@ -1026,7 +1045,7 @@ const ChurchAboutPage = () => {
             </div>
           )}
 
-          <h3 className="eyebrow" style={{ margin: '70px 0 30px 0', fontSize: '0.85rem', textAlign: 'center' }}>{t("about.faith.whyWeWriteHeading")}</h3>
+          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '70px 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>{t("about.faith.whyWeWriteHeading")}</h2>
           <p className="display" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5, margin: 0 }}>
             "{t("about.faith.whyWeWriteQuote")}"
           </p>
