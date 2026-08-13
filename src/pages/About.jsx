@@ -188,7 +188,7 @@ const ChurchAboutPage = () => {
     fetchMissionVision();
   }, [t]);
 
-  // === Faith questions fetched from /faq?category=Faith — shown above the FAQ questions ===
+  // === Faith questions fetched from /faq?category=Faith — shown in its own section above the FAQ section ===
   const [faithFaqs, setFaithFaqs] = useState([]);
   const [faithFaqsLoading, setFaithFaqsLoading] = useState(true);
   const [faithFaqsFallback, setFaithFaqsFallback] = useState(false);
@@ -526,6 +526,17 @@ const ChurchAboutPage = () => {
 
         .cta-band { text-align: center; }
 
+        .map-frame {
+          width: 100%;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 20px 40px rgba(15,36,56,0.16);
+          border: 1px solid rgba(28,58,82,0.12);
+          background: #ffffff;
+        }
+        .map-frame iframe { width: 100%; height: 420px; display: block; border: 0; }
+        @media (max-width: 600px) { .map-frame iframe { height: 300px; } }
+
         .about-section {
           width: 100%;
           background: #ffffff;
@@ -777,6 +788,11 @@ const ChurchAboutPage = () => {
 
         @media (max-width: 900px) {
           .about-label { display: block; text-align: center; }
+        }
+
+        /* Center all section/hero titles on tablet and mobile */
+        @media (max-width: 900px) {
+          h1.display, h2.display, h4.display { text-align: center !important; }
         }
       `}</style>
 
@@ -1115,16 +1131,16 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* FAQ (የተለመዱ ጥያቄዎች) */}
+      {/* FAITH QUESTIONS — its own section, fetched with /faq?category=Faith, shown above the FAQ section */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
-            {t("about.faq.heading")}
+            {t("about.faithFaq.heading", { defaultValue: "Questions of Faith" })}
           </h2>
 
           {faithFaqsFallback && !faithFaqsLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
-              {t("about.faq.fallbackNotice", { defaultValue: "Showing English content." })}
+              {t("about.faithFaq.fallbackNotice", { defaultValue: "Showing English content." })}
             </p>
           )}
 
@@ -1147,6 +1163,15 @@ const ChurchAboutPage = () => {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* FAQ (fetched with /faq?category=Information) */}
+      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
+        <div className="wrapper" style={{ maxWidth: '760px' }}>
+          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
+            {t("about.faq.heading")}
+          </h2>
 
           {faqFallback && !faqLoading && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
@@ -1180,7 +1205,6 @@ const ChurchAboutPage = () => {
       <div style={{ background: 'var(--deep-red)' }}>
         <section>
           <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
-            <h3 className="eyebrow" style={{ marginBottom: '18px', fontSize: '0.85rem' }}>{t("about.support.eyebrow")}</h3>
             <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
               {t("about.support.heading")}
             </h2>
@@ -1197,6 +1221,29 @@ const ChurchAboutPage = () => {
               <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: 0 }}>
                 {t("about.support.merchantName", { churchName: CHURCH_NAME })}
               </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* FIND US (MAP) — placed directly below the Support the Church section */}
+      <div style={{ background: '#ffffff' }}>
+        <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
+          <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>
+            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: 'var(--navy-deep)' }}>
+              {t("about.map.heading", { defaultValue: "Find Us" })}
+            </h2>
+            <p className="body-copy" style={{ margin: '0 auto 34px auto', maxWidth: '600px', color: 'var(--slate)' }}>
+              {t("about.map.description", { churchName: CHURCH_NAME, defaultValue: "Visit us at {{churchName}}." })}
+            </p>
+            <div className="map-frame" style={{ marginBottom: 0 }}>
+              <iframe
+                title="church-location-map"
+                src="https://www.google.com/maps?q=Udine,+Italy&output=embed"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
         </section>
