@@ -3,7 +3,7 @@
   width: 100%;
   background: #ffffff;
   padding: 60px 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .about-container {
@@ -20,8 +20,8 @@
   height: 80vh;
 }
 
-/* UPDATED: was plain colored text; now a circular loading spinner,
-   identical in behavior to the one used on the Home page, per request */
+/* Circular loading spinner, identical in behavior to the one used on
+   the Home page */
 .loading-spinner-wrap {
   display: flex;
   align-items: center;
@@ -96,20 +96,26 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
+/* MATCHES HOME: sermon/recommended item title size (2rem) instead of
+   the previous oversized 2.8rem, so item-level headings read at the
+   same scale as Home's post titles */
 .about-title {
-  font-size: 2.8rem;
+  font-size: 2rem;
   color: #0f172a;
-  margin: 15px 0;
-  font-weight: 800;
+  margin: 10px 0;
+  font-weight: 700;
   line-height: 1.1;
 }
 
+/* MATCHES HOME: sermon item description size (1.5rem / line-height 1.6)
+   instead of the previous 1.1rem, which read noticeably smaller than
+   equivalent body copy on Home */
 .about-description {
-  font-size: 1.1rem;
-  line-height: 1.8;
+  font-size: 1.5rem;
+  line-height: 1.6;
   color: #475569;
   text-align: justify;
   margin-bottom: 30px;
@@ -136,8 +142,8 @@
   font-weight: 600;
 }
 
-/* NEW: hero CTA buttons — kept side by side on mobile instead of
-   stacking, matching the Home page layout, per request */
+/* Hero CTA buttons — kept side by side on mobile instead of stacking,
+   matching the Home page layout */
 .hero-cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
 @media (max-width: 600px) {
   .hero-cta-row { flex-wrap: nowrap; gap: 10px; align-items: stretch; }
@@ -174,11 +180,11 @@
   }
 
   .about-title {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
   }
 
-  /* NEW: role/leader tag centered below the photo once the layout
-     stacks vertically, per request */
+  /* Role/leader tag centered below the photo once the layout stacks
+     vertically */
   .about-label {
     display: block;
     text-align: center;
@@ -190,6 +196,6 @@
     height: 350px;
   }
   .about-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 }

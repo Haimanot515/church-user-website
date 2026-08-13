@@ -10,7 +10,6 @@ const ChurchAboutPage = () => {
   const navigate = useNavigate();
 
   const [activeChapter, setActiveChapter] = useState(0);
-  const [activeFaith, setActiveFaith] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
 
   // === About/Hero content fetched from /about ===
@@ -189,16 +188,16 @@ const ChurchAboutPage = () => {
     fetchMissionVision();
   }, [t]);
 
-  // === Statement of Faith accordion fetched from /faq?category=Faith ===
-  const [faithPoints, setFaithPoints] = useState([]);
-  const [faithLoading, setFaithLoading] = useState(true);
-  const [faithFallback, setFaithFallback] = useState(false);
+  // === Faith questions fetched from /faq?category=Faith — shown above the FAQ questions ===
+  const [faithFaqs, setFaithFaqs] = useState([]);
+  const [faithFaqsLoading, setFaithFaqsLoading] = useState(true);
+  const [faithFaqsFallback, setFaithFaqsFallback] = useState(false);
 
   useEffect(() => {
-    const fetchFaith = async () => {
+    const fetchFaithFaqs = async () => {
       try {
-        setFaithLoading(true);
-        setFaithFallback(false);
+        setFaithFaqsLoading(true);
+        setFaithFaqsFallback(false);
 
         let res = await API.get("/faq", { params: { category: "Faith" } });
         let data = Array.isArray(res.data) ? res.data : [];
@@ -209,25 +208,25 @@ const ChurchAboutPage = () => {
             headers: { "Accept-Language": "en" },
           });
           data = Array.isArray(res.data) ? res.data : [];
-          if (data.length > 0) setFaithFallback(true);
+          if (data.length > 0) setFaithFaqsFallback(true);
         }
 
         const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
-        setFaithPoints(
+        setFaithFaqs(
           sorted.map((item) => ({
-            title: item.question,
-            desc: item.answer,
+            q: item.question,
+            a: item.answer,
           }))
         );
       } catch (err) {
-        console.error("Error fetching faith points:", err);
-        setFaithPoints([]);
+        console.error("Error fetching faith questions:", err);
+        setFaithFaqs([]);
       } finally {
-        setFaithLoading(false);
+        setFaithFaqsLoading(false);
       }
     };
-    fetchFaith();
+    fetchFaithFaqs();
   }, [t]);
 
   // === FAQ accordion fetched from /faq?category=Information ===
@@ -270,16 +269,6 @@ const ChurchAboutPage = () => {
     };
     fetchFaqs();
   }, [t]);
-
-  const location = {
-    city: "Udine, Italy",
-    address: t("about.location.churchName", { defaultValue: CHURCH_NAME }),
-    note: t("about.location.note"),
-    serviceTimes: (() => {
-      const raw = t("about.location.serviceTimes", { returnObjects: true });
-      return Array.isArray(raw) ? raw : [];
-    })(),
-  };
 
   const Spinner = ({ light }) => (
     <div className="loading-spinner-wrap">
@@ -396,8 +385,8 @@ const ChurchAboutPage = () => {
 
         .fact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.14); border-radius: 12px; overflow: hidden; }
         .fact-item { background: rgba(255,255,255,0.06); padding: 26px 28px; text-align: center; }
-        .fact-label { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 2.8vw, 2rem); font-weight: 700; letter-spacing: 0.01em; text-transform: none; color: var(--gold); margin: 0 0 10px 0; }
-        .fact-value { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; color: #eaf3f8; margin: 0; line-height: 1.5; }
+        .fact-label { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.01em; text-transform: none; color: var(--gold); margin: 0 0 10px 0; }
+        .fact-value { font-family: 'Nunito Sans', sans-serif; font-size: 1.4rem; font-weight: 600; color: #eaf3f8; margin: 0; line-height: 1.65; }
         @media (max-width: 600px) { .fact-grid { grid-template-columns: 1fr; } }
 
         .pull-quote { border-left: 4px solid var(--gold); padding-left: 30px; margin: 0; }
@@ -434,7 +423,7 @@ const ChurchAboutPage = () => {
           border: 2px solid var(--gold);
         }
 
-        .thanks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .thanks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
         @media (max-width: 900px) { .thanks-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 560px) { .thanks-grid { grid-template-columns: 1fr; } }
         .thanks-card {
@@ -470,24 +459,11 @@ const ChurchAboutPage = () => {
         .photo-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
         .photo-card-body { padding: 18px 20px 22px 20px; }
 
-        .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; align-items: center; }
-        @media (max-width: 800px) { .location-grid { grid-template-columns: 1fr; } }
-        .map-frame {
-          width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden;
-          box-shadow: 0 20px 40px rgba(15,36,56,0.2);
-        }
-        .service-time-row {
-          display: flex; justify-content: space-between; align-items: center;
-          padding: 14px 0; border-bottom: 1px dashed rgba(255,255,255,0.2);
-          font-size: 1.05rem;
-        }
-        .service-time-row:last-child { border-bottom: none; }
-
         .body-copy {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(1.6rem, 3vw, 2.2rem);
-          font-weight: 600;
-          line-height: 1.5;
+          font-family: 'Nunito Sans', sans-serif;
+          font-size: 1.4rem;
+          font-weight: 400;
+          line-height: 1.65;
           color: var(--navy-deep);
           margin: 0;
         }
@@ -614,15 +590,15 @@ const ChurchAboutPage = () => {
         }
         .about-title {
           font-family: 'Cormorant Garamond', serif;
-          font-size: 2.8rem;
+          font-size: 2rem;
           color: var(--navy-deep);
           margin: 16px 0;
           font-weight: 700;
           line-height: 1.1;
         }
         .about-description {
-          font-size: 1.1rem;
-          line-height: 1.8;
+          font-size: 1.5rem;
+          line-height: 1.6;
           color: var(--slate);
           margin-bottom: 26px;
         }
@@ -672,11 +648,11 @@ const ChurchAboutPage = () => {
           .about-photo-side { flex: 0 1 100%; width: 100%; max-width: 450px; }
           .about-description { text-align: center; }
           .about-tags { justify-content: center; }
-          .about-title { font-size: 2.2rem; }
+          .about-title { font-size: 1.8rem; }
         }
         @media (max-width: 480px) {
           .about-image { height: 350px; }
-          .about-title { font-size: 1.8rem; }
+          .about-title { font-size: 1.6rem; }
         }
 
         html, body { overflow-x: hidden; width: 100%; }
@@ -750,8 +726,6 @@ const ChurchAboutPage = () => {
 
           .give-info-box { padding: 18px !important; }
           .give-info-box p { font-size: 1rem !important; }
-
-          .service-time-row { font-size: 0.92rem; }
         }
 
         @media (max-width: 360px) {
@@ -821,22 +795,22 @@ const ChurchAboutPage = () => {
             </div>
           ) : (
           <>
-          <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px' }}>
+          <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px', textAlign: 'left' }}>
             {about?._id ? (
               <Link to={`/about/${about._id}`} style={{ display: 'block', cursor: 'pointer' }}>
-                <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+                <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   {about?.title || t("about.hero.titleFallback")}
                 </h1>
-                <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
                   {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
                 </p>
               </Link>
             ) : (
               <>
-                <h1 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4.2rem)', fontWeight: 700, lineHeight: 1.1, margin: '0 0 26px 0', color: '#eaf3f8' }}>
+                <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   {about?.title || t("about.hero.titleFallback")}
                 </h1>
-                <p style={{ fontSize: '1.35rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
                   {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
                 </p>
               </>
@@ -940,7 +914,7 @@ const ChurchAboutPage = () => {
       {/* OUR STORY (paginated via /church-story?page=&limit=) */}
       <section className="about-section" id="our-church-story">
         <div className="about-container">
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
             {t("about.story.heading")}
           </h2>
 
@@ -1014,49 +988,11 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* STATEMENT OF FAITH (የምናምንበት) + WHY WE WRITE */}
-      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
-        <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>{t("about.faith.heading")}</h2>
-
-          {faithFallback && !faithLoading && (
-            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
-              {t("about.faith.fallbackNotice", { defaultValue: "Showing English content." })}
-            </p>
-          )}
-
-          {faithLoading ? (
-            <Spinner />
-          ) : (
-            <div>
-              {faithPoints.map((f, i) => (
-                <div className="accordion-item" key={i}>
-                  <button className="accordion-head" onClick={() => setActiveFaith(activeFaith === i ? -1 : i)}>
-                    {f.title}
-                    <span className="accordion-icon">{activeFaith === i ? '−' : '+'}</span>
-                  </button>
-                  {activeFaith === i && (
-                    <div className="accordion-body">
-                      <p className="body-copy">{f.desc}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '70px 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>{t("about.faith.whyWeWriteHeading")}</h2>
-          <p className="display" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5, margin: 0 }}>
-            "{t("about.faith.whyWeWriteQuote")}"
-          </p>
-        </div>
-      </section>
-
       {/* LEADERSHIP TEAM */}
       <div className="cross-bg" style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <section>
-          <div className="wrapper" style={{ maxWidth: '760px' }}>
-            <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 44px 0', color: '#ffffff', textAlign: 'center' }}>
+          <div className="wrapper" style={{ maxWidth: '1000px' }}>
+            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 44px 0', color: '#ffffff', textAlign: 'left' }}>
               {t("about.leadership.heading")}
             </h2>
 
@@ -1085,7 +1021,7 @@ const ChurchAboutPage = () => {
                   <div>
                     <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
                     <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
-                    <p className="body-copy on-red" style={{ fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)', marginTop: '10px' }}>
+                    <p className="body-copy on-red" style={{ fontSize: '1.2rem', marginTop: '10px' }}>
                       {truncateWords(p.description, 20)}
                     </p>
                   </div>
@@ -1100,7 +1036,7 @@ const ChurchAboutPage = () => {
       {/* TESTIMONIALS */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
             {t("about.testimonials.heading")}
           </h2>
 
@@ -1126,7 +1062,7 @@ const ChurchAboutPage = () => {
                   src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
                   alt={person.name}
                 />
-                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
+                <p className="body-copy" style={{ fontSize: '1.4rem', marginBottom: '18px' }}>
                   "{truncateWords(person.message, 20)}"
                 </p>
                 <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
@@ -1138,45 +1074,10 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* FAQ (የተለመዱ ጥያቄዎች) */}
-      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
-        <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
-            {t("about.faq.heading")}
-          </h2>
-
-          {faqFallback && !faqLoading && (
-            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
-              {t("about.faq.fallbackNotice", { defaultValue: "Showing English content." })}
-            </p>
-          )}
-
-          {faqLoading ? (
-            <Spinner />
-          ) : (
-            <div>
-              {faqs.map((f, i) => (
-                <div className="accordion-item" key={i}>
-                  <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === i ? -1 : i)}>
-                    {f.q}
-                    <span className="accordion-icon">{activeFaq === i ? '−' : '+'}</span>
-                  </button>
-                  {activeFaq === i && (
-                    <div className="accordion-body">
-                      <p className="body-copy" style={{ fontSize: '1.2rem' }}>{f.a}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* SPECIAL THANKS (testimonial-style cards) */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2.6rem, 6vw, 4rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'center' }}>
+          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
             {t("about.specialThanks.heading")}
           </h2>
 
@@ -1202,7 +1103,7 @@ const ChurchAboutPage = () => {
                   src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
                   alt={p.name}
                 />
-                <p className="body-copy" style={{ fontSize: '1.3rem', marginBottom: '18px' }}>
+                <p className="body-copy" style={{ fontSize: '1.4rem', marginBottom: '18px' }}>
                   {truncateWords(p.description, 20)}
                 </p>
                 <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
@@ -1214,41 +1115,73 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* LOCATION & CONTACT */}
-      <div style={{ background: 'var(--navy-deep)' }}>
-        <section>
-          <div className="wrapper">
-            <div className="location-grid">
-              <div>
-                <h3 className="eyebrow" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>{t("about.location.eyebrow")}</h3>
-                <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3rem)', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>{location.address}</h2>
-                <p className="body-copy on-dark" style={{ fontSize: '1.2rem', marginBottom: '26px' }}>{location.note}</p>
-                <div>
-                  {location.serviceTimes.map((time, i) => (
-                    <div className="service-time-row" key={i}>
-                      <span style={{ color: '#ffffff' }}>{time}</span>
+      {/* FAQ (የተለመዱ ጥያቄዎች) */}
+      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
+        <div className="wrapper" style={{ maxWidth: '760px' }}>
+          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
+            {t("about.faq.heading")}
+          </h2>
+
+          {faithFaqsFallback && !faithFaqsLoading && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
+              {t("about.faq.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+
+          {faithFaqsLoading ? (
+            <Spinner />
+          ) : (
+            <div>
+              {faithFaqs.map((f, i) => (
+                <div className="accordion-item" key={`faith-${i}`}>
+                  <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === `faith-${i}` ? null : `faith-${i}`)}>
+                    {f.q}
+                    <span className="accordion-icon">{activeFaq === `faith-${i}` ? '−' : '+'}</span>
+                  </button>
+                  {activeFaq === `faith-${i}` && (
+                    <div className="accordion-body">
+                      <p className="body-copy" style={{ fontSize: '1.4rem' }}>{f.a}</p>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
-              <div className="map-frame">
-                <img
-                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=80"
-                  alt={t("about.location.mapAlt", { churchName: CHURCH_NAME })}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
+              ))}
             </div>
-          </div>
-        </section>
-      </div>
+          )}
+
+          {faqFallback && !faqLoading && (
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
+              {t("about.faq.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+
+          {faqLoading ? (
+            <Spinner />
+          ) : (
+            <div>
+              {faqs.map((f, i) => (
+                <div className="accordion-item" key={`info-${i}`}>
+                  <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === `info-${i}` ? null : `info-${i}`)}>
+                    {f.q}
+                    <span className="accordion-icon">{activeFaq === `info-${i}` ? '−' : '+'}</span>
+                  </button>
+                  {activeFaq === `info-${i}` && (
+                    <div className="accordion-body">
+                      <p className="body-copy" style={{ fontSize: '1.4rem' }}>{f.a}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* SUPPORT THE CHURCH */}
       <div style={{ background: 'var(--deep-red)' }}>
         <section>
           <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
             <h3 className="eyebrow" style={{ marginBottom: '18px', fontSize: '0.85rem' }}>{t("about.support.eyebrow")}</h3>
-            <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
+            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
               {t("about.support.heading")}
             </h2>
             <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
@@ -1273,7 +1206,7 @@ const ChurchAboutPage = () => {
       <div style={{ background: 'var(--deep-red)' }}>
         <section className="cta-band">
           <div className="wrapper" style={{ maxWidth: '640px' }}>
-            <h2 className="display" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>
+            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>
               {t("about.cta.heading")}
             </h2>
             <p className="body-copy on-red" style={{ margin: '0 auto 30px auto', maxWidth: '520px' }}>
