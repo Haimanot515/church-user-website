@@ -23,6 +23,28 @@ const getMediaUrl = (mediaUrl) => {
   return `${base}${path}`;
 };
 
+// Same blob-based download used on Media.jsx — fetches the file as a
+// blob so `download` works even when the file is served from a
+// different origin (CDN), instead of the browser just navigating to it.
+const handleDownload = async (url, title) => {
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const ext = (url.split(".").pop() || "").split("?")[0];
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = ext ? `${title || "download"}.${ext}` : title || "download";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+};
+
 const MediaDetail = () => {
   const { id } = useParams();
   const [entry, setEntry] = useState(null);
@@ -35,8 +57,18 @@ const MediaDetail = () => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [relatedItems, setRelatedItems] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const audioRef = useRef(null);
   const rafRef = useRef(null);
+
+  // Close the three-dot menu when clicking anywhere else on the page
+  // (same pattern as the video/audio cards on Media.jsx).
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const closeMenu = () => setMenuOpen(false);
+    document.addEventListener("click", closeMenu);
+    return () => document.removeEventListener("click", closeMenu);
+  }, [menuOpen]);
 
   const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
@@ -66,7 +98,6 @@ const MediaDetail = () => {
           thumbnail: getMediaUrl(item.thumbnail),
         });
       } catch (err) {
-        console.log(err);
         setError(err.response?.data?.message || "Failed to load this item");
       } finally {
         setLoading(false);
@@ -94,7 +125,6 @@ const MediaDetail = () => {
         }));
         setRelatedItems(picks);
       } catch (err) {
-        console.log("Failed to load related items:", err);
         setRelatedItems([]);
       }
     };
@@ -124,12 +154,8 @@ const MediaDetail = () => {
   }, [isPlaying]);
 
   const toggleAudio = () => {
-    console.log("Play button clicked, isPlaying:", isPlaying);
     const el = audioRef.current;
-    if (!el) {
-      console.log("audioRef.current is null — audio element not mounted yet");
-      return;
-    }
+    if (!el) return;
     if (isPlaying) {
       el.pause();
       setIsPlaying(false);
@@ -139,8 +165,7 @@ const MediaDetail = () => {
       if (playPromise !== undefined) {
         playPromise
           .then(() => setIsPlaying(true))
-          .catch((err) => {
-            console.log("Audio play failed:", err);
+          .catch(() => {
             setAudioError("Couldn't play audio. Try tapping play again.");
             setIsPlaying(false);
           });
@@ -234,47 +259,98 @@ const MediaDetail = () => {
       <section className="media-detail-section">
         <div className="wrapper">
           <div className="media-detail-body">
-            {entry.mediaType === "video" && (
-              <>
-                <div className="media-detail-video">
-                  <video src={entry.mediaUrl} controls autoPlay />
-                </div>
-                <a className="media-detail-download-btn media-detail-download-standalone" href={entry.mediaUrl} download aria-label="Download video">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 3v12" />
-                    <path d="M7 10l5 5 5-5" />
-                    <path d="M5 21h14" />
-                  </svg>
-                  Download
-                </a>
-              </>
-            )}
+            {(entry.mediaType === "video" || entry.mediaType === "photo") && (
+              <div className="media-detail-media-wrap" style={{ position: "relative" }}>
+                {entry.mediaType === "video" ? (
+                  <div className="media-detail-video">
+                    <video src={entry.mediaUrl} controls autoPlay />
+                  </div>
+                ) : (
+                  <img src={entry.mediaUrl} alt={entry.title} className="media-detail-photo" />
+                )}
 
-            {entry.mediaType === "photo" && (
-              <>
-                <img src={entry.mediaUrl} alt={entry.title} className="media-detail-photo" />
-                <a className="media-detail-download-btn media-detail-download-standalone" href={entry.mediaUrl} download aria-label="Download photo">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 3v12" />
-                    <path d="M7 10l5 5 5-5" />
-                    <path d="M5 21h14" />
+                <button
+                  type="button"
+                  className="media-detail-menu-btn"
+                  aria-label="More options"
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    width: 30,
+                    height: 30,
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "rgba(0,0,0,0.55)",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    zIndex: 2,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen((cur) => !cur);
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.7" />
+                    <circle cx="12" cy="12" r="1.7" />
+                    <circle cx="12" cy="19" r="1.7" />
                   </svg>
-                  Download
-                </a>
-              </>
+                </button>
+
+                {menuOpen && (
+                  <div
+                    className="media-detail-menu-dropdown"
+                    style={{
+                      position: "absolute",
+                      top: 42,
+                      right: 8,
+                      background: "#fff",
+                      borderRadius: 8,
+                      boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+                      overflow: "hidden",
+                      zIndex: 3,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      type="button"
+                      className="media-detail-menu-item"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        width: "100%",
+                        padding: "8px 14px",
+                        border: "none",
+                        background: "transparent",
+                        color: "#222",
+                        fontSize: "0.9rem",
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                      }}
+                      onClick={() => {
+                        handleDownload(entry.mediaUrl, entry.title);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M12 3v12" />
+                        <path d="M7 10l5 5 5-5" />
+                        <path d="M5 21h14" />
+                      </svg>
+                      Download
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
 
             {entry.mediaType === "audio" && (
               <div className="media-detail-audio-card">
-                {/* TEMP DEBUG: bare-bones native player to isolate whether
-                    the issue is the audio source or our custom player logic.
-                    Remove this block once diagnosed. */}
-                <audio
-                  src={entry.mediaUrl}
-                  controls
-                  autoPlay
-                  style={{ width: "100%", marginBottom: "16px" }}
-                />
                 <button
                   className="media-detail-audio-play-btn"
                   onClick={toggleAudio}
@@ -332,10 +408,10 @@ const MediaDetail = () => {
                   >
                     {playbackRate}x
                   </button>
-                  <a
+                  <button
+                    type="button"
                     className="media-detail-download-btn"
-                    href={entry.mediaUrl}
-                    download
+                    onClick={() => handleDownload(entry.mediaUrl, entry.title)}
                     aria-label="Download audio"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -344,7 +420,7 @@ const MediaDetail = () => {
                       <path d="M5 21h14" />
                     </svg>
                     Download
-                  </a>
+                  </button>
                 </div>
                 <audio
                   ref={audioRef}
@@ -352,16 +428,8 @@ const MediaDetail = () => {
                   preload="auto"
                   muted={isMuted}
                   onEnded={() => setIsPlaying(false)}
-                  onPlay={() => {
-                    console.log("PLAY");
-                    console.log("muted:", audioRef.current?.muted);
-                    console.log("volume:", audioRef.current?.volume);
-                    setIsPlaying(true);
-                  }}
-                  onPause={() => {
-                    console.log("PAUSE");
-                    setIsPlaying(false);
-                  }}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
                   onLoadedMetadata={(e) => {
                     if (Number.isFinite(e.target.duration)) {
                       setDuration(e.target.duration);
@@ -373,13 +441,8 @@ const MediaDetail = () => {
                       setDuration(e.target.duration);
                     }
                   }}
-                  onTimeUpdate={(e) => {
-                    console.log("TIME:", e.target.currentTime);
-                    setCurrentTime(e.target.currentTime);
-                  }}
-                  onError={(e) => {
-                    console.log("ERROR:", e.target.error);
-                    console.log("Audio failed to load:", entry.mediaUrl);
+                  onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
+                  onError={() => {
                     setAudioError("This audio file couldn't be loaded.");
                   }}
                 />
