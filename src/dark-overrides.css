@@ -179,6 +179,24 @@
   color: #cbd5e1 !important;
 }
 
+/* ---------- About: FAQ / Faith Questions accordion ---------- */
+[data-theme="dark"] section:has(.accordion-item) {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .church-portal .accordion-head {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .church-portal .accordion-body .body-copy {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .church-portal .accordion-item,
+[data-theme="dark"] .church-portal .accordion-item:first-child {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .church-portal .accordion-icon {
+  color: #e6c67a !important;
+}
+
 /* ---------- Media: ".media-portal" root ---------- */
 [data-theme="dark"] .media-portal {
   background: #1a1a1a !important;

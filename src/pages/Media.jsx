@@ -8,13 +8,17 @@ import "./Media.css";
  * Media page — one page, four sections, each laid out as a
  * functional 3-item grid, fetched from the backend (same API client
  * used in CreateMedia.jsx):
- *  1. Video  — grid of cards; click a card to go to its detail page
+ *  1. Video  — grid of cards; click the play button to play inline,
+ *              click the title to go to its detail page
  *  2. Photos — grid of cards; click a card to go to its detail page
- *  3. Audio  — grid of cards; click a card to go to its detail page
+ *  3. Audio  — grid of cards; click the play button to play inline,
+ *              click the title to go to its detail page
  *  4. Books/PDFs — grid of cards; click a card to go to its detail page
  *
- * Every card now redirects to /media/:id (MediaDetail.jsx), where
- * the actual video/photo/audio/document is played or opened.
+ * Video/Audio cards play inline where they are when the play button
+ * is clicked. Clicking the title still redirects to /media/:id
+ * (MediaDetail.jsx). Photo/Book cards are unchanged — the whole card
+ * redirects to /media/:id.
  *
  * Each section shows 10 items at a time with its own "Load More" button
  * that reveals 10 more, and only appears once that section has more
@@ -65,6 +69,10 @@ const Spinner = ({ light }) => (
 
 const VideoSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  // Tracks which video is currently playing inline (by id), so the
+  // play button plays the video right where it is instead of
+  // navigating away.
+  const [playingId, setPlayingId] = useState(null);
 
   if (items.length === 0) return null;
   const visible = items.slice(0, visibleCount);
@@ -78,21 +86,81 @@ const VideoSection = ({ items, fallback, t }) => {
         <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
       )}
       <div className="media-grid">
-        {visible.map((v, i) => (
-          <Link className="grid-card video-card" to={`/media/${v._id}`} key={v._id || i}>
-            <div className="video-thumb-btn" aria-label={t("media.video.openAria", { title: v.title })}>
-              {v.thumbnail ? (
-                <img src={v.thumbnail} alt={v.title} />
-              ) : (
-                <div className="video-thumb-placeholder" />
+        {visible.map((v, i) => {
+          const id = v._id || i;
+          const isPlaying = playingId === id;
+          return (
+            <div className="grid-card video-card" key={id}>
+              {isPlaying && (
+                <div
+                  className="video-fullscreen-overlay"
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    background: "#000",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999,
+                  }}
+                  onClick={(e) => {
+                    if (e.target === e.currentTarget) setPlayingId(null);
+                  }}
+                >
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    onClick={() => setPlayingId(null)}
+                    style={{
+                      position: "absolute",
+                      top: 16,
+                      right: 20,
+                      background: "transparent",
+                      border: "none",
+                      color: "#fff",
+                      fontSize: "2.2rem",
+                      lineHeight: 1,
+                      cursor: "pointer",
+                      zIndex: 10000,
+                    }}
+                  >
+                    &times;
+                  </button>
+                  <video
+                    src={v.mediaUrl}
+                    controls
+                    autoPlay
+                    onEnded={() => setPlayingId(null)}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
+                </div>
               )}
-              <span className="play-overlay">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-              </span>
+              {!isPlaying && (
+                <button
+                  type="button"
+                  className="video-thumb-btn"
+                  aria-label={t("media.video.openAria", { title: v.title })}
+                  onClick={() => setPlayingId(id)}
+                >
+                  {v.thumbnail ? (
+                    <img src={v.thumbnail} alt={v.title} />
+                  ) : (
+                    <div className="video-thumb-placeholder" />
+                  )}
+                  <span className="play-overlay">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                  </span>
+                </button>
+              )}
+              <Link to={`/media/${v._id}`}>
+                <p className="grid-card-title">{v.title}</p>
+              </Link>
             </div>
-            <p className="grid-card-title">{v.title}</p>
-          </Link>
-        ))}
+          );
+        })}
       </div>
       {items.length > visibleCount && (
         <div className="load-more-wrap">
@@ -141,6 +209,10 @@ const PhotoSection = ({ items, fallback, t }) => {
 
 const AudioSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  // Tracks which audio track is currently playing inline (by id), so
+  // the play button plays the audio right where it is instead of
+  // navigating away.
+  const [playingId, setPlayingId] = useState(null);
 
   if (items.length === 0) return null;
   const visible = items.slice(0, visibleCount);
@@ -154,15 +226,36 @@ const AudioSection = ({ items, fallback, t }) => {
         <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
       )}
       <div className="media-grid">
-        {visible.map((a, i) => (
-          <Link className="grid-card audio-card" to={`/media/${a._id}`} key={a._id || i}>
-            <div className="audio-play-btn" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+        {visible.map((a, i) => {
+          const id = a._id || i;
+          const isPlaying = playingId === id;
+          return (
+            <div className="grid-card audio-card" key={id}>
+              {isPlaying ? (
+                <audio
+                  className="audio-play-btn"
+                  src={a.mediaUrl}
+                  controls
+                  autoPlay
+                  onEnded={() => setPlayingId(null)}
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="audio-play-btn"
+                  aria-label={t("media.video.openAria", { title: a.title })}
+                  onClick={() => setPlayingId(id)}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                </button>
+              )}
+              <Link to={`/media/${a._id}`}>
+                <p className="grid-card-title">{a.title}</p>
+              </Link>
+              <p className="audio-artist">{a.description}</p>
             </div>
-            <p className="grid-card-title">{a.title}</p>
-            <p className="audio-artist">{a.description}</p>
-          </Link>
-        ))}
+          );
+        })}
       </div>
       {items.length > visibleCount && (
         <div className="load-more-wrap">

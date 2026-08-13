@@ -487,7 +487,13 @@ const ChurchAboutPage = () => {
           width: 100%; text-align: left; background: none; border: none; cursor: pointer;
           display: flex; justify-content: space-between; align-items: center;
           padding: 24px 4px; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700;
-          color: var(--navy-deep);
+          color: var(--navy-deep) !important;
+        }
+        .accordion-head:hover,
+        .accordion-head:focus,
+        .accordion-head:active,
+        .accordion-head:visited {
+          color: var(--navy-deep) !important;
         }
         .accordion-icon { font-family: 'IBM Plex Mono', monospace; color: var(--gold); font-size: 1.2rem; flex-shrink: 0; margin-left: 20px; }
         .accordion-body { padding: 0 4px 24px 4px; max-width: 640px; }
