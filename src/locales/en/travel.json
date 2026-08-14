@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "Notes from wherever our church has traveled",
-    "description": "Mission trips, sabbaticals, and the occasional congregational detour — this is where we keep the stories that didn't fit in a sermon. Scroll for the trip log, or jump to what's coming up next."
+    "description": "Mission trips, sabbaticals, and the occasional congregational detour this is where we keep the stories that didn't fit in a sermon. Scroll for the trip log, or jump to what's coming up next."
   },
   "upcoming": {
     "heading": "A few trips already on the calendar",
@@ -100,6 +100,6 @@
   },
   "quote": {
     "text": "Every trip our church has taken has taught us the same lesson from a different angle: God was already there before we arrived, and He'll stay long after we've gone home.",
-    "attribution": "— Harbor Light Church"
+    "attribution": "Debre Selam Abune Gebre Menfes Kidus Church"
   }
 }

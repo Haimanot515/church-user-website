@@ -1,7 +1,7 @@
 {
   "hero": {
-    "title": "Mi piacerebbe davvero sentirti",
-    "description": "Che sia una domanda su qualcosa che ho scritto, una richiesta di preghiera, o solo un saluto — questa pagina arriva direttamente a me, non a un comitato. Scorri per il modulo, oppure contattami nel modo che ti risulta più semplice."
+    "title": "Ci piacerebbe davvero sentirti",
+    "description": "Che sia una domanda su qualcosa che abbiamo condiviso, una richiesta di preghiera, o solo un saluto — questa pagina arriva direttamente alla nostra chiesa, non a un comitato. Scorri per il modulo, oppure contattaci nel modo che ti risulta più semplice."
   },
   "quickFacts": {
     "items": [
@@ -14,22 +14,22 @@
     ]
   },
   "reachMethods": {
-    "heading": "Modi per Contattarmi",
+    "heading": "Modi per Contattarci",
     "items": [
       {
         "title": "Email",
-        "value": "daniel@harborlightchurch.org",
-        "desc": "Il modo più affidabile per raggiungermi. Leggo ogni messaggio personalmente, di solito con un caffè in mano."
+        "value": "abunegebremenfeskidus@gmail.com",
+        "desc": "Il modo più affidabile per raggiungere la nostra chiesa. Il nostro team legge ogni messaggio e risponde il prima possibile."
       },
       {
         "title": "Ufficio della Chiesa",
         "value": "+251 11 555 0148",
-        "desc": "Per programmazioni, domande sull'edificio, o qualsiasi cosa con cui il team dell'ufficio possa aiutare direttamente."
+        "desc": "Per programmazioni, domande sull'edificio, o qualsiasi cosa con cui il nostro team dell'ufficio possa aiutare direttamente."
       },
       {
         "title": "Instagram",
-        "value": "@priest.daniel.worku",
-        "desc": "Dove pubblico riflessioni più brevi tra i post più lunghi qui sul diario."
+        "value": "@harborlightchurch",
+        "desc": "Dove pubblichiamo riflessioni più brevi e aggiornamenti sulla vita della congregazione."
       },
       {
         "title": "Posta",
@@ -40,10 +40,10 @@
   },
   "form": {
     "heading": "Scrivi quanto poco o quanto vuoi",
-    "successNote": "Grazie — il tuo messaggio è in arrivo da me. Leggo tutto personalmente, quindi potrebbe volerci qualche giorno, ma ti risponderò.",
+    "successNote": "Grazie — il tuo messaggio è in arrivo da noi. Il nostro team legge tutto, quindi potrebbe volerci qualche giorno, ma ti risponderemo.",
     "namePlaceholder": "Il Tuo Nome",
     "emailPlaceholder": "Email",
-    "messagePlaceholder": "Prenditi il tuo tempo — leggerò tutto.",
+    "messagePlaceholder": "Prenditi il tuo tempo — leggeremo tutto.",
     "sendButton": "Invia Messaggio",
     "sendingButton": "Invio in corso...",
     "errorDefault": "Qualcosa è andato storto — riprova."
@@ -52,31 +52,31 @@
     "heading": "Alcune Domande Frequenti",
     "items": [
       {
-        "q": "Offri consulenza pastorale a persone esterne alla congregazione?",
-        "a": "Sì, entro limiti ragionevoli. Scrivimi una breve email su cosa stai cercando e ti dirò onestamente se sono la persona giusta, o ti indirizzerò verso qualcuno più adatto."
+        "q": "Offrite consulenza pastorale a persone esterne alla congregazione?",
+        "a": "Sì, entro limiti ragionevoli. Scrivici una breve email su cosa stai cercando e ti diremo onestamente se possiamo aiutarti, o ti indirizzeremo verso qualcuno più adatto."
       },
       {
         "q": "Posso chiedere preghiere senza frequentare la chiesa?",
-        "a": "Assolutamente. Il nostro incontro di preghiera del mercoledì accetta richieste da chiunque, e io stesso prego personalmente l'intero elenco ogni mattina."
+        "a": "Assolutamente. Il nostro incontro di preghiera del mercoledì accetta richieste da chiunque, e preghiamo l'intero elenco ogni mattina."
       },
       {
-        "q": "Sei disponibile per matrimoni o funerali al di fuori di Harbor Light?",
-        "a": "Occasionalmente, a seconda del calendario. Contattami il prima possibile — questi vengono prenotati con mesi di anticipo."
+        "q": "Siete disponibili per matrimoni o funerali al di fuori di Harbor Light?",
+        "a": "Occasionalmente, a seconda del calendario. Contattaci il prima possibile — questi vengono prenotati con mesi di anticipo."
       },
       {
-        "q": "Leggi e rispondi a ogni commento sul blog?",
-        "a": "Ci provo. A volte ci vuole una settimana o due, ma non ne ho mai lasciato uno non letto."
+        "q": "Leggete e rispondete a ogni commento sul blog?",
+        "a": "Ci proviamo. A volte ci vuole una settimana o due, ma non ne abbiamo mai lasciato uno non letto."
       }
     ]
   },
   "quote": {
-    "text": "Non hai bisogno delle parole giuste o di una buona ragione. Se hai qualcosa nel cuore, preferirei sentirlo in modo imperfetto piuttosto che non sentirlo affatto.",
-    "attribution": "— Daniel"
+    "text": "Non hai bisogno delle parole giuste o di una buona ragione. Se hai qualcosa nel cuore, preferiremmo sentirlo in modo imperfetto piuttosto che non sentirlo affatto.",
+    "attribution": "— Harbor Light Church"
   },
   "location": {
     "heading": "Vieni a Trovarci di Persona",
     "address": "Harbor Light Church, Bole Road, Addis Abeba, Etiopia",
-    "note": "Il mio ufficio si trova dietro il santuario. Se la porta è aperta, ci sono anch'io — nessun appuntamento necessario nella maggior parte delle mattine feriali.",
+    "note": "Il nostro ufficio si trova dietro il santuario. Se la porta è aperta, ci siamo anche noi — nessun appuntamento necessario nella maggior parte delle mattine feriali.",
     "getDirections": "Ottieni Indicazioni →",
     "mapIframeTitle": "Posizione di Harbor Light Church",
     "serviceTimes": [

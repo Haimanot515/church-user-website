@@ -1,7 +1,7 @@
 {
   "hero": {
-    "title": "I'd genuinely love to hear from you",
-    "description": "Whether it's a question about something I've written, a prayer request, or just a hello — this page goes straight to me, not a committee. Scroll down for the form, or reach out however feels easiest."
+    "title": "We'd genuinely love to hear from you",
+    "description": "Whether it's a question about something we've shared, a prayer request, or just a hello — this page goes straight to our church, not a committee. Scroll down for the form, or reach out however feels easiest."
   },
   "quickFacts": {
     "items": [
@@ -14,22 +14,22 @@
     ]
   },
   "reachMethods": {
-    "heading": "Ways to Reach Me",
+    "heading": "Ways to Reach Us",
     "items": [
       {
         "title": "Email",
-        "value": "daniel@harborlightchurch.org",
-        "desc": "The most reliable way to reach me. I read every message myself, usually with coffee in hand."
+        "value": "abunegebremenfeskidus@gmail.com",
+        "desc": "The most reliable way to reach our church. Our team reads every message and responds as quickly as we can."
       },
       {
         "title": "Church Office",
         "value": "+251 11 555 0148",
-        "desc": "For scheduling, building questions, or anything the office team can help with directly."
+        "desc": "For scheduling, building questions, or anything our office team can help with directly."
       },
       {
         "title": "Instagram",
-        "value": "@priest.daniel.worku",
-        "desc": "Where I post shorter reflections between longer posts here on the journal."
+        "value": "@harborlightchurch",
+        "desc": "Where we post shorter reflections and updates from congregation life."
       },
       {
         "title": "Mail",
@@ -40,10 +40,10 @@
   },
   "form": {
     "heading": "Write as much or as little as you'd like",
-    "successNote": "Thank you — your message is on its way to me. I read everything myself, so it may take a few days, but I will get back to you.",
+    "successNote": "Thank you — your message is on its way to us. Our team reads everything, so it may take a few days, but we will get back to you.",
     "namePlaceholder": "Your Name",
     "emailPlaceholder": "Email",
-    "messagePlaceholder": "Take your time — I'll read all of it.",
+    "messagePlaceholder": "Take your time — we'll read all of it.",
     "sendButton": "Send Message",
     "sendingButton": "Sending...",
     "errorDefault": "Something went wrong — please try again."
@@ -53,11 +53,11 @@
     "items": [
       {
         "q": "Do you offer priestly counseling to people outside the congregation?",
-        "a": "Yes, within reason. Email me a little about what you're looking for and I'll tell you honestly whether I'm the right person, or point you toward someone better suited."
+        "a": "Yes, within reason. Email us a little about what you're looking for and we'll tell you honestly whether we can help, or point you toward someone better suited."
       },
       {
         "q": "Can I request prayer without attending the church?",
-        "a": "Absolutely. Our Wednesday prayer meeting takes requests from anyone, and I personally pray through the list every morning."
+        "a": "Absolutely. Our Wednesday prayer meeting takes requests from anyone, and we pray through the list every morning."
       },
       {
         "q": "Are you available for weddings or funerals outside Harbor Light?",
@@ -65,18 +65,18 @@
       },
       {
         "q": "Do you read and reply to every comment on the blog?",
-        "a": "I try to. It sometimes takes a week or two, but I've never left one unread."
+        "a": "We try to. It sometimes takes a week or two, but we've never left one unread."
       }
     ]
   },
   "quote": {
-    "text": "You don't need the right words or a good reason. If something's on your heart, I'd rather hear it imperfectly than not at all.",
-    "attribution": "— Daniel"
+    "text": "You don't need the right words or a good reason. If something's on your heart, we'd rather hear it imperfectly than not at all.",
+    "attribution": "— Debre Selam Abune Gebre Menfes Kidus Church"
   },
   "location": {
     "heading": "Visit In Person",
     "address": "Debre Selam Abune Gebre Menfes Kidus Church, Bole Road, Addis Ababa, Ethiopia",
-    "note": "My office sits behind the sanctuary. If the door's open, so am I — no appointment required most weekday mornings.",
+    "note": "Our office sits behind the sanctuary. If the door's open, so are we — no appointment required most weekday mornings.",
     "getDirections": "Get Directions →",
     "mapIframeTitle": "Debre Selam Abune Gebre Menfes Kidus Church location",
     "serviceTimes": [
