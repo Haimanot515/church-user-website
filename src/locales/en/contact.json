@@ -61,7 +61,7 @@
       },
       {
         "q": "Are you available for weddings or funerals outside Harbor Light?",
-        "a": "Occasionally, depending on the calendar. Reach out as early as you can — these get booked months ahead."
+        "a": "Occasionally, depending on the calendar. Reach out as early as you can these get booked months ahead."
       },
       {
         "q": "Do you read and reply to every comment on the blog?",
@@ -76,7 +76,7 @@
   "location": {
     "heading": "Visit In Person",
     "address": "Debre Selam Abune Gebre Menfes Kidus Church, Bole Road, Addis Ababa, Ethiopia",
-    "note": "Our office sits behind the sanctuary. If the door's open, so are we — no appointment required most weekday mornings.",
+    "note": "Our office sits behind the sanctuary. If the door's open, so are we no appointment required most weekday mornings.",
     "getDirections": "Get Directions →",
     "mapIframeTitle": "Debre Selam Abune Gebre Menfes Kidus Church location",
     "serviceTimes": [
