@@ -13,19 +13,31 @@ const getMediaUrl = (mediaUrl) => {
   return `${base}${path}`;
 };
 
-// Cloudinary lets you force a real download (instead of opening inline)
-// by inserting an fl_attachment flag into the URL, optionally with a
-// clean filename. Falls back to the plain URL for non-Cloudinary links.
-const getDownloadUrl = (url, filename) => {
-  if (!url) return url;
-  if (!/\/upload\//.test(url)) return url;
-
-  const safeName = (filename || "document")
-    .replace(/[^a-zA-Z0-9-_ ]/g, "")
-    .trim()
-    .replace(/\s+/g, "_") || "document";
-
-  return url.replace("/upload/", `/upload/fl_attachment:${safeName}/`);
+// Forces a real file download instead of the browser navigating to /
+// opening the file. Using the `download` attribute on an <a> only
+// works when the file is same-origin; since media files are usually
+// served from a different host/CDN, we fetch the bytes as a blob and
+// download from that instead, which works regardless of origin.
+const handleDownload = async (url, title) => {
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const ext = (url.split(".").pop() || "").split("?")[0];
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = ext ? `${title || "download"}.${ext}` : title || "download";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    // Fallback: if fetching as a blob fails (e.g. CORS blocked at the
+    // network level), open the file in a new tab so the user can at
+    // least save it manually from there.
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 };
 
 const BookIcon = ({ size }) => (
@@ -73,8 +85,6 @@ const Cover = ({ src, alt, iconSize }) => {
 };
 
 const BookCard = ({ book, t }) => {
-  const downloadUrl = getDownloadUrl(book.mediaUrl, book.title);
-
   return (
     <div className="catalog-card">
       <div className="catalog-cover">
@@ -105,14 +115,14 @@ const BookCard = ({ book, t }) => {
           >
             {t("book.card.readOnline")}
           </a>
-          <a
+          <button
+            type="button"
             className="catalog-card-btn catalog-card-btn-outline"
-            href={downloadUrl}
-            download
+            onClick={() => handleDownload(book.mediaUrl, book.title)}
           >
             <DownloadIcon />
             {t("book.card.download")}
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -250,9 +260,6 @@ const Book = () => {
 
       <section className="book-catalog">
         <div className="wrapper">
-          {/* NEW: circular spinner (same as Home.jsx / Media.jsx) while
-              the initial fetch is in flight — replaces the old plain-text
-              "Loading..." message, no placeholder content shown. */}
           {loading && <Spinner />}
 
           {!loading && error && (
