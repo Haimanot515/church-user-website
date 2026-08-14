@@ -1,7 +1,7 @@
 {
   "hero": {
-    "title": "Storie, riflessioni e aggiornamenti da Harbor Light",
-    "description": "Note di predica, testimonianze e notizie dalla vita della nostra congregazione — scritte dai nostri pastori e dalle persone che compongono la nostra chiesa"
+    "title": "Storie, riflessioni e aggiornamenti",
+    "description": "Note di predica, testimonianze e notizie dalla vita della nostra congregazione scritte dai nostri sacerdoti e dalle persone che compongono la nostra chiesa"
   },
   "categoryNav": {
     "ariaLabel": "Categorie dei post",
@@ -16,7 +16,7 @@
     "readMoreButton": "Leggi il Post Completo",
     "loadMoreButton": "Carica Altri Post",
     "loadingMoreButton": "Caricamento...",
-    "defaultAuthor": "Harbor Light Church",
+    "defaultAuthor": "Chiesa Debre Selam Abune Gebre Menfes Kidus Church",
     "defaultCategory": "Generale",
     "readTimeSuffix": "min di lettura"
   }

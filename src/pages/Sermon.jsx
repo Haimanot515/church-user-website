@@ -16,11 +16,19 @@ import "./Sermon.css";
  * a specific category, reintroduce the SERMON_CATEGORY check inside
  * filterSermons.
  *
- * Both the sermons list and the campuses list follow the same
- * Accept-Language fallback pattern used elsewhere on the site
- * (Services, Church, Blog, Travel, About): try the active language
- * first, and if it comes back empty, retry with an explicit "en"
- * header and flag it so the UI can show a small notice.
+ * The sermons list follows the same Accept-Language fallback pattern
+ * used elsewhere on the site (Services, Church, Blog, Travel, About):
+ * try the active language first, and if it comes back empty, retry
+ * with an explicit "en" header and flag it so the UI can show a
+ * small notice.
+ *
+ * REMOVED: the "churches I serve" / campuses section (GET /churches)
+ * is no longer fetched or rendered.
+ *
+ * Each sermon card in the grid has a three-dot (⋮) menu, same
+ * pattern/markup as Media.jsx's VideoSection/AudioSection, with a
+ * Download option that fetches the file as a blob and saves it
+ * (works cross-origin, unlike a plain <a download>).
  */
 
 function formatTime(totalSeconds) {
@@ -30,14 +38,31 @@ function formatTime(totalSeconds) {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
-// Turns whatever the API sends back for a media file (a full URL, or just a
-// filename/relative path saved from an upload) into a usable src.
 const getMediaUrl = (mediaUrl) => {
   if (!mediaUrl) return null;
-  if (/^https?:\/\//i.test(mediaUrl)) return mediaUrl; // already a full URL
+  if (/^https?:\/\//i.test(mediaUrl)) return mediaUrl;
   const base = (API.defaults.baseURL || "").replace(/\/api\/?$/, "");
   const path = mediaUrl.startsWith("/") ? mediaUrl : `/uploads/${mediaUrl}`;
   return `${base}${path}`;
+};
+
+const handleDownload = async (url, title) => {
+  if (!url) return;
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const ext = (url.split(".").pop() || "").split("?")[0];
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = ext ? `${title || "download"}.${ext}` : title || "download";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (err) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
 };
 
 const Sermon = () => {
@@ -59,23 +84,10 @@ const Sermon = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(false);
-  // Whether the video hero is shown in its "widened" fullscreen layout or
-  // the default "narrow" layout. Toggled from the expand/collapse icon,
-  // and kept in sync with the browser's real Fullscreen API state (see
-  // the fullscreenchange listener below) so it stays correct even if the
-  // user exits via Escape or the browser's own UI.
   const [expanded, setExpanded] = useState(false);
 
-  // --- "The churches I serve": GET /churches (Church table) ---
-  const [campuses, setCampuses] = useState([]);
-  const [campusesLoading, setCampusesLoading] = useState(true);
-  const [campusesError, setCampusesError] = useState("");
-  const [campusesFallback, setCampusesFallback] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null);
 
-  // Reusable inline loading spinner — shown while a section's data is
-  // being fetched from the backend, so no hardcoded frontend placeholder
-  // content is ever visible before the real data arrives. Same
-  // markup/classes as Home.jsx's Spinner, so it renders identically.
   const Spinner = ({ light }) => (
     <div className="loading-spinner-wrap">
       <div className={`loading-spinner${light ? " light" : ""}`} />
@@ -84,8 +96,6 @@ const Sermon = () => {
 
   const currentSermon = sermons[sermonIndex];
 
-  // CHANGED: no longer filters by category — every published video-type
-  // media document is included.
   const filterSermons = (data) =>
     (data || [])
       .filter((m) => m.status === "published")
@@ -95,9 +105,6 @@ const Sermon = () => {
         thumbnail: getMediaUrl(m.thumbnail),
       }));
 
-  // Fetch all published video media from the Media API on mount (and
-  // whenever the active language changes, so titles/descriptions come
-  // back localized).
   useEffect(() => {
     const fetchSermons = async () => {
       try {
@@ -127,37 +134,6 @@ const Sermon = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
 
-  // Fetch churches from the Church table on mount (and on language change)
-  useEffect(() => {
-    const fetchCampuses = async () => {
-      try {
-        setCampusesLoading(true);
-        setCampusesError("");
-        setCampusesFallback(false);
-
-        let res = await API.get("/churches");
-        let data = Array.isArray(res.data) ? res.data : [];
-
-        if (data.length === 0) {
-          res = await API.get("/churches", {
-            headers: { "Accept-Language": "en" },
-          });
-          data = Array.isArray(res.data) ? res.data : [];
-          if (data.length > 0) setCampusesFallback(true);
-        }
-
-        setCampuses(data);
-      } catch (err) {
-        setCampusesError(err.response?.data?.message || t("sermon.errors.campusesDefault"));
-      } finally {
-        setCampusesLoading(false);
-      }
-    };
-    fetchCampuses();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t]);
-
-  // Autoplay (muted) whenever the current sermon changes, as long as the panel is open
   useEffect(() => {
     const el = videoRef.current;
     if (!el || videoClosed || !currentSermon) return;
@@ -170,6 +146,13 @@ const Sermon = () => {
     if (playPromise && playPromise.catch) playPromise.catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sermonIndex, videoClosed, currentSermon]);
+
+  useEffect(() => {
+    if (openMenuId === null) return undefined;
+    const closeMenu = () => setOpenMenuId(null);
+    document.addEventListener("click", closeMenu);
+    return () => document.removeEventListener("click", closeMenu);
+  }, [openMenuId]);
 
   const handleLoadedMetadata = () => {
     const el = videoRef.current;
@@ -184,7 +167,6 @@ const Sermon = () => {
     setCurrentTime(el.currentTime);
   };
 
-  // Jump playback to wherever the person clicks on the progress track.
   const handleSeek = (e) => {
     const el = videoRef.current;
     const bar = seekBarRef.current;
@@ -231,12 +213,6 @@ const Sermon = () => {
     setShowControls((v) => !v);
   };
 
-  // Widen/narrow the video hero. Uses the real browser Fullscreen API so
-  // it covers the ENTIRE screen — including the browser's own tabs and
-  // address bar — the same way YouTube's fullscreen button does. CSS
-  // alone (100vw/100vh/position:fixed) can only ever fill the browser's
-  // content area, never actual browser chrome, so this has to happen
-  // here in JS via requestFullscreen()/exitFullscreen().
   const toggleExpand = () => {
     const el = videoHeroRef.current;
     if (!el) return;
@@ -245,21 +221,17 @@ const Sermon = () => {
       if (el.requestFullscreen) {
         el.requestFullscreen();
       } else if (el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen(); // Safari
+        el.webkitRequestFullscreen();
       }
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
       } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen(); // Safari
+        document.webkitExitFullscreen();
       }
     }
   };
 
-  // Keep `expanded` state in sync with the actual fullscreen state, so
-  // the expand/collapse icon (and the .expanded CSS class) stay correct
-  // even if the user exits fullscreen via the Escape key or the
-  // browser's own UI instead of our button.
   useEffect(() => {
     const handleFullscreenChange = () => {
       setExpanded(Boolean(document.fullscreenElement));
@@ -297,10 +269,6 @@ const Sermon = () => {
           </div>
         ) : (
           <>
-            {/* The video element (and its current frame) now stays mounted
-                and visible whether playing or closed/paused — closing no
-                longer swaps it out for a blank panel. Only the controls
-                around it change. */}
             <div className="yt-bg-wrap">
               <video
                 ref={videoRef}
@@ -317,11 +285,6 @@ const Sermon = () => {
               onClick={videoClosed ? toggleVideo : toggleControls}
             />
 
-            {/* Big centered play/pause toggle. While playing, it fades
-                in/out together with the rest of the controls (tap the
-                empty area to reveal it). While paused/closed it stays on
-                screen over the still-visible last frame so the video can
-                always be resumed with one click. */}
             <button
               className={`center-toggle-btn${(showControls || videoClosed) ? " visible" : ""}`}
               onClick={(e) => { e.stopPropagation(); toggleVideo(); }}
@@ -355,9 +318,6 @@ const Sermon = () => {
                   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </button>
 
-                {/* Timer + progressive seek bar: shows elapsed/total time
-                    and how far through the sermon playback currently is.
-                    Click or drag anywhere on the track to jump there. */}
                 <div className="progress-bar-row" onClick={(e) => e.stopPropagation()}>
                   <span className="time-label">{formatTime(currentTime)}</span>
                   <div
@@ -377,9 +337,6 @@ const Sermon = () => {
                   <span className="time-label">{formatTime(duration)}</span>
                 </div>
 
-                {/* Widen/narrow toggle for the video display area. Sits
-                    top-right, always reachable while the controls overlay
-                    is visible, and swaps its icon based on current state. */}
                 <button
                   className="expand-btn"
                   onClick={(e) => { e.stopPropagation(); toggleExpand(); }}
@@ -411,10 +368,8 @@ const Sermon = () => {
 
       <section className="hero-text-section">
         <div className="hero-text-inner">
-
           <h1 className="display">{t("sermon.heroText.title")}</h1>
           <p>{t("sermon.heroText.description")}</p>
-
         </div>
       </section>
 
@@ -440,84 +395,123 @@ const Sermon = () => {
                 </p>
               )}
               <div className="sermons-grid">
-                {sermons.map((s, i) => (
-                  <button
-                    key={s._id || s.title}
-                    className={`sermon-card${i === sermonIndex && !videoClosed ? " active" : ""}`}
-                    onClick={() => selectSermonFromGrid(i)}
-                  >
-                    <div className="sermon-thumb-wrap">
-                      {s.thumbnail ? (
-                        <img src={s.thumbnail} alt={s.title} />
-                      ) : (
+                {sermons.map((s, i) => {
+                  const id = s._id || i;
+                  return (
+                    <div
+                      key={id}
+                      className={`sermon-card${i === sermonIndex && !videoClosed ? " active" : ""}`}
+                      style={{ position: "relative" }}
+                    >
+                      <button
+                        type="button"
+                        className="sermon-card-btn"
+                        style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: 0, cursor: "pointer" }}
+                        onClick={() => selectSermonFromGrid(i)}
+                      >
+                        <div className="sermon-thumb-wrap">
+                          {s.thumbnail ? (
+                            <img src={s.thumbnail} alt={s.title} />
+                          ) : (
+                            <div
+                              style={{
+                                width: "100%",
+                                aspectRatio: "16/9",
+                                background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%)",
+                              }}
+                            />
+                          )}
+                          <div className="sermon-play-badge">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.4" opacity="0.85"/><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor"/></svg>
+                          </div>
+                        </div>
+                        <div className="sermon-card-body">
+                          {i === sermonIndex && !videoClosed && (
+                            <div className="sermon-now-playing">{t("sermon.sermons.nowPlaying")}</div>
+                          )}
+                          <h3>{s.title}</h3>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="sermon-menu-btn"
+                        aria-label={t("media.common.moreOptions")}
+                        style={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          width: 30,
+                          height: 30,
+                          borderRadius: "50%",
+                          border: "none",
+                          background: "rgba(0,0,0,0.55)",
+                          color: "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          zIndex: 2,
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuId((cur) => (cur === id ? null : id));
+                        }}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <circle cx="12" cy="5" r="1.7" />
+                          <circle cx="12" cy="12" r="1.7" />
+                          <circle cx="12" cy="19" r="1.7" />
+                        </svg>
+                      </button>
+                      {openMenuId === id && (
                         <div
+                          className="sermon-menu-dropdown"
                           style={{
-                            width: "100%",
-                            aspectRatio: "16/9",
-                            background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%)",
+                            position: "absolute",
+                            top: 42,
+                            right: 8,
+                            background: "#fff",
+                            borderRadius: 8,
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+                            overflow: "hidden",
+                            zIndex: 3,
                           }}
-                        />
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            className="sermon-menu-item"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              width: "100%",
+                              padding: "8px 14px",
+                              border: "none",
+                              background: "transparent",
+                              color: "#222",
+                              fontSize: "0.9rem",
+                              cursor: "pointer",
+                              whiteSpace: "nowrap",
+                            }}
+                            onClick={() => {
+                              handleDownload(s.mediaUrl, s.title);
+                              setOpenMenuId(null);
+                            }}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                              <path d="M12 3v12" />
+                              <path d="M7 10l5 5 5-5" />
+                              <path d="M5 21h14" />
+                            </svg>
+                            {t("media.common.download")}
+                          </button>
+                        </div>
                       )}
-                      <div className="sermon-play-badge">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.4" opacity="0.85"/><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor"/></svg>
-                      </div>
                     </div>
-                    <div className="sermon-card-body">
-                      {i === sermonIndex && !videoClosed && (
-                        <div className="sermon-now-playing">{t("sermon.sermons.nowPlaying")}</div>
-                      )}
-                      <h3>{s.title}</h3>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      <section className="campuses-section">
-        <div className="wrapper">
-          <div className="campuses-head">
-            <h2 className="display">{t("sermon.campuses.sectionTitle")}</h2>
-            <p>{t("sermon.campuses.description")}</p>
-          </div>
-
-          {campusesLoading ? (
-            <Spinner />
-          ) : campusesError ? (
-            <p style={{ textAlign: "center", color: "#dc2626" }}>{campusesError}</p>
-          ) : campuses.length === 0 ? (
-            <p style={{ textAlign: "center" }}>{t("sermon.campuses.none")}</p>
-          ) : (
-            <>
-              {campusesFallback && (
-                <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
-                  {t("sermon.campuses.fallbackNotice")}
-                </p>
-              )}
-              <div className="campus-grid">
-                {campuses.map((c) => (
-                  <div className="campus-card" key={c._id}>
-                    <img src={c.image || ""} alt={c.churchName} />
-                    <div className="campus-card-body">
-                      <div className="campus-role">
-                        {c.isPrimary
-                          ? t("sermon.campuses.tagPrimary")
-                          : c.isFeatured
-                          ? t("sermon.campuses.tagFeatured")
-                          : ""}
-                      </div>
-                      <h3>{c.churchName}</h3>
-                      <div className="campus-line">
-                        <strong>{t("sermon.campuses.address")}</strong> {c.address}
-                      </div>
-                      <div className="campus-line">
-                        <strong>{t("sermon.campuses.service")}</strong> {c.serviceDays} · {c.serviceTime}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}

@@ -57,7 +57,7 @@
     "imageAltFallback": "Priest in ornate robes holding a ceremonial staff"
   },
   "testimonials": {
-    "heading": "What People Say About the Author",
+    "heading": "What People Say About the Church",
     "loading": "Loading testimonies...",
     "none": "No testimonies found.",
     "errorDefault": "Failed to load testimonials"

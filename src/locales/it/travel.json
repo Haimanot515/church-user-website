@@ -1,105 +1,105 @@
 {
   "hero": {
-    "title": "Note da ovunque la strada mi abbia portato questa volta",
-    "description": "Viaggi missionari, sabbatici e qualche deviazione familiare — qui conservo le storie che non sono entrate in una predica. Scorri per il diario di viaggio, o vai direttamente a ciò che sta arrivando."
+    "title": "Note da ovunque la nostra chiesa abbia viaggiato",
+    "description": "Viaggi missionari, periodi sabbatici e qualche gita comunitaria — qui conserviamo le storie che non sono entrate in una predica. Scorri per il diario dei viaggi, oppure passa direttamente a ciò che sta per arrivare."
   },
   "upcoming": {
-    "heading": "Alcuni viaggi già in calendario",
-    "errorDefault": "Impossibile caricare i post di viaggio",
-    "loading": "Caricamento dei viaggi...",
-    "none": "Nessun post di viaggio trovato.",
-    "loadMoreButton": "Carica Altri Viaggi",
+    "heading": "Alcuni viaggi già in programma",
+    "errorDefault": "Impossibile caricare gli articoli di viaggio",
+    "loading": "Caricamento viaggi...",
+    "none": "Nessun articolo di viaggio trovato.",
+    "loadMoreButton": "Carica altri viaggi",
     "loadingMoreButton": "Caricamento...",
-    "fallbackNotice": "Questi viaggi sono mostrati in inglese perché non sono ancora disponibili nella tua lingua."
+    "fallbackNotice": "Questi viaggi sono mostrati in inglese perché non ancora disponibili nella tua lingua."
   },
   "quickFacts": {
-    "heading": "Prima di Leggere",
+    "heading": "Prima di leggere",
     "items": [
-      { "label": "Paesi Visitati", "value": "14, e continuano ad aumentare" },
-      { "label": "Viaggio Preferito Finora", "value": "Kenya, anno missionario, 2019" },
-      { "label": "Prossima Partenza", "value": "Sabbatico in Scozia — settembre" },
-      { "label": "Filosofia di Imballaggio", "value": "Sempre una sola borsa. Senza eccezioni." },
-      { "label": "Compagno di Viaggio", "value": "Di solito mia moglie, a volte tutta la famiglia" },
-      { "label": "Souvenir Preferito", "value": "Un innario locale o una preghiera scritta a mano" }
+      { "label": "Paesi visitati", "value": "14, e in aumento" },
+      { "label": "Viaggio preferito finora", "value": "Anno missionario in Kenya, 2019" },
+      { "label": "Prossima partenza", "value": "Ritiro in Scozia — settembre" },
+      { "label": "Filosofia dei bagagli", "value": "Una borsa a testa, sempre. Nessuna eccezione." },
+      { "label": "Chi viaggia", "value": "Staff, anziani e squadre di volontari della congregazione" },
+      { "label": "Souvenir preferito", "value": "Un innario locale o una preghiera scritta a mano" }
     ]
   },
   "travelKinds": {
     "heading": "Quattro tipi di viaggio, quattro ragioni diverse",
     "items": [
       {
-        "title": "Viaggi Missionari",
-        "value": "Brevi, in squadra",
-        "desc": "Una o due settimane, di solito con un gruppo di Harbor Light, costruendo qualcosa, insegnando qualcosa, o semplicemente essendo presenti dove serviva."
+        "title": "Viaggi missionari",
+        "value": "Breve durata, in squadra",
+        "desc": "Una o due settimane, di solito con una squadra di Harbor Light, per costruire qualcosa, insegnare qualcosa, o semplicemente essere presenti dove c'era bisogno di noi."
       },
       {
-        "title": "Viaggi Sabbatici",
-        "value": "Più lunghi, più lenti, da solo o con Miriam",
-        "desc": "Ogni pochi anni gli anziani mi mandano via per un mese a riposare, leggere e ricordare perché ho iniziato a fare tutto questo."
+        "title": "Ritiri dello staff",
+        "value": "Più lunghi, più lenti, per riposare",
+        "desc": "Ogni pochi anni gli anziani mandano via il nostro staff pastorale per una stagione, a riposare, leggere e ricordare perché questa chiesa ha iniziato questo lavoro."
       },
       {
-        "title": "Viaggi in Famiglia",
-        "value": "Vengono anche i bambini",
-        "desc": "Metà vacanza, metà educazione. Cerchiamo di vedere una cosa che conta per la storia e una che non conta per nessuno tranne che per noi."
+        "title": "Viaggi comunitari",
+        "value": "Le famiglie sono benvenute",
+        "desc": "Metà pellegrinaggio, metà comunione. Cerchiamo di vedere una cosa che conta per la storia e una cosa che non conta per nessuno tranne che per la nostra famiglia di chiesa."
       },
       {
-        "title": "Pellegrinaggi di un Giorno",
+        "title": "Pellegrinaggi in giornata",
         "value": "Nessuna valigia necessaria",
-        "desc": "Un viaggio in auto verso un vecchio monastero, una città di confine, un posto con una buona storia — via prima di cena, un po' cambiati entro sera."
+        "desc": "Una gita a un vecchio monastero, una città di confine, un luogo con una buona storia — partiti prima di cena, un po' cambiati la sera."
       }
     ]
   },
   "trips": {
-    "heading": "Alcuni luoghi a cui torno spesso, nella memoria se non di persona",
+    "heading": "Alcuni luoghi a cui la nostra chiesa continua a tornare, se non di persona almeno nel ricordo",
     "items": [
       {
         "place": "Kericho, Kenya",
         "year": "2019",
-        "title": "L'anno in cui la chiesa costruì un pozzo",
-        "body": "Siamo andati per due settimane per aiutare a finire un pozzo il cui lavoro si era fermato per mancanza di fondi. Siamo rimasti per gran parte dell'anno. Ho imparato più sulla pazienza dal ritmo di quel progetto che da qualsiasi corso di seminario, e penso ancora al suono di quella pompa la prima mattina in cui ha funzionato."
+        "title": "L'anno in cui la nostra chiesa ha costruito un pozzo",
+        "body": "Abbiamo mandato una squadra per due settimane per finire un pozzo fermo da tempo per mancanza di fondi. Il progetto è durato quasi un anno intero, e la congregazione ha imparato più pazienza dal ritmo di quel progetto che da qualsiasi predica. C'è ancora una foto di quella prima mattina in cui la pompa ha funzionato, appesa nella sala della comunione."
       },
       {
         "place": "Isola di Iona, Scozia",
         "year": "2022",
-        "title": "Quattro settimane di quasi niente",
-        "body": "Il mio primo vero sabbatico. Nessuna predica da scrivere, nessuna riunione da gestire. Per lo più ho camminato, letto vecchi libri di preghiere e mi sono seduto con persone che pregavano nella stessa piccola cappella da cinquant'anni. Sono tornato a casa più lento, e ci sono voluti mesi perché svanisse — che era proprio il punto."
+        "title": "Quattro settimane di quasi nulla",
+        "body": "Il primo vero periodo sabbatico del nostro staff pastorale passato insieme. Nessuna predica da scrivere, nessuna riunione da condurre. Per lo più camminate, vecchi libri di preghiere, e tempo passato con persone che pregavano in quella stessa piccola cappella da cinquant'anni. Sono tornati più lenti, e la congregazione lo ha notato, nel modo migliore, per mesi."
       },
       {
         "place": "Lalibela, Etiopia",
         "year": "2023",
-        "title": "Un pellegrinaggio più vicino a casa",
-        "body": "Non serve sempre un passaporto per essere cambiati. Le chiese scavate nella roccia qui sono a quattro ore di macchina da casa mia, e non avevo mai fatto il viaggio finché il mio figlio più piccolo non mi ha chiesto perché. Ci siamo andati il mese successivo, candele comprese."
+        "title": "Un pellegrinaggio vicino a casa",
+        "body": "Non serve sempre un passaporto per essere cambiati. Queste chiese scavate nella roccia sono a sole quattro ore da casa nostra, e ci è voluto un membro del gruppo giovanile che chiedesse perché non ci fossimo mai andati perché la chiesa finalmente facesse il viaggio. Ci siamo andati il mese successivo, candele comprese."
       },
       {
         "place": "Chiang Rai, Thailandia",
         "year": "2024",
-        "title": "Una squadra, una scuola, una lingua che non parlavo",
-        "body": "Dieci giorni a costruire letti a castello per una casa per bambini con sei persone della nostra congregazione che non avevano mai lasciato l'Etiopia prima. Vederli innamorarsi di un posto che non ha quasi nulla in comune con casa è stato, silenziosamente, uno dei miei viaggi preferiti da guidare piuttosto che da vivere."
+        "title": "Una squadra, una scuola, una lingua che nessuno parlava",
+        "body": "Dieci giorni a costruire letti a castello per un orfanotrofio con sei volontari della nostra congregazione che non avevano mai lasciato l'Etiopia. Vederli innamorarsi di un luogo che non ha quasi nulla in comune con casa è stato, silenziosamente, uno dei nostri viaggi preferiti da organizzare."
       }
     ]
   },
   "faq": {
-    "heading": "Alcune Domande Comuni",
+    "heading": "Alcune domande frequenti",
     "items": [
       {
-        "q": "Porti con te membri della congregazione in questi viaggi?",
-        "a": "Sì, la maggior parte di loro. I viaggi missionari in particolare sono quasi sempre di squadra — pubblicherò un invito aperto qui e nel bollettino qualche mese prima di ciascuno."
+        "q": "Portate i membri della congregazione in questi viaggi?",
+        "a": "Sì, la maggior parte di loro. I viaggi missionari in particolare sono quasi sempre in squadra — pubblicheremo un invito aperto qui e nel bollettino qualche mese prima di ogni viaggio."
       },
       {
-        "q": "Come decidi dove andare per un viaggio missionario?",
+        "q": "Come decide la chiesa dove andare per un viaggio missionario?",
         "a": "Di solito viene prima una relazione — una chiesa partner, un missionario che già sosteniamo, un bisogno che qualcuno ci ha portato direttamente. Cerchiamo di non andare da qualche parte solo perché sembrava significativo sulla carta."
       },
       {
-        "q": "Posso chiedere preghiere per il mio prossimo viaggio?",
-        "a": "Fallo pure. Mandalo tramite la pagina dei contatti o menzionalo mercoledì sera — le preghiere di viaggio sono tra le mie preferite da pregare, per quanto strane e specifiche siano di solito."
+        "q": "Posso chiedere preghiere per un mio prossimo viaggio?",
+        "a": "Certo. Mandacelo tramite la pagina contatti o dillo il mercoledì sera — le preghiere di viaggio sono tra le nostre preferite, per quanto stranamente specifiche possano essere."
       },
       {
-        "q": "Viaggi mai solo per riposare, senza alcun ministero legato?",
-        "a": "Ci provo, anche se non sono sempre bravo. Il viaggio sabbatico è pensato per essere esattamente questo, e sto imparando — lentamente — a lasciare che un viaggio serva solo al riposo senza trasformarlo in un progetto."
+        "q": "La chiesa viaggia mai solo per riposare, senza alcun impegno di ministero?",
+        "a": "Ci proviamo, anche se non sempre ci riusciamo bene. I ritiri dello staff sono pensati esattamente per questo, e stiamo imparando — lentamente — a lasciare che un viaggio sia solo per il riposo, senza trasformarlo in un progetto."
       }
     ]
   },
   "quote": {
-    "text": "Ogni viaggio che ho fatto mi ha insegnato la stessa lezione da un'angolazione diversa: Dio era già lì prima che arrivassi, e resterà molto tempo dopo che me ne sarò andato.",
-    "attribution": "— Daniel"
+    "text": "Ogni viaggio che la nostra chiesa ha fatto ci ha insegnato la stessa lezione da un'angolazione diversa: Dio era già lì prima del nostro arrivo, e vi resterà a lungo dopo che saremo tornati a casa.",
+    "attribution": "— Chiesa Harbor Light"
   }
 }

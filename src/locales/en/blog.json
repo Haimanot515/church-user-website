@@ -1,7 +1,7 @@
 {
   "hero": {
-    "title": "Stories, reflections, and updates from Harbor Light",
-    "description": "Sermon notes, testimonies, and news from the life of our congregation — written by our pastors and by the people who make up our church"
+    "title": "Stories, reflections, and updates",
+    "description": "Sermon notes, testimonies, and news from the life of our congregation written by our priests and by the people who make up our church"
   },
   "categoryNav": {
     "ariaLabel": "Post categories",
@@ -16,7 +16,7 @@
     "readMoreButton": "Read Full Post",
     "loadMoreButton": "Load More Posts",
     "loadingMoreButton": "Loading...",
-    "defaultAuthor": "Harbor Light Church",
+    "defaultAuthor": "Debre Selam Abune Gebre Menfes Kidus Church",
     "defaultCategory": "General",
     "readTimeSuffix": "min read"
   }

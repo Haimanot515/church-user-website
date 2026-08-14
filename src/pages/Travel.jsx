@@ -22,9 +22,16 @@ const Travel = () => {
   const [upcomingError, setUpcomingError] = useState("");
   const [upcomingPage, setUpcomingPage] = useState(1);
   const [upcomingTotalPages, setUpcomingTotalPages] = useState(1);
-  // NEW: true when the upcoming trips currently shown came from the
+  // true when the upcoming trips currently shown came from the
   // English fallback because the active language had none
   const [upcomingFallback, setUpcomingFallback] = useState(false);
+
+  // === FAQ fetched from /faq?category=Travel — same pattern as
+  // Contact.jsx's fetchFaqs: try active language first, fall back to
+  // an explicit "en" header if empty, sort by order. ===
+  const [faqs, setFaqs] = useState([]);
+  const [faqLoading, setFaqLoading] = useState(true);
+  const [faqFallback, setFaqFallback] = useState(false);
 
   // Reusable inline loading spinner — shown while a section's data is
   // being fetched from the backend, so no hardcoded frontend placeholder
@@ -86,6 +93,44 @@ const Travel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [upcomingPage, t]);
 
+  // Fetch FAQ items for the Travel category on mount (and on language
+  // change, so questions/answers come back localized).
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        setFaqLoading(true);
+        setFaqFallback(false);
+
+        let res = await API.get("/faq", { params: { category: "Travel" } });
+        let data = Array.isArray(res.data) ? res.data : [];
+
+        if (data.length === 0) {
+          res = await API.get("/faq", {
+            params: { category: "Travel" },
+            headers: { "Accept-Language": "en" },
+          });
+          data = Array.isArray(res.data) ? res.data : [];
+          if (data.length > 0) setFaqFallback(true);
+        }
+
+        const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        setFaqs(
+          sorted.map((item) => ({
+            q: item.question,
+            a: item.answer,
+          }))
+        );
+      } catch (err) {
+        console.error("Error fetching FAQs:", err);
+        setFaqs([]);
+      } finally {
+        setFaqLoading(false);
+      }
+    };
+    fetchFaqs();
+  }, [t]);
+
   const handleLoadMoreTrips = () => {
     if (upcomingPage < upcomingTotalPages) setUpcomingPage((p) => p + 1);
   };
@@ -107,9 +152,6 @@ const Travel = () => {
 
   const tripsRaw = t("travel.trips.items", { returnObjects: true });
   const trips = Array.isArray(tripsRaw) ? tripsRaw : [];
-
-  const faqsRaw = t("travel.faq.items", { returnObjects: true });
-  const faqs = Array.isArray(faqsRaw) ? faqsRaw : [];
 
   return (
     <div className="church-portal">
@@ -243,10 +285,6 @@ const Travel = () => {
 
       <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <div className="fixed-cross left">
-          {/* FIX: was two horizontal crossbars (an Orthodox-style cross) —
-              simplified to a single horizontal crossbar (a plain Latin
-              cross), matching the single-crossbar style used elsewhere
-              on the site. */}
           <svg width="46" height="64" viewBox="0 0 46 64" xmlns="http://www.w3.org/2000/svg">
             <rect x="19" y="0" width="8" height="64" fill="var(--gold)" />
             <rect x="4" y="20" width="38" height="8" fill="var(--gold)" />
@@ -286,17 +324,28 @@ const Travel = () => {
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
             {t("travel.faq.heading")}
           </h2>
-          <div>
-            {faqs.map((f, i) => (
-              <div className="faq-item" key={i}>
-                <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
-                  <span>{f.q}</span>
-                  <span className="faq-toggle">{openFaq === i ? "–" : "+"}</span>
-                </button>
-                {openFaq === i && <p className="faq-answer">{f.a}</p>}
-              </div>
-            ))}
-          </div>
+
+          {faqFallback && !faqLoading && (
+            <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '20px' }}>
+              {t("travel.faq.fallbackNotice", { defaultValue: "Showing English content." })}
+            </p>
+          )}
+
+          {faqLoading ? (
+            <Spinner />
+          ) : (
+            <div>
+              {faqs.map((f, i) => (
+                <div className="faq-item" key={i}>
+                  <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}>
+                    <span>{f.q}</span>
+                    <span className="faq-toggle">{openFaq === i ? "–" : "+"}</span>
+                  </button>
+                  {openFaq === i && <p className="faq-answer">{f.a}</p>}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -309,7 +358,6 @@ const Travel = () => {
         </div>
       </section>
 
-      
     </div>
   );
 };
