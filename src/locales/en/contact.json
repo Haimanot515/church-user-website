@@ -1,7 +1,7 @@
 {
   "hero": {
     "title": "We'd genuinely love to hear from you",
-    "description": "Whether it's a question about something we've shared, a prayer request, or just a hello — this page goes straight to our church, not a committee. Scroll down for the form, or reach out however feels easiest."
+    "description": "Whether it's a question about something we've shared, a prayer request, or just a hello this page goes straight to our church, not a committee. Scroll down for the form, or reach out however feels easiest."
   },
   "quickFacts": {
     "items": [
@@ -40,13 +40,13 @@
   },
   "form": {
     "heading": "Write as much or as little as you'd like",
-    "successNote": "Thank you — your message is on its way to us. Our team reads everything, so it may take a few days, but we will get back to you.",
+    "successNote": "Thank you your message is on its way to us. Our team reads everything, so it may take a few days, but we will get back to you.",
     "namePlaceholder": "Your Name",
     "emailPlaceholder": "Email",
-    "messagePlaceholder": "Take your time — we'll read all of it.",
+    "messagePlaceholder": "Take your time we'll read all of it.",
     "sendButton": "Send Message",
     "sendingButton": "Sending...",
-    "errorDefault": "Something went wrong — please try again."
+    "errorDefault": "Something went wrong please try again."
   },
   "faq": {
     "heading": "A Few FAQ Questions",
@@ -71,7 +71,7 @@
   },
   "quote": {
     "text": "You don't need the right words or a good reason. If something's on your heart, we'd rather hear it imperfectly than not at all.",
-    "attribution": "— Debre Selam Abune Gebre Menfes Kidus Church"
+    "attribution": "Debre Selam Abune Gebre Menfes Kidus Church"
   },
   "location": {
     "heading": "Visit In Person",
