@@ -17,26 +17,32 @@ const Blog = () => {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  // NEW: true when the posts currently shown came from the English
-  // fallback because the active language had none
+  // true when the posts currently shown came from the English
+  // fallback because the active language had none (only applies when
+  // no category filter is active — see fetchPosts)
   const [postsFallback, setPostsFallback] = useState(false);
 
-  // Category list comes entirely from the backend (fetched below); "All"
-  // is the only UI-only entry, prepended so people can clear the filter.
-  const [categories, setCategories] = useState(["All"]);
+  // Category list comes entirely from the backend. Each entry is now
+  // { name, slug } — slug is the language-independent key sent to the
+  // backend, name is the translated label shown in the UI. "All" is a
+  // UI-only entry, prepended so people can clear the filter.
+  const [categories, setCategories] = useState([{ name: "All", slug: "all" }]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState("");
-  // NEW: true when the category list currently shown came from the
+  // true when the category list currently shown came from the
   // English fallback because the active language had none
   const [categoriesFallback, setCategoriesFallback] = useState(false);
 
   // === which category is currently selected in the nav ===
-  const [activeCategory, setActiveCategory] = useState("All");
+  // Stores the SLUG (language-independent), not the translated display
+  // name. Defaults to "all" so the initial render shows every post.
+  const [activeCategory, setActiveCategory] = useState("all");
 
-  // NEW: set when the footer's category bar sent us here — tells the
-  // "posts finished loading" effect below that a scroll-to-top-of-list
-  // is still owed, so it fires once the requested category's posts (not
-  // just whatever was loading before) have actually arrived.
+  // set when the footer's category bar sent us here (it now passes a
+  // slug in router state) — tells the "posts finished loading" effect
+  // below that a scroll-to-top-of-list is still owed, so it fires once
+  // the requested category's posts (not just whatever was loading
+  // before) have actually arrived.
   const pendingFooterScroll = useRef(false);
 
   // Reusable inline loading spinner — shown while a section's data is
@@ -132,6 +138,7 @@ const Blog = () => {
   useEffect(() => () => clearTimeout(catResumeTimeout.current), []);
 
   const startCatDrag = (e) => {
+    // data-cat now holds the SLUG (see render below), not the translated name
     const itemEl = e.target.closest?.(".cat-nav-item");
     catDrag.current = {
       active: true,
@@ -187,17 +194,24 @@ const Blog = () => {
       setError("");
       if (pageNum === 1) setPostsFallback(false);
 
+      const isFiltered = activeCategory && activeCategory !== "all";
       const params = {
         page: pageNum,
         limit: POSTS_PER_PAGE,
-        ...(activeCategory && activeCategory !== "All" ? { category: activeCategory } : {}),
+        // categorySlug is what the backend expects — a translated
+        // category name will never match anything server-side.
+        ...(isFiltered ? { categorySlug: activeCategory } : {}),
       };
 
       let res = await API.get("/posts", { params });
       let postsData = Array.isArray(res.data) ? res.data : res.data.posts;
       let pages = Array.isArray(res.data) ? 1 : (res.data.totalPages || 1);
 
-      if (pageNum === 1 && (!postsData || postsData.length === 0)) {
+      // Only retry in English when there's NO category filter active — a
+      // specific category legitimately having zero posts should show the
+      // empty state, not trigger a retry that can end up ignoring the
+      // filter server-side and returning unrelated posts.
+      if (pageNum === 1 && (!postsData || postsData.length === 0) && !isFiltered) {
         res = await API.get("/posts", {
           params,
           headers: { "Accept-Language": "en" },
@@ -226,12 +240,15 @@ const Blog = () => {
     if (page < totalPages) setPage((p) => p + 1);
   };
 
+  // cat is now the SLUG (language-independent), read from data-cat
   const handleCategoryClick = (cat) => {
     setActiveCategory(cat);
     setPage(1);
     scrollToFirstPost();
   };
 
+  // Fetch categories as { name, slug }. If the current language has zero
+  // categories, re-fetch in English explicitly and flag the fallback.
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -241,23 +258,23 @@ const Blog = () => {
 
         let res = await API.get("/categories");
         let raw = Array.isArray(res.data) ? res.data : res.data.categories;
-        let names = (raw || [])
-          .map((c) => (typeof c === "string" ? c : c?.name))
+        let cats = (raw || [])
+          .map((c) => (c && c.name && c.slug ? { name: c.name, slug: c.slug } : null))
           .filter(Boolean);
 
-        if (names.length === 0) {
+        if (cats.length === 0) {
           res = await API.get("/categories", {
             headers: { "Accept-Language": "en" },
           });
           raw = Array.isArray(res.data) ? res.data : res.data.categories;
-          names = (raw || [])
-            .map((c) => (typeof c === "string" ? c : c?.name))
+          cats = (raw || [])
+            .map((c) => (c && c.name && c.slug ? { name: c.name, slug: c.slug } : null))
             .filter(Boolean);
-          if (names.length > 0) setCategoriesFallback(true);
+          if (cats.length > 0) setCategoriesFallback(true);
         }
 
-        if (names.length > 0) {
-          setCategories(["All", ...names]);
+        if (cats.length > 0) {
+          setCategories([{ name: "All", slug: "all" }, ...cats]);
         }
       } catch (err) {
         console.log(err);
@@ -269,13 +286,13 @@ const Blog = () => {
     fetchCategories();
   }, [t]);
 
-  // NEW: pick up a category passed in via router state — e.g. from the
-  // footer's category bar (navigate("/projects", { state: { category } })).
+  // Pick up a category slug passed in via router state — e.g. from the
+  // footer's category bar (navigate("/projects", { state: { categorySlug } })).
   // Applies the filter and marks a scroll as pending until that
   // category's posts have actually finished loading.
   useEffect(() => {
-    if (location.state?.category) {
-      setActiveCategory(location.state.category);
+    if (location.state?.categorySlug) {
+      setActiveCategory(location.state.categorySlug);
       setPage(1);
       pendingFooterScroll.current = true;
       // Clear the state so refreshing or navigating back doesn't re-trigger it.
@@ -284,7 +301,7 @@ const Blog = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
-  // NEW: once the requested category's posts have actually loaded, scroll
+  // Once the requested category's posts have actually loaded, scroll
   // to the very top of the post list. Waiting on `loading` (rather than a
   // fixed timeout) means the landing spot is accurate no matter how long
   // the fetch takes.
@@ -321,6 +338,13 @@ const Blog = () => {
     return `${minutes} ${t("blog.posts.readTimeSuffix")}`;
   };
 
+  // Translated display name for the currently active category slug —
+  // used only for the "no posts in <category>" message below.
+  const activeCategoryLabel =
+    categories.find((c) => c.slug === activeCategory)?.name || activeCategory;
+
+  const isFiltered = activeCategory && activeCategory !== "all";
+
   return (
     <div className="church-portal">
       <div className="cloud-layer">
@@ -348,11 +372,11 @@ const Blog = () => {
           <div className="cat-nav-scroll" ref={catTrackRef}>
             {catLoopItems.map((cat, i) => (
               <span
-                key={`${cat}-${i}`}
-                data-cat={cat}
-                className={`cat-nav-item${cat === activeCategory ? " active" : ""}`}
+                key={`${cat.slug}-${i}`}
+                data-cat={cat.slug}
+                className={`cat-nav-item${cat.slug === activeCategory ? " active" : ""}`}
               >
-                {cat}
+                {cat.slug === "all" ? t("blog.categoryNav.all") : cat.name}
               </span>
             ))}
           </div>
@@ -373,7 +397,8 @@ const Blog = () => {
         <div className="wrapper">
           {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
-          {/* note shown when the posts fell back to English */}
+          {/* note shown when the posts fell back to English (only relevant
+              when no category filter is active — see fetchPosts) */}
           {postsFallback && (
             <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
               {t("blog.posts.fallbackNotice")}
@@ -383,7 +408,11 @@ const Blog = () => {
           {loading && posts.length === 0 ? (
             <Spinner />
           ) : posts.length === 0 ? (
-            <p style={{ textAlign: "center" }}>{t("blog.posts.none")}</p>
+            <p style={{ textAlign: "center" }}>
+              {activeCategory === "all"
+                ? t("blog.posts.noneAll")
+                : t("blog.posts.noneCategory", { category: activeCategoryLabel })}
+            </p>
           ) : (
             posts.map((post, index) => (
               <React.Fragment key={post._id || index}>

@@ -4,6 +4,7 @@
     "description": "የስብከት ማስታወሻዎች፣ ምስክርነቶች እና ዜናዎች ከጉባኤያችን ሕይወት በካህናቶቻችን እና ቤተ ክርስቲያናችንን በሚያዋቅሩ ሰዎች የተጻፉ"
   },
   "categoryNav": {
+    "all": "ሁሉም",
     "ariaLabel": "የልጥፍ ምድቦች",
     "errorDefault": "ምድቦችን መጫን አልተሳካም",
     "fallbackNotice": "ምድቦቹ በቋንቋዎ ስላልተዘጋጁ በእንግሊዝኛ እየታዩ ነው።"
@@ -12,7 +13,8 @@
     "errorDefault": "ልጥፎችን መጫን አልተሳካም",
     "fallbackNotice": "እነዚህ ልጥፎች በቋንቋዎ ስላልተዘጋጁ በእንግሊዝኛ እየታዩ ነው።",
     "loading": "ልጥፎችን በመጫን ላይ...",
-    "none": "ምንም ልጥፎች አልተገኙም።",
+    "noneAll": "ምንም ልጥፎች አልተገኙም።",
+    "noneCategory": "በ\"{{category}}\" ውስጥ ምንም ልጥፎች አልተገኙም።",
     "readMoreButton": "ሙሉ ልጥፉን ያንብቡ",
     "loadMoreButton": "ተጨማሪ ልጥፎችን ይጫኑ",
     "loadingMoreButton": "በመጫን ላይ...",

@@ -4,6 +4,7 @@
     "description": "Note di predica, testimonianze e notizie dalla vita della nostra congregazione scritte dai nostri sacerdoti e dalle persone che compongono la nostra chiesa"
   },
   "categoryNav": {
+    "all": "Tutte",
     "ariaLabel": "Categorie dei post",
     "errorDefault": "Impossibile caricare le categorie",
     "fallbackNotice": "Le categorie sono mostrate in inglese perché non sono ancora disponibili nella tua lingua."
@@ -12,7 +13,8 @@
     "errorDefault": "Impossibile caricare i post",
     "fallbackNotice": "Questi post sono mostrati in inglese perché non sono ancora disponibili nella tua lingua.",
     "loading": "Caricamento dei post...",
-    "none": "Nessun post trovato.",
+    "noneAll": "Nessun post trovato.",
+    "noneCategory": "Nessun post trovato in \"{{category}}\".",
     "readMoreButton": "Leggi il Post Completo",
     "loadMoreButton": "Carica Altri Post",
     "loadingMoreButton": "Caricamento...",

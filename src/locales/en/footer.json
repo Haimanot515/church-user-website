@@ -1,7 +1,7 @@
 {
   "newsletter": {
-    "heading": "A short reflection, delivered every Monday.",
-    "subheading": "One email a week — a verse, a short reflection, and this week's prayer requests.",
+    "heading": "A short reflection, delivered every Monday",
+    "subheading": "One email a week a verse, a short reflection, and this week's prayer requests",
     "placeholder": "you@email.com",
     "subscribeButton": "Subscribe",
     "subscribingButton": "Subscribing…",
@@ -11,7 +11,7 @@
   },
   "brand": {
     "name": "Debre Selam Abune Gebre Menfes Kidus Church",
-    "tagline": "Sunday services at 9:00 & 11:00 AM. All are welcome, always."
+    "tagline": "Sunday services at 9:00 & 11:00 AM. All are welcome, always"
   },
   "columns": {
     "visit": {
@@ -38,7 +38,18 @@
         "instagram": "Instagram",
         "youtube": "YouTube"
       }
+    },
+    "quickLinks": {
+      "title": "Quick Links"
     }
+  },
+  "mobileNav": "Quick actions",
+  "contactFab": "Send us a message",
+  "contactFabShort": "Send",
+  "backToTop": "Back to top",
+  "backToTopShort": "Top",
+  "categoryNav": {
+    "errorDefault": "Unable to load categories."
   },
   "bottom": {
     "copyright": "© 2026 Debre Selam Abune Gebre Menfes Kidus Church",

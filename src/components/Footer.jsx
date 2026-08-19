@@ -96,16 +96,7 @@ const socialLinks = [
       </svg>
     ),
   },
-  {
-    key: "pinterest",
-    href: "#",
-    label: "Pinterest",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M12.02 2C6.5 2 2 6.5 2 12.02c0 4.23 2.63 7.85 6.35 9.32-.09-.79-.17-2.02.03-2.89.18-.79 1.17-5.02 1.17-5.02s-.3-.6-.3-1.48c0-1.39.8-2.42 1.8-2.42.85 0 1.26.64 1.26 1.4 0 .85-.55 2.13-.83 3.31-.24.99.5 1.8 1.48 1.8 1.77 0 3.13-1.87 3.13-4.56 0-2.39-1.71-4.05-4.16-4.05-2.83 0-4.5 2.13-4.5 4.32 0 .86.33 1.78.74 2.28a.3.3 0 0 1 .07.29c-.08.32-.25 1-.29 1.14-.05.19-.15.23-.35.14-1.3-.6-2.11-2.5-2.11-4.02 0-3.27 2.38-6.28 6.86-6.28 3.6 0 6.4 2.57 6.4 5.99 0 3.58-2.25 6.45-5.38 6.45-1.05 0-2.04-.55-2.38-1.19l-.65 2.47c-.24.9-.87 2.03-1.3 2.72.98.3 2.02.47 3.1.47 5.52 0 10-4.5 10-10.02C22 6.5 17.52 2 12.02 2Z" />
-      </svg>
-    ),
-  },
+ 
   {
     key: "linkedin",
     href: "#",
@@ -116,26 +107,8 @@ const socialLinks = [
       </svg>
     ),
   },
-  {
-    key: "threads",
-    href: "#",
-    label: "Threads",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M12.2 2C7.1 2 3.6 5.02 3.4 9.9h2.35c.2-3.5 2.6-5.6 6.35-5.6 3.1 0 5.5 1.6 5.5 4.15 0 1.85-1.1 2.9-3.15 3.35.15-.5.22-1.03.22-1.57 0-2.5-1.75-4.05-4.7-4.05-3.15 0-5.15 1.85-5.15 4.5 0 2.35 1.65 4.15 4.5 4.5-.55 1.35-1.85 2-3.55 2-2.15 0-3.5-1.15-3.7-2.9H2.05C2.25 18.3 4.9 20.6 8.9 20.6c3.55 0 5.85-1.85 6.5-4.65 2.9-.7 4.5-2.55 4.5-5.3C19.9 5.8 16.7 2 12.2 2Zm-.2 12.55c-1.85 0-2.9-.9-2.9-2.15 0-1.2.95-2 2.55-2 1.65 0 2.65.85 2.65 2.15 0 1.25-.95 2-2.3 2Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "spotify",
-    href: "#",
-    label: "Spotify",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.4a.62.62 0 0 1-.85.2c-2.33-1.42-5.26-1.75-8.72-.96a.62.62 0 1 1-.28-1.21c3.79-.87 7.04-.5 9.65 1.11.3.18.4.57.2.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.67-1.64-6.74-2.12-9.9-1.16a.78.78 0 0 1-.45-1.49c3.61-1.1 8.1-.56 11.16 1.32.37.23.48.71.26 1.07Zm.1-2.83c-3.2-1.9-8.49-2.07-11.55-1.15a.93.93 0 1 1-.54-1.78c3.51-1.06 9.34-.86 13.02 1.33a.93.93 0 0 1-.93 1.6Z" />
-      </svg>
-    ),
-  },
+ 
+ 
 ];
 
 const Footer = () => {
@@ -174,16 +147,19 @@ const Footer = () => {
   }, []);
 
   // Categories for the top-of-footer bar. Same source/fallback pattern as
-  // Home's category nav (src/pages/Home.jsx, fetchCategories), fetched
-  // independently so the footer works even if Home hasn't loaded
+  // Home's category nav (src/pages/Home.jsx, fetchCategories) and Blog's
+  // (src/pages/Blog.jsx, fetchCategories) — each entry is { name, slug }.
+  // slug is the language-independent key sent to the backend when
+  // filtering; name is the translated label shown in the chip. Fetched
+  // independently so the footer works even if Home/Blog haven't loaded
   // categories yet in this session. Re-fetches whenever the active
   // language (t) changes, and falls back to English if the active
-  // language currently has zero categories — exactly like Home.
-  const [footerCategories, setFooterCategories] = useState(["All"]);
+  // language currently has zero categories — exactly like Home/Blog.
+  const [footerCategories, setFooterCategories] = useState([{ name: "All", slug: "all" }]);
   const [footerCategoriesLoading, setFooterCategoriesLoading] = useState(true);
   const [footerCategoriesError, setFooterCategoriesError] = useState("");
   // true when the categories currently shown came from the English
-  // fallback because the active language had none (mirrors Home)
+  // fallback because the active language had none (mirrors Home/Blog)
   const [footerCategoriesFallback, setFooterCategoriesFallback] = useState(false);
 
   useEffect(() => {
@@ -204,26 +180,26 @@ const Footer = () => {
 
         let res = await API.get("/categories");
         let raw = Array.isArray(res.data) ? res.data : res.data.categories;
-        let names = (raw || [])
-          .map((c) => (typeof c === "string" ? c : c?.name))
+        let cats = (raw || [])
+          .map((c) => (c && c.name && c.slug ? { name: c.name, slug: c.slug } : null))
           .filter(Boolean);
 
-        if (names.length === 0) {
+        if (cats.length === 0) {
           res = await API.get("/categories", {
             headers: { "Accept-Language": "en" },
           });
           raw = Array.isArray(res.data) ? res.data : res.data.categories;
-          names = (raw || [])
-            .map((c) => (typeof c === "string" ? c : c?.name))
+          cats = (raw || [])
+            .map((c) => (c && c.name && c.slug ? { name: c.name, slug: c.slug } : null))
             .filter(Boolean);
 
-          if (names.length > 0) {
+          if (cats.length > 0) {
             setFooterCategoriesFallback(true);
           }
         }
 
-        if (names.length > 0) {
-          setFooterCategories(["All", ...names]);
+        if (cats.length > 0) {
+          setFooterCategories([{ name: "All", slug: "all" }, ...cats]);
         }
       } catch (err) {
         console.error("Error fetching footer categories:", err);
@@ -238,12 +214,14 @@ const Footer = () => {
     fetchFooterCategories();
   }, [t]);
 
-  // Navigate to the Blog page with the chosen category in router state;
-  // Blog picks this up on mount, applies the filter, and scrolls to the
-  // top of the post list once it's loaded. Note: the Blog component
-  // (src/pages/Blog.jsx) is mounted at "/projects" in App.jsx, not "/blog".
+  // Navigate to the Blog page with the chosen category's SLUG in router
+  // state; Blog picks this up on mount via location.state.categorySlug,
+  // applies the filter (sent to the backend as categorySlug, not the
+  // translated name), and scrolls to the top of the post list once it's
+  // loaded. Note: the Blog component (src/pages/Blog.jsx) is mounted at
+  // "/projects" in App.jsx, not "/blog".
   const handleFooterCategoryClick = (cat) => {
-    navigate("/projects", { state: { category: cat } });
+    navigate("/projects", { state: { categorySlug: cat.slug } });
   };
 
   const handleSubmit = async (e) => {
@@ -292,12 +270,12 @@ const Footer = () => {
         ) : (
           footerCategories.map((cat) => (
             <button
-              key={cat}
+              key={cat.slug}
               type="button"
               className="footer-category-chip"
               onClick={() => handleFooterCategoryClick(cat)}
             >
-              {cat === "All" ? t("home.categoryNav.all") : cat}
+              {cat.slug === "all" ? t("home.categoryNav.all") : cat.name}
             </button>
           ))
         )}
