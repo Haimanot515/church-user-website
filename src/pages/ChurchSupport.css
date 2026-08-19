@@ -1,0 +1,743 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --support-navy: #1c3a52;
+  --support-navy-deep: #0f2438;
+  --support-gold: #cf9f3f;
+  --support-gold-light: #e5bd67;
+  --support-red: #7a1010;
+  --support-white: #ffffff;
+  --support-light: #f5f8fa;
+  --support-text: #304b5d;
+  --support-muted: #718493;
+  --support-border: rgba(28, 58, 82, 0.13);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.church-support-page {
+  width: 100%;
+  min-height: 100vh;
+  font-family: "Nunito Sans", sans-serif;
+  color: var(--support-text);
+  background: var(--support-light);
+}
+
+/* ================================
+   GLOBAL CONTAINER
+================================ */
+
+.support-container {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+/* ================================
+   HERO
+================================ */
+
+.support-hero {
+  padding: 110px 0 105px;
+  text-align: center;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(207, 159, 63, 0.18),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      var(--support-navy),
+      var(--support-navy-deep)
+    );
+}
+
+.support-hero .support-container {
+  max-width: 850px;
+}
+
+.support-eyebrow {
+  display: inline-block;
+  margin-bottom: 16px;
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  color: var(--support-gold);
+}
+
+.support-hero h1 {
+  margin: 0 auto 24px;
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1.02;
+  font-weight: 700;
+
+  color: #eaf3f8;
+}
+
+.support-hero p {
+  max-width: 720px;
+  margin: 0 auto;
+
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.8;
+
+  color: #a9c2d3;
+}
+
+/* ================================
+   SECTIONS
+================================ */
+
+.support-section {
+  padding: 95px 0;
+}
+
+.account-section {
+  background: #ffffff;
+}
+
+.volunteer-section {
+  background:
+    linear-gradient(
+      180deg,
+      var(--support-navy),
+      var(--support-navy-deep)
+    );
+}
+
+.ways-section {
+  background: #f5f8fa;
+}
+
+/* ================================
+   SECTION HEADING
+================================ */
+
+.section-heading {
+  max-width: 780px;
+  margin: 0 auto 52px;
+  text-align: center;
+}
+
+.section-heading h2 {
+  margin: 0 0 18px;
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1.05;
+  font-weight: 700;
+
+  color: var(--support-navy-deep);
+}
+
+.section-heading p {
+  max-width: 650px;
+  margin: 0 auto;
+
+  font-size: 1.12rem;
+  line-height: 1.8;
+
+  color: var(--support-muted);
+}
+
+.light-heading h2 {
+  color: #ffffff;
+}
+
+.light-heading p {
+  color: #a9c2d3;
+}
+
+/* ================================
+   ACCOUNT TABLE
+================================ */
+
+.account-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 20px 55px rgba(15, 36, 56, 0.12);
+
+  border: 1px solid var(--support-border);
+}
+
+.account-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  min-width: 760px;
+}
+
+.account-table thead {
+  background: linear-gradient(
+    180deg,
+    var(--support-navy),
+    var(--support-navy-deep)
+  );
+}
+
+.account-table th {
+  padding: 20px 22px;
+
+  text-align: left;
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #ffffff;
+}
+
+.account-table td {
+  padding: 23px 22px;
+
+  border-bottom: 1px solid var(--support-border);
+
+  font-size: 1rem;
+  line-height: 1.5;
+
+  color: var(--support-text);
+
+  vertical-align: middle;
+}
+
+.account-table tbody tr {
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.account-table tbody tr:hover {
+  background: #f8fafb;
+}
+
+.account-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.account-table td:first-child {
+  width: 60px;
+
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--support-gold-deep);
+}
+
+.account-table td strong {
+  color: var(--support-navy-deep);
+}
+
+.account-number {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 9px 13px;
+
+  border-radius: 8px;
+
+  background: rgba(207, 159, 63, 0.1);
+  border: 1px solid rgba(207, 159, 63, 0.35);
+
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.92rem;
+  font-weight: 600;
+
+  color: #80601a;
+
+  white-space: nowrap;
+}
+
+/* ================================
+   ACCOUNT NOTE
+================================ */
+
+.account-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  max-width: 850px;
+
+  margin: 25px auto 0;
+  padding: 18px 22px;
+
+  border-radius: 12px;
+
+  background: #fff9eb;
+  border: 1px solid rgba(207, 159, 63, 0.3);
+}
+
+.note-icon {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  background: var(--support-gold);
+  color: white;
+
+  font-weight: 700;
+}
+
+.account-note p {
+  margin: 2px 0 0;
+
+  font-size: 0.95rem;
+  line-height: 1.65;
+
+  color: #72591d;
+}
+
+/* ================================
+   VOLUNTEER GRID
+================================ */
+
+.volunteer-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: 22px;
+}
+
+.volunteer-card {
+  position: relative;
+
+  padding: 32px 28px;
+
+  min-height: 280px;
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+
+  overflow: hidden;
+}
+
+.volunteer-card:hover {
+  transform: translateY(-7px);
+
+  background: rgba(255, 255, 255, 0.1);
+
+  border-color: rgba(207, 159, 63, 0.5);
+}
+
+.support-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 25px;
+
+  border-radius: 14px;
+
+  background: rgba(207, 159, 63, 0.14);
+
+  border: 1px solid rgba(207, 159, 63, 0.35);
+
+  font-size: 1.65rem;
+}
+
+.volunteer-card h3 {
+  margin: 0 0 13px;
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.65rem;
+
+  color: #ffffff;
+}
+
+.volunteer-card p {
+  margin: 0;
+
+  font-size: 0.98rem;
+  line-height: 1.75;
+
+  color: #a9c2d3;
+}
+
+.card-line {
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--support-gold),
+    transparent
+  );
+
+  opacity: 0.65;
+}
+
+/* ================================
+   OTHER WAYS
+================================ */
+
+.ways-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 24px;
+
+  max-width: 1000px;
+
+  margin: 0 auto;
+}
+
+.way-card {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 20px;
+
+  padding: 30px;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  border: 1px solid var(--support-border);
+
+  box-shadow: 0 15px 40px rgba(15, 36, 56, 0.07);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.way-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow: 0 20px 45px rgba(15, 36, 56, 0.12);
+}
+
+.way-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 13px;
+
+  background: rgba(207, 159, 63, 0.12);
+
+  font-size: 1.45rem;
+}
+
+.way-card h3 {
+  margin: 0 0 8px;
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.55rem;
+
+  color: var(--support-navy-deep);
+}
+
+.way-card p {
+  margin: 0;
+
+  font-size: 0.95rem;
+  line-height: 1.7;
+
+  color: var(--support-muted);
+}
+
+/* ================================
+   CTA
+================================ */
+
+.support-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 35px;
+
+  max-width: 1000px;
+
+  margin: 55px auto 0;
+  padding: 35px 40px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(
+    135deg,
+    var(--support-navy),
+    var(--support-navy-deep)
+  );
+
+  box-shadow: 0 20px 50px rgba(15, 36, 56, 0.18);
+}
+
+.support-cta h3 {
+  margin: 0 0 8px;
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+
+  color: #ffffff;
+}
+
+.support-cta p {
+  margin: 0;
+
+  color: #a9c2d3;
+  line-height: 1.6;
+}
+
+.support-contact-btn {
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 14px 26px;
+
+  border-radius: 30px;
+
+  background: var(--support-gold);
+
+  color: var(--support-navy-deep);
+
+  font-weight: 800;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.support-contact-btn:hover {
+  background: var(--support-gold-light);
+
+  transform: translateY(-2px);
+}
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1000px) {
+  .volunteer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ways-grid {
+    grid-template-columns: 1fr;
+    max-width: 700px;
+  }
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 700px) {
+  .support-container {
+    width: min(100% - 32px, 1180px);
+  }
+
+  .support-hero {
+    padding: 80px 0 75px;
+  }
+
+  .support-section {
+    padding: 70px 0;
+  }
+
+  .section-heading {
+    margin-bottom: 35px;
+  }
+
+  .section-heading h2 {
+    font-size: 2.7rem;
+  }
+
+  .volunteer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .volunteer-card {
+    min-height: auto;
+  }
+
+  .support-cta {
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 30px 25px;
+  }
+
+  .support-contact-btn {
+    width: 100%;
+  }
+}
+
+/* ================================
+   SMALL MOBILE
+================================ */
+
+@media (max-width: 520px) {
+  .support-container {
+    width: calc(100% - 24px);
+  }
+
+  .support-hero h1 {
+    font-size: 3rem;
+  }
+
+  .support-hero p {
+    font-size: 1rem;
+  }
+
+  .support-section {
+    padding: 60px 0;
+  }
+
+  .section-heading h2 {
+    font-size: 2.4rem;
+  }
+
+  .account-table-wrapper {
+    border-radius: 12px;
+  }
+
+  /*
+    Convert the account table into
+    mobile-friendly stacked rows.
+  */
+  .account-table,
+  .account-table thead,
+  .account-table tbody,
+  .account-table th,
+  .account-table td,
+  .account-table tr {
+    display: block;
+  }
+
+  .account-table {
+    min-width: 0;
+  }
+
+  .account-table thead {
+    display: none;
+  }
+
+  .account-table tbody tr {
+    padding: 20px;
+    border-bottom: 1px solid var(--support-border);
+  }
+
+  .account-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .account-table td {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 15px;
+
+    padding: 8px 0;
+
+    border: none;
+
+    text-align: right;
+
+    font-size: 0.94rem;
+  }
+
+  .account-table td::before {
+    content: attr(data-label);
+
+    flex-shrink: 0;
+
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    color: var(--support-muted);
+
+    text-align: left;
+  }
+
+  .account-table td:first-child {
+    width: auto;
+  }
+
+  .account-number {
+    font-size: 0.8rem;
+  }
+
+  .account-note {
+    padding: 16px;
+  }
+
+  .way-card {
+    padding: 24px;
+  }
+}
+
+/* ================================
+   ACCESSIBILITY
+================================ */
+
+.support-contact-btn:focus-visible,
+.account-table tr:focus-visible {
+  outline: 3px solid rgba(207, 159, 63, 0.5);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .volunteer-card,
+  .way-card,
+  .support-contact-btn {
+    transition: none;
+  }
+}

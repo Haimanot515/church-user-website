@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import Skill from "./pages/Sermon";
 import Testimonials from "./pages/Travel";
 import Church from "./pages/Church";
+import ChurchSupport from "./pages/ChurchSupport";
 import Services from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
 import Media from "./pages/Media";
@@ -54,22 +55,52 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/skill" element={<Skill />} />
         <Route path="/testimonials" element={<Testimonials />} />
+
+        {/* Church */}
         <Route path="/cv" element={<Church />} />
+        <Route
+          path="/church-support"
+          element={<ChurchSupport />}
+        />
+
+        {/* Services */}
         <Route path="/services" element={<Services />} />
         <Route path="/services/:id" element={<ServiceDetail />} />
+
+        {/* Media and Books */}
         <Route path="/media" element={<Media />} />
         <Route path="/book" element={<Book />} />
+
+        {/* Detail Pages */}
         <Route path="/projects/:id" element={<Detail />} />
-        <Route path="/promotions/:id" element={<PromotionDetail />} />
+        <Route
+          path="/promotions/:id"
+          element={<PromotionDetail />}
+        />
         <Route path="/about/:id" element={<AboutDetail />} />
-        <Route path="/homeheros/:id" element={<HeroDetail />} />
-        <Route path="/about/story/:slug" element={<StoryDetail />} />
+        <Route
+          path="/homeheros/:id"
+          element={<HeroDetail />}
+        />
+        <Route
+          path="/about/story/:slug"
+          element={<StoryDetail />}
+        />
         <Route path="/media/:id" element={<MediaDetail />} />
-        <Route path="/churches/:id" element={<ChurchDetail />} />
-        <Route path="/church-persons/:id" element={<PersonDetail />} />
+        <Route
+          path="/churches/:id"
+          element={<ChurchDetail />}
+        />
+        <Route
+          path="/church-persons/:id"
+          element={<PersonDetail />}
+        />
 
         {/* 404 */}
-        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+        <Route
+          path="*"
+          element={<h2>404 - Page Not Found</h2>}
+        />
       </Routes>
 
       <Footer />

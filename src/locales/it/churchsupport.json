@@ -1,0 +1,46 @@
+{
+  "hero": {
+    "eyebrow": "SOSTIENI LA CHIESA",
+    "title": "Sostieni la Nostra Chiesa e la Comunità",
+    "description": "Insieme possiamo rafforzare la nostra chiesa, sostenere la nostra comunità e continuare l'opera di fede, servizio e amore."
+  },
+  "accounts": {
+    "eyebrow": "SOSTEGNO FINANZIARIO",
+    "title": "Numeri di Conto Disponibili",
+    "description": "Puoi sostenere la chiesa tramite uno dei conti elencati di seguito.",
+    "table": {
+      "number": "#",
+      "bank": "Banca",
+      "holder": "Intestatario",
+      "account": "Numero di Conto"
+    },
+    "note": "Verifica il nome e il numero del conto prima di effettuare un bonifico. Contatta la chiesa per ulteriori informazioni sui pagamenti."
+  },
+  "volunteer": {
+    "eyebrow": "PARTECIPA",
+    "title": "Attività di Volontariato",
+    "description": "Il tuo tempo, le tue competenze e la tua disponibilità a servire possono fare una differenza significativa.",
+    "items": [
+      { "icon": "🤝", "title": "Servizio in Chiesa", "description": "Aiuta con le attività della chiesa, l'accoglienza dei visitatori, l'organizzazione di eventi e le necessità quotidiane della chiesa." },
+      { "icon": "📚", "title": "Scuola Domenicale", "description": "Sostieni bambini e giovani attraverso l'insegnamento, il tutoraggio, attività educative e guida spirituale." },
+      { "icon": "❤️", "title": "Sostegno alla Comunità", "description": "Partecipa ad attività a sostegno di famiglie, anziani, bambini e membri della nostra comunità." },
+      { "icon": "🎥", "title": "Media e Tecnologia", "description": "Aiuta con fotografia, video, dirette streaming, social media, aggiornamenti del sito web e altre attività digitali." }
+    ]
+  },
+  "ways": {
+    "eyebrow": "FAI LA DIFFERENZA",
+    "title": "Altri Modi per Sostenerci",
+    "description": "Ci sono molti modi per contribuire alla vita e alla missione della nostra chiesa.",
+    "items": [
+      { "icon": "🙏", "title": "Preghiera", "description": "Prega per la chiesa, i suoi membri, le famiglie, i leader, i bambini e tutto il lavoro svolto nella comunità." },
+      { "icon": "💰", "title": "Sostegno Finanziario", "description": "Il tuo contributo finanziario aiuta la chiesa a continuare le sue attività spirituali, educative, caritatevoli e comunitarie." },
+      { "icon": "🌍", "title": "Servizio alla Comunità", "description": "Dona il tuo tempo e le tue competenze per aiutare le persone bisognose e rafforzare la nostra chiesa e comunità." }
+    ]
+  },
+  "cta": {
+    "eyebrow": "INSIEME",
+    "title": "Ogni contributo fa la differenza.",
+    "description": "Grazie per sostenere la nostra chiesa e per aiutarci a servire la nostra comunità.",
+    "contactButton": "Contatta la Chiesa"
+  }
+}

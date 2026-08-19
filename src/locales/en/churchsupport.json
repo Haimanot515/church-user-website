@@ -1,0 +1,46 @@
+{
+  "hero": {
+    "eyebrow": "CHURCH SUPPORT",
+    "title": "Support Our Church & Community",
+    "description": "Together we can strengthen our church, support our community, and continue the work of faith, service, and love."
+  },
+  "accounts": {
+    "eyebrow": "FINANCIAL SUPPORT",
+    "title": "Available Account Numbers",
+    "description": "You can support the church through any of the accounts listed below.",
+    "table": {
+      "number": "#",
+      "bank": "Bank",
+      "holder": "Account Name",
+      "account": "Account Number"
+    },
+    "note": "Please verify the account name and number before making a transfer. Contact the church if you need additional payment information."
+  },
+  "volunteer": {
+    "eyebrow": "GET INVOLVED",
+    "title": "Volunteer Activities",
+    "description": "Your time, skills, and willingness to serve can make a meaningful difference.",
+    "items": [
+      { "icon": "🤝", "title": "Church Service", "description": "Help with church activities, welcoming visitors, organizing events, and supporting the daily needs of the church." },
+      { "icon": "📚", "title": "Sunday School", "description": "Support children and young people through teaching, mentoring, educational activities, and spiritual guidance." },
+      { "icon": "❤️", "title": "Community Support", "description": "Take part in activities that support families, elderly people, children, and members of our wider community." },
+      { "icon": "🎥", "title": "Media & Technology", "description": "Help with photography, video, livestreaming, social media, website updates, and other digital activities." }
+    ]
+  },
+  "ways": {
+    "eyebrow": "MAKE A DIFFERENCE",
+    "title": "Other Ways You Can Support",
+    "description": "There are many ways to contribute to the life and mission of our church.",
+    "items": [
+      { "icon": "🙏", "title": "Prayer", "description": "Pray for the church, its members, families, leaders, children, and all the work being carried out in the community." },
+      { "icon": "💰", "title": "Financial Support", "description": "Your financial contribution helps the church continue its spiritual, educational, charitable, and community activities." },
+      { "icon": "🌍", "title": "Community Service", "description": "Give your time and skills to help people in need and strengthen our church and community." }
+    ]
+  },
+  "cta": {
+    "eyebrow": "TOGETHER",
+    "title": "Every contribution makes a difference.",
+    "description": "Thank you for supporting our church and helping us serve our community.",
+    "contactButton": "Contact Church"
+  }
+}

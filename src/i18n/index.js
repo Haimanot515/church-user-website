@@ -2,7 +2,10 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// English
+// =====================================================
+// ENGLISH
+// =====================================================
+
 import enNavbar from "../locales/en/navbar.json";
 import enFooter from "../locales/en/footer.json";
 import enHome from "../locales/en/home.json";
@@ -12,6 +15,7 @@ import enTravel from "../locales/en/travel.json";
 import enContact from "../locales/en/contact.json";
 import enServices from "../locales/en/services.json";
 import enChurch from "../locales/en/church.json";
+import enChurchSupport from "../locales/en/churchsupport.json";
 import enSermon from "../locales/en/sermon.json";
 import enMedia from "../locales/en/media.json";
 import enBook from "../locales/en/book.json";
@@ -20,7 +24,10 @@ import enLogin from "../locales/en/login.json";
 import enVerify from "../locales/en/verify.json";
 import enMeta from "../locales/en/meta.json";
 
-// Amharic
+// =====================================================
+// AMHARIC
+// =====================================================
+
 import amNavbar from "../locales/am/navbar.json";
 import amFooter from "../locales/am/footer.json";
 import amHome from "../locales/am/home.json";
@@ -30,6 +37,7 @@ import amTravel from "../locales/am/travel.json";
 import amContact from "../locales/am/contact.json";
 import amServices from "../locales/am/services.json";
 import amChurch from "../locales/am/church.json";
+import amChurchSupport from "../locales/am/churchsupport.json";
 import amSermon from "../locales/am/sermon.json";
 import amMedia from "../locales/am/media.json";
 import amBook from "../locales/am/book.json";
@@ -38,7 +46,10 @@ import amLogin from "../locales/am/login.json";
 import amVerify from "../locales/am/verify.json";
 import amMeta from "../locales/am/meta.json";
 
-// Italian
+// =====================================================
+// ITALIAN
+// =====================================================
+
 import itNavbar from "../locales/it/navbar.json";
 import itFooter from "../locales/it/footer.json";
 import itHome from "../locales/it/home.json";
@@ -48,6 +59,7 @@ import itTravel from "../locales/it/travel.json";
 import itContact from "../locales/it/contact.json";
 import itServices from "../locales/it/services.json";
 import itChurch from "../locales/it/church.json";
+import itChurchSupport from "../locales/it/churchsupport.json";
 import itSermon from "../locales/it/sermon.json";
 import itMedia from "../locales/it/media.json";
 import itBook from "../locales/it/book.json";
@@ -56,11 +68,18 @@ import itLogin from "../locales/it/login.json";
 import itVerify from "../locales/it/verify.json";
 import itMeta from "../locales/it/meta.json";
 
+// =====================================================
+// INITIALIZE I18N
+// =====================================================
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
+      // =================================================
+      // ENGLISH
+      // =================================================
       en: {
         translation: {
           navbar: enNavbar,
@@ -72,6 +91,7 @@ i18n
           contact: enContact,
           services: enServices,
           church: enChurch,
+          churchSupport: enChurchSupport,
           sermon: enSermon,
           media: enMedia,
           book: enBook,
@@ -82,6 +102,9 @@ i18n
         },
       },
 
+      // =================================================
+      // AMHARIC
+      // =================================================
       am: {
         translation: {
           navbar: amNavbar,
@@ -93,6 +116,7 @@ i18n
           contact: amContact,
           services: amServices,
           church: amChurch,
+          churchSupport: amChurchSupport,
           sermon: amSermon,
           media: amMedia,
           book: amBook,
@@ -103,6 +127,9 @@ i18n
         },
       },
 
+      // =================================================
+      // ITALIAN
+      // =================================================
       it: {
         translation: {
           navbar: itNavbar,
@@ -114,6 +141,7 @@ i18n
           contact: itContact,
           services: itServices,
           church: itChurch,
+          churchSupport: itChurchSupport,
           sermon: itSermon,
           media: itMedia,
           book: itBook,
@@ -124,6 +152,10 @@ i18n
         },
       },
     },
+
+    // ===================================================
+    // DEFAULT LANGUAGE
+    // ===================================================
 
     fallbackLng: "en",
 
