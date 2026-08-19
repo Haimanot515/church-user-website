@@ -47,8 +47,8 @@
     "pageInfo": "ገጽ {{page}} ከ {{total}}"
   },
   "invite": {
-    "line1": "እንዳሉ ይምጡ",
-    "line2": "እዚህ ቦታ አለዎት።"
+    "line1": "ይምጡ",
+    "line2": "እዚህ ቦታ አለዎት"
   },
   "priest": {
     "eyebrow": "ከካህኑ",
