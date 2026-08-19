@@ -1,4 +1,5 @@
 {
+  "churchName": "Chiesa Ortodossa Etiope Tewahedo – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
   "hero": {
     "titleFallback": "Una Chiesa, Non Solo un Edificio",
     "descriptionFallback": "Da quasi cinque decenni, {{churchName}} è una comunità che impara che la fede non riguarda tanto avere risposte, quanto esserci — per Dio, gli uni per gli altri e per il nostro quartiere. Qui raccontiamo questa storia, con onestà.",
@@ -12,7 +13,8 @@
     "missionLabel": "La Nostra Missione",
     "missionValue": "Aiutare questa comunità a conoscere Cristo e a crescere insieme nella fede, una settimana ordinaria alla volta.",
     "visionLabel": "La Nostra Visione",
-    "visionValue": "Una chiesa così radicata in questa comunità che nessuno nei dintorni debba affrontare difficoltà, dubbi o gioie da solo."
+    "visionValue": "Una chiesa così radicata in questa comunità che nessuno nei dintorni debba affrontare difficoltà, dubbi o gioie da solo.",
+    "fallbackNotice": "Contenuto mostrato in inglese."
   },
   "story": {
     "heading": "La Storia della Nostra Chiesa",
@@ -22,7 +24,8 @@
     "loadMoreButton": "Carica Altro",
     "loadingMoreButton": "Caricamento…",
     "readFullStoryButton": "Leggi la Storia Completa",
-    "fallbackNotice": "Nessun capitolo nella lingua selezionata — visualizzazione in inglese."
+    "fallbackNotice": "Nessun capitolo nella lingua selezionata — visualizzazione in inglese.",
+    "ledByLabel": "{{leaderRole}} · Guida da {{range}}"
   },
   "faith": {
     "heading": "Cosa Crediamo",
@@ -35,6 +38,10 @@
     "whyWeWriteHeading": "Perché Scriviamo Questo Blog",
     "whyWeWriteQuote": "Ci riuniamo la domenica, ma un servizio può contenere solo una parte. Qui mettiamo il resto — i dubbi che non esprimiamo sempre ad alta voce, le piccole misericordie che altrimenti dimenticheremmo, e la trama ordinaria del cercare di essere una chiesa per questa comunità, in questa stagione."
   },
+  "faithFaq": {
+    "heading": "Domande di Fede",
+    "fallbackNotice": "Contenuto mostrato in inglese."
+  },
   "leadership": {
     "heading": "Il Nostro Gruppo Dirigente",
     "fallbackNotice": "Contenuto mostrato in inglese."
@@ -45,6 +52,7 @@
   },
   "faq": {
     "heading": "Domande Frequenti",
+    "fallbackNotice": "Contenuto mostrato in inglese.",
     "items": [
       { "q": "Cosa devo aspettarmi come visitatore per la prima volta?", "a": "Un'accoglienza calorosa, un posto a sedere dove preferisci, e nessuna pressione a firmare nulla o alzarti a presentarti." },
       { "q": "C'è un programma per i bambini durante il servizio?", "a": "Sì — un servizio di accoglienza supervisionato e attività adatte all'età si svolgono durante entrambe le funzioni della domenica." },
@@ -61,6 +69,12 @@
     "note": "Le nostre porte sono aperte la maggior parte delle mattine, e il nostro team è di solito raggiungibile nel piccolo edificio dietro il santuario.",
     "serviceTimes": ["Domenica — 9:00 e 11:00", "Preghiera del Mercoledì — 18:30"],
     "mapAlt": "Mappa dell'area vicino a {{churchName}}"
+  },
+  "map": {
+    "heading": "Dove Siamo",
+    "description": "Vieni a trovarci a {{churchName}}.",
+    "iframeTitle": "Mappa della posizione della chiesa",
+    "query": "Udine, Italia"
   },
   "support": {
     "eyebrow": "Dona Online o di Persona",

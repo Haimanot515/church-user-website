@@ -3,11 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 
-const CHURCH_NAME = "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine";
-
 const ChurchAboutPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  // Localized church name — falls back to English if no translation exists for the active locale
+  const CHURCH_NAME = t("about.churchName", {
+    defaultValue:
+      "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
+  });
+
+  // Localized map query used to build the embedded Google Maps URL below
+  const MAP_QUERY = t("about.map.query", { defaultValue: "Udine, Italy" });
 
   const [activeChapter, setActiveChapter] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
@@ -980,7 +987,11 @@ const ChurchAboutPage = () => {
 
               <div className="about-text-side">
                 <span className="about-label">
-                  {item.leaderRole} · Led {item.range}
+                  {t("about.story.ledByLabel", {
+                    leaderRole: item.leaderRole,
+                    range: item.range,
+                    defaultValue: "{{leaderRole}} · Led {{range}}",
+                  })}
                 </span>
 
                 <h2 className="about-title">
@@ -1223,9 +1234,9 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* SUPPORT THE CHURCH */}
+      {/* SUPPORT & GET INVOLVED — merged: account details + give/volunteer buttons in one section */}
       <div style={{ background: 'var(--deep-red)' }}>
-        <section>
+        <section className="cta-band">
           <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
             <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
               {t("about.support.heading")}
@@ -1233,7 +1244,19 @@ const ChurchAboutPage = () => {
             <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
               {t("about.support.description")}
             </p>
-            <div className="give-info-box" style={{ display: 'inline-block', textAlign: 'left', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '12px', padding: '28px 34px' }}>
+
+            <div
+              className="give-info-box"
+              style={{
+                display: 'inline-block',
+                textAlign: 'left',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '12px',
+                padding: '28px 34px',
+                marginBottom: '34px',
+              }}
+            >
               <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>{t("about.support.bankTransferLabel")}</p>
               <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: '0 0 20px 0' }}>
                 {t("about.support.accountName", { churchName: CHURCH_NAME })}<br />
@@ -1244,11 +1267,20 @@ const ChurchAboutPage = () => {
                 {t("about.support.merchantName", { churchName: CHURCH_NAME })}
               </p>
             </div>
+
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+                {t("about.cta.giveButton")}
+              </button>
+              <button style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+                {t("about.cta.volunteerButton")}
+              </button>
+            </div>
           </div>
         </section>
       </div>
 
-      {/* FIND US (MAP) — placed directly below the Support the Church section */}
+      {/* FIND US (MAP) — placed directly below the merged Support/Get Involved section */}
       <div style={{ background: '#ffffff' }}>
         <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
           <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>
@@ -1260,34 +1292,12 @@ const ChurchAboutPage = () => {
             </p>
             <div className="map-frame" style={{ marginBottom: 0 }}>
               <iframe
-                title="church-location-map"
-                src="https://www.google.com/maps?q=Udine,+Italy&output=embed"
+                title={t("about.map.iframeTitle", { defaultValue: "Church location map" })}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`}
                 loading="lazy"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
               />
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {/* GIVE / GET INVOLVED CTA */}
-      <div style={{ background: 'var(--deep-red)' }}>
-        <section className="cta-band">
-          <div className="wrapper" style={{ maxWidth: '640px' }}>
-            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff' }}>
-              {t("about.cta.heading")}
-            </h2>
-            <p className="body-copy on-red" style={{ margin: '0 auto 30px auto', maxWidth: '520px' }}>
-              {t("about.cta.description")}
-            </p>
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
-                {t("about.cta.giveButton")}
-              </button>
-              <button style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
-                {t("about.cta.volunteerButton")}
-              </button>
             </div>
           </div>
         </section>

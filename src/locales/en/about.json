@@ -1,4 +1,5 @@
 {
+  "churchName": "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
   "hero": {
     "titleFallback": "A Church, Not Just a Building",
     "descriptionFallback": "For nearly five decades, {{churchName}} has been a community learning that faith is less about having answers and more about showing up for God, for each other, and for our neighborhood. This is where we tell that story, honestly.",
@@ -12,7 +13,8 @@
     "missionLabel": "Our Mission",
     "missionValue": "To help this community know Christ and grow together in faith, one ordinary week at a time.",
     "visionLabel": "Our Vision",
-    "visionValue": "A church so rooted in this community that no one nearby has to face hardship, doubt, or celebration alone."
+    "visionValue": "A church so rooted in this community that no one nearby has to face hardship, doubt, or celebration alone.",
+    "fallbackNotice": "Showing this content in English."
   },
   "story": {
     "heading": "Our Church Story",
@@ -22,7 +24,8 @@
     "loadMoreButton": "Load More",
     "loadingMoreButton": "Loading…",
     "readFullStoryButton": "Read Full Story",
-    "fallbackNotice": "No story chapters in your selected language yet — showing English instead."
+    "fallbackNotice": "No story chapters in your selected language yet — showing English instead.",
+    "ledByLabel": "{{leaderRole}} · Led {{range}}"
   },
   "faith": {
     "heading": "What We Believe",
@@ -35,6 +38,10 @@
     "whyWeWriteHeading": "Why We Write This Blog",
     "whyWeWriteQuote": "We gather on Sundays, but a service only holds so much. This is where we put the rest — the doubts we don't always voice out loud, the small mercies we'd otherwise forget, and the ordinary texture of trying to be a church for this community, in this season."
   },
+  "faithFaq": {
+    "heading": "Questions of Faith",
+    "fallbackNotice": "Showing this content in English."
+  },
   "leadership": {
     "heading": "Leadership Team",
     "fallbackNotice": "Showing this content in English."
@@ -45,6 +52,7 @@
   },
   "faq": {
     "heading": "Common Questions",
+    "fallbackNotice": "Showing this content in English.",
     "items": [
       { "q": "What should I expect as a first-time visitor?", "a": "A warm welcome, a seat wherever you like, and no pressure to sign anything or stand up and introduce yourself." },
       { "q": "Is there a program for kids during the service?", "a": "Yes — supervised check-in and age-appropriate programming run alongside both Sunday services." },
@@ -61,6 +69,12 @@
     "note": "Our doors are open most mornings, and our office team is usually reachable from the small building behind the sanctuary.",
     "serviceTimes": ["Sunday  9:00 & 11:00 AM", "Wednesday Prayer — 6:30 PM"],
     "mapAlt": "Map area near {{churchName}}"
+  },
+  "map": {
+    "heading": "Find Us",
+    "description": "Visit us at {{churchName}}.",
+    "iframeTitle": "Church location map",
+    "query": "Udine, Italy"
   },
   "support": {
     "eyebrow": "Give Online or In Person",
