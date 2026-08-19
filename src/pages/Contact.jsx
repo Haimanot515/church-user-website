@@ -125,6 +125,14 @@ const Contact = () => {
   const { t } = useTranslation();
   const location = useLocation();
 
+  // Same pattern as ChurchAboutPage — church name & map query come from
+  // translations so this page always points at the same place as About.
+  const CHURCH_NAME = t("about.churchName", {
+    defaultValue:
+      "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
+  });
+  const MAP_QUERY = t("contact.location.mapQuery", { defaultValue: "Udine, Italy" });
+
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -371,15 +379,6 @@ const Contact = () => {
         </div>
       </section>
 
-      <section style={{ background: "linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)" }}>
-        <div className="wrapper" style={{ maxWidth: "760px" }}>
-          <p className="pull-quote display" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.4rem)", fontWeight: 600, color: "var(--navy-deep)", lineHeight: 1.55 }}>
-            "{t("contact.quote.text")}"
-          </p>
-          <p style={{ marginTop: "26px", fontSize: "1.25rem", color: "#3d5a6c" }}>{t("contact.quote.attribution")}</p>
-        </div>
-      </section>
-
       <div style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden" }}>
         <section>
           <div className="wrapper">
@@ -390,7 +389,7 @@ const Contact = () => {
               <div className="map-frame">
                 <iframe
                   title={t("contact.location.mapIframeTitle")}
-                  src="https://www.google.com/maps?q=Bole+Road,+Addis+Ababa,+Ethiopia&output=embed"
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`}
                   style={{ width: "100%", height: "100%", border: 0 }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -400,7 +399,7 @@ const Contact = () => {
                 <p style={{ fontSize: "1.4rem", color: "#eaf3f8", lineHeight: 1.75, marginBottom: "12px" }}>{location_.address}</p>
                 <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.75, marginBottom: "20px", maxWidth: "460px" }}>{location_.note}</p>
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=Harbor+Light+Church+Bole+Road+Addis+Ababa"
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="eyebrow"

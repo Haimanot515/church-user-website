@@ -33,7 +33,7 @@
       },
       {
         "title": "Mail",
-        "value": "Debre Selam Abune Gebre Menfes Kidus Church, Bole Road, Addis Ababa",
+        "value": "Debre Selam Abune Gebre Menfes Kidus Church, Udine, Italy",
         "desc": "For letters, cards, or anything that deserves a stamp instead of a send button."
       }
     ]
@@ -75,9 +75,10 @@
   },
   "location": {
     "heading": "Visit In Person",
-    "address": "Debre Selam Abune Gebre Menfes Kidus Church, Bole Road, Addis Ababa, Ethiopia",
+    "address": "Debre Selam Abune Gebre Menfes Kidus Church, Udine, Italy",
     "note": "Our office sits behind the sanctuary. If the door's open, so are we no appointment required most weekday mornings.",
     "getDirections": "Get Directions →",
+    "mapQuery": "Udine, Italy",
     "mapIframeTitle": "Debre Selam Abune Gebre Menfes Kidus Church location",
     "serviceTimes": [
       "Sunday — 9:00 & 11:00 AM",

@@ -1,88 +1,89 @@
 {
   "hero": {
-    "title": "Ci piacerebbe davvero sentirti",
-    "description": "Che sia una domanda su qualcosa che abbiamo condiviso, una richiesta di preghiera, o solo un saluto — questa pagina arriva direttamente alla nostra chiesa, non a un comitato. Scorri per il modulo, oppure contattaci nel modo che ti risulta più semplice."
+    "title": "Saremmo davvero felici di sentire la tua voce",
+    "description": "Che si tratti di una domanda su qualcosa che abbiamo condiviso, di una richiesta di preghiera o anche solo di un saluto, questa pagina arriva direttamente alla nostra chiesa, non a un comitato. Scorri verso il basso per il modulo, oppure contattaci nel modo che ti è più comodo."
   },
   "quickFacts": {
     "items": [
-      { "label": "Ideale Per", "value": "Domande, feedback, o solo un saluto" },
-      { "label": "Tempo di Risposta", "value": "Di solito entro 2–3 giorni" },
-      { "label": "Orari d'Ufficio", "value": "Mar – Ven, 9:00 – 15:00" },
-      { "label": "Assistenza Pastorale Urgente", "value": "Chiama direttamente l'ufficio della chiesa" },
-      { "label": "Preferito Per Note Lunghe", "value": "Email invece dei social media" },
-      { "label": "Newsletter", "value": "Mensile, niente spam, facile da annullare" }
+      { "label": "Ideale per", "value": "Domande, commenti o anche solo per fare un saluto" },
+      { "label": "Tempo di risposta", "value": "Di solito entro 2–3 giorni" },
+      { "label": "Orari di ufficio", "value": "Mar – Ven, 9:00 – 15:00" },
+      { "label": "Assistenza sacerdotale urgente", "value": "Chiama direttamente l'ufficio parrocchiale" },
+      { "label": "Preferito per messaggi lunghi", "value": "E-mail rispetto ai social media" },
+      { "label": "Newsletter", "value": "Mensile, niente spam, ci si disiscrive facilmente" }
     ]
   },
   "reachMethods": {
-    "heading": "Modi per Contattarci",
+    "heading": "Modi per contattarci",
     "items": [
       {
-        "title": "Email",
+        "title": "E-mail",
         "value": "abunegebremenfeskidus@gmail.com",
         "desc": "Il modo più affidabile per raggiungere la nostra chiesa. Il nostro team legge ogni messaggio e risponde il prima possibile."
       },
       {
-        "title": "Ufficio della Chiesa",
+        "title": "Ufficio parrocchiale",
         "value": "+251 11 555 0148",
-        "desc": "Per programmazioni, domande sull'edificio, o qualsiasi cosa con cui il nostro team dell'ufficio possa aiutare direttamente."
+        "desc": "Per appuntamenti, informazioni sulla struttura o qualsiasi cosa in cui il nostro team possa aiutarti direttamente."
       },
       {
         "title": "Instagram",
         "value": "@harborlightchurch",
-        "desc": "Dove pubblichiamo riflessioni più brevi e aggiornamenti sulla vita della congregazione."
+        "desc": "Dove pubblichiamo brevi riflessioni e aggiornamenti sulla vita della comunità."
       },
       {
         "title": "Posta",
-        "value": "Harbor Light Church, Bole Road, Addis Abeba",
-        "desc": "Per lettere, biglietti, o qualsiasi cosa meriti un francobollo invece di un pulsante di invio."
+        "value": "Debre Selam Abune Gebre Menfes Kidus Church, Udine, Italia",
+        "desc": "Per lettere, cartoline o qualsiasi cosa che meriti un francobollo al posto di un pulsante di invio."
       }
     ]
   },
   "form": {
-    "heading": "Scrivi quanto poco o quanto vuoi",
-    "successNote": "Grazie — il tuo messaggio è in arrivo da noi. Il nostro team legge tutto, quindi potrebbe volerci qualche giorno, ma ti risponderemo.",
-    "namePlaceholder": "Il Tuo Nome",
-    "emailPlaceholder": "Email",
-    "messagePlaceholder": "Prenditi il tuo tempo — leggeremo tutto.",
-    "sendButton": "Invia Messaggio",
+    "heading": "Scrivi quanto desideri, poco o molto",
+    "successNote": "Grazie! Il tuo messaggio è in viaggio verso di noi. Il nostro team legge ogni messaggio, quindi potrebbero volerci alcuni giorni, ma ti risponderemo.",
+    "namePlaceholder": "Il tuo nome",
+    "emailPlaceholder": "E-mail",
+    "messagePlaceholder": "Fai con calma, leggeremo tutto.",
+    "sendButton": "Invia messaggio",
     "sendingButton": "Invio in corso...",
-    "errorDefault": "Qualcosa è andato storto — riprova."
+    "errorDefault": "Qualcosa è andato storto, riprova."
   },
   "faq": {
-    "heading": "Alcune Domande Frequenti",
+    "heading": "Alcune domande frequenti",
     "items": [
       {
-        "q": "Offrite consulenza pastorale a persone esterne alla congregazione?",
-        "a": "Sì, entro limiti ragionevoli. Scrivici una breve email su cosa stai cercando e ti diremo onestamente se possiamo aiutarti, o ti indirizzeremo verso qualcuno più adatto."
+        "q": "Offrite consulenza o ascolto pastorale a persone fuori dalla comunità?",
+        "a": "Sì, nei limiti del possibile. Inviaci un'e-mail spiegando brevemente cosa stai cercando e ti diremo in tutta onestà se possiamo aiutarti, o ti indirizzeremo verso qualcuno di più adatto."
       },
       {
-        "q": "Posso chiedere preghiere senza frequentare la chiesa?",
-        "a": "Assolutamente. Il nostro incontro di preghiera del mercoledì accetta richieste da chiunque, e preghiamo l'intero elenco ogni mattina."
+        "q": "Posso richiedere una preghiera senza frequentare la chiesa?",
+        "a": "Assolutamente sì. Il nostro incontro di preghiera del mercoledì accoglie le richieste di chiunque, e preghiamo per queste intenzioni ogni mattina."
       },
       {
-        "q": "Siete disponibili per matrimoni o funerali al di fuori di Harbor Light?",
-        "a": "Occasionalmente, a seconda del calendario. Contattaci il prima possibile — questi vengono prenotati con mesi di anticipo."
+        "q": "Siete disponibili per matrimoni o funerali al di fuori della vostra sede?",
+        "a": "Occasionalmente, a seconda delle disponibilità in calendario. Contattaci il prima possibile, poiché queste celebrazioni vengono prenotate con mesi di anticipo."
       },
       {
         "q": "Leggete e rispondete a ogni commento sul blog?",
-        "a": "Ci proviamo. A volte ci vuole una settimana o due, ma non ne abbiamo mai lasciato uno non letto."
+        "a": "Proviamo a farlo. A volte occorrono una o due settimane, ma non ne abbiamo mai lasciato uno non letto."
       }
     ]
   },
   "quote": {
-    "text": "Non hai bisogno delle parole giuste o di una buona ragione. Se hai qualcosa nel cuore, preferiremmo sentirlo in modo imperfetto piuttosto che non sentirlo affatto.",
-    "attribution": "— Harbor Light Church"
+    "text": "Non servono le parole giuste o un motivo particolare. Se hai qualcosa nel cuore, preferiamo ascoltarlo in modo imperfetto piuttosto che non ascoltarlo affatto.",
+    "attribution": "Debre Selam Abune Gebre Menfes Kidus Church"
   },
   "location": {
-    "heading": "Vieni a Trovarci di Persona",
-    "address": "Harbor Light Church, Bole Road, Addis Abeba, Etiopia",
-    "note": "Il nostro ufficio si trova dietro il santuario. Se la porta è aperta, ci siamo anche noi — nessun appuntamento necessario nella maggior parte delle mattine feriali.",
-    "getDirections": "Ottieni Indicazioni →",
-    "mapIframeTitle": "Posizione di Harbor Light Church",
+    "heading": "Vienici a trovare di persona",
+    "address": "Debre Selam Abune Gebre Menfes Kidus Church, Udine, Italia",
+    "note": "Il nostro ufficio si trova dietro la sala principale. Se la porta è aperta, lo siamo anche noi: non serve appuntamento nella maggior parte delle mattine feriali.",
+    "getDirections": "Ottieni indicazioni →",
+    "mapQuery": "Udine, Italia",
+    "mapIframeTitle": "Posizione della Chiesa Debre Selam Abune Gebre Menfes Kidus",
     "serviceTimes": [
-      "Domenica — 9:00 e 11:00",
+      "Domenica — 9:00 & 11:00",
       "Preghiera del Mercoledì — 18:30",
-      "Orari d'Ufficio — Mar–Ven, 9:00–15:00"
+      "Orari di ufficio — Mar–Ven, 9:00–15:00"
     ]
   }
 }
