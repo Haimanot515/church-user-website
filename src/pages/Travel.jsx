@@ -179,10 +179,7 @@ const Travel = () => {
 
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
-            {t("travel.upcoming.heading")}
-          </h2>
-
+   
           {upcomingError && <p style={{ color: 'red' }}>{upcomingError}</p>}
 
           {/* note shown when the upcoming trips fell back to English */}
