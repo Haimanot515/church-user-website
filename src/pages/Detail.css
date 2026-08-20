@@ -14,7 +14,7 @@
 
 .detail-back-btn {
   position: fixed;
-  top: 116px;
+  top: 96px;
   left: 28px;
   z-index: 1001; /* above the fixed .navbar (1000) so it's always clickable */
 
@@ -51,7 +51,7 @@
 /* --- Large desktop / ultra-wide (1920px+) ------------------------------- */
 @media (min-width: 1920px) {
   .detail-back-btn {
-    top: 124px;
+    top: 104px;
     left: 40px;
     width: 50px;
     height: 50px;
@@ -62,7 +62,7 @@
 /* --- Standard desktop (1025px - 1919px) --------------------------------- */
 @media (min-width: 1025px) and (max-width: 1919px) {
   .detail-back-btn {
-    top: 116px;
+    top: 96px;
     left: 28px;
     width: 46px;
     height: 46px;
@@ -72,7 +72,7 @@
 /* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
 @media (max-width: 1024px) {
   .detail-back-btn {
-    top: 110px;
+    top: 90px;
     left: 24px;
     width: 44px;
     height: 44px;
@@ -82,7 +82,7 @@
 /* --- Tablets landscape & portrait (max-width: 900px) --------------------- */
 @media (max-width: 900px) {
   .detail-back-btn {
-    top: 104px;
+    top: 84px;
     left: 20px;
     width: 42px;
     height: 42px;
@@ -92,7 +92,7 @@
 /* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
 @media (max-width: 768px) {
   .detail-back-btn {
-    top: 98px;
+    top: 78px;
     left: 18px;
     width: 40px;
     height: 40px;
@@ -103,7 +103,7 @@
 /* --- Large phones (max-width: 600px) ------------------------------------- */
 @media (max-width: 600px) {
   .detail-back-btn {
-    top: 88px;
+    top: 68px;
     left: 16px;
     width: 38px;
     height: 38px;
@@ -113,7 +113,7 @@
 /* --- Standard phones (max-width: 480px) ----------------------------------- */
 @media (max-width: 480px) {
   .detail-back-btn {
-    top: 78px;
+    top: 58px;
     left: 14px;
     width: 36px;
     height: 36px;
@@ -124,7 +124,7 @@
 /* --- Small phones (max-width: 380px) --------------------------------------- */
 @media (max-width: 380px) {
   .detail-back-btn {
-    top: 72px;
+    top: 52px;
     left: 12px;
     width: 34px;
     height: 34px;
