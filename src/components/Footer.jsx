@@ -10,16 +10,12 @@ const footerColumns = [
     key: "visit",
     items: [
       {
-        key: "visitUs",
-        to: "/church-support#location",
-      },
-      {
         key: "location",
-        to: "/church-support#location",
+        to: "/contact#location",
       },
       {
         key: "directions",
-        to: "/church-support#directions",
+        external: "directions",
       },
     ],
   },
@@ -27,37 +23,12 @@ const footerColumns = [
     key: "getInvolved",
     items: [
       {
-        key: "ministries",
-        to: "/services",
-      },
-      {
         key: "volunteer",
         to: "/church-support#volunteer",
       },
       {
         key: "give",
         to: "/church-support#accounts",
-      },
-      {
-        key: "missions",
-        to: "/projects",
-      },
-    ],
-  },
-  {
-    key: "connect",
-    items: [
-      {
-        key: "facebook",
-        href: "#",
-      },
-      {
-        key: "instagram",
-        href: "#",
-      },
-      {
-        key: "youtube",
-        href: "#",
       },
     ],
   },
@@ -219,6 +190,10 @@ const socialLinks = [
 const Footer = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  // Same source of truth as Contact.jsx's "Get Directions" link, so this
+  // footer link opens the exact same Google Maps destination.
+  const MAP_QUERY = t("contact.location.mapQuery", { defaultValue: "Udine, Italy" });
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
@@ -396,7 +371,11 @@ const Footer = () => {
     });
   };
 
-  const scrollToTopOnNavigate = () => {
+  // If the link has a hash (e.g. "/church-support#accounts"), let the
+  // target page's hash-scroll effect handle positioning — don't yank
+  // the viewport back to the top of the page.
+  const scrollToTopOnNavigate = (to) => {
+    if (to && to.includes("#")) return;
     window.scrollTo(0, 0);
   };
 
@@ -641,11 +620,26 @@ const Footer = () => {
                   key={item.key}
                   className="footer-link"
                 >
-                  {item.to ? (
+                  {item.external === "directions" ? (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        MAP_QUERY
+                      )}`}
+                      className="footer-column-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t(
+                        `footer.columns.${col.key}.items.${item.key}`
+                      )}
+                    </a>
+                  ) : item.to ? (
                     <Link
                       to={item.to}
                       className="footer-column-link"
-                      onClick={scrollToTopOnNavigate}
+                      onClick={() =>
+                        scrollToTopOnNavigate(item.to)
+                      }
                     >
                       {t(
                         `footer.columns.${col.key}.items.${item.key}`
@@ -683,7 +677,9 @@ const Footer = () => {
                   <Link
                     to={link.to}
                     className="footer-link footer-quicklink-item"
-                    onClick={scrollToTopOnNavigate}
+                    onClick={() =>
+                      scrollToTopOnNavigate(link.to)
+                    }
                   >
                     {t(`navbar.links.${link.key}`)}
                   </Link>

@@ -17,9 +17,9 @@
     "visit": {
       "title": "ይጎብኙ",
       "items": {
-        "serviceTimes": "የአገልግሎት ሰዓቶች",
-        "directions": "አቅጣጫዎች",
-        "whatToExpect": "ምን እንደሚጠብቅዎት"
+        "visitUs": "ይጎብኙን",
+        "location": "አድራሻ",
+        "directions": "አቅጣጫዎች"
       }
     },
     "getInvolved": {
@@ -38,7 +38,18 @@
         "instagram": "ኢንስታግራም",
         "youtube": "ዩቲዩብ"
       }
+    },
+    "quickLinks": {
+      "title": "አጭር አገናኞች"
     }
+  },
+  "mobileNav": "ፈጣን እርምጃዎች",
+  "contactFab": "መልእክት ይላኩልን",
+  "contactFabShort": "ላክ",
+  "backToTop": "ወደ ላይ ተመለስ",
+  "backToTopShort": "ላይ",
+  "categoryNav": {
+    "errorDefault": "ምድቦችን መጫን አልተቻለም።"
   },
   "bottom": {
     "copyright": "© 2026 ደብረ ሠላም አቡነ ገብረ መንፈስ ቅዱስ ቤ/ክ",

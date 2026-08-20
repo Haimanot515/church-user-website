@@ -195,18 +195,21 @@ const Contact = () => {
     fetchFaqs();
   }, [t]);
 
+  // Scroll to whichever section matches the URL hash (e.g. #contact-form,
+  // #location) once the page has rendered. Handles any hash generically
+  // instead of only the contact form.
   useEffect(() => {
-    if (location.hash === "#contact-form") {
-      const scrollToForm = () => {
-        const el = document.getElementById("contact-form");
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      };
-      requestAnimationFrame(scrollToForm);
-      const timer = setTimeout(scrollToForm, 300);
-      return () => clearTimeout(timer);
-    }
+    if (!location.hash) return;
+
+    const scrollToHash = () => {
+      const el = document.querySelector(location.hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    };
+    requestAnimationFrame(scrollToHash);
+    const timer = setTimeout(scrollToHash, 300);
+    return () => clearTimeout(timer);
   }, [location]);
 
   const handleChange = (field) => (e) => {
@@ -379,7 +382,7 @@ const Contact = () => {
         </div>
       </section>
 
-      <div style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden" }}>
+      <div id="location" style={{ background: "var(--deep-red)", position: "relative", overflow: "hidden", scrollMarginTop: "24px" }}>
         <section>
           <div className="wrapper">
             <h2 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", fontWeight: 700, margin: "0 0 40px 0", color: "#ffffff" }}>

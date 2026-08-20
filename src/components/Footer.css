@@ -1,3 +1,8 @@
+/* =============================================================================
+   FOOTER — site-wide footer: newsletter, nav columns, quick links, social
+   icons, floating action buttons, and the mobile bottom nav bar.
+   ============================================================================= */
+
 .site-footer {
   background: var(--navy-deep);
   color: #89a3b5;
@@ -5,130 +10,16 @@
   border-bottom: 6px solid var(--deep-red);
 }
 
-.footer-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 38px;
-  margin-bottom: 44px;
+.site-footer * {
+  min-width: 0;
 }
 
-.footer-brand {
-  color: #eaf3f8;
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
-.footer-tagline {
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-.footer-col-title {
-  color: #eaf3f8;
-  margin-bottom: 12px;
-  font-size: 0.85rem;
-}
-
-.footer-link {
-  font-size: 1.1rem;
-  margin: 8px 0;
-  cursor: pointer;
-}
-
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.footer-bottom-text {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-@media (max-width: 800px) {
-  .footer-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* =========================================================================
-   SOCIAL ICONS ROW — new, additive only.
-   Sits between .footer-grid and .footer-bottom (see Footer.jsx), laid out
-   horizontally, centered. Standard circular icon-button treatment matching
-   the site's navy/gold palette already used elsewhere (angel-arrow,
-   photo-arrow, sponsored-close, etc.).
-   ========================================================================= */
-.footer-social-viewport {
-  overflow: hidden;
-  margin: 0 0 30px 0;
-  width: 100%;
-}
-
-.footer-social-track {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  width: max-content;
-  animation: footerSocialMarquee 18s linear infinite;
-}
-
-.footer-social-viewport:hover .footer-social-track {
-  animation-play-state: paused;
-}
-
-@keyframes footerSocialMarquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .footer-social-track { animation: none; }
-}
-
-.footer-social-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  background: #4a0000;
-  color: #eaf3f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.footer-social-icon:hover,
-.footer-social-icon:focus-visible {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--navy-deep);
-  transform: translateY(-2px);
-}
-
-/* =========================================================================
-   RESPONSIVE LAYER — additive only.
-   Nothing above this line has been changed, reordered, or removed, so the
-   desktop appearance (1024px and up) is unchanged.
-   ========================================================================= */
-
-.site-footer * { min-width: 0; }
 .site-footer img,
 .site-footer svg {
   max-width: 100%;
   height: auto;
 }
+
 .site-footer h3,
 .site-footer h4,
 .site-footer h5,
@@ -141,88 +32,19 @@
 .site-footer form {
   width: 100%;
 }
+
 .site-footer form input {
   min-width: 0;
   box-sizing: border-box;
   font-size: 16px !important;
 }
+
 .site-footer form button {
   box-sizing: border-box;
 }
 
-@media (min-width: 1920px) {
-  .footer-grid { gap: 48px; }
-}
-
-@media (max-width: 1024px) {
-  .site-footer { padding: 52px 0 26px 0; }
-  .site-footer > section h3.display { font-size: 2.4rem !important; }
-}
-
-@media (max-width: 900px) {
-  .footer-grid { gap: 28px; text-align: center; }
-}
-
-@media (max-width: 768px) {
-  .site-footer { padding: 44px 0 24px 0; }
-  .site-footer > section h3.display { font-size: 2.1rem !important; margin: 14px 0 !important; }
-  .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1.15rem !important; margin-bottom: 24px !important; }
-  .footer-grid { gap: 24px; margin-bottom: 34px; justify-items: center; }
-}
-
-@media (max-width: 600px) {
-  .site-footer { padding: 40px 0 20px 0; }
-  .site-footer > section h3.display { font-size: 1.8rem !important; line-height: 1.25 !important; }
-  .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1.05rem !important; }
-  .site-footer form { gap: 10px !important; }
-  .site-footer form input {
-    width: 100% !important;
-    max-width: 320px !important;
-  }
-  /* Subscribe button stays visibly shorter than the input above it,
-     rather than matching its full width, so the two don't read as one
-     solid block once the form stacks on narrower screens. */
-  .site-footer form button {
-    width: auto;
-    min-width: 140px;
-    max-width: 200px;
-    margin: 0 auto;
-  }
-  .footer-grid { justify-items: center; }
-  .footer-tagline, .footer-link { font-size: 1rem; }
-  .footer-bottom { text-align: center; justify-content: center; gap: 8px 20px; }
-}
-
-@media (max-width: 480px) {
-  .site-footer { padding: 36px 0 18px 0; }
-  .site-footer > section h3.display { font-size: 1.55rem !important; }
-  .site-footer > section .wrapper > p:nth-of-type(1) { font-size: 1rem !important; margin-bottom: 20px !important; }
-  .site-footer form input { padding: 13px 18px !important; font-size: 16px !important; }
-  .site-footer form button { padding: 13px 26px !important; font-size: 1rem !important; }
-  .footer-grid { gap: 30px; margin-bottom: 28px; justify-items: center; }
-  .footer-col-title { margin-bottom: 8px; }
-  .footer-link { margin: 6px 0; }
-}
-
-@media (max-width: 380px) {
-  .site-footer > section h3.display { font-size: 1.4rem !important; }
-  .site-footer form input { max-width: 100% !important; }
-  .site-footer form button { max-width: 160px !important; }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .footer-link { padding: 4px 0; }
-  .site-footer form button { min-height: 48px; }
-  .site-footer form input { min-height: 48px; }
-  .footer-social-icon { width: 44px; height: 44px; }
-}
-
-/* =========================================================================
-   NEW ADDITIONS ONLY — everything above this line is the original
-   stylesheet, completely untouched.
-   ========================================================================= */
-
-/* --- Categories bar (fills the empty strip at the top of the footer) --- */
+/* --- Categories bar --------------------------------------------------------
+   Fills the strip at the top of the footer. */
 .footer-categories-bar {
   display: flex;
   flex-wrap: wrap;
@@ -266,172 +88,44 @@
 }
 
 @keyframes footerCatSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-@media (max-width: 480px) {
-  .footer-categories-bar { gap: 8px; padding: 16px 12px; }
-  .footer-category-chip { padding: 7px 14px; font-size: 0.85rem; }
+/* --- Main grid: brand / nav columns / quick links -------------------------- */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 38px;
+  margin-bottom: 44px;
 }
 
-/* --- Floating contact button ----------------------------------------------
-   Stacked directly above the back-to-top button, same right-edge offsets. */
-.footer-contact-fab {
-  position: fixed;
-  right: 9px;
-  bottom: 80px;
-  z-index: 40;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--gold);
-  color: var(--navy-deep);
-  border: 1.5px solid var(--gold);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.footer-contact-fab:hover,
-.footer-contact-fab:focus-visible {
-  background: var(--navy);
+.footer-brand {
   color: #eaf3f8;
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-3px);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
-.footer-contact-fab svg {
+.footer-tagline {
   font-size: 1.1rem;
+  line-height: 1.6;
 }
 
-.footer-fab-tooltip {
-  position: absolute;
-  right: calc(100% + 12px);
-  top: 50%;
-  transform: translateY(-50%) translateX(4px);
-  background: var(--navy);
+.footer-col-title {
   color: #eaf3f8;
+  margin-bottom: 12px;
   font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-  padding: 7px 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.footer-contact-fab:hover .footer-fab-tooltip,
-.footer-contact-fab:focus-visible .footer-fab-tooltip,
-.footer-back-to-top:hover .footer-fab-tooltip,
-.footer-back-to-top:focus-visible .footer-fab-tooltip {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .footer-fab-tooltip { display: none; }
-}
-
-@media (max-width: 1024px) {
-  .footer-contact-fab { width: 44px; height: 44px; }
-}
-
-@media (max-width: 768px) {
-  .footer-contact-fab { width: 40px; height: 40px; right: 1px; bottom: 69px; }
-}
-
-@media (max-width: 480px) {
-  .footer-contact-fab { width: 36px; height: 36px; right: 0px; bottom: 65px; }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .footer-contact-fab { min-height: 40px; }
-}
-
-/* --- Back to top bar ------------------------------------------------------
-   Full-width horizontal strip, first child of .site-footer (see
-   Footer.jsx), sitting above the newsletter section. */
-.footer-back-to-top {
-  position: fixed;
-  right: 9px;
-  bottom: 19px;
-  z-index: 40;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--navy);
-  color: #eaf3f8;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.footer-back-to-top:hover,
-.footer-back-to-top:focus-visible {
-  background: var(--gold);
-  color: var(--navy-deep);
-  border-color: var(--gold);
-  transform: translateY(-3px);
-}
-
-.footer-back-to-top svg {
+.footer-link {
   font-size: 1.1rem;
-  transition: transform 0.2s ease;
+  margin: 8px 0;
+  cursor: pointer;
 }
 
-.footer-back-to-top:hover svg {
-  transform: none;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* Text label under the icon inside the mobile/tablet bottom nav bar
-   (e.g. "Send", "Top"). Hidden everywhere by default so the desktop
-   circular FABs stay icon-only and unchanged; only switched on inside
-   .footer-bottom-navbar's own media query below. */
-.footer-nav-label {
-  display: none;
-}
-
-@media (max-width: 1024px) {
-  .footer-back-to-top { width: 44px; height: 44px; }
-}
-
-@media (max-width: 768px) {
-  .footer-back-to-top { width: 40px; height: 40px; right: 1px; bottom: 11px; }
-}
-
-@media (max-width: 480px) {
-  .footer-back-to-top { width: 36px; height: 36px; right: 0px; bottom: 9px; }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .footer-back-to-top { min-height: 40px; }
-}
-
-/* --- Quick Links column ----------------------------------------------------
-   Vertical list, added as a 5th item inside the existing .footer-grid.
+/* --- Quick Links column -----------------------------------------------------
    Positioned at the left edge (not centered) on desktop/tablet; only
    switches to centered on small mobile, where a single-column list reads
    better centered than left-hugging the edge. */
@@ -474,59 +168,171 @@
   color: var(--gold);
 }
 
-@media (max-width: 480px) {
-  .footer-quicklinks-col {
-    margin: 0 auto 30px auto;
-    text-align: center;
+/* --- Social icons row -------------------------------------------------------
+   Sits between .footer-grid and .footer-bottom, laid out horizontally,
+   centered, as an auto-scrolling marquee. */
+.footer-social-viewport {
+  overflow: hidden;
+  margin: 0 0 30px 0;
+  width: 100%;
+}
+
+.footer-social-track {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: max-content;
+  animation: footerSocialMarquee 18s linear infinite;
+}
+
+.footer-social-viewport:hover .footer-social-track {
+  animation-play-state: paused;
+}
+
+@keyframes footerSocialMarquee {
+  from {
+    transform: translateX(0);
   }
-  .footer-quicklinks-col .footer-col-title {
-    text-align: center;
-  }
-  .footer-quicklinks {
-    grid-template-columns: 1fr;
-    justify-content: center;
-    justify-items: center;
+  to {
+    transform: translateX(-50%);
   }
 }
 
-@media (hover: none) and (pointer: coarse) {
-  .footer-quicklink-item { padding: 4px 0; }
+.footer-social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: #4a0000;
+  color: #eaf3f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-/* =========================================================================
-   BOTTOM NAV BAR — mobile/tablet only, added for the bottom-navbar request.
-   Desktop is completely untouched: nothing above this line was edited, so
-   .footer-contact-fab and .footer-back-to-top keep their original gold/navy
-   colors and corner positions at 1024px and up.
+.footer-social-icon:hover,
+.footer-social-icon:focus-visible {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-deep);
+  transform: translateY(-2px);
+}
 
-   Below 1024px the two buttons sit inside this bar instead of floating
-   independently, spaced to opposite ends (contact on the left, back-to-top
-   on the right) with horizontal padding off the screen edges. flex-shrink:
-   0 on the buttons keeps them true circles instead of getting squashed
-   into ellipses by the flex layout. The BAR gets a pure white background;
-   the buttons themselves keep their original gold/navy colors from above —
-   only the strip behind them is white. Every page also gets bottom padding
-   so content scrolls freely behind the bar instead of being hidden under
-   it.
-   ========================================================================= */
+/* --- Footer bottom bar (copyright / privacy) -------------------------------- */
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
+.footer-bottom-text {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+/* =============================================================================
+   FLOATING ACTION BUTTONS — contact FAB (bottom) and back-to-top (bottom,
+   stacked above it). Desktop: independently fixed, gold/navy circles at
+   the corner. Below 1024px they move inside .footer-bottom-navbar instead
+   (see that section).
+   ============================================================================= */
+
+.footer-contact-fab {
+  position: fixed;
+  right: 9px;
+  bottom: 80px;
+  z-index: 40;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold);
+  color: var(--navy-deep);
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-contact-fab:hover,
+.footer-contact-fab:focus-visible {
+  background: var(--navy);
+  color: #eaf3f8;
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-3px);
+}
+
+.footer-contact-fab svg {
+  font-size: 1.1rem;
+}
+
+.footer-back-to-top {
+  position: fixed;
+  right: 9px;
+  bottom: 19px;
+  z-index: 40;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: #eaf3f8;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-back-to-top:hover,
+.footer-back-to-top:focus-visible {
+  background: var(--gold);
+  color: var(--navy-deep);
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}
+
+.footer-back-to-top svg {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.footer-back-to-top:hover svg {
+  transform: none;
+}
+
+/* Text label under the icon inside the mobile/tablet bottom nav bar
+   (e.g. "Send", "Top"). Hidden everywhere by default so the desktop
+   circular FABs stay icon-only; only switched on inside
+   .footer-bottom-navbar's own media query below. */
+.footer-nav-label {
+  display: none;
+}
+
+/* =============================================================================
+   BOTTOM NAV BAR — mobile/tablet only.
+   Desktop: the <nav> wrapper renders as display: contents, so it generates
+   no box of its own and its children (.footer-contact-fab,
+   .footer-back-to-top) render exactly as above — independently fixed,
+   gold/navy, corner-stacked.
+
+   Below 1024px the two buttons sit inside this bar instead, spaced to
+   opposite ends (contact on the left, back-to-top on the right) with
+   horizontal padding off the screen edges. The bar itself gets a white
+   background; the buttons keep their own gold/navy colors from above.
+   Every page also gets bottom padding so content scrolls freely behind
+   the bar instead of being hidden under it.
+   ============================================================================= */
 .footer-bottom-navbar {
-  /* Desktop: the <nav> wrapper itself generates no box and applies no
-     styling — display: contents makes it "disappear" structurally so its
-     children (.footer-contact-fab, .footer-back-to-top) render exactly as
-     in the original file: independently fixed, gold/navy, corner-stacked.
-     (display: none would hide them entirely, since they're DOM children
-     of this nav — that was the bug.) */
   display: contents;
-}
-
-/* Show/hide slide animation (mobile/tablet only — see the flex layout
-   inside the media query below). Hidden by default (translated fully off
-   screen); Footer.jsx toggles the --visible class based on scroll
-   direction: hidden on load and while scrolling down, slides in while
-   scrolling up. transform on a display:contents element has no effect,
-   so this is inert on desktop regardless of the class. */
-.footer-bottom-navbar {
   transform: translateY(100%);
   transition: transform 0.28s ease;
 }
@@ -535,11 +341,60 @@
   transform: translateY(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .footer-bottom-navbar { transition: none; }
+/* =============================================================================
+   RESPONSIVE — one block per breakpoint, largest to smallest.
+   ============================================================================= */
+
+@media (min-width: 1920px) {
+  .footer-grid {
+    gap: 48px;
+  }
+}
+
+@media (min-width: 1025px) and (prefers-reduced-motion: reduce) {
+  .footer-contact-fab,
+  .footer-back-to-top {
+    transition: opacity 0.01ms, visibility 0.01ms;
+  }
+}
+
+/* Desktop-only show/hide: below 1024px the whole bar hides/shows as a unit
+   via the .footer-bottom-navbar transform rules above (that transform is
+   inert on desktop, where the nav is display: contents). This extends the
+   same navVisible logic to the two corner FABs individually on desktop:
+   hidden on first load, hidden while scrolling down, shown while
+   scrolling up. */
+@media (min-width: 1025px) {
+  .footer-contact-fab,
+  .footer-back-to-top {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0.28s ease, background 0.2s ease,
+      color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .footer-bottom-navbar.footer-bottom-navbar--visible .footer-contact-fab,
+  .footer-bottom-navbar.footer-bottom-navbar--visible .footer-back-to-top {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 @media (max-width: 1024px) {
+  .site-footer {
+    padding: 52px 0 26px 0;
+  }
+
+  .site-footer > section h3.display {
+    font-size: 2.4rem !important;
+  }
+
+  .footer-contact-fab,
+  .footer-back-to-top {
+    width: 44px;
+    height: 44px;
+  }
+
   .footer-bottom-navbar {
     display: flex;
     align-items: center;
@@ -554,17 +409,15 @@
     background: #ffffff;
     z-index: 50;
     padding: 0 20px;
-    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 1px); /* clears iPhone home-bar, +1px to offset the bottom: -1px overlap above */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + 1px); /* clears iPhone home-bar */
   }
 
   /* Buttons live inside the flex bar now — drop their own fixed
      positioning/shadow so they sit inline instead of double-floating.
-     Colors are untouched, inherited from the original rules above.
-     justify-content: space-between above pushes contact to the left
-     edge and back-to-top to the right edge of the bar. flex-shrink: 0
-     stops flex from compressing their width and turning the square
-     into a rectangle. flex-direction: column stacks the icon above
-     the label text turned on just below. */
+     Colors are inherited, unchanged. justify-content: space-between
+     above pushes contact to the left edge and back-to-top to the right.
+     flex-shrink: 0 stops the square from being compressed into a
+     rectangle; flex-direction: column stacks the icon above the label. */
   .footer-bottom-navbar .footer-contact-fab,
   .footer-bottom-navbar .footer-back-to-top {
     position: static;
@@ -577,8 +430,6 @@
     border-radius: 12px;
   }
 
-  /* Icon shrinks slightly so it sits comfortably above the label
-     inside the same fixed button height. */
   .footer-bottom-navbar .footer-contact-fab svg,
   .footer-bottom-navbar .footer-back-to-top svg {
     font-size: 1rem;
@@ -592,76 +443,294 @@
     letter-spacing: 0.01em;
   }
 
-  /* Every page needs room at the bottom so content isn't hidden behind
-     the bar. body is the safe default; swap for your app's root wrapper
-     (e.g. #root or <main>) if your layout scrolls a container other
-     than body. */
+  /* body is the safe default for bottom padding; swap for your app's
+     root wrapper (e.g. #root or <main>) if your layout scrolls a
+     container other than body. */
   body {
     padding-bottom: calc(68px + env(safe-area-inset-bottom, 0));
     background-color: #ffffff;
   }
 }
 
+@media (max-width: 900px) {
+  .footer-grid {
+    gap: 28px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 800px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .footer-bottom-navbar { height: 62px; background: #ffffff; padding: 0 16px; }
+  .site-footer {
+    padding: 44px 0 24px 0;
+  }
+
+  .site-footer > section h3.display {
+    font-size: 2.1rem !important;
+    margin: 14px 0 !important;
+  }
+
+  .site-footer > section .wrapper > p:nth-of-type(1) {
+    font-size: 1.15rem !important;
+    margin-bottom: 24px !important;
+  }
+
+  .footer-grid {
+    gap: 24px;
+    margin-bottom: 34px;
+    justify-items: center;
+  }
+
+  .footer-contact-fab {
+    width: 40px;
+    height: 40px;
+    right: 1px;
+    bottom: 69px;
+  }
+
+  .footer-back-to-top {
+    width: 40px;
+    height: 40px;
+    right: 1px;
+    bottom: 11px;
+  }
+
+  .footer-bottom-navbar {
+    height: 62px;
+    background: #ffffff;
+    padding: 0 16px;
+  }
+
   .footer-bottom-navbar .footer-contact-fab,
   .footer-bottom-navbar .footer-back-to-top {
     width: 52px;
     height: 48px;
   }
+
   .footer-bottom-navbar .footer-contact-fab svg,
   .footer-bottom-navbar .footer-back-to-top svg {
     font-size: 0.95rem;
   }
-  .footer-bottom-navbar .footer-nav-label { font-size: 0.65rem; }
-  body { padding-bottom: calc(62px + env(safe-area-inset-bottom, 0)); }
+
+  .footer-bottom-navbar .footer-nav-label {
+    font-size: 0.65rem;
+  }
+
+  body {
+    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0));
+  }
+}
+
+@media (max-width: 600px) {
+  .site-footer {
+    padding: 40px 0 20px 0;
+  }
+
+  .site-footer > section h3.display {
+    font-size: 1.8rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .site-footer > section .wrapper > p:nth-of-type(1) {
+    font-size: 1.05rem !important;
+  }
+
+  .site-footer form {
+    gap: 10px !important;
+  }
+
+  .site-footer form input {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+
+  /* Subscribe button stays visibly shorter than the input above it,
+     rather than matching its full width, so the two don't read as one
+     solid block once the form stacks on narrower screens. */
+  .site-footer form button {
+    width: auto;
+    min-width: 140px;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .footer-grid {
+    justify-items: center;
+  }
+
+  .footer-tagline,
+  .footer-link {
+    font-size: 1rem;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    justify-content: center;
+    gap: 8px 20px;
+  }
 }
 
 @media (max-width: 480px) {
-  .footer-bottom-navbar { height: 58px; background: #ffffff; padding: 0 12px; }
+  .site-footer {
+    padding: 36px 0 18px 0;
+  }
+
+  .site-footer > section h3.display {
+    font-size: 1.55rem !important;
+  }
+
+  .site-footer > section .wrapper > p:nth-of-type(1) {
+    font-size: 1rem !important;
+    margin-bottom: 20px !important;
+  }
+
+  .site-footer form input {
+    padding: 13px 18px !important;
+    font-size: 16px !important;
+  }
+
+  .site-footer form button {
+    padding: 13px 26px !important;
+    font-size: 1rem !important;
+  }
+
+  .footer-categories-bar {
+    gap: 8px;
+    padding: 16px 12px;
+  }
+
+  .footer-category-chip {
+    padding: 7px 14px;
+    font-size: 0.85rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-bottom: 28px;
+    justify-items: center;
+  }
+
+  .footer-col-title {
+    margin-bottom: 8px;
+  }
+
+  .footer-link {
+    margin: 6px 0;
+  }
+
+  .footer-quicklinks-col {
+    margin: 0 auto 30px auto;
+    text-align: center;
+  }
+
+  .footer-quicklinks-col .footer-col-title {
+    text-align: center;
+  }
+
+  .footer-quicklinks {
+    grid-template-columns: 1fr;
+    justify-content: center;
+    justify-items: center;
+  }
+
+  .footer-contact-fab {
+    width: 36px;
+    height: 36px;
+    right: 0px;
+    bottom: 65px;
+  }
+
+  .footer-back-to-top {
+    width: 36px;
+    height: 36px;
+    right: 0px;
+    bottom: 9px;
+  }
+
+  .footer-bottom-navbar {
+    height: 58px;
+    background: #ffffff;
+    padding: 0 12px;
+  }
+
   .footer-bottom-navbar .footer-contact-fab,
   .footer-bottom-navbar .footer-back-to-top {
     width: 48px;
     height: 44px;
     border-radius: 10px;
   }
+
   .footer-bottom-navbar .footer-contact-fab svg,
   .footer-bottom-navbar .footer-back-to-top svg {
     font-size: 0.9rem;
   }
-  .footer-bottom-navbar .footer-nav-label { font-size: 0.6rem; }
-  body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0)); }
+
+  .footer-bottom-navbar .footer-nav-label {
+    font-size: 0.6rem;
+  }
+
+  body {
+    padding-bottom: calc(58px + env(safe-area-inset-bottom, 0));
+  }
 }
 
-/* =========================================================================
-   DESKTOP SCROLL SHOW/HIDE — new, additive only.
-   Below 1024px the whole bar already hides/shows as a unit via the
-   .footer-bottom-navbar transform rules above. On desktop that transform
-   is inert (the nav is display:contents there), so the two corner FABs
-   have stayed permanently visible until now. This extends the exact same
-   navVisible logic from Footer.jsx to the desktop buttons individually:
-   hidden on first load, hidden while scrolling down, shown while
-   scrolling up. Nothing else on desktop (position, colors, hover states)
-   is touched.
-   ========================================================================= */
-@media (min-width: 1025px) {
-  .footer-contact-fab,
+@media (max-width: 380px) {
+  .site-footer > section h3.display {
+    font-size: 1.4rem !important;
+  }
+
+  .site-footer form input {
+    max-width: 100% !important;
+  }
+
+  .site-footer form button {
+    max-width: 160px !important;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .footer-link {
+    padding: 4px 0;
+  }
+
+  .site-footer form button {
+    min-height: 48px;
+  }
+
+  .site-footer form input {
+    min-height: 48px;
+  }
+
+  .footer-social-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .footer-contact-fab {
+    min-height: 40px;
+  }
+
   .footer-back-to-top {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.28s ease, visibility 0.28s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    min-height: 40px;
   }
 
-  .footer-bottom-navbar.footer-bottom-navbar--visible .footer-contact-fab,
-  .footer-bottom-navbar.footer-bottom-navbar--visible .footer-back-to-top {
-    opacity: 1;
-    visibility: visible;
+  .footer-quicklink-item {
+    padding: 4px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-social-track {
+    animation: none;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .footer-contact-fab,
-    .footer-back-to-top {
-      transition: opacity 0.01ms, visibility 0.01ms;
-    }
+  .footer-bottom-navbar {
+    transition: none;
   }
 }

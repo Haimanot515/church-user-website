@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import "./ChurchSupport.css";
 
 const ChurchSupport = () => {
   const { t } = useTranslation();
+  const { hash } = useLocation();
+
+  // Scroll to the section matching the URL hash (e.g. #accounts,
+  // #volunteer) once the page has rendered. React Router doesn't do
+  // this automatically on its own.
+  useEffect(() => {
+    if (!hash) return;
+
+    const el = document.querySelector(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [hash]);
 
   // Static data — bank details are literal values, not translatable text,
   // same treatment Contact.jsx gives the map query / church name source.
@@ -55,7 +69,10 @@ const ChurchSupport = () => {
       </section>
 
       {/* ACCOUNT NUMBERS */}
-      <section className="support-section account-section">
+      <section
+        className="support-section account-section"
+        id="accounts"
+      >
         <div className="support-container">
           <div className="section-heading">
             <span className="support-eyebrow">
@@ -113,7 +130,10 @@ const ChurchSupport = () => {
       </section>
 
       {/* VOLUNTEER ACTIVITIES */}
-      <section className="support-section volunteer-section">
+      <section
+        className="support-section volunteer-section"
+        id="volunteer"
+      >
         <div className="support-container">
           <div className="section-heading light-heading">
             <span className="support-eyebrow">

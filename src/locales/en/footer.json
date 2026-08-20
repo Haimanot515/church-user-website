@@ -17,9 +17,9 @@
     "visit": {
       "title": "Visit",
       "items": {
-        "serviceTimes": "Service Times",
-        "directions": "Directions",
-        "whatToExpect": "What to Expect"
+        "visitUs": "Visit Us",
+        "location": "Location",
+        "directions": "Directions"
       }
     },
     "getInvolved": {

@@ -17,9 +17,9 @@
     "visit": {
       "title": "Visita",
       "items": {
-        "serviceTimes": "Orari delle funzioni",
-        "directions": "Indicazioni",
-        "whatToExpect": "Cosa aspettarti"
+        "visitUs": "Vieni a trovarci",
+        "location": "Posizione",
+        "directions": "Indicazioni"
       }
     },
     "getInvolved": {
@@ -38,7 +38,18 @@
         "instagram": "Instagram",
         "youtube": "YouTube"
       }
+    },
+    "quickLinks": {
+      "title": "Link rapidi"
     }
+  },
+  "mobileNav": "Azioni rapide",
+  "contactFab": "Inviaci un messaggio",
+  "contactFabShort": "Invia",
+  "backToTop": "Torna su",
+  "backToTopShort": "Su",
+  "categoryNav": {
+    "errorDefault": "Impossibile caricare le categorie."
   },
   "bottom": {
     "copyright": "© 2026 Chiesa di Debre Selam Abune Gebre Menfes Kidus",
