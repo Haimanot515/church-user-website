@@ -1268,13 +1268,24 @@ const ChurchAboutPage = () => {
               </p>
             </div>
 
+            {/* Give -> the account-numbers section (id="accounts") on
+                ChurchSupport.jsx, mounted at /church-support in App.jsx.
+                Volunteer -> that page's id="volunteer" section. The page
+                already has its own hash-scroll effect (useLocation +
+                scrollIntoView), so these just work once routed there. */}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+              <Link
+                to="/church-support#accounts"
+                style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px', textDecoration: 'none', display: 'inline-block' }}
+              >
                 {t("about.cta.giveButton")}
-              </button>
-              <button style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px' }}>
+              </Link>
+              <Link
+                to="/church-support#volunteer"
+                style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px', textDecoration: 'none', display: 'inline-block' }}
+              >
                 {t("about.cta.volunteerButton")}
-              </button>
+              </Link>
             </div>
           </div>
         </section>
