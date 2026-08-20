@@ -15,7 +15,6 @@ const Travel = () => {
   const { t } = useTranslation();
 
   const [openFaq, setOpenFaq] = useState(0);
-  const [activeTrip, setActiveTrip] = useState(0);
 
   const [upcomingTrips, setUpcomingTrips] = useState([]);
   const [upcomingLoading, setUpcomingLoading] = useState(true);
@@ -144,14 +143,8 @@ const Travel = () => {
       : "";
 
   // === Static, translated content sections ===
-  const quickFactsRaw = t("travel.quickFacts.items", { returnObjects: true });
-  const quickFacts = Array.isArray(quickFactsRaw) ? quickFactsRaw : [];
-
   const travelKindsRaw = t("travel.travelKinds.items", { returnObjects: true });
   const travelKinds = Array.isArray(travelKindsRaw) ? travelKindsRaw : [];
-
-  const tripsRaw = t("travel.trips.items", { returnObjects: true });
-  const trips = Array.isArray(tripsRaw) ? tripsRaw : [];
 
   return (
     <div className="church-portal">
@@ -166,7 +159,7 @@ const Travel = () => {
         style={{
           width: '100%',
           height: 'clamp(320px, 52vw, 620px)',
-          backgroundImage: "url('https://images.unsplash.com/photo-1698350876380-0c7c97a3c1e4?fm=jpg&q=80&w=2400&auto=format&fit=crop')",
+          backgroundImage: "url('https://res.cloudinary.com/dq3jkpys8/image/upload/v1787228474/travel_qaptcq.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center 38%',
           backgroundRepeat: 'no-repeat'
@@ -250,22 +243,6 @@ const Travel = () => {
         </div>
       </section>
 
-      <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
-        <section style={{ padding: '64px 0' }}>
-          <div className="wrapper">
-            <h3 className="eyebrow" style={{ marginBottom: '28px', fontSize: '0.85rem' }}>{t("travel.quickFacts.heading")}</h3>
-            <div className="fact-grid">
-              {quickFacts.map((f, i) => (
-                <div className="fact-item" key={i}>
-                  <p className="fact-label">{f.label}</p>
-                  <p className="fact-value">{f.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
-
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)' }}>
@@ -282,42 +259,6 @@ const Travel = () => {
           </div>
         </div>
       </section>
-
-      <div style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
-        <div className="fixed-cross left">
-          <svg width="46" height="64" viewBox="0 0 46 64" xmlns="http://www.w3.org/2000/svg">
-            <rect x="19" y="0" width="8" height="64" fill="var(--gold)" />
-            <rect x="4" y="20" width="38" height="8" fill="var(--gold)" />
-          </svg>
-        </div>
-        <section>
-          <div className="wrapper">
-            <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 40px 0', color: '#ffffff' }}>
-              {t("travel.trips.heading")}
-            </h2>
-            <div className="trip-layout">
-              <div className="trip-list">
-                {trips.map((trip, i) => (
-                  <button
-                    key={i}
-                    className={`trip-tab${activeTrip === i ? " active" : ""}`}
-                    onClick={() => setActiveTrip(i)}
-                  >
-                    <span className="trip-tab-place">{trip.place}</span>
-                    <span className="trip-tab-year">{trip.year}</span>
-                  </button>
-                ))}
-              </div>
-              {trips.length > 0 && (
-                <div>
-                  <h4 className="display trip-detail-title">{trips[activeTrip]?.title}</h4>
-                  <p className="trip-detail-body">{trips[activeTrip]?.body}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      </div>
 
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
@@ -351,7 +292,7 @@ const Travel = () => {
 
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <p className="pull-quote display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5 }}>
+          <p className="pull-quote display" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.5, borderLeft: 'none', paddingLeft: 0 }}>
             "{t("travel.quote.text")}"
           </p>
           <p style={{ marginTop: '26px', fontSize: '1.1rem', color: '#3d5a6c' }}>{t("travel.quote.attribution")}</p>
