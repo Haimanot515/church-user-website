@@ -234,6 +234,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
               <Link to="/book" onClick={closeMenu}>{t("navbar.links.books")}</Link>
               <Link to="/testimonials" onClick={closeMenu}>{t("navbar.links.travel")}</Link>
               <Link to="/contact" onClick={closeMenu}>{t("navbar.links.contact")}</Link>
+              <Link to="/church-support" onClick={closeMenu}>{t("navbar.links.churchSupport")}</Link>
             </div>
           </div>
 
