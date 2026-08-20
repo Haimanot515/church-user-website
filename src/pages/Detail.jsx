@@ -6,6 +6,16 @@ import "./Detail.css";
 
 const RELATED_LIMIT = 3;
 
+// Single source of truth for the back button — rendered once per
+// return path so there's never a chance of two showing at once.
+const BackButton = () => (
+  <Link to="/projects" aria-label="Go back" className="detail-back-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  </Link>
+);
+
 const Detail = () => {
   const { id } = useParams();
 
@@ -15,6 +25,7 @@ const Detail = () => {
 
   const [related, setRelated] = useState([]);
   const [relatedLoading, setRelatedLoading] = useState(true);
+  const [relatedLoadingMore, setRelatedLoadingMore] = useState(false);
   const [relatedPage, setRelatedPage] = useState(1);
   const [relatedTotalPages, setRelatedTotalPages] = useState(1);
 
@@ -52,7 +63,9 @@ const Detail = () => {
 
     const fetchRelated = async (pageNum) => {
       try {
-        setRelatedLoading(true);
+        if (pageNum === 1) setRelatedLoading(true);
+        else setRelatedLoadingMore(true);
+
         const category = getCategoryName(post);
 
         const res = await API.get("/posts", {
@@ -65,51 +78,28 @@ const Detail = () => {
 
         const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
         const filtered = (postsData || []).filter((p) => p._id !== post._id).slice(0, RELATED_LIMIT);
-        setRelated(filtered);
+
+        // Page 1 replaces the list (new post landed on); later pages
+        // append, since this is now "Load More" rather than Next/Back
+        // pagination that swaps the visible set out.
+        setRelated((prev) => (pageNum === 1 ? filtered : [...prev, ...filtered]));
         setRelatedTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
-        setRelated([]);
+        if (pageNum === 1) setRelated([]);
       } finally {
         setRelatedLoading(false);
+        setRelatedLoadingMore(false);
       }
     };
     fetchRelated(relatedPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post?._id, relatedPage]);
 
-  const goToRelatedPage = (page) => {
-    if (page < 1 || page > relatedTotalPages) return;
-    setRelatedPage(page);
+  const loadMoreRelated = () => {
+    if (relatedPage >= relatedTotalPages || relatedLoadingMore) return;
+    setRelatedPage((page) => page + 1);
   };
-
-  const pageButtonStyle = (disabled) => ({
-    padding: "8px 16px",
-    background: disabled ? "#e5e7eb" : "#2563eb",
-    color: disabled ? "#999" : "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: disabled ? "not-allowed" : "pointer",
-  });
-
-  const arrowButtonStyle = (side) => ({
-    position: "absolute",
-    top: "50%",
-    [side]: "-22px",
-    transform: "translateY(-50%)",
-    width: "44px",
-    height: "44px",
-    borderRadius: "50%",
-    border: "1px solid #eee",
-    background: "#fff",
-    color: "var(--navy-deep)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
-    zIndex: 2,
-  });
 
   // === Same field helpers used in Blog.jsx, kept local since no shared utils file exists yet ===
   const getCategoryName = (p) =>
@@ -153,11 +143,7 @@ const Detail = () => {
   if (loading) {
     return (
       <div className="church-portal">
-        <Link to="/projects" aria-label="Go back" className="detail-back-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
+        <BackButton />
         <section className="hero-blog">
           <div className="wrapper">
             <p style={{ textAlign: "center" }}>Loading post...</p>
@@ -170,11 +156,7 @@ const Detail = () => {
   if (error || !post) {
     return (
       <div className="church-portal">
-        <Link to="/projects" aria-label="Go back" className="detail-back-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
+        <BackButton />
         <section className="hero-blog">
           <div className="wrapper" style={{ textAlign: "center" }}>
             <p style={{ color: "red" }}>{error || "Post not found."}</p>
@@ -195,12 +177,9 @@ const Detail = () => {
       </div>
 
       {/* BACK — fixed top-left, transparent/frosted so it blends over the
-          navbar/hero color instead of showing a separate white bar */}
-      <Link to="/projects" aria-label="Go back" className="detail-back-btn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </Link>
+          navbar/hero color instead of showing a separate white bar.
+          Rendered once via BackButton, same as the loading/error states. */}
+      <BackButton />
 
       {/* HERO */}
       <section className="hero-blog">
@@ -269,67 +248,50 @@ const Detail = () => {
               You Might Also Like
             </h3>
 
-            <div style={{ position: "relative" }}>
-              {relatedPage > 1 && (
-                <button
-                  onClick={() => goToRelatedPage(relatedPage - 1)}
-                  aria-label="Previous"
-                  style={arrowButtonStyle("left")}
+            <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
+              {related.map((p) => (
+                <Link
+                  key={p._id}
+                  to={`/projects/${p._id}`}
+                  className="card"
+                  style={{ textDecoration: "none", color: "inherit", overflow: "hidden", display: "block" }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              )}
-
-              <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
-                {related.map((p) => (
-                  <Link
-                    key={p._id}
-                    to={`/projects/${p._id}`}
-                    className="card"
-                    style={{ textDecoration: "none", color: "inherit", overflow: "hidden", display: "block" }}
-                  >
-                    <img
-                      src={p.imageUrl}
-                      alt={p.title}
-                      style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}
-                    />
-                    <div style={{ padding: "16px" }}>
-                      <span className="tag">{getCategoryName(p)}</span>
-                      <h4 style={{ fontSize: "1.3rem", margin: "10px 0 0 0" }}>{p.title}</h4>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-
-              {relatedPage < relatedTotalPages && (
-                <button
-                  onClick={() => goToRelatedPage(relatedPage + 1)}
-                  aria-label="Next"
-                  style={arrowButtonStyle("right")}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              )}
+                  <img
+                    src={p.imageUrl}
+                    alt={p.title}
+                    style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}
+                  />
+                  <div style={{ padding: "16px" }}>
+                    <span className="tag">{getCategoryName(p)}</span>
+                    <h4 style={{ fontSize: "1.3rem", margin: "10px 0 0 0" }}>{p.title}</h4>
+                  </div>
+                </Link>
+              ))}
             </div>
+
+            {relatedPage < relatedTotalPages && (
+              <div style={{ textAlign: "center", marginTop: "34px" }}>
+                <button
+                  onClick={loadMoreRelated}
+                  disabled={relatedLoadingMore}
+                  style={{
+                    padding: "12px 28px",
+                    borderRadius: "999px",
+                    border: "1px solid var(--navy-deep, #1e293b)",
+                    background: "transparent",
+                    color: "var(--navy-deep, #1e293b)",
+                    fontWeight: 600,
+                    cursor: relatedLoadingMore ? "not-allowed" : "pointer",
+                    opacity: relatedLoadingMore ? 0.6 : 1,
+                  }}
+                >
+                  {relatedLoadingMore ? "Loading..." : "Load More"}
+                </button>
+              </div>
+            )}
           </div>
         </section>
       )}
-
-      {/* NEWSLETTER */}
-      <section className="newsletter-section">
-        <div className="wrapper" style={{ maxWidth: "600px" }}>
-          <h3 className="display">Never miss a post — delivered every Monday.</h3>
-          <p>One email a week: a new post, a verse, and this week's prayer requests</p>
-          <div className="newsletter-form">
-            <input type="email" placeholder="you@email.com" />
-            <button>Subscribe</button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
