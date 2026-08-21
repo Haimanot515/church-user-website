@@ -730,6 +730,21 @@ img, video { max-width: 100%; height: auto; }
   text-align: left;
 }
 
+/* GLOBAL FIX: justified text so every line starts and ends flush at
+   both edges when it reaches the end of the line, with even spacing
+   (not the scattered gaps seen before) and the paragraph's last line
+   left-aligned as usual. Uses !important so it wins regardless of
+   any other rule's specificity or load order, and targets every
+   paragraph under .church-portal so this stays consistent everywhere
+   on the page. Nothing else in this file was changed. */
+.church-portal p {
+  text-align: justify !important;
+  text-align-last: left !important;
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+  hyphens: auto !important;
+}
+
 /* ============================================================
    CONSISTENT TEXT SPACING ACROSS LANGUAGES (incl. Amharic)
    Latin/Italic fonts (Cormorant Garamond, Nunito Sans) don't include
@@ -855,3 +870,11 @@ img, video { max-width: 100%; height: auto; }
 @media (hover: none) and (pointer: coarse) {
   .cat-nav-item { padding-top: 10px; padding-bottom: 10px; }
 }
+
+@media (max-width: 768px) {
+  .church-portal p {
+    text-align: left !important;
+    hyphens: none !important;
+  }
+}
+
