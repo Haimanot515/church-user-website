@@ -14,7 +14,9 @@
       "holder": "Intestatario",
       "account": "Numero di Conto"
     },
-    "note": "Verifica il nome e il numero del conto prima di effettuare un bonifico. Contatta la chiesa per ulteriori informazioni sui pagamenti."
+    "note": "Verifica il nome e il numero del conto prima di effettuare un bonifico. Contatta la chiesa per ulteriori informazioni sui pagamenti.",
+    "loading": "Caricamento dei numeri di conto...",
+    "error": "Impossibile caricare i conti bancari in questo momento. Riprova più tardi."
   },
   "volunteer": {
     "eyebrow": "PARTECIPA",

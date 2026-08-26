@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import "./ChurchSupport.css";
@@ -6,6 +6,10 @@ import "./ChurchSupport.css";
 const ChurchSupport = () => {
   const { t } = useTranslation();
   const { hash } = useLocation();
+
+  const [accountNumbers, setAccountNumbers] = useState([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [accountsError, setAccountsError] = useState(false);
 
   // Scroll to the section matching the URL hash (e.g. #accounts,
   // #volunteer) once the page has rendered. React Router doesn't do
@@ -19,25 +23,31 @@ const ChurchSupport = () => {
     }
   }, [hash]);
 
-  // Static data — bank details are literal values, not translatable text,
-  // same treatment Contact.jsx gives the map query / church name source.
-  const accountNumbers = [
-    {
-      bank: "Commercial Bank of Ethiopia",
-      accountName: "Debre Selam Abune Gebre Menfes Kidus Church",
-      accountNumber: "1000 0000 0000",
-    },
-    {
-      bank: "Awash Bank",
-      accountName: "Debre Selam Abune Gebre Menfes Kidus Church",
-      accountNumber: "2000 0000 0000",
-    },
-    {
-      bank: "Dashen Bank",
-      accountName: "Debre Selam Abune Gebre Menfes Kidus Church",
-      accountNumber: "3000 0000 0000",
-    },
-  ];
+  // Bank accounts are admin-managed, fetched from the backend so they
+  // can be updated without a redeploy.
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        setAccountsLoading(true);
+        setAccountsError(false);
+
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/bank-accounts`
+        );
+        if (!res.ok) throw new Error("Failed to fetch bank accounts");
+
+        const data = await res.json();
+        setAccountNumbers(data.accounts || []);
+      } catch (err) {
+        console.error(err);
+        setAccountsError(true);
+      } finally {
+        setAccountsLoading(false);
+      }
+    };
+
+    fetchAccounts();
+  }, []);
 
   // Pulled from translation files with returnObjects, same pattern as
   // Contact.jsx's quickFacts / reachMethods / serviceTimes.
@@ -84,45 +94,51 @@ const ChurchSupport = () => {
             <p>{t("churchSupport.accounts.description")}</p>
           </div>
 
-          <div className="account-table-wrapper">
-            <table className="account-table">
-              <thead>
-                <tr>
-                  <th>{t("churchSupport.accounts.table.number")}</th>
-                  <th>{t("churchSupport.accounts.table.bank")}</th>
-                  <th>{t("churchSupport.accounts.table.holder")}</th>
-                  <th>{t("churchSupport.accounts.table.account")}</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {accountNumbers.map((account, index) => (
-                  <tr key={account.accountNumber}>
-                    <td data-label={t("churchSupport.accounts.table.number")}>
-                      {index + 1}
-                    </td>
-
-                    <td data-label={t("churchSupport.accounts.table.bank")}>
-                      <strong>{account.bank}</strong>
-                    </td>
-
-                    <td data-label={t("churchSupport.accounts.table.holder")}>
-                      {account.accountName}
-                    </td>
-
-                    <td data-label={t("churchSupport.accounts.table.account")}>
-                      <span className="account-number">
-                        {account.accountNumber}
-                      </span>
-                    </td>
+          {accountsLoading ? (
+            <p>{t("churchSupport.accounts.loading")}</p>
+          ) : accountsError ? (
+            <p>{t("churchSupport.accounts.error")}</p>
+          ) : (
+            <div className="account-table-wrapper">
+              <table className="account-table">
+                <thead>
+                  <tr>
+                    <th>{t("churchSupport.accounts.table.number")}</th>
+                    <th>{t("churchSupport.accounts.table.bank")}</th>
+                    <th>{t("churchSupport.accounts.table.holder")}</th>
+                    <th>{t("churchSupport.accounts.table.account")}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+
+                <tbody>
+                  {accountNumbers.map((account, index) => (
+                    <tr key={account._id}>
+                      <td data-label={t("churchSupport.accounts.table.number")}>
+                        {index + 1}
+                      </td>
+
+                      <td data-label={t("churchSupport.accounts.table.bank")}>
+                        <strong>{account.bank}</strong>
+                      </td>
+
+                      <td data-label={t("churchSupport.accounts.table.holder")}>
+                        {account.accountName}
+                      </td>
+
+                      <td data-label={t("churchSupport.accounts.table.account")}>
+                        <span className="account-number">
+                          {account.accountNumber}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <div className="account-note">
-            <span className="note-icon">ℹ</span>
+            <span className="note-icon">i</span>
 
             <p>{t("churchSupport.accounts.note")}</p>
           </div>

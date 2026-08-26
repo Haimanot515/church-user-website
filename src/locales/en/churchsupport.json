@@ -14,7 +14,9 @@
       "holder": "Account Name",
       "account": "Account Number"
     },
-    "note": "Please verify the account name and number before making a transfer. Contact the church if you need additional payment information."
+    "note": "Please verify the account name and number before making a transfer. Contact the church if you need additional payment information.",
+    "loading": "Loading account numbers...",
+    "error": "Unable to load bank accounts right now. Please try again later."
   },
   "volunteer": {
     "eyebrow": "GET INVOLVED",
