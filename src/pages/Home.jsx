@@ -11,32 +11,44 @@ const Home = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [hero, setHero] = useState(null);
-  // NEW: true when the hero currently shown came from the English
+  // true when the hero currently shown came from the English
   // fallback because the active language had none
   const [heroFallback, setHeroFallback] = useState(false);
   const [heroLoading, setHeroLoading] = useState(true);
   const [priest, setPriest] = useState(null);
-  // NEW: true when the priest/about content currently shown came from the
+  // true when the priest/about content currently shown came from the
   // English fallback because the active language had none
   const [priestFallback, setPriestFallback] = useState(false);
   const [priestLoading, setPriestLoading] = useState(true);
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(true);
   const [testimonialsError, setTestimonialsError] = useState("");
-  // NEW: true when testimonials currently shown came from the English
+  // true when testimonials currently shown came from the English
   // fallback because the active language had none
   const [testimonialsFallback, setTestimonialsFallback] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [photos, setPhotos] = useState([]);
+  // photosLoading only gates the very first load of the section (shows the
+  // full-section spinner). photosPageLoading gates subsequent page turns
+  // (Next/Prev across a page boundary) and only shows a small overlay so
+  // the carousel + arrows stay mounted and visible the whole time.
   const [photosLoading, setPhotosLoading] = useState(true);
+  const [photosPageLoading, setPhotosPageLoading] = useState(false);
+  const photosLoadedOnce = useRef(false);
   const [photosError, setPhotosError] = useState("");
   const [photosPage, setPhotosPage] = useState(1);
   const [photosTotalPages, setPhotosTotalPages] = useState(1);
   const [showSponsored, setShowSponsored] = useState(true);
+  // the sponsored block shouldn't appear immediately on page load — it
+  // only becomes eligible to render 10s after mount.
+  const [sponsoredDelayPassed, setSponsoredDelayPassed] = useState(false);
 
-  const [promotion, setPromotion] = useState(null);
+  // Promotions: now a rotating list of (up to) the 5 most recent, instead
+  // of a single promotion. promotionIndex is advanced every 5s.
+  const [promotions, setPromotions] = useState([]);
+  const [promotionIndex, setPromotionIndex] = useState(0);
   const [promotionLoading, setPromotionLoading] = useState(true);
-  // NEW: true when the promotion currently shown came from the English
+  // true when the promotions currently shown came from the English
   // fallback because the active language had none
   const [promotionFallback, setPromotionFallback] = useState(false);
 
@@ -54,7 +66,7 @@ const Home = () => {
   const [trendingError, setTrendingError] = useState("");
   const [trendingPage, setTrendingPage] = useState(1);
   const [trendingTotalPages, setTrendingTotalPages] = useState(1);
-  // NEW: true when trending posts currently shown came from the English
+  // true when trending posts currently shown came from the English
   // fallback because the active language had none
   const [trendingFallback, setTrendingFallback] = useState(false);
 
@@ -63,7 +75,7 @@ const Home = () => {
   const [recommendedError, setRecommendedError] = useState("");
   const [recommendedPage, setRecommendedPage] = useState(1);
   const [recommendedTotalPages, setRecommendedTotalPages] = useState(1);
-  // NEW: true when recommended posts currently shown came from the English
+  // true when recommended posts currently shown came from the English
   // fallback because the active language had none
   const [recommendedFallback, setRecommendedFallback] = useState(false);
 
@@ -84,7 +96,7 @@ const Home = () => {
   );
 
   // "All" is always first, so users can clear the category filter.
-  // Each entry is now { name, slug } — slug is the language-independent
+  // Each entry is { name, slug } — slug is the language-independent
   // key sent to the backend, name is the translated label shown in the UI.
   const [categories, setCategories] = useState([{ name: "All", slug: "all" }]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -94,7 +106,7 @@ const Home = () => {
   const [categoriesFallback, setCategoriesFallback] = useState(false);
 
   // default to "all" so the initial render shows every post, no filter.
-  // activeCategory now stores the SLUG (language-independent), not the
+  // activeCategory stores the SLUG (language-independent), not the
   // translated display name.
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -399,40 +411,70 @@ const Home = () => {
     fetchTestimonials();
   }, [t]);
 
-  // Promotion: try current language first; if none, retry explicitly in
-  // English and flag the fallback so the UI can show a note about it.
+  // Promotions: fetch the 5 most recent. Try current language first; if
+  // page 1 is empty, retry explicitly in English and flag the fallback so
+  // the UI can show a note about it.
   useEffect(() => {
-    const fetchPromotion = async () => {
+    const fetchPromotions = async () => {
       try {
         setPromotionLoading(true);
         setPromotionFallback(false);
 
-        let res = await API.get("/promotions/latest");
-        let latest = Array.isArray(res.data) ? res.data[0] : res.data;
+        let res = await API.get("/promotions/latest", { params: { limit: 5 } });
+        let list = Array.isArray(res.data) ? res.data : (res.data ? [res.data] : []);
 
-        if (!latest) {
+        if (list.length === 0) {
           res = await API.get("/promotions/latest", {
+            params: { limit: 5 },
             headers: { "Accept-Language": "en" },
           });
-          latest = Array.isArray(res.data) ? res.data[0] : res.data;
-          if (latest) setPromotionFallback(true);
+          list = Array.isArray(res.data) ? res.data : (res.data ? [res.data] : []);
+          if (list.length > 0) setPromotionFallback(true);
         }
 
-        setPromotion(latest || null);
+        setPromotions(list.slice(0, 5));
+        setPromotionIndex(0);
       } catch (err) {
         console.log(err);
-        setPromotion(null);
+        setPromotions([]);
       } finally {
         setPromotionLoading(false);
       }
     };
-    fetchPromotion();
+    fetchPromotions();
   }, [t]);
+
+  // The sponsored block shouldn't appear immediately on page load — it
+  // only becomes eligible to render 10s after mount.
+  useEffect(() => {
+    const timer = setTimeout(() => setSponsoredDelayPassed(true), 10000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Rotate to the next promotion every 5 seconds — only once the sponsored
+  // block has actually appeared (i.e. after the initial 5s reveal delay),
+  // so the first rotation always happens 5s after the user first sees it.
+  useEffect(() => {
+    if (!sponsoredDelayPassed || promotions.length <= 1) return;
+    const interval = setInterval(() => {
+      setPromotionIndex((i) => (i + 1) % promotions.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [sponsoredDelayPassed, promotions.length]);
 
   useEffect(() => {
     const fetchPhotos = async (page) => {
       try {
-        setPhotosLoading(true);
+        // Only show the full-section spinner on the very first load of
+        // this section. On every later page turn, keep the carousel (and
+        // its arrows) mounted and use a small overlay spinner instead —
+        // otherwise the whole section unmounts on every Next/Prev click
+        // at a page boundary, which looked like the button did nothing.
+        if (!photosLoadedOnce.current) {
+          setPhotosLoading(true);
+        } else {
+          setPhotosPageLoading(true);
+        }
         setPhotosError("");
 
         const res = await API.get("/media/type/photo", {
@@ -450,6 +492,8 @@ const Home = () => {
         setPhotosError(err.response?.data?.message || t("home.photos.errorDefault"));
       } finally {
         setPhotosLoading(false);
+        setPhotosPageLoading(false);
+        photosLoadedOnce.current = true;
       }
     };
     fetchPhotos(photosPage);
@@ -676,7 +720,10 @@ const Home = () => {
     cursor: disabled ? "not-allowed" : "pointer",
   });
 
-  const shouldShowSponsored = showSponsored && !promotionLoading && !!promotion;
+  // The currently-displayed promotion, derived from the rotating list.
+  const promotion = promotions[promotionIndex] || null;
+  const shouldShowSponsored =
+    showSponsored && sponsoredDelayPassed && !promotionLoading && !!promotion;
 
   // Translated display name for the currently active category slug —
   // used only for the "no posts in <category>" message below.
@@ -776,11 +823,30 @@ const Home = () => {
                 onMouseOut={(e) => e.target.style.backgroundColor = '#d32f2f'}>
                 {t("home.sponsored.openButton")}
               </button>
-              {/* NEW: note shown when the promotion fell back to English */}
+              {/* note shown when the promotion fell back to English */}
               {promotionFallback && (
                 <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#888', margin: '10px 0 0 0' }}>
                   {t("home.sponsored.fallbackNotice", "Showing this promotion in English.")}
                 </p>
+              )}
+              {/* dots indicating position within the rotating promotion list */}
+              {promotions.length > 1 && (
+                <div style={{ display: 'flex', gap: '6px', marginTop: '14px' }}>
+                  {promotions.map((_, i) => (
+                    <span
+                      key={i}
+                      onClick={() => setPromotionIndex(i)}
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        background: i === promotionIndex ? '#d32f2f' : '#ddd',
+                        display: 'inline-block',
+                      }}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -827,7 +893,7 @@ const Home = () => {
                     {t("home.hero.planVisitButton")}
                   </button>
                 </div>
-                {/* NEW: note shown when the hero fell back to English */}
+                {/* note shown when the hero fell back to English */}
                 {heroFallback && (
                   <p style={{ fontSize: '0.85rem', color: '#a9c2d3', margin: '18px 0 0 0' }}>
                     {t("home.hero.fallbackNotice", "Showing hero content in English — none available in your selected language yet.")}
@@ -979,7 +1045,7 @@ const Home = () => {
 
           {trendingError && <p style={{ color: '#ffb3b3', textAlign: 'center' }}>{trendingError}</p>}
 
-          {/* NEW: note shown when trending fell back to English */}
+          {/* note shown when trending fell back to English */}
           {trendingFallback && !trendingError && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#ddd', marginTop: '-14px', marginBottom: '20px' }}>
               {t("home.trending.fallbackNotice", "Showing trending posts in English.")}
@@ -1054,7 +1120,7 @@ const Home = () => {
 
           {recommendedError && <p style={{ color: 'red', textAlign: 'center' }}>{recommendedError}</p>}
 
-          {/* NEW: note shown when recommended fell back to English */}
+          {/* note shown when recommended fell back to English */}
           {recommendedFallback && !recommendedError && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-24px', marginBottom: '20px' }}>
               {t("home.recommended.fallbackNotice", "Showing recommended posts in English.")}
@@ -1165,7 +1231,7 @@ const Home = () => {
               <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
                 {truncateWords(priest?.description, 70) || t("home.priest.descriptionFallback")}
               </p>
-              {/* NEW: note shown when the priest/about content fell back to English */}
+              {/* note shown when the priest/about content fell back to English */}
               {priestFallback && (
                 <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', margin: '14px 0 0 0' }}>
                   {t("home.priest.fallbackNotice", "Showing this content in English — none available in your selected language yet.")}
@@ -1184,7 +1250,7 @@ const Home = () => {
           </h3>
           {testimonialsError && <p style={{ color: 'red', textAlign: 'center' }}>{testimonialsError}</p>}
 
-          {/* NEW: note shown when testimonials fell back to English */}
+          {/* note shown when testimonials fell back to English */}
           {testimonialsFallback && !testimonialsError && (
             <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-24px', marginBottom: '30px' }}>
               {t("home.testimonials.fallbackNotice", "Showing testimonials in English.")}
@@ -1250,8 +1316,13 @@ const Home = () => {
           ) : (
             <div className="photo-carousel">
               <div className="photo-carousel-frame">
-                <div className="photo-image-wrap">
-                  <button className="photo-arrow left" aria-label={t("home.photos.prevAriaLabel")} onClick={showPrevPhoto} disabled={photoIndex === 0 && photosPage === 1}>
+                <div className="photo-image-wrap" style={{ position: 'relative' }}>
+                  <button
+                    className="photo-arrow left"
+                    aria-label={t("home.photos.prevAriaLabel")}
+                    onClick={showPrevPhoto}
+                    disabled={photosPageLoading || (photoIndex === 0 && photosPage === 1)}
+                  >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -1262,7 +1333,28 @@ const Home = () => {
                     onClick={() => photos[photoIndex]?._id && navigate(`/media/${photos[photoIndex]._id}`)}
                     style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
                   />
-                  <button className="photo-arrow right" aria-label={t("home.photos.nextAriaLabel")} onClick={showNextPhoto} disabled={photoIndex === photos.length - 1 && photosPage === photosTotalPages}>
+                  {/* Overlay spinner shown only while turning to a new page —
+                      the image/arrows underneath stay mounted the whole time
+                      so Next/Prev never appears to "do nothing". */}
+                  {photosPageLoading && (
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(255,255,255,0.55)',
+                      borderRadius: '8px'
+                    }}>
+                      <div className="loading-spinner" />
+                    </div>
+                  )}
+                  <button
+                    className="photo-arrow right"
+                    aria-label={t("home.photos.nextAriaLabel")}
+                    onClick={showNextPhoto}
+                    disabled={photosPageLoading || (photoIndex === photos.length - 1 && photosPage === photosTotalPages)}
+                  >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
