@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import "./ChurchSupport.css";
 
 const ChurchSupport = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { hash } = useLocation();
 
   const [accountNumbers, setAccountNumbers] = useState([]);
@@ -23,8 +23,10 @@ const ChurchSupport = () => {
     }
   }, [hash]);
 
-  // Bank accounts are admin-managed, fetched from the backend so they
-  // can be updated without a redeploy.
+  // Bank accounts are admin-managed and language-specific, fetched from
+  // the backend so they can be updated without a redeploy. Accept-Language
+  // tells resolveLanguage middleware which language's accounts to return,
+  // same as church-story.
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
@@ -32,7 +34,12 @@ const ChurchSupport = () => {
         setAccountsError(false);
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/bank-accounts`
+          `${import.meta.env.VITE_API_URL}/api/bank-accounts`,
+          {
+            headers: {
+              "Accept-Language": i18n.language,
+            },
+          }
         );
         if (!res.ok) throw new Error("Failed to fetch bank accounts");
 
@@ -47,7 +54,7 @@ const ChurchSupport = () => {
     };
 
     fetchAccounts();
-  }, []);
+  }, [i18n.language]);
 
   // Pulled from translation files with returnObjects, same pattern as
   // Contact.jsx's quickFacts / reachMethods / serviceTimes.
