@@ -1037,7 +1037,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* LEADERSHIP TEAM */}
+      {/* LEADERSHIP TEAM — order: name, role, description */}
       <div className="cross-bg" style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <section>
           <div className="wrapper" style={{ maxWidth: '1000px' }}>
@@ -1069,7 +1069,7 @@ const ChurchAboutPage = () => {
                   />
                   <div>
                     <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
-                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role || p.title}</span>
+                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role}</span>
                     <p className="body-copy on-red" style={{ fontSize: '1.2rem', marginTop: '10px' }}>
                       {truncateWords(p.description, 20)}
                     </p>
@@ -1082,7 +1082,7 @@ const ChurchAboutPage = () => {
         </section>
       </div>
 
-      {/* TESTIMONIALS */}
+      {/* TESTIMONIALS — order: name, role, description */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
@@ -1111,11 +1111,11 @@ const ChurchAboutPage = () => {
                   src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
                   alt={person.name}
                 />
-                <p className="body-copy" style={{ fontSize: '1.4rem', marginBottom: '18px' }}>
-                  "{truncateWords(person.message, 20)}"
-                </p>
                 <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
-                <p className="testimonial-title">{person.title}</p>
+                <p className="testimonial-title">{person.role}</p>
+                <p className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
+                  "{truncateWords(person.description, 20)}"
+                </p>
               </Link>
             ))}
           </div>
@@ -1123,7 +1123,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* SPECIAL THANKS (testimonial-style cards) */}
+      {/* SPECIAL THANKS — order: name, role, description */}
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '1000px' }}>
           <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
@@ -1152,11 +1152,11 @@ const ChurchAboutPage = () => {
                   src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
                   alt={p.name}
                 />
-                <p className="body-copy" style={{ fontSize: '1.4rem', marginBottom: '18px' }}>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
+                <p className="testimonial-title">{p.role}</p>
+                <p className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
                   {truncateWords(p.description, 20)}
                 </p>
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
-                <p className="testimonial-title">{p.role || p.title}</p>
               </Link>
             ))}
           </div>
