@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import API from "../api/api";
 import "./ChurchSupport.css";
 
 const ChurchSupport = () => {
@@ -33,18 +34,11 @@ const ChurchSupport = () => {
         setAccountsLoading(true);
         setAccountsError(false);
 
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/bank-accounts`,
-          {
-            headers: {
-              "Accept-Language": i18n.language,
-            },
-          }
-        );
-        if (!res.ok) throw new Error("Failed to fetch bank accounts");
+        const res = await API.get("/bank-accounts", {
+          headers: { "Accept-Language": i18n.language },
+        });
 
-        const data = await res.json();
-        setAccountNumbers(data.accounts || []);
+        setAccountNumbers(res.data.accounts || []);
       } catch (err) {
         console.error(err);
         setAccountsError(true);
