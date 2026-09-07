@@ -24,9 +24,10 @@ const PromotionDetail = () => {
         setError("");
         const res = await API.get("/promotions");
         const list = Array.isArray(res.data) ? res.data : res.data.promotions;
-        const match = (list || []).find((p) => p._id === id);
+        // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
+        const match = (list || []).find((p) => p.id === id);
         setPromotion(match || null);
-        setOtherPromotions((list || []).filter((p) => p._id !== id));
+        setOtherPromotions((list || []).filter((p) => p.id !== id));
       } catch (err) {
         console.log(err);
         setError(err.response?.data?.message || "Failed to load this promotion");
@@ -119,11 +120,11 @@ const PromotionDetail = () => {
                 const thumb = p.image || p.photo || p.photoUrl || p.imageUrl;
                 return (
                   <div
-                    key={p._id}
+                    key={p.id}
                     className="promo-more-card"
                     onClick={() => {
                       window.scrollTo({ top: 0, behavior: "smooth" });
-                      navigate(`/promotions/${p._id}`);
+                      navigate(`/promotions/${p.id}`);
                     }}
                   >
                     {thumb && (

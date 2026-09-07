@@ -134,7 +134,7 @@ const VideoSection = ({ items, fallback, t }) => {
       )}
       <div className="media-grid">
         {visible.map((v, i) => {
-          const id = v._id || i;
+          const id = v.id || i;
           const isPlaying = playingId === id;
           return (
             <div className="grid-card video-card" style={{ position: "relative" }} key={id}>
@@ -163,7 +163,7 @@ const VideoSection = ({ items, fallback, t }) => {
                   </span>
                 </button>
               )}
-              <Link to={`/media/${v._id}`}>
+              <Link to={`/media/${v.id}`}>
                 <p className="grid-card-title">{v.title}</p>
               </Link>
               <button
@@ -273,7 +273,7 @@ const PhotoSection = ({ items, fallback, t }) => {
       )}
       <div className="media-grid">
         {visible.map((p, i) => (
-          <Link className="grid-card photo-card" to={`/media/${p._id}`} key={p._id || i}>
+          <Link className="grid-card photo-card" to={`/media/${p.id}`} key={p.id || i}>
             <img src={p.mediaUrl} alt={p.title} />
             <p className="grid-card-title">{p.title}</p>
           </Link>
@@ -322,7 +322,7 @@ const AudioSection = ({ items, fallback, t }) => {
       )}
       <div className="media-grid">
         {visible.map((a, i) => {
-          const id = a._id || i;
+          const id = a.id || i;
           const isPlaying = playingId === id;
           return (
             <div className="grid-card audio-card" style={{ position: "relative" }} key={id}>
@@ -344,7 +344,7 @@ const AudioSection = ({ items, fallback, t }) => {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                 </button>
               )}
-              <Link to={`/media/${a._id}`}>
+              <Link to={`/media/${a.id}`}>
                 <p className="grid-card-title">{a.title}</p>
               </Link>
               <p className="audio-artist">{a.description}</p>
@@ -455,7 +455,7 @@ const BookSection = ({ items, fallback, t }) => {
       )}
       <div className="media-grid">
         {visible.map((b, i) => (
-          <Link className="grid-card book-card" to={`/media/${b._id}`} key={b._id || i}>
+          <Link className="grid-card book-card" to={`/media/${b.id}`} key={b.id || i}>
             <div className="book-cover">
               {b.thumbnail ? (
                 <img src={b.thumbnail} alt={b.title} />

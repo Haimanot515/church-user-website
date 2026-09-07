@@ -31,12 +31,13 @@ const ServiceDetail = () => {
         setError("");
         const res = await API.get("/services");
         const list = Array.isArray(res.data) ? res.data : res.data?.services || [];
-        const match = (list || []).find((s) => s._id === id);
+        // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
+        const match = (list || []).find((s) => s.id === id);
         setEntry(match || null);
 
         // "You may also like" — other active services, excluding this one
         const others = (list || [])
-          .filter((s) => s._id !== id && s.status === "active")
+          .filter((s) => s.id !== id && s.status === "active")
           .slice(0, 3);
         setRelated(others);
       } catch (err) {
@@ -297,13 +298,13 @@ const ServiceDetail = () => {
                 const img = getImageUrl(s.imageUrl);
                 return (
                   <div
-                    key={s._id}
+                    key={s.id}
                     className="service-related-card"
-                    onClick={() => navigate(`/services/${s._id}`)}
+                    onClick={() => navigate(`/services/${s.id}`)}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") navigate(`/services/${s._id}`);
+                      if (e.key === "Enter" || e.key === " ") navigate(`/services/${s.id}`);
                     }}
                   >
                     {img ? (

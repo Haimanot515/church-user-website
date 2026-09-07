@@ -20,7 +20,8 @@ const AboutDetail = () => {
         setError("");
         const res = await API.get("/about");
         const list = Array.isArray(res.data) ? res.data : [res.data];
-        const match = (list || []).find((a) => a._id === id);
+        // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
+        const match = (list || []).find((a) => a.id === id);
         setEntry(match || null);
       } catch (err) {
         console.log(err);

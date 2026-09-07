@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api";
 import "./MediaDetail.css";
-
 /**
  * Media detail page — single-item view for whatever was clicked on
  * the Media page. Renders differently depending on entry.mediaType:
@@ -14,7 +13,6 @@ import "./MediaDetail.css";
  * Uses the same getMediaUrl helper and design system (cloud layer,
  * navy/gold palette, fonts) as Media.jsx / Media.css.
  */
-
 const getMediaUrl = (mediaUrl) => {
   if (!mediaUrl) return null;
   if (/^https?:\/\//i.test(mediaUrl)) return mediaUrl;
@@ -22,7 +20,6 @@ const getMediaUrl = (mediaUrl) => {
   const path = mediaUrl.startsWith("/") ? mediaUrl : `/uploads/${mediaUrl}`;
   return `${base}${path}`;
 };
-
 // Same blob-based download used on Media.jsx — fetches the file as a
 // blob so `download` works even when the file is served from a
 // different origin (CDN), instead of the browser just navigating to it.
@@ -44,7 +41,6 @@ const handleDownload = async (url, title) => {
     window.open(url, "_blank", "noopener,noreferrer");
   }
 };
-
 const MediaDetail = () => {
   const { id } = useParams();
   const [entry, setEntry] = useState(null);
@@ -60,7 +56,6 @@ const MediaDetail = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const audioRef = useRef(null);
   const rafRef = useRef(null);
-
   // Close the three-dot menu when clicking anywhere else on the page
   // (same pattern as the video/audio cards on Media.jsx).
   useEffect(() => {
@@ -69,9 +64,7 @@ const MediaDetail = () => {
     document.addEventListener("click", closeMenu);
     return () => document.removeEventListener("click", closeMenu);
   }, [menuOpen]);
-
   const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 2];
-
   const formatTime = (secs) => {
     if (!Number.isFinite(secs) || secs < 0) return "0:00";
     const m = Math.floor(secs / 60);
@@ -80,11 +73,9 @@ const MediaDetail = () => {
       .padStart(2, "0");
     return `${m}:${s}`;
   };
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
-
   useEffect(() => {
     const fetchEntry = async () => {
       try {
@@ -105,22 +96,22 @@ const MediaDetail = () => {
     };
     fetchEntry();
   }, [id]);
-
   useEffect(() => {
     const fetchRelated = async () => {
       try {
         const res = await API.get("/media");
         const all = Array.isArray(res.data) ? res.data : res.data?.items || [];
         const currentId = String(id);
+        // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
         const sameType = all.filter(
-          (m) => (m._id || m.id) && String(m._id || m.id) !== currentId && m.mediaType === entry?.mediaType
+          (m) => m.id && String(m.id) !== currentId && m.mediaType === entry?.mediaType
         );
         const pool = sameType.length >= 3
           ? sameType
-          : all.filter((m) => (m._id || m.id) && String(m._id || m.id) !== currentId);
+          : all.filter((m) => m.id && String(m.id) !== currentId);
         const picks = pool.slice(0, 4).map((m) => ({
           ...m,
-          id: m._id || m.id,
+          id: m.id,
           thumbnail: getMediaUrl(m.thumbnail || m.mediaUrl),
         }));
         setRelatedItems(picks);
@@ -130,7 +121,6 @@ const MediaDetail = () => {
     };
     if (entry) fetchRelated();
   }, [entry, id]);
-
   // Backup ticker: some audio sources fire `timeupdate` inconsistently
   // (throttled background tabs, certain streamed formats), so while
   // playing we also poll currentTime directly via requestAnimationFrame.
@@ -152,7 +142,6 @@ const MediaDetail = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [isPlaying]);
-
   const toggleAudio = () => {
     const el = audioRef.current;
     if (!el) return;
@@ -174,7 +163,6 @@ const MediaDetail = () => {
       }
     }
   };
-
   const handleSeek = (e) => {
     const el = audioRef.current;
     if (!el) return;
@@ -182,7 +170,6 @@ const MediaDetail = () => {
     el.currentTime = value;
     setCurrentTime(value);
   };
-
   const cycleSpeed = () => {
     const el = audioRef.current;
     if (!el) return;
@@ -191,7 +178,6 @@ const MediaDetail = () => {
     el.playbackRate = next;
     setPlaybackRate(next);
   };
-
   const toggleMute = () => {
     const el = audioRef.current;
     if (!el) return;
@@ -199,7 +185,6 @@ const MediaDetail = () => {
     el.muted = next;
     setIsMuted(next);
   };
-
   const BackButton = () => (
     <Link to="/media" aria-label="Go back" className="media-detail-back-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -207,7 +192,6 @@ const MediaDetail = () => {
       </svg>
     </Link>
   );
-
   const Shell = ({ children }) => (
     <div className="media-portal">
       <div className="cloud-layer">
@@ -219,7 +203,6 @@ const MediaDetail = () => {
       {children}
     </div>
   );
-
   if (loading) {
     return (
       <Shell>
@@ -229,7 +212,6 @@ const MediaDetail = () => {
       </Shell>
     );
   }
-
   if (error || !entry) {
     return (
       <Shell>
@@ -240,14 +222,12 @@ const MediaDetail = () => {
       </Shell>
     );
   }
-
   const eyebrowByType = {
     video: "Watch",
     photo: "Look Back",
     audio: "Listen",
     document: "Read",
   };
-
   return (
     <Shell>
       <section className="media-detail-hero">
@@ -255,7 +235,6 @@ const MediaDetail = () => {
           <span className="eyebrow">{eyebrowByType[entry.mediaType] || "Media"}</span>
         </div>
       </section>
-
       <section className="media-detail-section">
         <div className="wrapper">
           <div className="media-detail-body">
@@ -268,7 +247,6 @@ const MediaDetail = () => {
                 ) : (
                   <img src={entry.mediaUrl} alt={entry.title} className="media-detail-photo" />
                 )}
-
                 <button
                   type="button"
                   className="media-detail-menu-btn"
@@ -300,7 +278,6 @@ const MediaDetail = () => {
                     <circle cx="12" cy="19" r="1.7" />
                   </svg>
                 </button>
-
                 {menuOpen && (
                   <div
                     className="media-detail-menu-dropdown"
@@ -348,7 +325,6 @@ const MediaDetail = () => {
                 )}
               </div>
             )}
-
             {entry.mediaType === "audio" && (
               <div className="media-detail-audio-card">
                 <button
@@ -451,7 +427,6 @@ const MediaDetail = () => {
                 )}
               </div>
             )}
-
             {entry.mediaType === "document" && (
               <div className="media-detail-document">
                 {entry.thumbnail ? (
@@ -474,14 +449,11 @@ const MediaDetail = () => {
                 </div>
               </div>
             )}
-
             <h1 className="media-detail-title">{entry.title}</h1>
-
             {entry.description && (
               <p className="media-detail-description">{entry.description}</p>
             )}
           </div>
-
           {relatedItems.length > 0 && (
             <div className="media-detail-related">
               <h2 className="media-detail-related-heading">You May Also Like</h2>
@@ -513,5 +485,4 @@ const MediaDetail = () => {
     </Shell>
   );
 };
-
 export default MediaDetail;

@@ -55,7 +55,7 @@ const Detail = () => {
   // === Reset related-posts paging whenever we land on a new post ===
   useEffect(() => {
     setRelatedPage(1);
-  }, [post?._id]);
+  }, [post?.id]);
 
   // === Fetch a page of related posts once we know the post's category ===
   useEffect(() => {
@@ -77,7 +77,7 @@ const Detail = () => {
         });
 
         const postsData = Array.isArray(res.data) ? res.data : res.data.posts;
-        const filtered = (postsData || []).filter((p) => p._id !== post._id).slice(0, RELATED_LIMIT);
+        const filtered = (postsData || []).filter((p) => p.id !== post.id).slice(0, RELATED_LIMIT);
 
         // Page 1 replaces the list (new post landed on); later pages
         // append, since this is now "Load More" rather than Next/Back
@@ -94,7 +94,7 @@ const Detail = () => {
     };
     fetchRelated(relatedPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post?._id, relatedPage]);
+  }, [post?.id, relatedPage]);
 
   const loadMoreRelated = () => {
     if (relatedPage >= relatedTotalPages || relatedLoadingMore) return;
@@ -251,8 +251,8 @@ const Detail = () => {
             <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
               {related.map((p) => (
                 <Link
-                  key={p._id}
-                  to={`/projects/${p._id}`}
+                  key={p.id}
+                  to={`/projects/${p.id}`}
                   className="card"
                   style={{ textDecoration: "none", color: "inherit", overflow: "hidden", display: "block" }}
                 >

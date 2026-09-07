@@ -318,7 +318,7 @@ const Book = () => {
                 <>
                   <div className="book-catalog-grid">
                     {visible.map((b, i) => (
-                      <BookCard key={b._id || i} book={b} t={t} />
+                      <BookCard key={b.id || i} book={b} t={t} />
                     ))}
                   </div>
 

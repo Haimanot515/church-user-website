@@ -396,7 +396,7 @@ const Sermon = () => {
               )}
               <div className="sermons-grid">
                 {sermons.map((s, i) => {
-                  const id = s._id || i;
+                  const id = s.id || i;
                   return (
                     <div
                       key={id}

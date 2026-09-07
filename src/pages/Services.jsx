@@ -141,14 +141,14 @@ const Services = () => {
           )}
 
           {!loading && !error && services.slice(0, visibleCount).map((s, i) => (
-            <div className={`service-row${i % 2 === 1 ? " reverse" : ""}`} key={s._id || i}>
+            <div className={`service-row${i % 2 === 1 ? " reverse" : ""}`} key={s.id || i}>
               <div
                 className="service-img"
-                onClick={() => goToDetail(s._id)}
+                onClick={() => goToDetail(s.id)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") goToDetail(s._id);
+                  if (e.key === "Enter" || e.key === " ") goToDetail(s.id);
                 }}
               >
                 {s.resolvedImageUrl ? (
@@ -159,11 +159,11 @@ const Services = () => {
               </div>
               <div
                 className="service-copy"
-                onClick={() => goToDetail(s._id)}
+                onClick={() => goToDetail(s.id)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") goToDetail(s._id);
+                  if (e.key === "Enter" || e.key === " ") goToDetail(s.id);
                 }}
               >
                 <svg className="service-cross" width="22" height="32" viewBox="0 0 22 32" xmlns="http://www.w3.org/2000/svg">

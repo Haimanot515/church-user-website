@@ -198,8 +198,8 @@ const Travel = () => {
               {upcomingTrips.map((trip) => (
                 <Link
                   className="upcoming-card"
-                  key={trip._id}
-                  to={`/projects/${trip._id}`}
+                  key={trip.id}
+                  to={`/projects/${trip.id}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
                   <img src={trip.imageUrl} alt={trip.title} />

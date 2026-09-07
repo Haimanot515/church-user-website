@@ -164,9 +164,10 @@ const Church = () => {
     return fallback;
   };
 
-  const currentChurchId = currentChurch?.church?._id;
+  // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
+  const currentChurchId = currentChurch?.church?.id;
   const visibleBlogChurches = currentChurchId
-    ? blogChurches.filter((c) => c._id !== currentChurchId)
+    ? blogChurches.filter((c) => c.id !== currentChurchId)
     : blogChurches;
 
   return (
@@ -200,8 +201,8 @@ const Church = () => {
             <button className="hero-cta">{t("church.hero.cta")}</button>
           </div>
           <div className="church-hero-media">
-            {primaryChurch?._id ? (
-              <Link to={`/churches/${primaryChurch._id}`}>
+            {primaryChurch?.id ? (
+              <Link to={`/churches/${primaryChurch.id}`}>
                 <img
                   src={
                     primaryChurch?.image ||
@@ -382,8 +383,8 @@ const Church = () => {
               )}
               <div className="blog-grid">
                 {visibleBlogChurches.map((c) => (
-                  <div className="blog-card" key={c._id}>
-                    <Link to={`/churches/${c._id}`}>
+                  <div className="blog-card" key={c.id}>
+                    <Link to={`/churches/${c.id}`}>
                       <img src={c.image || ""} alt={c.churchName} />
                     </Link>
                     <div className="blog-card-body">
@@ -396,7 +397,7 @@ const Church = () => {
                       </div>
                       <h3>{c.churchName}</h3>
                       <p>{c.shortDescription || c.description}</p>
-                      <Link className="read-more" to={`/churches/${c._id}`}>
+                      <Link className="read-more" to={`/churches/${c.id}`}>
                         {t("church.blog.readMore")}
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path

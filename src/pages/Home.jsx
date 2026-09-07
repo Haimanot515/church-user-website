@@ -790,8 +790,8 @@ const Home = () => {
             <img
               src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
               alt={promotion?.title || t("home.sponsored.imageAltFallback")}
-              onClick={() => promotion?._id && navigate(`/promotions/${promotion._id}`)}
-              style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px', cursor: promotion?._id ? 'pointer' : 'default' }}
+              onClick={() => promotion?.id && navigate(`/promotions/${promotion.id}`)}
+              style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px', cursor: promotion?.id ? 'pointer' : 'default' }}
             />
             <div>
               <h3 style={{ fontSize: '1.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif' }}>
@@ -802,8 +802,8 @@ const Home = () => {
               </p>
               <button
                 onClick={() => {
-                  if (promotion?._id) {
-                    navigate(`/promotions/${promotion._id}`);
+                  if (promotion?.id) {
+                    navigate(`/promotions/${promotion.id}`);
                   } else if (promotion?.link) {
                     window.open(promotion.link, "_blank", "noopener,noreferrer");
                   }
@@ -863,7 +863,7 @@ const Home = () => {
           ) : (
             <>
               <div style={{ flex: '1', minWidth: '320px' }}>
-                <Link to={`/homeheros/${hero?._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                <Link to={`/homeheros/${hero?.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                   <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
                     {hero?.title || t("home.hero.titleFallback")}
                   </h1>
@@ -901,7 +901,7 @@ const Home = () => {
                 )}
               </div>
               <div style={{ flex: '0 0 480px', minWidth: '320px' }}>
-                <Link to={`/homeheros/${hero?._id}`}>
+                <Link to={`/homeheros/${hero?.id}`}>
                   <img
                     src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
                     alt={hero?.title || t("home.hero.imageAltFallback")}
@@ -982,8 +982,8 @@ const Home = () => {
             </p>
           ) : (
             sermons.map((item, index, arr) => (
-              <React.Fragment key={item._id}>
-                <Link to={`/projects/${item._id}`} className="sermon-item-grid" style={{
+              <React.Fragment key={item.id}>
+                <Link to={`/projects/${item.id}`} className="sermon-item-grid" style={{
                   padding: '50px 0',
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr',
@@ -1067,8 +1067,8 @@ const Home = () => {
               ) : (
                 trending.map((post) => (
                   <Link
-                    key={post._id}
-                    to={`/projects/${post._id}`}
+                    key={post.id}
+                    to={`/projects/${post.id}`}
                     className="angel-box"
                     style={{ backgroundImage: `url(${post.imageUrl})` }}
                     role="img"
@@ -1134,7 +1134,7 @@ const Home = () => {
           ) : (
             <div className="recommended-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '26px' }}>
               {recommended.map((post) => (
-                <Link key={post._id} to={`/projects/${post._id}`} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none', display: 'block', textDecoration: 'none', color: 'inherit' }}
+                <Link key={post.id} to={`/projects/${post.id}`} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none', display: 'block', textDecoration: 'none', color: 'inherit' }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
                   <img src={post.imageUrl} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
@@ -1204,7 +1204,7 @@ const Home = () => {
               <Spinner light />
             </div>
           ) : (
-          <Link to={`/about/${priest?._id}`} style={{
+          <Link to={`/about/${priest?.id}`} style={{
             maxWidth: '880px',
             display: 'flex',
             gap: '50px',
@@ -1265,8 +1265,8 @@ const Home = () => {
             <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
               {testimonials.map((person, i) => (
           <Link
-  key={person._id || i}
-  to={`/church-persons/${person._id}`}
+  key={person.id || i}
+  to={`/church-persons/${person.id}`}
   className="testimonial-card"
   style={{ paddingTop: '28px', textAlign: 'left', textDecoration: 'none', color: 'inherit' }}
 >
@@ -1330,8 +1330,8 @@ const Home = () => {
                   <img
                     src={photos[photoIndex]?.mediaUrl}
                     alt={photos[photoIndex]?.title}
-                    onClick={() => photos[photoIndex]?._id && navigate(`/media/${photos[photoIndex]._id}`)}
-                    style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
+                    onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
+                    style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?.id ? 'pointer' : 'default' }}
                   />
                   {/* Overlay spinner shown only while turning to a new page —
                       the image/arrows underneath stay mounted the whole time
@@ -1361,8 +1361,8 @@ const Home = () => {
                   </button>
                 </div>
                 <div
-                  style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?._id ? 'pointer' : 'default' }}
-                  onClick={() => photos[photoIndex]?._id && navigate(`/media/${photos[photoIndex]._id}`)}
+                  style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?.id ? 'pointer' : 'default' }}
+                  onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
                 >
                   <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
                     {photos[photoIndex]?.title}

@@ -25,7 +25,8 @@ const PersonDetail = () => {
         setError("");
         const res = await API.get("/church-persons");
         const list = Array.isArray(res.data) ? res.data : [res.data];
-        const match = (list || []).find((p) => p._id === id);
+        // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
+        const match = (list || []).find((p) => p.id === id);
         setEntry(match || null);
       } catch (err) {
         console.log(err);

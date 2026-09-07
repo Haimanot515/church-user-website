@@ -415,9 +415,9 @@ const Blog = () => {
             </p>
           ) : (
             posts.map((post, index) => (
-              <React.Fragment key={post._id || index}>
+              <React.Fragment key={post.id || index}>
                 <div className={`post-row${index % 2 === 1 ? " reverse" : ""}`}>
-                  <Link to={`/projects/${post._id}`} className="post-media">
+                  <Link to={`/projects/${post.id}`} className="post-media">
                     <img src={post.imageUrl} alt={post.title} />
                   </Link>
                   <div className="post-copy">
@@ -431,7 +431,7 @@ const Blog = () => {
                     <h3>{post.title}</h3>
                     <p className="desc">{post.description}</p>
                     <p className="byline">By {getAuthorName(post)}</p>
-                    <Link to={`/projects/${post._id}`} className="read-more">
+                    <Link to={`/projects/${post.id}`} className="read-more">
                       {t("blog.posts.readMoreButton")}
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -20,7 +20,8 @@ const HeroDetail = () => {
         setError("");
         const res = await API.get("/homeheros");
         const list = Array.isArray(res.data) ? res.data : [res.data];
-        const match = (list || []).find((h) => h._id === id);
+        // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
+        const match = (list || []).find((h) => h.id === id);
         setEntry(match || null);
       } catch (err) {
         console.log(err);

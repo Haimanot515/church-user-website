@@ -858,8 +858,8 @@ const ChurchAboutPage = () => {
           ) : (
           <>
           <div className="about-hero-text-col" style={{ flex: '1', minWidth: '320px', textAlign: 'left' }}>
-            {about?._id ? (
-              <Link to={`/about/${about._id}`} style={{ display: 'block', cursor: 'pointer' }}>
+            {about?.id ? (
+              <Link to={`/about/${about.id}`} style={{ display: 'block', cursor: 'pointer' }}>
                 <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   {about?.title || t("about.hero.titleFallback")}
                 </h1>
@@ -901,8 +901,8 @@ const ChurchAboutPage = () => {
           </div>
           <div className="about-hero-image-col" style={{ flex: '0 0 340px', minWidth: '280px' }}>
             <div style={{ position: 'relative', width: '100%' }}>
-              {about?._id ? (
-                <Link to={`/about/${about._id}`} style={{ display: 'block', width: '100%' }}>
+              {about?.id ? (
+                <Link to={`/about/${about.id}`} style={{ display: 'block', width: '100%' }}>
                   <img
                     src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
                     alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
@@ -969,12 +969,23 @@ const ChurchAboutPage = () => {
             </p>
           )}
 
-          {history.map((item) => (
-            <div key={item._id} className="about-item">
+          {history.map((item, index) => {
+            // Only the most recent story (index 0, i.e. the latest chapter)
+            // is shown in full — older ones are truncated to a word limit
+            // so the page stays scannable and the "Read full story" link
+            // has a real purpose for them.
+            const STORY_WORD_LIMIT = 60;
+            const isLatest = index === 0;
+            const displayedDesc = isLatest
+              ? item.desc
+              : truncateWords(item.desc, STORY_WORD_LIMIT);
+
+            return (
+            <div key={item.id} className="about-item">
 
               <div className="about-photo-side">
                 {item.photo && (
-                  <Link to={`/about/story/${item._id}`} className="about-img-wrapper">
+                  <Link to={`/about/story/${item.id}`} className="about-img-wrapper">
                     <img
                       src={item.photo}
                       alt={item.title}
@@ -998,19 +1009,20 @@ const ChurchAboutPage = () => {
                   {item.title}
                 </h2>
                 <div className="about-description">
-                  <p>{item.desc}</p>
+                  <p>{displayedDesc}</p>
                 </div>
                 <div className="about-tags">
                   <div className="about-tag">{item.leader}</div>
                   <div className="about-tag">{item.range}</div>
                   <div className="about-tag">{item.servedBy}</div>
-                  <Link to={`/about/story/${item._id}`} className="read-full-story-btn">
+                  <Link to={`/about/story/${item.id}`} className="read-full-story-btn">
                     {t("about.story.readFullStoryButton")}
                   </Link>
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {history.length === 0 && historyLoading && (
             <Spinner />
@@ -1057,9 +1069,9 @@ const ChurchAboutPage = () => {
             <div className="thanks-grid">
               {leaders.map((p) => (
                 <Link
-                  to={`/church-persons/${p._id}`}
+                  to={`/church-persons/${p.id}`}
                   className="thanks-card"
-                  key={p._id}
+                  key={p.id}
                   style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
                 >
                   <img
@@ -1101,9 +1113,9 @@ const ChurchAboutPage = () => {
           <div className="testimonial-grid">
             {testimonialsList.map((person) => (
               <Link
-                to={`/church-persons/${person._id}`}
+                to={`/church-persons/${person.id}`}
                 className="card testimonial-card"
-                key={person._id}
+                key={person.id}
                 style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
               >
                 <img
@@ -1142,9 +1154,9 @@ const ChurchAboutPage = () => {
           <div className="testimonial-grid">
             {thanksList.map((p) => (
               <Link
-                to={`/church-persons/${p._id}`}
+                to={`/church-persons/${p.id}`}
                 className="card testimonial-card"
-                key={p._id}
+                key={p.id}
                 style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
               >
                 <img

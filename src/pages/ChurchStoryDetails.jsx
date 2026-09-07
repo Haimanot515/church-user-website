@@ -49,7 +49,7 @@ const StoryDetail = () => {
   // === Reset related-chapters paging whenever we land on a new chapter ===
   useEffect(() => {
     setRelatedPage(1);
-  }, [post?._id]);
+  }, [post?.id]);
 
   // === Fetch a page of related chapters ===
   useEffect(() => {
@@ -67,7 +67,7 @@ const StoryDetail = () => {
         });
 
         const postsData = Array.isArray(res.data) ? res.data : res.data.stories;
-        const filtered = (postsData || []).filter((p) => p._id !== post._id).slice(0, RELATED_LIMIT);
+        const filtered = (postsData || []).filter((p) => p.id !== post.id).slice(0, RELATED_LIMIT);
         setRelated(filtered);
         setRelatedTotalPages(res.data.totalPages || 1);
       } catch (err) {
@@ -79,7 +79,7 @@ const StoryDetail = () => {
     };
     fetchRelated(relatedPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post?._id, relatedPage]);
+  }, [post?.id, relatedPage]);
 
   const goToRelatedPage = (page) => {
     if (page < 1 || page > relatedTotalPages) return;
@@ -187,10 +187,6 @@ const StoryDetail = () => {
     .story-related-card-title {
       font-size: 1.3rem;
     }
-    .story-newsletter-heading {
-      font-size: 1.6rem;
-    }
-
     /* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
     @media (max-width: 1024px) {
       .story-title { font-size: 2.3rem; }
@@ -218,7 +214,6 @@ const StoryDetail = () => {
       .story-body p { font-size: 0.95rem; line-height: 1.6; }
       .story-related-grid { grid-template-columns: 1fr; gap: 18px; }
       .story-related-card-title { font-size: 1.1rem; }
-      .story-newsletter-heading { font-size: 1.35rem; }
     }
 
     /* --- Standard phones (max-width: 480px) ------------------------------------ */
@@ -360,8 +355,8 @@ const StoryDetail = () => {
               <div className="story-related-grid">
                 {related.map((p) => (
                   <Link
-                    key={p._id}
-                    to={`/about/story/${p._id}`}
+                    key={p.id}
+                    to={`/about/story/${p.id}`}
                     className="card"
                     style={{ textDecoration: "none", color: "inherit", overflow: "hidden", display: "block" }}
                   >
@@ -394,17 +389,6 @@ const StoryDetail = () => {
         </section>
       )}
 
-      {/* NEWSLETTER */}
-      <section className="newsletter-section">
-        <div className="wrapper" style={{ maxWidth: "600px" }}>
-          <h3 className="display story-newsletter-heading">Never miss a post — delivered every Monday.</h3>
-          <p>One email a week: a new post, a verse, and this week's prayer requests</p>
-          <div className="newsletter-form">
-            <input type="email" placeholder="you@email.com" />
-            <button>Subscribe</button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
