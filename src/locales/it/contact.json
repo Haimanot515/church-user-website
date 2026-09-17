@@ -33,7 +33,7 @@
       },
       {
         "title": "Posta",
-        "value": "Debre Selam Abune Gebre Menfes Kidus Church, Udine, Italia",
+        "value": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italia",
         "desc": "Per lettere, cartoline o qualsiasi cosa che meriti un francobollo al posto di un pulsante di invio."
       }
     ]
@@ -75,10 +75,10 @@
   },
   "location": {
     "heading": "Vienici a trovare di persona",
-    "address": "Debre Selam Abune Gebre Menfes Kidus Church, Udine, Italia",
+    "address": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italia",
     "note": "Il nostro ufficio si trova dietro la sala principale. Se la porta è aperta, lo siamo anche noi: non serve appuntamento nella maggior parte delle mattine feriali.",
     "getDirections": "Ottieni indicazioni →",
-    "mapQuery": "Udine, Italia",
+    "mapQuery": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italia",
     "mapIframeTitle": "Posizione della Chiesa Debre Selam Abune Gebre Menfes Kidus",
     "serviceTimes": [
       "Domenica — 9:00 & 11:00",

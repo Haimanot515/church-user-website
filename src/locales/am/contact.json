@@ -33,7 +33,7 @@
       },
       {
         "title": "ፖስታ",
-        "value": "ደብረ ሠላም አቡነ ገብረ መንፈስ ቅዱስ ቤ/ክ፣ ኡዲኔ፣ ጣሊያን",
+        "value": "Via Baldasseria Bassa, 353, 33100 ኡዲኔ፣ ጣሊያን",
         "desc": "ደብዳቤዎች፣ ካርዶች፣ ወይም ከመላክ አዝራር ይልቅ ማህተም የሚገባቸው ማንኛውም ነገር።"
       }
     ]
@@ -75,10 +75,10 @@
   },
   "location": {
     "heading": "በአካል ይጎብኙን",
-    "address": "ደብረ ሠላም አቡነ ገብረ መንፈስ ቅዱስ ቤ/ክ ቤተ ክርስቲያን፣ ኡዲኔ፣ ጣሊያን",
+    "address": "Via Baldasseria Bassa, 353, 33100 ኡዲኔ፣ ጣሊያን",
     "note": "ቢሮአችን ከቅድስተ ቅዱሳኑ ጀርባ ይገኛል። በር ክፍት ከሆነ፣ ቡድናችንም እዚያ ነው በአብዛኛዎቹ የስራ ቀናት ጠዋት ቀጠሮ አያስፈልግም።",
     "getDirections": "አቅጣጫ ያግኙ →",
-    "mapQuery": "Udine, Italy",
+    "mapQuery": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy",
     "mapIframeTitle": "ደብረ ሠላም አቡነ ገብረ መንፈስ ቅዱስ ቤ/ክ ቤተ ክርስቲያን አካባቢ",
     "serviceTimes": [
       "እሁድ — 9:00 እና 11:00 ጥዋት",

@@ -14,9 +14,8 @@ const ChurchAboutPage = () => {
   });
 
   // Localized map query used to build the embedded Google Maps URL below
-  const MAP_QUERY = t("about.map.query", { defaultValue: "Udine, Italy" });
-
-  const [activeChapter, setActiveChapter] = useState(0);
+const MAP_QUERY = "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy"; 
+const [activeChapter, setActiveChapter] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
 
   // === About/Hero content fetched from /about ===
@@ -840,6 +839,18 @@ const ChurchAboutPage = () => {
           .fact-item { text-align: center !important; }
           .fact-label, .fact-value { width: 100%; text-align: center !important; }
         }
+
+        .map-address-line {
+          margin-top: 16px;
+          font-size: 1.05rem;
+          color: var(--slate);
+        }
+        .map-address-link {
+          color: var(--deep-red);
+          text-decoration: underline;
+          font-weight: 600;
+        }
+        .map-address-link:hover { color: var(--navy-deep); }
       `}</style>
 
       <div className="cloud-layer">
@@ -1303,7 +1314,9 @@ const ChurchAboutPage = () => {
         </section>
       </div>
 
-      {/* FIND US (MAP) — placed directly below the merged Support/Get Involved section */}
+      {/* FIND US (MAP) — placed directly below the merged Support/Get Involved section.
+          Below the map we now also show the plain-text address and an external link,
+          both pulled through i18n so they can be localized per-locale. */}
       <div style={{ background: '#ffffff' }}>
         <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
           <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>
@@ -1322,6 +1335,18 @@ const ChurchAboutPage = () => {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
+            <p className="map-address-line">
+              {t("about.map.placeName", { defaultValue: MAP_QUERY })}
+              {" — "}
+              <a
+                href="https://sosutenze.it"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="map-address-link"
+              >
+                {t("about.map.linkLabel", { defaultValue: "sosutenze.it" })}
+              </a>
+            </p>
           </div>
         </section>
       </div>

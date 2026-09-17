@@ -70,12 +70,12 @@
     "serviceTimes": ["እሁድ — 9:00 እና 11:00 ጥዋት", "የረቡዕ ጸሎት — 6:30 ምሽት"],
     "mapAlt": "በ{{churchName}} አካባቢ ያለ ካርታ"
   },
-  "map": {
-    "heading": "ያግኙን",
-    "description": "በ{{churchName}} ይጎብኙን።",
-    "iframeTitle": "የቤተ ክርስቲያኑ አካባቢ ካርታ",
-    "query": "ኡዲኔ፣ ጣሊያን"
-  },
+ "map": {
+    "heading": "ግኙን",
+    "description": "በ {{churchName}} ይጎብኙን።",
+    "iframeTitle": "የቤተክርስቲያን አካባቢ ካርታ",
+    "query": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy"
+},
   "support": {
     "eyebrow": "በመስመር ላይ ወይም በአካል ይስጡ",
     "heading": "ቤተ ክርስቲያኗን ይደግፉ",

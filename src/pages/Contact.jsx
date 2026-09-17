@@ -121,6 +121,15 @@ function useLoopStrip({ itemCount, onItemClick, speed = 0.45 }) {
   return { viewportRef, trackRef, canLoop, startDrag, moveDrag, endDrag };
 }
 
+// Exact confirmed church location — verified against the church's Google
+// Maps place listing ("LA CHIESA ORTODOSSA TEWAHDO D'ETIOPI Abune
+// g.menfeskidus"), coordinates 46.0312119, 13.26044.
+const CHURCH_ADDRESS = "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy";
+const CHURCH_LAT = 46.0312119;
+const CHURCH_LNG = 13.26044;
+const CHURCH_MAPS_LINK =
+  "https://www.google.com/maps/place/LA+CHIESA+ORTODOSSA+TEWAHDO+D+%CD%97ETIOPI+Abune+g.menfeskidus/@46.0312119,13.26044,17z/data=!3m1!4b1!4m6!3m5!1s0x477bb5005f652de5:0x47c424c763f6fe5c!8m2!3d46.0312119!4d13.26044!16s%2Fg%2F11lmj642bk!18m1!1e1";
+
 const Contact = () => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -131,8 +140,6 @@ const Contact = () => {
     defaultValue:
       "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
   });
-  const MAP_QUERY = t("contact.location.mapQuery", { defaultValue: "Udine, Italy" });
-
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -149,7 +156,7 @@ const Contact = () => {
   const serviceTimes = Array.isArray(serviceTimesRaw) ? serviceTimesRaw : [];
 
   const location_ = {
-    address: t("contact.location.address"),
+    address: t("contact.location.address", { defaultValue: CHURCH_ADDRESS }),
     note: t("contact.location.note"),
     serviceTimes,
   };
@@ -392,7 +399,7 @@ const Contact = () => {
               <div className="map-frame">
                 <iframe
                   title={t("contact.location.mapIframeTitle")}
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`}
+                  src={`https://www.google.com/maps?q=${CHURCH_LAT},${CHURCH_LNG}&z=17&output=embed`}
                   style={{ width: "100%", height: "100%", border: 0 }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -402,7 +409,7 @@ const Contact = () => {
                 <p style={{ fontSize: "1.4rem", color: "#eaf3f8", lineHeight: 1.75, marginBottom: "12px" }}>{location_.address}</p>
                 <p style={{ fontSize: "1.2rem", color: "rgba(255,255,255,0.78)", lineHeight: 1.75, marginBottom: "20px", maxWidth: "460px" }}>{location_.note}</p>
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`}
+                  href={CHURCH_MAPS_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="eyebrow"

@@ -49,7 +49,7 @@ const quickLinks = [
 const socialLinks = [
   {
     key: "facebook",
-    href: "#",
+    href: "#", // TODO: replace with the church's actual Facebook page URL
     label: "Facebook",
     icon: (
       <svg
@@ -64,126 +64,10 @@ const socialLinks = [
     ),
   },
   {
-    key: "instagram",
-    href: "#",
-    label: "Instagram",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        aria-hidden="true"
-      >
-        <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
-        <path d="M16 11.37a4 4 0 1 1-7.914 1.174A4 4 0 0 1 16 11.37Z" />
-        <line
-          x1="17.5"
-          y1="6.5"
-          x2="17.51"
-          y2="6.5"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
-  {
-    key: "youtube",
-    href: "#",
-    label: "YouTube",
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.51 3.5 12 3.5 12 3.5s-7.51 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.87.55 9.38.55 9.38.55s7.51 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81ZM9.75 15.5v-7l6.27 3.5-6.27 3.5Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "tiktok",
-    href: "#",
-    label: "TikTok",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M16.6 2h-3.2v13.2a3.1 3.1 0 1 1-2.2-2.97V8.9a6.2 6.2 0 1 0 5.4 6.15V9.03a8.1 8.1 0 0 0 5 1.7V7.5a4.9 4.9 0 0 1-5-5.5Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "x",
-    href: "#",
-    label: "X",
-    icon: (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M18.9 2H22l-7.6 8.68L23.3 22h-6.9l-5.4-6.86L4.8 22H1.6l8.13-9.29L1 2h7.1l4.9 6.28L18.9 2Zm-1.2 18.2h1.7L7.4 3.7H5.6l12.1 16.5Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "whatsapp",
-    href: "#",
-    label: "WhatsApp",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.27-1.38a9.9 9.9 0 0 0 4.77 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm5.78 14.03c-.24.68-1.4 1.3-1.93 1.36-.5.06-1.02.28-3.43-.72-2.9-1.2-4.77-4.15-4.92-4.35-.14-.2-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.4.27-.28.58-.35.78-.35.2 0 .4 0 .57.01.18.01.43-.07.68.52.24.6.82 2.06.9 2.2.07.15.12.32.02.52-.1.2-.15.32-.29.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.3.76 1.26 1.64 2.04 1.13 1 2.08 1.32 2.38 1.47.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.66-.15.27.1 1.72.82 2.02.96.3.15.5.22.57.35.07.13.07.75-.17 1.44Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "telegram",
-    href: "#",
-    label: "Telegram",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M21.94 3.68 18.6 20.02c-.25 1.1-.9 1.37-1.83.86l-5.05-3.73-2.44 2.36c-.27.27-.5.5-1.02.5l.36-5.16 9.4-8.5c.41-.36-.09-.56-.63-.2L6.6 12.8l-4.98-1.56c-1.08-.34-1.1-1.08.23-1.6L20.6 2.4c.9-.33 1.69.2 1.34 1.28Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "linkedin",
-    href: "#",
-    label: "LinkedIn",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14ZM7.12 20.45H3.56V9h3.56v11.45Z" />
-      </svg>
-    ),
+    key: "email",
+    href: "mailto:info@example.com", // TODO: replace with the church's actual email address
+    label: "Email",
+    icon: <FaEnvelope aria-hidden="true" size={18} />,
   },
 ];
 
@@ -691,29 +575,15 @@ const Footer = () => {
 
         {/* Social Icons */}
         <div className="footer-social-viewport">
-          <div className="footer-social-track">
+          <div className="footer-social-track footer-social-track--static">
             {socialLinks.map((s) => (
               <a
                 key={s.key}
                 href={s.href}
                 className="footer-social-icon"
                 aria-label={s.label}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {s.icon}
-              </a>
-            ))}
-
-            {socialLinks.map((s) => (
-              <a
-                key={`${s.key}-duplicate`}
-                href={s.href}
-                className="footer-social-icon"
-                aria-hidden="true"
-                tabIndex={-1}
-                target="_blank"
-                rel="noopener noreferrer"
+                target={s.key === "email" ? undefined : "_blank"}
+                rel={s.key === "email" ? undefined : "noopener noreferrer"}
               >
                 {s.icon}
               </a>

@@ -170,7 +170,7 @@
 
 /* --- Social icons row -------------------------------------------------------
    Sits between .footer-grid and .footer-bottom, laid out horizontally,
-   centered, as an auto-scrolling marquee. */
+   centered. Static (no marquee/scroll animation). */
 .footer-social-viewport {
   overflow: hidden;
   margin: 0 0 30px 0;
@@ -180,22 +180,9 @@
 .footer-social-track {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 20px;
-  width: max-content;
-  animation: footerSocialMarquee 18s linear infinite;
-}
-
-.footer-social-viewport:hover .footer-social-track {
-  animation-play-state: paused;
-}
-
-@keyframes footerSocialMarquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  width: 100%;
 }
 
 .footer-social-icon {
@@ -722,15 +709,5 @@
 
   .footer-quicklink-item {
     padding: 4px 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .footer-social-track {
-    animation: none;
-  }
-
-  .footer-bottom-navbar {
-    transition: none;
   }
 }
