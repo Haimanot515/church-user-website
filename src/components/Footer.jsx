@@ -49,7 +49,8 @@ const quickLinks = [
 const socialLinks = [
   {
     key: "facebook",
-    href: "#", // TODO: replace with the church's actual Facebook page URL
+    href:
+      "https://web.facebook.com/people/\u12E8\u12A1\u12F5\u1294-\u12F0\u1265\u1228-\u1230\u120B\u121D-\u12A3\u1261\u1290-\u1308\u1265\u1228\u1218\u1295\u1348\u1235-\u1245\u12F1\u1235/pfbid0Gmvo48jeTiFVEBNUrfDAoHVAWFydhpuaSCWFxp6hpd7rCoUJci6sUJRBDVtn3g7Ql/",
     label: "Facebook",
     icon: (
       <svg
@@ -65,7 +66,7 @@ const socialLinks = [
   },
   {
     key: "email",
-    href: "mailto:info@example.com", // TODO: replace with the church's actual email address
+    href: "mailto:abunegebremenfeskidus@gmail.com",
     label: "Email",
     icon: <FaEnvelope aria-hidden="true" size={18} />,
   },
