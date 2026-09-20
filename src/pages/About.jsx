@@ -13,9 +13,20 @@ const ChurchAboutPage = () => {
       "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
   });
 
-  // Localized map query used to build the embedded Google Maps URL below
-const MAP_QUERY = "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy"; 
-const [activeChapter, setActiveChapter] = useState(0);
+  // Localized map query used to build the embedded Google Maps URL below.
+  // NOTE: includes the business name (not just the street address) so the
+  // geocoder resolves to the actual verified Place listing — matching what
+  // opens from the church's Google Maps share link — rather than dropping a
+  // generic pin on the street.
+  const MAP_QUERY =
+    "LA CHIESA ORTODOSSA TEWAHDO D'ETIOPI Abune g.menfeskidus, Via Baldasseria Bassa, 353, 33100 Udine UD, Italy";
+
+  // The verified Google Maps place link (same one people get when they tap
+  // "Directions"/"Share" on the actual listing). Used for the "open in maps"
+  // link below the embed so it points at the exact same place as the embed.
+  const MAP_PLACE_URL = "https://maps.app.goo.gl/561B5ceMkyJfWMaZ6";
+
+  const [activeChapter, setActiveChapter] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
 
   // === About/Hero content fetched from /about ===
@@ -1315,8 +1326,9 @@ const [activeChapter, setActiveChapter] = useState(0);
       </div>
 
       {/* FIND US (MAP) — placed directly below the merged Support/Get Involved section.
-          Below the map we now also show the plain-text address and an external link,
-          both pulled through i18n so they can be localized per-locale. */}
+          Below the map we now also show the plain-text address and a link to
+          the verified Google Maps place — the same one the embed above uses —
+          so "open in maps" always matches the map that's shown on the page. */}
       <div style={{ background: '#ffffff' }}>
         <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
           <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>
@@ -1339,12 +1351,12 @@ const [activeChapter, setActiveChapter] = useState(0);
               {t("about.map.placeName", { defaultValue: MAP_QUERY })}
               {" — "}
               <a
-                href="https://sosutenze.it"
+                href={MAP_PLACE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="map-address-link"
               >
-                {t("about.map.linkLabel", { defaultValue: "sosutenze.it" })}
+                {t("about.map.linkLabel", { defaultValue: "Open in Google Maps" })}
               </a>
             </p>
           </div>
