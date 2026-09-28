@@ -21,6 +21,11 @@
   -webkit-font-smoothing: antialiased;
 }
 .wrapper { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+/* FIX 1: wider container for the Trending and Recommended sections so the
+   cards can spread out instead of sitting bunched in the middle. */
+.wrapper.wrapper-wide { max-width: 1500px; }
+
 .display {
   font-family: 'Cormorant Garamond', serif;
 }
@@ -296,10 +301,14 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   min-width: 0;
 }
 .angel-grid::-webkit-scrollbar { display: none; }
+
+/* FIX 1: boxes now GROW to fill the row (flex-grow 1) instead of staying a
+   fixed 240px. flex-basis is the minimum comfortable width; max-width stops
+   a row with only 1-2 cards from producing huge tiles. */
 .angel-box {
   position: relative;
-  flex: 0 0 auto;
-  width: 240px;
+  flex: 1 0 240px;
+  max-width: 460px;
   aspect-ratio: 1 / 1;
   border-radius: 10px;
   overflow: hidden;
@@ -346,7 +355,7 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   transform: translateY(-2px);
 }
 @media (max-width: 700px) {
-  .angel-box { width: 180px; }
+  .angel-box { flex-basis: 180px; }
   .angel-arrow { width: 38px; height: 38px; }
 }
 
@@ -364,9 +373,14 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   align-items: center;
   gap: 24px;
 }
-.photo-image-wrap img { flex: 1; min-width: 0; }
+.photo-image-wrap img { flex: 1; min-width: 0; position: relative; z-index: 1; }
 
+/* FIX 3: arrows sit above everything in the carousel and always receive
+   clicks. (On <=1024px they switch to position:absolute below.) */
 .photo-arrow {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
   flex-shrink: 0;
   width: 52px; height: 52px;
   border-radius: 50%;
@@ -395,7 +409,7 @@ section { padding: 90px 0; position: relative; z-index: 1; }
     top: 50%;
     transform: translateY(-50%);
     margin: 0;
-    z-index: 5;
+    z-index: 10;
   }
   .photo-arrow:hover { transform: translateY(-50%); }
   .photo-arrow.left { left: 10px; }
@@ -641,7 +655,7 @@ img, video { max-width: 100%; height: auto; }
   .recommended-grid { grid-template-columns: 1fr !important; }
   .home-testimonial-grid { grid-template-columns: 1fr !important; }
 
-  .angel-box { width: 190px; }
+  .angel-box { flex-basis: 190px; }
   .angel-box-overlay h4 { font-size: 1.2rem; }
   .angel-box-overlay p { font-size: 0.8rem; }
   .angel-arrow { width: 34px; height: 34px; }
@@ -681,7 +695,7 @@ img, video { max-width: 100%; height: auto; }
   .sponsored-block { padding: 16px !important; }
   .sponsored-ad-label { font-size: 0.6rem; }
 
-  .angel-box { width: 170px; }
+  .angel-box { flex-basis: 170px; }
   .angel-grid { gap: 14px; }
 
   .video-thumb-wrap { width: 80px; height: 56px; }
@@ -696,7 +710,7 @@ img, video { max-width: 100%; height: auto; }
   .nav-bar { gap: 10px; padding: 0 12px; }
   .nav-item { font-size: 0.78rem; }
 
-  .angel-box { width: 150px; }
+  .angel-box { flex-basis: 150px; }
   .photo-arrow { width: 32px; height: 32px; }
   .video-thumb-wrap { width: 68px; height: 48px; }
   .photo-wrapper { padding: 0 4px; }
@@ -895,4 +909,38 @@ img, video { max-width: 100%; height: auto; }
 
 @media (hover: none) and (pointer: coarse) {
   .cat-nav-item { padding-top: 10px; padding-bottom: 10px; }
+}
+
+/* ============================================================
+   ABOUT CARD: photo height = text column height.
+   Wide screens: the text column has a FIXED width, so its height never
+   depends on the photo -> no feedback loop, no shaking.
+============================================================ */
+.about-photo {
+  display: block;
+  width: var(--about-size, 340px);
+  height: var(--about-height, 340px);
+  flex: 0 0 auto;
+}
+.about-text {
+  flex: 0 0 440px;
+}
+/* Narrow screens: stack, photo is a plain square capped at 340px */
+@media (max-width: 1000px) {
+  .about-card { justify-content: center; }
+  .about-photo {
+    width: min(100%, 340px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+  .about-text { flex: 1 1 100%; }
+}
+
+/* About: the rich-text description ends with a paragraph that has a bottom
+   margin, which leaves empty space under the last line so the photo's
+   bottom edge sat lower than the text. Remove trailing margins so the
+   bottom edges line up. */
+.about-text :last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }

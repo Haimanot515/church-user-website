@@ -33,6 +33,14 @@ const Home = () => {
   const [photosLoading, setPhotosLoading] = useState(true);
   const [photosPageLoading, setPhotosPageLoading] = useState(false);
   const photosLoadedOnce = useRef(false);
+  // Remembers which photo to show once the next/previous page arrives:
+  // 0 = first photo (going forward), "last" = last photo (going back).
+  const pendingPhotoIndex = useRef(0);
+  // About section: the photo is a square whose side equals the height of
+  // the text column next to it (measured live, see effect below).
+  const priestTextRef = useRef(null);
+  const [priestPhotoSize, setPriestPhotoSize] = useState(340);   // photo width (clamped)
+  const [priestTextHeight, setPriestTextHeight] = useState(340); // exact text height = photo height
   const [photosError, setPhotosError] = useState("");
   const [photosPage, setPhotosPage] = useState(1);
   const [photosTotalPages, setPhotosTotalPages] = useState(1);
@@ -232,21 +240,26 @@ const Home = () => {
   };
   // ---------- End inlined category nav bar logic ----------
 
+  // Photo navigation. At a page boundary we load the neighbouring page and
+  // remember (via pendingPhotoIndex) which photo to land on: the FIRST photo
+  // when going forward, the LAST photo when going back.
   const showPrevPhoto = () => {
+    if (photosPageLoading) return;
     if (photoIndex > 0) {
       setPhotoIndex((i) => i - 1);
     } else if (photosPage > 1) {
+      pendingPhotoIndex.current = "last";
       setPhotosPage((p) => p - 1);
-      setPhotoIndex(0);
     }
   };
 
   const showNextPhoto = () => {
+    if (photosPageLoading) return;
     if (photoIndex < photos.length - 1) {
       setPhotoIndex((i) => i + 1);
     } else if (photosPage < photosTotalPages) {
+      pendingPhotoIndex.current = 0;
       setPhotosPage((p) => p + 1);
-      setPhotoIndex(0);
     }
   };
 
@@ -403,6 +416,31 @@ const Home = () => {
     fetchPromotions();
   }, [t]);
 
+  // About: the photo is a square whose side equals the text column's height.
+  // This is stable (no shaking) because on wide screens the text column has a
+  // FIXED width in CSS (.about-text), so its height never depends on the
+  // photo size. On narrow screens CSS ignores this value entirely.
+  useEffect(() => {
+    if (priestLoading) return;
+    const el = priestTextRef.current;
+    if (!el) return;
+    const update = () => {
+      const h = Math.round(el.getBoundingClientRect().height);
+      const next = Math.min(Math.max(h, 260), 420);
+      setPriestPhotoSize((prev) => (Math.abs(prev - next) > 1 ? next : prev));
+      // photo HEIGHT is exactly the text height (not clamped)
+      if (h > 0) setPriestTextHeight((prev) => (Math.abs(prev - h) > 1 ? h : prev));
+    };
+    update();
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", update);
+      return () => window.removeEventListener("resize", update);
+    }
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [priestLoading, priest, i18n.language]);
+
   // The sponsored block shouldn't appear immediately on page load — it
   // only becomes eligible to render 10s after mount.
   useEffect(() => {
@@ -444,10 +482,20 @@ const Home = () => {
         });
 
         const mediaData = Array.isArray(res.data) ? res.data : res.data.media;
-        setPhotos(mediaData || []);
+        const list = mediaData || [];
+        setPhotos(list);
+        // Land on the first photo (going forward / first load) or the last
+        // photo of the page (going back across a page boundary).
+        setPhotoIndex(
+          pendingPhotoIndex.current === "last"
+            ? Math.max(list.length - 1, 0)
+            : 0
+        );
+        pendingPhotoIndex.current = 0;
         setPhotosTotalPages(res.data.totalPages || 1);
       } catch (err) {
         console.log(err);
+        pendingPhotoIndex.current = 0;
         setPhotosError(err.response?.data?.message || t("home.photos.errorDefault"));
       } finally {
         setPhotosLoading(false);
@@ -629,15 +677,10 @@ const Home = () => {
     fetchCategories();
   }, [t]);
 
-  // FIX: plain scrollIntoView({block:"start"}) does move the page, but it
-  // aligns the section's top edge with the very top of the viewport — right
-  // where the sticky .cat-nav-bar sits. So the section moved, but its own
-  // top (the first post) ended up hidden underneath that sticky bar,
-  // making it look like nothing happened, especially when scrolling up
-  // from the bottom of the page. This measures the sticky bar's actual
-  // height and scrolls just far enough that the first post lands right
-  // below it instead — and it runs the same way regardless of where the
-  // page is currently scrolled to.
+  // Plain scrollIntoView({block:"start"}) aligns the section's top edge with
+  // the very top of the viewport — right where the sticky .cat-nav-bar sits.
+  // This measures the sticky bar's actual height and scrolls just far enough
+  // that the first post lands right below it instead.
   const scrollToSermons = () => {
     if (!sermonSectionRef.current) return;
     const navHeight = catNavBarRef.current?.getBoundingClientRect().height || 0;
@@ -733,6 +776,7 @@ const Home = () => {
           <div className="sponsored-tag-wrap">
             <span className="sponsored-ad-label">{t("home.sponsored.adLabel")}</span>
             <button
+              type="button"
               className="sponsored-close"
               aria-label={t("home.sponsored.closeAriaLabel")}
               onClick={() => setShowSponsored(false)}
@@ -761,6 +805,7 @@ const Home = () => {
                 <Rich html={promotion?.description} words={50} />
               </div>
               <button
+                type="button"
                 onClick={() => {
                   if (promotion?.id) {
                     navigate(`/promotions/${promotion.id}`);
@@ -833,6 +878,7 @@ const Home = () => {
                 </Link>
                 <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                   <button
+                    type="button"
                     className="hero-cta-btn"
                     onClick={() => {
                       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -843,6 +889,7 @@ const Home = () => {
                     {t("home.hero.watchSermonButton")}
                   </button>
                   <button
+                    type="button"
                     className="hero-cta-btn"
                     onClick={() => {
                       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -991,7 +1038,7 @@ const Home = () => {
 
           {sermonsPage < sermonsTotalPages && (
             <div className="load-more-wrap">
-              <button className="load-more-btn" onClick={handleLoadMoreSermons} disabled={sermonsLoading}>
+              <button type="button" className="load-more-btn" onClick={handleLoadMoreSermons} disabled={sermonsLoading}>
                 {sermonsLoading ? t("home.sermons.loadingMore") : t("home.sermons.loadMoreButton")}
               </button>
             </div>
@@ -1000,7 +1047,8 @@ const Home = () => {
       </section>
 
       <section className="angel-divider">
-        <div className="wrapper">
+        {/* wrapper-wide: lets the trending cards spread across a wider row */}
+        <div className="wrapper wrapper-wide">
           <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: '#ffffff' }}>{t("home.trending.heading")}</h3>
 
           {trendingError && <p style={{ color: '#ffb3b3', textAlign: 'center' }}>{trendingError}</p>}
@@ -1016,7 +1064,7 @@ const Home = () => {
             <Spinner light />
           ) : (
           <div className="angel-carousel">
-            <button className="angel-arrow left" aria-label={t("home.trending.scrollLeftAriaLabel")} onClick={() => scrollAngels(-1)}>
+            <button type="button" className="angel-arrow left" aria-label={t("home.trending.scrollLeftAriaLabel")} onClick={() => scrollAngels(-1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -1042,7 +1090,7 @@ const Home = () => {
                 ))
               )}
             </div>
-            <button className="angel-arrow right" aria-label={t("home.trending.scrollRightAriaLabel")} onClick={() => scrollAngels(1)}>
+            <button type="button" className="angel-arrow right" aria-label={t("home.trending.scrollRightAriaLabel")} onClick={() => scrollAngels(1)}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -1053,6 +1101,7 @@ const Home = () => {
           {trendingTotalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
               <button
+                type="button"
                 onClick={() => goToTrendingPage(trendingPage - 1)}
                 disabled={trendingPage === 1}
                 style={pageButtonStyle(trendingPage === 1)}
@@ -1063,6 +1112,7 @@ const Home = () => {
                 {t("home.pagination.pageInfo", { page: trendingPage, total: trendingTotalPages })}
               </span>
               <button
+                type="button"
                 onClick={() => goToTrendingPage(trendingPage + 1)}
                 disabled={trendingPage === trendingTotalPages}
                 style={pageButtonStyle(trendingPage === trendingTotalPages)}
@@ -1075,7 +1125,8 @@ const Home = () => {
       </section>
 
       <section style={{ background: '#ffffff' }}>
-        <div className="wrapper">
+        {/* wrapper-wide: lets the recommended cards use more of the screen */}
+        <div className="wrapper wrapper-wide">
           <h3 className="display" style={{ marginBottom: '38px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.recommended.heading")}</h3>
 
           {recommendedError && <p style={{ color: 'red', textAlign: 'center' }}>{recommendedError}</p>}
@@ -1110,6 +1161,7 @@ const Home = () => {
           {recommendedTotalPages > 1 && (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '25px' }}>
               <button
+                type="button"
                 onClick={() => goToRecommendedPage(recommendedPage - 1)}
                 disabled={recommendedPage === 1}
                 style={pageButtonStyle(recommendedPage === 1)}
@@ -1120,6 +1172,7 @@ const Home = () => {
                 {t("home.pagination.pageInfo", { page: recommendedPage, total: recommendedTotalPages })}
               </span>
               <button
+                type="button"
                 onClick={() => goToRecommendedPage(recommendedPage + 1)}
                 disabled={recommendedPage === recommendedTotalPages}
                 style={pageButtonStyle(recommendedPage === recommendedTotalPages)}
@@ -1165,10 +1218,10 @@ const Home = () => {
             </div>
           ) : (
           <Link to={`/about/${priest?.id}`} style={{
-            maxWidth: '880px',
+            maxWidth: '1000px',
             display: 'flex',
             gap: '50px',
-            alignItems: 'center',
+            alignItems: 'center',    // text keeps its natural height; the photo is sized to match it
             flexWrap: 'wrap',
             padding: '40px',
             background: 'rgba(255,255,255,0.06)',
@@ -1177,13 +1230,22 @@ const Home = () => {
             backdropFilter: 'blur(6px)',
             textDecoration: 'none',
             color: 'inherit'
-          }} className="wrapper" >
+          }} className="wrapper about-card" >
             <img
+              className="about-photo"
               src={priest?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"}
               alt={stripHtml(priest?.title) || t("home.priest.imageAltFallback")}
-              style={{ width: '260px', height: '320px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0, border: '4px solid #fff', boxShadow: '0 8px 20px rgba(0,0,0,0.25)' }}
+              style={{
+                '--about-size': `${priestPhotoSize}px`,     // photo width
+                '--about-height': `${priestTextHeight}px`,  // photo height = text height
+                objectFit: 'cover',
+                borderRadius: '10px',
+                flexShrink: 0,
+                border: '4px solid #fff',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.25)'
+              }}
             />
-            <div style={{ flex: 1, minWidth: '260px' }}>
+            <div ref={priestTextRef} className="about-text" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem', display: 'block', textAlign: 'center' }}>{t("home.priest.eyebrow")}</span>
               <h3 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '12px 0 14px 0', color: '#ffffff' }}>
                 <Rich html={priest?.title} fallback={t("home.priest.titleFallback")} />
@@ -1234,6 +1296,7 @@ const Home = () => {
               <div className="photo-carousel-frame">
                 <div className="photo-image-wrap" style={{ position: 'relative' }}>
                   <button
+                    type="button"
                     className="photo-arrow left"
                     aria-label={t("home.photos.prevAriaLabel")}
                     onClick={showPrevPhoto}
@@ -1251,7 +1314,8 @@ const Home = () => {
                   />
                   {/* Overlay spinner shown only while turning to a new page —
                       the image/arrows underneath stay mounted the whole time
-                      so Next/Prev never appears to "do nothing". */}
+                      so Next/Prev never appears to "do nothing".
+                      pointerEvents:none so it can never swallow clicks. */}
                   {photosPageLoading && (
                     <div style={{
                       position: 'absolute',
@@ -1260,12 +1324,15 @@ const Home = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       background: 'rgba(255,255,255,0.55)',
-                      borderRadius: '8px'
+                      borderRadius: '8px',
+                      pointerEvents: 'none',
+                      zIndex: 2
                     }}>
                       <div className="loading-spinner" />
                     </div>
                   )}
                   <button
+                    type="button"
                     className="photo-arrow right"
                     aria-label={t("home.photos.nextAriaLabel")}
                     onClick={showNextPhoto}
