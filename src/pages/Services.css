@@ -169,17 +169,8 @@ a { color: inherit; text-decoration: none; }
   to { transform: rotate(360deg); }
 }
 
-.services-cta {
-  background: var(--deep-red);
-  text-align: center;
-  padding: 70px 0;
-}
-.services-cta h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 700; color: #fff; margin: 0 0 14px 0;
-}
-.services-cta p { color: rgba(255,255,255,0.85); font-size: 1.1rem; margin: 0; }
+/* (Removed: .services-cta styles — the red call-to-action section at the
+   bottom of the page is no longer rendered.) */
 
 /* Footer (was inline style objects in the original component) */
 .services-footer {
@@ -267,8 +258,6 @@ html, body { overflow-x: hidden; }
   .service-row { gap: 36px; padding: 46px 0; }
   .service-copy h2 { font-size: 2.1rem; }
 
-  .services-cta { padding: 56px 0; }
-
   .services-footer .footer-grid { gap: 30px; }
 }
 
@@ -285,9 +274,6 @@ html, body { overflow-x: hidden; }
   .service-copy p.desc { font-size: 1rem; }
 
   .load-more-btn { width: 100%; }
-
-  .services-cta { padding: 46px 0; }
-  .services-cta p { font-size: 1rem; }
 
   .services-footer { padding: 44px 0 24px 0; }
   .services-footer .footer-grid { gap: 24px; margin-bottom: 32px; }

@@ -22,6 +22,9 @@ import "./Services.css";
  * Clicking a service's photo or text navigates to its detail page
  * (/services/:id), handled by ServiceDetail.jsx.
  *
+ * REMOVED: the red call-to-action section at the bottom of the page
+ * (services.cta.title / services.cta.description) is no longer rendered.
+ *
  * RICH TEXT: title / description / schedule / location are RichTextField
  * HTML. This page only shows them as list cards (the full formatted
  * description lives on ServiceDetail.jsx), so each service carries plain
@@ -114,12 +117,6 @@ const Services = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
 
-  const footerColumns = [
-    { title: t("services.footer.visit.title"), items: t("services.footer.visit.items", { returnObjects: true }) },
-    { title: t("services.footer.getInvolved.title"), items: t("services.footer.getInvolved.items", { returnObjects: true }) },
-    { title: t("services.footer.connect.title"), items: t("services.footer.connect.items", { returnObjects: true }) },
-  ];
-
   const goToDetail = (id) => {
     if (id) navigate(`/services/${id}`);
   };
@@ -207,14 +204,6 @@ const Services = () => {
           )}
         </div>
       </section>
-
-      <section className="services-cta">
-        <div className="wrapper">
-          <h3 className="display">{t("services.cta.title")}</h3>
-          <p>{t("services.cta.description")}</p>
-        </div>
-      </section>
-
     </div>
   );
 };
