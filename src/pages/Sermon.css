@@ -37,22 +37,28 @@
   background: var(--navy-deep);
   transition: height 0.35s ease;
 }
-/* "Widen" state now uses the real browser Fullscreen API (triggered in
-   Sermon.jsx via requestFullscreen()), which covers the ENTIRE screen —
-   including the browser's tabs/address bar — the same way YouTube's
-   fullscreen button does. The browser applies :fullscreen to the element
-   automatically once that API is active, so we style off that instead of
-   faking it with position:fixed/100vw/100vh (which can only ever fill the
-   browser's content area, never real screen chrome). */
+
+/* Fullscreen ("widen") state: uses the real browser Fullscreen API.
+   The hero fills the whole screen and the video is pinned to all four
+   edges with object-fit: cover, so there are no gaps left or right. */
 .video-hero:fullscreen,
 .video-hero:-webkit-full-screen {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  background: var(--navy-deep);
+}
+.video-hero:fullscreen .yt-bg-wrap,
+.video-hero:-webkit-full-screen .yt-bg-wrap {
+  position: absolute;
+  inset: 0;
 }
 .video-hero:fullscreen .yt-bg-wrap video,
 .video-hero:-webkit-full-screen .yt-bg-wrap video {
+  width: 100%;
   height: 100%;
+  object-fit: cover;
 }
+
 .yt-bg-wrap {
   position: absolute; inset: 0;
   overflow: hidden;
@@ -67,21 +73,25 @@
   min-width: 100%;
   min-height: 56.25vw; /* 100vw * (9/16) */
 }
-/* Self-hosted <video> uploads: fill the hero regardless of the file's
-   native resolution/aspect ratio, cropping instead of stretching. This
-   is the reason some videos looked full-width and others didn't — there
-   was no sizing rule for <video>, only the old iframe one above. */
+
+/* Self-hosted <video> uploads: pinned to all four edges of the hero and
+   scaled with object-fit: cover, so the video always fills the full
+   width and height (cropping instead of leaving gaps at the sides). */
 .yt-bg-wrap video {
   position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-width: 100%;
-  min-height: 100%;
-  object-fit: cover;
+  max-width: none;      /* overrides .shepherd-page video { max-width: 100% } */
+  min-width: 0;
+  min-height: 0;
+  transform: none;      /* no centering hack needed anymore */
+  object-fit: cover;    /* fill the hero, crop instead of leaving gaps */
+  object-position: center;
   display: block;
+  background: var(--navy-deep);
 }
+
 .controls-overlay {
   position: absolute; inset: 0;
   z-index: 2;
@@ -144,7 +154,7 @@
    both the playing state (pause icon) and the closed/stopped state
    (triangle icon) inside .video-closed-panel.
 
-   While playing, it now fades in/out together with the rest of the
+   While playing, it fades in/out together with the rest of the
    controls-overlay (nav arrows, mute button, expand button) instead of
    sitting on screen permanently — tap the empty area to reveal it, tap
    again to hide it. In the closed/paused panel it always carries the
@@ -372,8 +382,6 @@
 
 /* ============================================================
    RESPONSIVE ENHANCEMENTS
-   Everything above this line is untouched from the original file,
-   aside from the fullscreen .video-hero.expanded rule above.
    Desktop appearance (min-width: 1025px) is unaffected by anything
    below — these rules only kick in at smaller viewport widths, or
    add safe, non-visual overflow protections.
@@ -517,4 +525,68 @@ html, body { overflow-x: hidden; }
   .nav-arrow, .mute-btn, .expand-btn { min-width: 40px; min-height: 40px; }
   .progress-bar-track { height: 8px; }
   .progress-bar-handle { width: 16px; height: 16px; }
+}
+
+/* ===== FINAL OVERRIDE: keep the hero video full-bleed =====
+   Must stay at the very bottom so it wins over the global
+   `.shepherd-page video { max-width: 100% }` safety net above. */
+.shepherd-page .yt-bg-wrap video {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== FULL-BLEED: video goes edge to edge, ignoring any parent
+   padding / max-width from the app layout ===== */
+.video-hero,
+.hero-text-section {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+/* In real fullscreen, drop the breakout so it doesn't shift */
+.video-hero:fullscreen,
+.video-hero:-webkit-full-screen {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ===== FULL-WIDTH SERMON GRID: cards span the whole page with
+   generous space between them (no more 1100px centered column) ===== */
+.sermons-section .wrapper {
+  max-width: none;
+  width: 100%;
+  padding: 0 48px;
+}
+.sermons-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: 44px;
+}
+.sermons-head { max-width: none; }
+
+@media (max-width: 1024px) {
+  .sermons-section .wrapper { padding: 0 28px; }
+  .sermons-grid { gap: 32px; }
+}
+@media (max-width: 600px) {
+  .sermons-section .wrapper { padding: 0 16px; }
+  .sermons-grid { gap: 24px; }
+}
+
+/* ===== CENTERED SECTION HEADING ===== */
+.sermons-head {
+  max-width: none;
+  width: 100%;
+  margin: 0 auto 36px auto;
+  text-align: center;
+}
+.sermons-head h2 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
