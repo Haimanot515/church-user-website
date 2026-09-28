@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api";
+import { stripHtml } from "../components/RichTextView";
 import "./Media.css";
 
 /**
@@ -46,6 +47,11 @@ import "./Media.css";
  * FIX: audio cards now use the same three-dot (⋮) menu pattern as
  * video cards for downloading, replacing the old separate inline
  * download link/button.
+ *
+ * RICH TEXT: title/description are RichTextField HTML. Every use on
+ * this page is a card, alt/aria text or a download filename, so each
+ * item carries plainTitle / plainDescription (tags stripped) — the
+ * formatted version is shown on MediaDetail.jsx.
  */
 const PAGE_SIZE = 10;
 
@@ -91,6 +97,8 @@ const mapItems = (data) =>
       ...m,
       mediaUrl: getMediaUrl(m.mediaUrl),
       thumbnail: getMediaUrl(m.thumbnail),
+      plainTitle: stripHtml(m.title),
+      plainDescription: stripHtml(m.description),
     }));
 
 // Reusable inline loading spinner — same markup/classes as Home.jsx's
@@ -150,11 +158,11 @@ const VideoSection = ({ items, fallback, t }) => {
                 <button
                   type="button"
                   className="video-thumb-btn"
-                  aria-label={t("media.video.openAria", { title: v.title })}
+                  aria-label={t("media.video.openAria", { title: v.plainTitle })}
                   onClick={() => setPlayingId(id)}
                 >
                   {v.thumbnail ? (
-                    <img src={v.thumbnail} alt={v.title} />
+                    <img src={v.thumbnail} alt={v.plainTitle} />
                   ) : (
                     <div className="video-thumb-placeholder" />
                   )}
@@ -164,7 +172,7 @@ const VideoSection = ({ items, fallback, t }) => {
                 </button>
               )}
               <Link to={`/media/${v.id}`}>
-                <p className="grid-card-title">{v.title}</p>
+                <p className="grid-card-title">{v.plainTitle}</p>
               </Link>
               <button
                 type="button"
@@ -229,7 +237,7 @@ const VideoSection = ({ items, fallback, t }) => {
                       whiteSpace: "nowrap",
                     }}
                     onClick={() => {
-                      handleDownload(v.mediaUrl, v.title);
+                      handleDownload(v.mediaUrl, v.plainTitle);
                       setOpenMenuId(null);
                     }}
                   >
@@ -274,8 +282,8 @@ const PhotoSection = ({ items, fallback, t }) => {
       <div className="media-grid">
         {visible.map((p, i) => (
           <Link className="grid-card photo-card" to={`/media/${p.id}`} key={p.id || i}>
-            <img src={p.mediaUrl} alt={p.title} />
-            <p className="grid-card-title">{p.title}</p>
+            <img src={p.mediaUrl} alt={p.plainTitle} />
+            <p className="grid-card-title">{p.plainTitle}</p>
           </Link>
         ))}
       </div>
@@ -338,16 +346,16 @@ const AudioSection = ({ items, fallback, t }) => {
                 <button
                   type="button"
                   className="audio-play-btn"
-                  aria-label={t("media.video.openAria", { title: a.title })}
+                  aria-label={t("media.video.openAria", { title: a.plainTitle })}
                   onClick={() => setPlayingId(id)}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                 </button>
               )}
               <Link to={`/media/${a.id}`}>
-                <p className="grid-card-title">{a.title}</p>
+                <p className="grid-card-title">{a.plainTitle}</p>
               </Link>
-              <p className="audio-artist">{a.description}</p>
+              <p className="audio-artist">{a.plainDescription}</p>
               <button
                 type="button"
                 className="audio-menu-btn"
@@ -411,7 +419,7 @@ const AudioSection = ({ items, fallback, t }) => {
                       whiteSpace: "nowrap",
                     }}
                     onClick={() => {
-                      handleDownload(a.mediaUrl, a.title);
+                      handleDownload(a.mediaUrl, a.plainTitle);
                       setOpenMenuId(null);
                     }}
                   >
@@ -458,7 +466,7 @@ const BookSection = ({ items, fallback, t }) => {
           <Link className="grid-card book-card" to={`/media/${b.id}`} key={b.id || i}>
             <div className="book-cover">
               {b.thumbnail ? (
-                <img src={b.thumbnail} alt={b.title} />
+                <img src={b.thumbnail} alt={b.plainTitle} />
               ) : (
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
@@ -466,8 +474,8 @@ const BookSection = ({ items, fallback, t }) => {
                 </svg>
               )}
             </div>
-            <p className="grid-card-title">{b.title}</p>
-            <p className="book-meta">{b.description}</p>
+            <p className="grid-card-title">{b.plainTitle}</p>
+            <p className="book-meta">{b.plainDescription}</p>
           </Link>
         ))}
       </div>

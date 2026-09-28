@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml, Rich } from "../components/RichTextView";
 import "./AboutDetail.css";
 
+/**
+ * RICH TEXT: title and description are RichTextField HTML. Both are shown
+ * WITH their formatting (colors, bold, links). Links are clickable and
+ * underlined automatically. Only the image alt text is plain text.
+ */
 const AboutDetail = () => {
   const { id } = useParams();
   const [entry, setEntry] = useState(null);
@@ -75,14 +81,16 @@ const AboutDetail = () => {
           {entry.image && (
             <img
               src={entry.image}
-              alt={entry.title || "Priest"}
+              alt={stripHtml(entry.title) || "Priest"}
               className="about-detail-image"
             />
           )}
 
-          <h1 className="about-detail-title">{entry.title}</h1>
+          <h1 className="about-detail-title">
+            <Rich html={entry.title} unwrapLinks={false} />
+          </h1>
 
-          <p className="about-detail-description">{entry.description}</p>
+          <RichTextView className="about-detail-description" html={entry.description} />
         </div>
       </section>
     </div>

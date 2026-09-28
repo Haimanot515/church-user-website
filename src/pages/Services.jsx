@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import API from "../api/api";
+import { stripHtml } from "../components/RichTextView";
 import "./Services.css";
 
 /**
@@ -20,6 +21,12 @@ import "./Services.css";
  *
  * Clicking a service's photo or text navigates to its detail page
  * (/services/:id), handled by ServiceDetail.jsx.
+ *
+ * RICH TEXT: title / description / schedule / location are RichTextField
+ * HTML. This page only shows them as list cards (the full formatted
+ * description lives on ServiceDetail.jsx), so each service carries plain
+ * versions (plainTitle, plainDescription, plainSchedule, plainLocation)
+ * with tags stripped once when the data is mapped.
  */
 const Services = () => {
   const { t } = useTranslation();
@@ -53,6 +60,20 @@ const Services = () => {
     return `${base}${path}`;
   };
 
+  // Keep only active services and add resolved image URL + plain-text
+  // versions of the rich-text fields.
+  const prepareServices = (data) =>
+    (data?.services || [])
+      .filter((s) => s.status === "active")
+      .map((s) => ({
+        ...s,
+        resolvedImageUrl: getImageUrl(s.imageUrl),
+        plainTitle: stripHtml(s.title),
+        plainDescription: stripHtml(s.description),
+        plainSchedule: stripHtml(s.schedule),
+        plainLocation: stripHtml(s.location),
+      }));
+
   // === Fetch services, same Accept-Language fallback pattern used
   // elsewhere on the site (Blog, Travel, About): try the active language
   // first, and if it comes back with no active services, retry with an
@@ -70,17 +91,13 @@ const Services = () => {
       setServicesFallback(false);
 
       let res = await API.get("/services");
-      let active = (res.data?.services || [])
-        .filter((s) => s.status === "active")
-        .map((s) => ({ ...s, resolvedImageUrl: getImageUrl(s.imageUrl) }));
+      let active = prepareServices(res.data);
 
       if (active.length === 0) {
         res = await API.get("/services", {
           headers: { "Accept-Language": "en" },
         });
-        active = (res.data?.services || [])
-          .filter((s) => s.status === "active")
-          .map((s) => ({ ...s, resolvedImageUrl: getImageUrl(s.imageUrl) }));
+        active = prepareServices(res.data);
         if (active.length > 0) setServicesFallback(true);
       }
 
@@ -152,7 +169,7 @@ const Services = () => {
                 }}
               >
                 {s.resolvedImageUrl ? (
-                  <img src={s.resolvedImageUrl} alt={s.title} />
+                  <img src={s.resolvedImageUrl} alt={s.plainTitle} />
                 ) : (
                   <div className="service-img-placeholder" aria-hidden="true" />
                 )}
@@ -170,10 +187,10 @@ const Services = () => {
                   <rect x="9" y="0" width="4" height="32" fill="var(--gold)" />
                   <rect x="1" y="12" width="20" height="4" fill="var(--gold)" />
                 </svg>
-                <h2>{s.title}</h2>
-                <p className="time">{s.schedule}{s.location ? ` · ${s.location}` : ""}</p>
+                <h2>{s.plainTitle}</h2>
+                <p className="time">{s.plainSchedule}{s.plainLocation ? ` · ${s.plainLocation}` : ""}</p>
                 {s.isFeatured && <p className="note">{t("services.list.featuredNote")}</p>}
-                <p className="desc">{s.description}</p>
+                <p className="desc">{s.plainDescription}</p>
               </div>
             </div>
           ))}

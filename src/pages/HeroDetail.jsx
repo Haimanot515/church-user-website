@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import { stripHtml, Rich } from "../components/RichTextView";
 
+/**
+ * RICH TEXT: title and description are RichTextField HTML. Both are shown
+ * WITH their formatting (colors, bold, links). Links are real, clickable
+ * and underlined here because this page has no <Link> card around them.
+ * Only the image alt text uses plain text (stripHtml).
+ */
 const HeroDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -158,18 +165,22 @@ const HeroDetail = () => {
           {entry.image && (
             <img
               src={entry.image}
-              alt={entry.title || "Church hero"}
+              alt={stripHtml(entry.title) || "Church hero"}
               className="hero-detail-image"
             />
           )}
 
           <h1 className="display hero-detail-title">
-            {entry.title}
+            <Rich html={entry.title} unwrapLinks={false} />
           </h1>
 
-          <p className="hero-detail-description">
-            {entry.description}
-          </p>
+          {/* Full text: paragraphs/lists kept, links clickable + underlined */}
+          <Rich
+            className="hero-detail-description"
+            inline={false}
+            unwrapLinks={false}
+            html={entry.description}
+          />
         </div>
       </section>
     </div>

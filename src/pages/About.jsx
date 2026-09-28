@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml, Rich } from "../components/RichTextView";
+
+// Rich text (formatted titles/previews) comes from the shared RichTextView file:
+// <Rich /> keeps colors/bold/links, stripHtml gives plain text for alt/aria.
 
 const ChurchAboutPage = () => {
   const { t } = useTranslation();
@@ -232,8 +236,8 @@ const ChurchAboutPage = () => {
 
         setFaithFaqs(
           sorted.map((item) => ({
-            q: item.question,
-            a: item.answer,
+            q: stripHtml(item.question), // plain text for the button label
+            a: item.answer,              // HTML, rendered with RichTextView
           }))
         );
       } catch (err) {
@@ -273,8 +277,8 @@ const ChurchAboutPage = () => {
 
         setFaqs(
           sorted.map((item) => ({
-            q: item.question,
-            a: item.answer,
+            q: stripHtml(item.question), // plain text for the button label
+            a: item.answer,              // HTML, rendered with RichTextView
           }))
         );
       } catch (err) {
@@ -292,13 +296,6 @@ const ChurchAboutPage = () => {
       <div className={`loading-spinner${light ? " light" : ""}`} />
     </div>
   );
-
-  const truncateWords = (text, limit = 20) => {
-    if (!text) return "";
-    const words = text.trim().split(/\s+/);
-    if (words.length <= limit) return text;
-    return words.slice(0, limit).join(" ") + "...";
-  };
 
   return (
     <div className="church-portal">
@@ -883,20 +880,28 @@ const ChurchAboutPage = () => {
             {about?.id ? (
               <Link to={`/about/${about.id}`} style={{ display: 'block', cursor: 'pointer' }}>
                 <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
-                  {about?.title || t("about.hero.titleFallback")}
+                  <Rich html={about?.title} fallback={t("about.hero.titleFallback")} />
                 </h1>
-                <p className="hero-desc" style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
-                  {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
-                </p>
+                {/* Inside a <Link>: links in the text become plain underlined
+                    text (an <a> inside an <a> is invalid); the whole block
+                    still opens the about page. Full text, not truncated. */}
+                <Rich
+                  className="hero-desc"
+                  inline={false}
+                  html={about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
+                />
               </Link>
             ) : (
               <>
                 <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
-                  {about?.title || t("about.hero.titleFallback")}
+                  <Rich html={about?.title} unwrapLinks={false} fallback={t("about.hero.titleFallback")} />
                 </h1>
-                <p className="hero-desc" style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, margin: '0 0 36px 0', padding: 0, textAlign: 'left', maxWidth: '520px' }}>
-                  {about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
-                </p>
+                <Rich
+                  className="hero-desc"
+                  inline={false}
+                  unwrapLinks={false}
+                  html={about?.description || t("about.hero.descriptionFallback", { churchName: CHURCH_NAME })}
+                />
               </>
             )}
             <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -927,14 +932,14 @@ const ChurchAboutPage = () => {
                 <Link to={`/about/${about.id}`} style={{ display: 'block', width: '100%' }}>
                   <img
                     src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
-                    alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
+                    alt={stripHtml(about?.title) || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
                     style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', cursor: 'pointer', display: 'block' }}
                   />
                 </Link>
               ) : (
                 <img
                   src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
-                  alt={about?.title || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
+                  alt={stripHtml(about?.title) || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
                   style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', display: 'block' }}
                 />
               )}
@@ -942,7 +947,7 @@ const ChurchAboutPage = () => {
             {about?.churchLeader && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', marginTop: '14px' }}>
                 <p className="display" style={{ textAlign: 'center', fontSize: '1.3rem', fontWeight: 700, color: '#eaf3f8', margin: '0 0 2px 0' }}>
-                  {about.churchLeader}
+                  {stripHtml(about.churchLeader)}
                 </p>
                 <p className="eyebrow" style={{ textAlign: 'center', fontSize: '0.72rem', margin: 0 }}>
                   {t("about.hero.churchLeaderLabel")}
@@ -969,8 +974,11 @@ const ChurchAboutPage = () => {
             <div className="fact-grid">
               {missionVision.map((m, i) => (
                 <div className="fact-item" key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <p className="fact-label" style={{ textAlign: 'center' }}>{m.label}</p>
-                  <p className="fact-value" style={{ textAlign: 'center' }}>{m.value}</p>
+                  {/* <div>, not <p>: rich text renders block HTML */}
+                  <div className="fact-label" style={{ textAlign: 'center' }}>
+                    <Rich html={m.label} unwrapLinks={false} />
+                  </div>
+                  <Rich className="fact-value" inline={false} unwrapLinks={false} html={m.value} />
                 </div>
               ))}
             </div>
@@ -994,13 +1002,10 @@ const ChurchAboutPage = () => {
           {history.map((item, index) => {
             // Only the most recent story (index 0, i.e. the latest chapter)
             // is shown in full — older ones are truncated to a word limit
-            // so the page stays scannable and the "Read full story" link
-            // has a real purpose for them.
+            // (formatting kept) so the page stays scannable and the
+            // "Read full story" link has a real purpose for them.
             const STORY_WORD_LIMIT = 60;
             const isLatest = index === 0;
-            const displayedDesc = isLatest
-              ? item.desc
-              : truncateWords(item.desc, STORY_WORD_LIMIT);
 
             return (
             <div key={item.id} className="about-item">
@@ -1010,7 +1015,7 @@ const ChurchAboutPage = () => {
                   <Link to={`/about/story/${item.id}`} className="about-img-wrapper">
                     <img
                       src={item.photo}
-                      alt={item.title}
+                      alt={stripHtml(item.title)}
                       className="about-image"
                     />
                   </Link>
@@ -1021,22 +1026,27 @@ const ChurchAboutPage = () => {
               <div className="about-text-side">
                 <span className="about-label">
                   {t("about.story.ledByLabel", {
-                    leaderRole: item.leaderRole,
-                    range: item.range,
+                    leaderRole: stripHtml(item.leaderRole),
+                    range: stripHtml(item.range),
                     defaultValue: "{{leaderRole}} · Led {{range}}",
                   })}
                 </span>
 
                 <h2 className="about-title">
-                  {item.title}
+                  <Rich html={item.title} unwrapLinks={false} />
                 </h2>
+                {/* Not inside a <Link>, so links stay real, clickable links */}
                 <div className="about-description">
-                  <p>{displayedDesc}</p>
+                  {isLatest ? (
+                    <Rich html={item.desc} inline={false} unwrapLinks={false} />
+                  ) : (
+                    <Rich html={item.desc} words={STORY_WORD_LIMIT} unwrapLinks={false} />
+                  )}
                 </div>
                 <div className="about-tags">
-                  <div className="about-tag">{item.leader}</div>
-                  <div className="about-tag">{item.range}</div>
-                  <div className="about-tag">{item.servedBy}</div>
+                  <div className="about-tag"><Rich html={item.leader} unwrapLinks={false} /></div>
+                  <div className="about-tag"><Rich html={item.range} unwrapLinks={false} /></div>
+                  <div className="about-tag"><Rich html={item.servedBy} unwrapLinks={false} /></div>
                   <Link to={`/about/story/${item.id}`} className="read-full-story-btn">
                     {t("about.story.readFullStoryButton")}
                   </Link>
@@ -1099,14 +1109,14 @@ const ChurchAboutPage = () => {
                   <img
                     className="thanks-photo"
                     src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
-                    alt={p.name}
+                    alt={stripHtml(p.name)}
                   />
                   <div>
-                    <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{p.name}</h4>
-                    <span className="eyebrow" style={{ fontSize: '0.75rem' }}>{p.role}</span>
-                    <p className="body-copy on-red" style={{ fontSize: '1.2rem', marginTop: '10px' }}>
-                      {truncateWords(p.description, 20)}
-                    </p>
+                    <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{stripHtml(p.name)}</h4>
+                    <div className="eyebrow" style={{ fontSize: '0.75rem' }}><Rich html={p.role} /></div>
+                    <div className="body-copy on-red" style={{ fontSize: '1.2rem', marginTop: '10px' }}>
+                      <Rich html={p.description} words={20} />
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -1143,13 +1153,13 @@ const ChurchAboutPage = () => {
                 <img
                   className="testimonial-photo"
                   src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
-                  alt={person.name}
+                  alt={stripHtml(person.name)}
                 />
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{person.name}</p>
-                <p className="testimonial-title">{person.role}</p>
-                <p className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
-                  "{truncateWords(person.description, 20)}"
-                </p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{stripHtml(person.name)}</p>
+                <div className="testimonial-title"><Rich html={person.role} /></div>
+                <div className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
+                  <Rich html={person.description} words={20} quote />
+                </div>
               </Link>
             ))}
           </div>
@@ -1184,13 +1194,13 @@ const ChurchAboutPage = () => {
                 <img
                   className="testimonial-photo"
                   src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
-                  alt={p.name}
+                  alt={stripHtml(p.name)}
                 />
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{p.name}</p>
-                <p className="testimonial-title">{p.role}</p>
-                <p className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
-                  {truncateWords(p.description, 20)}
-                </p>
+                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{stripHtml(p.name)}</p>
+                <div className="testimonial-title"><Rich html={p.role} /></div>
+                <div className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
+                  <Rich html={p.description} words={20} />
+                </div>
               </Link>
             ))}
           </div>
@@ -1223,7 +1233,7 @@ const ChurchAboutPage = () => {
                   </button>
                   {activeFaq === `faith-${i}` && (
                     <div className="accordion-body">
-                      <p className="body-copy" style={{ fontSize: '1.4rem' }}>{f.a}</p>
+                      <Rich className="body-copy" inline={false} unwrapLinks={false} html={f.a} />
                     </div>
                   )}
                 </div>
@@ -1258,7 +1268,7 @@ const ChurchAboutPage = () => {
                   </button>
                   {activeFaq === `info-${i}` && (
                     <div className="accordion-body">
-                      <p className="body-copy" style={{ fontSize: '1.4rem' }}>{f.a}</p>
+                      <Rich className="body-copy" inline={false} unwrapLinks={false} html={f.a} />
                     </div>
                   )}
                 </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import API from "../api/api";
+import { stripHtml } from "../components/RichTextView";
 import "./Book.css";
 
 const PAGE_SIZE = 12;
@@ -88,12 +89,12 @@ const BookCard = ({ book, t }) => {
   return (
     <div className="catalog-card">
       <div className="catalog-cover">
-        <Cover src={book.thumbnail} alt={book.title} iconSize={36} />
+        <Cover src={book.thumbnail} alt={book.plainTitle} iconSize={36} />
       </div>
 
       <div className="catalog-card-body">
         <div className="catalog-card-text">
-          <p className="catalog-card-title">{book.title}</p>
+          <p className="catalog-card-title">{book.plainTitle}</p>
           {book.authorName && <p className="catalog-card-author">{book.authorName}</p>}
 
           {(book.categoryName || book.languageName) && (
@@ -103,7 +104,7 @@ const BookCard = ({ book, t }) => {
             </div>
           )}
 
-          {book.description && <p className="catalog-card-desc">{book.description}</p>}
+          {book.plainDescription && <p className="catalog-card-desc">{book.plainDescription}</p>}
         </div>
 
         <div className="catalog-card-actions">
@@ -118,7 +119,7 @@ const BookCard = ({ book, t }) => {
           <button
             type="button"
             className="catalog-card-btn catalog-card-btn-outline"
-            onClick={() => handleDownload(book.mediaUrl, book.title)}
+            onClick={() => handleDownload(book.mediaUrl, book.plainTitle)}
           >
             <DownloadIcon />
             {t("book.card.download")}
@@ -152,6 +153,11 @@ const Book = () => {
           ...m,
           mediaUrl: getMediaUrl(m.mediaUrl),
           thumbnail: getMediaUrl(m.thumbnail),
+          // title/description are RichTextField HTML — keep plain-text
+          // versions for the card, alt text, download filename, search
+          // and sorting so tags never leak or get matched.
+          plainTitle: stripHtml(m.title),
+          plainDescription: stripHtml(m.description),
           authorName: m.author && typeof m.author === "object" ? m.author.name : "",
           categoryName: m.category && typeof m.category === "object" ? m.category.name : "",
           languageName: m.language && typeof m.language === "object" ? m.language.name : "",
@@ -208,8 +214,8 @@ const Book = () => {
     let list = bookItems.filter((b) => {
       const matchesQuery =
         !q ||
-        (b.title || "").toLowerCase().includes(q) ||
-        (b.description || "").toLowerCase().includes(q) ||
+        (b.plainTitle || "").toLowerCase().includes(q) ||
+        (b.plainDescription || "").toLowerCase().includes(q) ||
         (b.authorName || "").toLowerCase().includes(q);
 
       const matchesCategory = activeCategory === "all" || b.categoryName === activeCategory;
@@ -218,7 +224,7 @@ const Book = () => {
     });
 
     if (sortBy === "title") {
-      list = [...list].sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+      list = [...list].sort((a, b) => (a.plainTitle || "").localeCompare(b.plainTitle || ""));
     } else if (sortBy === "author") {
       list = [...list].sort((a, b) => (a.authorName || "").localeCompare(b.authorName || ""));
     }

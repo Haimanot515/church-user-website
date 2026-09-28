@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import API from "../api/api";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Church.css";
 
 const Church = () => {
@@ -184,8 +185,8 @@ const Church = () => {
               <p style={{ color: "red" }}>{primaryError}</p>
             ) : primaryChurch ? (
               <>
-                <h1 className="display">{primaryChurch.churchName}</h1>
-                <p>{primaryChurch.shortDescription || primaryChurch.description}</p>
+                <h1 className="display">{stripHtml(primaryChurch.churchName)}</h1>
+                <RichTextView html={primaryChurch.shortDescription || primaryChurch.description} />
               </>
             ) : (
               <>
@@ -208,7 +209,7 @@ const Church = () => {
                     primaryChurch?.image ||
                     "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
                   }
-                  alt={primaryChurch?.churchName || t("church.hero.imageAlt")}
+                  alt={stripHtml(primaryChurch?.churchName) || t("church.hero.imageAlt")}
                 />
               </Link>
             ) : (
@@ -217,7 +218,7 @@ const Church = () => {
                   primaryChurch?.image ||
                   "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
                 }
-                alt={primaryChurch?.churchName || t("church.hero.imageAlt")}
+                alt={stripHtml(primaryChurch?.churchName) || t("church.hero.imageAlt")}
               />
             )}
           </div>
@@ -287,7 +288,7 @@ const Church = () => {
                         currentChurch.church?.image ||
                         ""
                       }
-                      alt={currentChurch.user?.name || "Leader"}
+                      alt={stripHtml(currentChurch.user?.name) || "Leader"}
                     />
                   </Link>
                 ) : (
@@ -298,21 +299,21 @@ const Church = () => {
                       currentChurch.church?.image ||
                       ""
                     }
-                    alt={currentChurch.user?.name || "Leader"}
+                    alt={stripHtml(currentChurch.user?.name) || "Leader"}
                   />
                 )}
                 <span className="serve-now-badge">{t("church.serveNow.badge")}</span>
               </div>
               <div className="serve-now-body">
                 <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
-                <h2 className="display">{currentChurch.church?.churchName}</h2>
+                <h2 className="display">{stripHtml(currentChurch.church?.churchName)}</h2>
                 <div className="serve-now-since">
                   {currentChurch.servingSince &&
                     t("church.serveNow.since", {
                       year: new Date(currentChurch.servingSince).getFullYear(),
                     })}
                 </div>
-                <p className="serve-now-desc">{currentChurch.description}</p>
+                <RichTextView className="serve-now-desc" html={currentChurch.description} />
                 <div className="serve-now-details">
                   <div className="serve-now-line">
                     <strong>{t("church.serveNow.address")}</strong> {currentChurch.church?.address}
@@ -385,7 +386,7 @@ const Church = () => {
                 {visibleBlogChurches.map((c) => (
                   <div className="blog-card" key={c.id}>
                     <Link to={`/churches/${c.id}`}>
-                      <img src={c.image || ""} alt={c.churchName} />
+                      <img src={c.image || ""} alt={stripHtml(c.churchName)} />
                     </Link>
                     <div className="blog-card-body">
                       <div className="blog-tag">
@@ -395,8 +396,8 @@ const Church = () => {
                           ? t("church.blog.tagFeatured")
                           : t("church.blog.tagDefault")}
                       </div>
-                      <h3>{c.churchName}</h3>
-                      <p>{c.shortDescription || c.description}</p>
+                      <h3>{stripHtml(c.churchName)}</h3>
+                      <p>{stripHtml(c.shortDescription || c.description)}</p>
                       <Link className="read-more" to={`/churches/${c.id}`}>
                         {t("church.blog.readMore")}
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

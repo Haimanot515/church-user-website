@@ -2,7 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Travel.css";
+
+/**
+ * RICH TEXT: post title/description and FAQ question/answer are
+ * RichTextField HTML.
+ *  - Trip cards (title, description preview, alt) -> stripHtml, done once
+ *    when the posts are loaded (plainTitle / plainDescription).
+ *  - FAQ question (button label)                  -> stripHtml
+ *  - FAQ answer (full, untruncated)               -> <RichTextView />
+ */
 
 const TRAVEL_ITEM_LIMIT = 10;
 
@@ -10,6 +20,14 @@ const TRAVEL_ITEM_LIMIT = 10;
 // `slug` field stored on the Travel / Viaggi / ጉዞ Category documents,
 // so the backend resolves the right one for whatever language is active.
 const TRAVEL_CATEGORY_SLUG = "travel";
+
+// Adds plain-text versions of the rich-text fields used on the trip cards.
+const withPlainText = (posts) =>
+  (posts || []).map((p) => ({
+    ...p,
+    plainTitle: stripHtml(p.title),
+    plainDescription: stripHtml(p.description),
+  }));
 
 const Travel = () => {
   const { t } = useTranslation();
@@ -77,7 +95,8 @@ const Travel = () => {
         if (postsData && postsData.length > 0) setUpcomingFallback(true);
       }
 
-      setUpcomingTrips((prev) => (pageNum === 1 ? (postsData || []) : [...prev, ...(postsData || [])]));
+      const prepared = withPlainText(postsData);
+      setUpcomingTrips((prev) => (pageNum === 1 ? prepared : [...prev, ...prepared]));
       setUpcomingTotalPages(pages);
     } catch (err) {
       console.log(err);
@@ -116,8 +135,8 @@ const Travel = () => {
 
         setFaqs(
           sorted.map((item) => ({
-            q: item.question,
-            a: item.answer,
+            q: stripHtml(item.question), // plain text for the button label
+            a: item.answer,              // HTML, rendered with RichTextView
           }))
         );
       } catch (err) {
@@ -202,11 +221,11 @@ const Travel = () => {
                   to={`/projects/${trip.id}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <img src={trip.imageUrl} alt={trip.title} />
+                  <img src={trip.imageUrl} alt={trip.plainTitle} />
                   <div className="upcoming-card-body">
                     <span className="upcoming-card-date">{getFormattedDate(trip)}</span>
-                    <h4 className="upcoming-card-title">{trip.title}</h4>
-                    <p className="upcoming-card-desc">{trip.description}</p>
+                    <h4 className="upcoming-card-title">{trip.plainTitle}</h4>
+                    <p className="upcoming-card-desc">{trip.plainDescription}</p>
                   </div>
                 </Link>
               ))}
@@ -279,7 +298,13 @@ const Travel = () => {
                     <span>{f.q}</span>
                     <span className="faq-toggle">{openFaq === i ? "–" : "+"}</span>
                   </button>
-                  {openFaq === i && <p className="faq-answer">{f.a}</p>}
+                  {/* Was <p className="faq-answer">{f.a}</p>. Rich text can contain
+                      <p>, so it needs a <div> wrapper. */}
+                  {openFaq === i && (
+                    <div className="faq-answer">
+                      <RichTextView html={f.a} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

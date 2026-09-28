@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./MediaDetail.css";
 /**
  * Media detail page — single-item view for whatever was clicked on
@@ -228,6 +229,9 @@ const MediaDetail = () => {
     audio: "Listen",
     document: "Read",
   };
+  // title is RichTextField HTML — plain-text version for the heading,
+  // alt text and download filename.
+  const plainTitle = stripHtml(entry.title);
   return (
     <Shell>
       <section className="media-detail-hero">
@@ -245,7 +249,7 @@ const MediaDetail = () => {
                     <video src={entry.mediaUrl} controls autoPlay />
                   </div>
                 ) : (
-                  <img src={entry.mediaUrl} alt={entry.title} className="media-detail-photo" />
+                  <img src={entry.mediaUrl} alt={plainTitle} className="media-detail-photo" />
                 )}
                 <button
                   type="button"
@@ -310,7 +314,7 @@ const MediaDetail = () => {
                         whiteSpace: "nowrap",
                       }}
                       onClick={() => {
-                        handleDownload(entry.mediaUrl, entry.title);
+                        handleDownload(entry.mediaUrl, plainTitle);
                         setMenuOpen(false);
                       }}
                     >
@@ -387,7 +391,7 @@ const MediaDetail = () => {
                   <button
                     type="button"
                     className="media-detail-download-btn"
-                    onClick={() => handleDownload(entry.mediaUrl, entry.title)}
+                    onClick={() => handleDownload(entry.mediaUrl, plainTitle)}
                     aria-label="Download audio"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -430,7 +434,7 @@ const MediaDetail = () => {
             {entry.mediaType === "document" && (
               <div className="media-detail-document">
                 {entry.thumbnail ? (
-                  <img src={entry.thumbnail} alt={entry.title} style={{ maxWidth: "220px", borderRadius: "6px" }} />
+                  <img src={entry.thumbnail} alt={plainTitle} style={{ maxWidth: "220px", borderRadius: "6px" }} />
                 ) : (
                   <svg className="media-detail-document-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
@@ -449,9 +453,9 @@ const MediaDetail = () => {
                 </div>
               </div>
             )}
-            <h1 className="media-detail-title">{entry.title}</h1>
+            <h1 className="media-detail-title">{plainTitle}</h1>
             {entry.description && (
-              <p className="media-detail-description">{entry.description}</p>
+              <RichTextView className="media-detail-description" html={entry.description} />
             )}
           </div>
           {relatedItems.length > 0 && (
@@ -466,7 +470,7 @@ const MediaDetail = () => {
                   >
                     <div className="media-detail-related-thumb">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.title} />
+                        <img src={item.thumbnail} alt={stripHtml(item.title)} />
                       ) : (
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                           <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
@@ -474,7 +478,7 @@ const MediaDetail = () => {
                         </svg>
                       )}
                     </div>
-                    <span className="media-detail-related-title">{item.title}</span>
+                    <span className="media-detail-related-title">{stripHtml(item.title)}</span>
                   </Link>
                 ))}
               </div>

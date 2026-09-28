@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./ChurchDetail.css";
 
 /**
@@ -76,23 +77,24 @@ const ChurchDetail = () => {
       <section className="church-detail-hero">
         <img
           src={church.image || ""}
-          alt={church.churchName}
+          alt={stripHtml(church.churchName)}
         />
         <div className="church-detail-hero-content">
           {church.isPrimary && <span className="church-detail-tag">Primary</span>}
           {!church.isPrimary && church.isFeatured && (
             <span className="church-detail-tag">Featured</span>
           )}
-          <h1>{church.churchName}</h1>
+          <h1>{stripHtml(church.churchName)}</h1>
         </div>
       </section>
 
       <section className="church-detail-section">
         <div className="wrapper">
           <div className="church-detail-body">
-            <p className="church-detail-description">
-              {church.description || church.shortDescription}
-            </p>
+            <RichTextView
+              className="church-detail-description"
+              html={church.description || church.shortDescription}
+            />
 
             <div className="church-detail-details">
               {church.address && (

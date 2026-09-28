@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
+import { stripHtml, Rich } from "../components/RichTextView";
 import "./Home.css";
 
 const POSTS_PER_PAGE = 10;
+
+// Rich text (formatted titles/previews) comes from the shared RichTextView file:
+// <Rich /> keeps colors/bold/links, stripHtml gives plain text for alt/aria.
 
 const Home = () => {
   const { t, i18n } = useTranslation();
@@ -20,12 +24,6 @@ const Home = () => {
   // English fallback because the active language had none
   const [priestFallback, setPriestFallback] = useState(false);
   const [priestLoading, setPriestLoading] = useState(true);
-  const [testimonials, setTestimonials] = useState([]);
-  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
-  const [testimonialsError, setTestimonialsError] = useState("");
-  // true when testimonials currently shown came from the English
-  // fallback because the active language had none
-  const [testimonialsFallback, setTestimonialsFallback] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [photos, setPhotos] = useState([]);
   // photosLoading only gates the very first load of the section (shows the
@@ -78,13 +76,6 @@ const Home = () => {
   // true when recommended posts currently shown came from the English
   // fallback because the active language had none
   const [recommendedFallback, setRecommendedFallback] = useState(false);
-
-  const truncateWords = (text, limit) => {
-    if (!text) return text;
-    const words = text.trim().split(/\s+/);
-    if (words.length <= limit) return text;
-    return words.slice(0, limit).join(" ") + "…";
-  };
 
   // Reusable inline loading spinner — shown while a section's data is
   // being fetched from the backend so the user never sees hardcoded
@@ -377,38 +368,6 @@ const Home = () => {
       }
     };
     fetchPriest();
-  }, [t]);
-
-  // Testimonials: try current language first; if none, retry explicitly in
-  // English and flag the fallback so the UI can show a note about it.
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        setTestimonialsLoading(true);
-        setTestimonialsError("");
-        setTestimonialsFallback(false);
-
-        let res = await API.get("/church-persons", { params: { category: "testimony" } });
-        let testimonialsData = Array.isArray(res.data) ? res.data : [];
-
-        if (testimonialsData.length === 0) {
-          res = await API.get("/church-persons", {
-            params: { category: "testimony" },
-            headers: { "Accept-Language": "en" },
-          });
-          testimonialsData = Array.isArray(res.data) ? res.data : [];
-          if (testimonialsData.length > 0) setTestimonialsFallback(true);
-        }
-
-        setTestimonials(testimonialsData || []);
-      } catch (err) {
-        console.log(err);
-        setTestimonialsError(err.response?.data?.message || t("home.testimonials.errorDefault"));
-      } finally {
-        setTestimonialsLoading(false);
-      }
-    };
-    fetchTestimonials();
   }, [t]);
 
   // Promotions: fetch the 5 most recent. Try current language first; if
@@ -789,17 +748,18 @@ const Home = () => {
           <div className="sponsored-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
             <img
               src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
-              alt={promotion?.title || t("home.sponsored.imageAltFallback")}
+              alt={stripHtml(promotion?.title) || t("home.sponsored.imageAltFallback")}
               onClick={() => promotion?.id && navigate(`/promotions/${promotion.id}`)}
               style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '4px', cursor: promotion?.id ? 'pointer' : 'default' }}
             />
             <div>
               <h3 style={{ fontSize: '1.8rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif' }}>
-                {promotion?.title}
+                <Rich html={promotion?.title} />
               </h3>
-              <p style={{ fontSize: '1.1rem', color: '#555', margin: '0 0 20px 0' }}>
-                {truncateWords(promotion?.description, 50)}
-              </p>
+              {/* <div>, not <p>: RichTextView renders block HTML */}
+              <div style={{ fontSize: '1.1rem', color: '#555', margin: '0 0 20px 0' }}>
+                <Rich html={promotion?.description} words={50} />
+              </div>
               <button
                 onClick={() => {
                   if (promotion?.id) {
@@ -865,11 +825,11 @@ const Home = () => {
               <div style={{ flex: '1', minWidth: '320px' }}>
                 <Link to={`/homeheros/${hero?.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                   <h1 className="display" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', color: '#eaf3f8' }}>
-                    {hero?.title || t("home.hero.titleFallback")}
+                    <Rich html={hero?.title} fallback={t("home.hero.titleFallback")} />
                   </h1>
-                  <p style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
-                    {truncateWords(hero?.description, 50) || t("home.hero.descriptionFallback")}
-                  </p>
+                  <div style={{ fontSize: '1.4rem', color: '#a9c2d3', lineHeight: 1.65, marginBottom: '36px', maxWidth: '520px' }}>
+                    <Rich html={hero?.description} words={50} fallback={t("home.hero.descriptionFallback")} />
+                  </div>
                 </Link>
                 <div className="hero-cta-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                   <button
@@ -904,7 +864,7 @@ const Home = () => {
                 <Link to={`/homeheros/${hero?.id}`}>
                   <img
                     src={hero?.image || "https://images.unsplash.com/photo-1602802490525-79e3e5062d1b?auto=format&fit=crop&w=900&q=80"}
-                    alt={hero?.title || t("home.hero.imageAltFallback")}
+                    alt={stripHtml(hero?.title) || t("home.hero.imageAltFallback")}
                     style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)' }}
                   />
                 </Link>
@@ -994,16 +954,16 @@ const Home = () => {
                 }}>
                   <img
                     src={item.imageUrl}
-                    alt={item.title}
+                    alt={stripHtml(item.title)}
                     style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
                   />
                   <div style={{ marginTop: '-5px' }}>
                     <h3 style={{ fontSize: '2rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1', fontWeight: '600', color: '#c1440e' }}>
-                      {item.title}
+                      <Rich html={item.title} />
                     </h3>
-                    <p style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
-                      {truncateWords(item.description, 37)}
-                    </p>
+                    <div style={{ fontSize: '1.5rem', color: '#333', margin: 0, lineHeight: '1.6' }}>
+                      <Rich html={item.description} words={37} />
+                    </div>
 
                   </div>
                 </Link>
@@ -1072,11 +1032,11 @@ const Home = () => {
                     className="angel-box"
                     style={{ backgroundImage: `url(${post.imageUrl})` }}
                     role="img"
-                    aria-label={post.title}
+                    aria-label={stripHtml(post.title)}
                   >
                     <div className="angel-box-overlay">
-                      <h4>{post.title}</h4>
-                      <p>{truncateWords(post.description, 50)}</p>
+                      <h4><Rich html={post.title} /></h4>
+                      <div><Rich html={post.description} words={50} /></div>
                     </div>
                   </Link>
                 ))
@@ -1137,10 +1097,10 @@ const Home = () => {
                 <Link key={post.id} to={`/projects/${post.id}`} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none', display: 'block', textDecoration: 'none', color: 'inherit' }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                  <img src={post.imageUrl} alt={post.title} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
+                  <img src={post.imageUrl} alt={stripHtml(post.title)} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
                   <div style={{ padding: '18px' }}>
-                    <h4 className="display" style={{ fontSize: '2rem', fontWeight: 600, margin: '0 0 8px 0', color: '#a80070' }}>{post.title}</h4>
-                    <p style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}>{truncateWords(post.description, 20)}</p>
+                    <h4 className="display" style={{ fontSize: '2rem', fontWeight: 600, margin: '0 0 8px 0', color: '#a80070' }}><Rich html={post.title} /></h4>
+                    <div style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}><Rich html={post.description} words={20} /></div>
                   </div>
                 </Link>
               ))}
@@ -1220,17 +1180,17 @@ const Home = () => {
           }} className="wrapper" >
             <img
               src={priest?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"}
-              alt={priest?.title || t("home.priest.imageAltFallback")}
+              alt={stripHtml(priest?.title) || t("home.priest.imageAltFallback")}
               style={{ width: '260px', height: '320px', objectFit: 'cover', borderRadius: '10px', flexShrink: 0, border: '4px solid #fff', boxShadow: '0 8px 20px rgba(0,0,0,0.25)' }}
             />
             <div style={{ flex: 1, minWidth: '260px' }}>
               <span className="eyebrow" style={{ color: 'var(--gold)', fontSize: '0.85rem', display: 'block', textAlign: 'center' }}>{t("home.priest.eyebrow")}</span>
               <h3 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '12px 0 14px 0', color: '#ffffff' }}>
-                {priest?.title || t("home.priest.titleFallback")}
+                <Rich html={priest?.title} fallback={t("home.priest.titleFallback")} />
               </h3>
-              <p style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
-                {truncateWords(priest?.description, 70) || t("home.priest.descriptionFallback")}
-              </p>
+              <div style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, margin: 0 }}>
+                <Rich html={priest?.description} words={70} fallback={t("home.priest.descriptionFallback")} />
+              </div>
               {/* note shown when the priest/about content fell back to English */}
               {priestFallback && (
                 <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', margin: '14px 0 0 0' }}>
@@ -1242,50 +1202,6 @@ const Home = () => {
           )}
         </section>
       </div>
-
-      <section style={{ background: '#ffffff' }}>
-        <div className="wrapper" style={{ maxWidth: '1080px' }}>
-          <h3 className="display" style={{ fontSize: '2.6rem', fontWeight: 700, marginBottom: '44px', textAlign: 'center', color: 'var(--navy-deep)' }}>
-            {t("home.testimonials.heading")}
-          </h3>
-          {testimonialsError && <p style={{ color: 'red', textAlign: 'center' }}>{testimonialsError}</p>}
-
-          {/* note shown when testimonials fell back to English */}
-          {testimonialsFallback && !testimonialsError && (
-            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-24px', marginBottom: '30px' }}>
-              {t("home.testimonials.fallbackNotice", "Showing testimonials in English.")}
-            </p>
-          )}
-
-          {testimonialsLoading ? (
-            <Spinner />
-          ) : testimonials.length === 0 ? (
-            <p style={{ textAlign: 'center' }}>{t("home.testimonials.none")}</p>
-          ) : (
-            <div className="home-testimonial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
-              {testimonials.map((person, i) => (
-          <Link
-  key={person.id || i}
-  to={`/church-persons/${person.id}`}
-  className="testimonial-card"
-  style={{ paddingTop: '28px', textAlign: 'left', textDecoration: 'none', color: 'inherit' }}
->
-                  <img
-                    src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
-                    alt={person.name}
-                    className="testimonial-photo"
-                  />
-                  <p style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--navy)' }}>{person.name}</p>
-                  <p className="eyebrow" style={{ marginTop: '2px', marginBottom: '16px', fontSize: '0.8rem' }}>{person.role || person.title}</p>
-                  <p className="display" style={{ fontSize: '1.4rem', fontStyle: 'italic', fontWeight: 600, color: 'var(--navy-deep)', lineHeight: 1.55, margin: 0 }}>
-                    "{truncateWords(person.message || person.description, 50)}"
-                  </p>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       <div className="section-cross-divider">
         <span className="h-string" />
@@ -1329,7 +1245,7 @@ const Home = () => {
                   </button>
                   <img
                     src={photos[photoIndex]?.mediaUrl}
-                    alt={photos[photoIndex]?.title}
+                    alt={stripHtml(photos[photoIndex]?.title)}
                     onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
                     style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?.id ? 'pointer' : 'default' }}
                   />
@@ -1365,11 +1281,12 @@ const Home = () => {
                   onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
                 >
                   <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
-                    {photos[photoIndex]?.title}
+                    <Rich html={photos[photoIndex]?.title} />
                   </h3>
-                  <p style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px' }}>
-                    {truncateWords(photos[photoIndex]?.description, 50)}
-                  </p>
+                  <div style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px' }}>
+                    {/* This block is not inside a <Link>, so links stay clickable */}
+                    <Rich html={photos[photoIndex]?.description} words={50} unwrapLinks={false} />
+                  </div>
                 </div>
                 <div className="photo-dots">
                   {photos.map((_, i) => (

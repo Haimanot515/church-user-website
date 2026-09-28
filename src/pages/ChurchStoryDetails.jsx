@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 
 const RELATED_LIMIT = 3;
 
@@ -111,22 +112,12 @@ const StoryDetail = () => {
   const getLeaderName = (p) => p.leader || "Harbor Light Church";
 
   const getReadTime = (p) => {
-    const words = (p.desc || p.description || "").split(/\s+/).filter(Boolean).length;
+    // Strip tags first — otherwise every "<p>", "<span style=...>" etc.
+    // gets counted as a word and inflates the estimate.
+    const plain = stripHtml(p.desc || p.description || "");
+    const words = plain.split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.round(words / 200));
     return `${minutes} min read`;
-  };
-
-  // === Body content may come as one big string; split on blank lines into paragraphs ===
-  const renderBody = (p) => {
-    const raw = p.desc || p.description || "";
-    const paragraphs = raw.split(/\n\s*\n/).filter(Boolean);
-    if (paragraphs.length === 0) return null;
-
-    return paragraphs.map((para, i) => (
-      <p key={i} className="desc" style={{ marginBottom: "22px" }}>
-        {para}
-      </p>
-    ));
   };
 
   // === Same fixed top-left back button used on Detail / PromotionDetail / HeroDetail ===
@@ -173,8 +164,12 @@ const StoryDetail = () => {
     .story-featured-image {
       aspect-ratio: 16/9;
     }
-    .story-body p {
+    .story-body .story-rich,
+    .story-body .story-rich p {
       font-size: 1.1rem;
+    }
+    .story-body .story-rich p {
+      margin-bottom: 22px;
     }
     .story-related-heading {
       font-size: 2.2rem;
@@ -190,7 +185,8 @@ const StoryDetail = () => {
     /* --- Laptops / small desktops (max-width: 1024px) ----------------------- */
     @media (max-width: 1024px) {
       .story-title { font-size: 2.3rem; }
-      .story-body p { font-size: 1.05rem; }
+      .story-body .story-rich,
+      .story-body .story-rich p { font-size: 1.05rem; }
     }
 
     /* --- Tablets (max-width: 900px) ------------------------------------------ */
@@ -203,7 +199,8 @@ const StoryDetail = () => {
       .story-hero-section { padding-top: 66px; }
       .story-title { font-size: 2rem; }
       .story-byline { font-size: 0.95rem; }
-      .story-body p { font-size: 1rem; }
+      .story-body .story-rich,
+      .story-body .story-rich p { font-size: 1rem; }
       .story-related-heading { font-size: 1.8rem; }
       .story-back-btn { top: 18px; left: 18px; width: 36px; height: 36px; }
     }
@@ -211,7 +208,8 @@ const StoryDetail = () => {
     /* --- Large phones (max-width: 600px) -------------------------------------- */
     @media (max-width: 600px) {
       .story-title { font-size: 1.7rem; }
-      .story-body p { font-size: 0.95rem; line-height: 1.6; }
+      .story-body .story-rich,
+      .story-body .story-rich p { font-size: 0.95rem; line-height: 1.6; }
       .story-related-grid { grid-template-columns: 1fr; gap: 18px; }
       .story-related-card-title { font-size: 1.1rem; }
     }
@@ -227,7 +225,8 @@ const StoryDetail = () => {
     /* --- Small phones (max-width: 380px) ---------------------------------------- */
     @media (max-width: 380px) {
       .story-title { font-size: 1.3rem; }
-      .story-body p { font-size: 0.9rem; }
+      .story-body .story-rich,
+      .story-body .story-rich p { font-size: 0.9rem; }
     }
   `;
 
@@ -283,7 +282,7 @@ const StoryDetail = () => {
             <span className="meta-plain">{getReadTime(post)}</span>
           </div>
 
-          <h1 className="display story-title">{post.title}</h1>
+          <h1 className="display story-title">{stripHtml(post.title)}</h1>
           <p className="byline story-byline">By {getLeaderName(post)}</p>
         </div>
       </section>
@@ -294,7 +293,7 @@ const StoryDetail = () => {
           <div className="wrapper" style={{ maxWidth: "980px" }}>
             <img
               src={post.photo || post.imageUrl}
-              alt={post.title}
+              alt={stripHtml(post.title)}
               className="story-featured-image"
               style={{
                 width: "100%",
@@ -310,7 +309,7 @@ const StoryDetail = () => {
       {/* BODY */}
       <section style={{ background: "#ffffff" }} className="story-body">
         <div className="wrapper" style={{ maxWidth: "760px" }}>
-          {renderBody(post)}
+          <RichTextView className="desc story-rich" html={post.desc || post.description} />
         </div>
       </section>
 
@@ -362,12 +361,12 @@ const StoryDetail = () => {
                   >
                     <img
                       src={p.photo || p.imageUrl}
-                      alt={p.title}
+                      alt={stripHtml(p.title)}
                       style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}
                     />
                     <div style={{ padding: "16px" }}>
                       <span className="tag">{getRange(p)}</span>
-                      <h4 className="story-related-card-title" style={{ margin: "10px 0 0 0" }}>{p.title}</h4>
+                      <h4 className="story-related-card-title" style={{ margin: "10px 0 0 0" }}>{stripHtml(p.title)}</h4>
                     </div>
                   </Link>
                 ))}

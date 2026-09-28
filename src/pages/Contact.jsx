@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Contact.css";
 
 /**
@@ -194,7 +195,10 @@ const Contact = () => {
 
         setFaqs(
           sorted.map((item) => ({
-            q: item.question,
+            // question is a heading-style button label → plain text;
+            // answer is shown in full when opened → keep the HTML for
+            // RichTextView below.
+            q: stripHtml(item.question),
             a: item.answer,
           }))
         );
@@ -387,7 +391,7 @@ const Contact = () => {
                     <span>{f.q}</span>
                     <span className="faq-toggle">{openFaq === i ? "–" : "+"}</span>
                   </button>
-                  {openFaq === i && <p className="faq-answer">{f.a}</p>}
+                  {openFaq === i && <RichTextView className="faq-answer" html={f.a} />}
                 </div>
               ))}
             </div>

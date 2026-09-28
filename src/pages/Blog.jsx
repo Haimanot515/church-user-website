@@ -2,9 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
+import RichTextView from "../components/RichTextView";
 import "./Blog.css";
 
 const POSTS_PER_PAGE = 10;
+
+// RichTextField-authored fields (title, description, content) are stored
+// as HTML — strip tags before using them as plain text (headings, alt
+// attributes, word counts for read time).
+const stripHtml = (html) =>
+  html ? html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
 
 const Blog = () => {
   const { t } = useTranslation();
@@ -333,7 +340,10 @@ const Blog = () => {
       : "";
 
   const getReadTime = (post) => {
-    const words = (post.content || post.description || "").split(/\s+/).filter(Boolean).length;
+    // Strip tags first — otherwise every "<p>", "<span style=...>" etc.
+    // gets counted as a word and inflates the estimate.
+    const plain = stripHtml(post.content || post.description || "");
+    const words = plain.split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.round(words / 200));
     return `${minutes} ${t("blog.posts.readTimeSuffix")}`;
   };
@@ -418,7 +428,7 @@ const Blog = () => {
               <React.Fragment key={post.id || index}>
                 <div className={`post-row${index % 2 === 1 ? " reverse" : ""}`}>
                   <Link to={`/projects/${post.id}`} className="post-media">
-                    <img src={post.imageUrl} alt={post.title} />
+                    <img src={post.imageUrl} alt={stripHtml(post.title)} />
                   </Link>
                   <div className="post-copy">
                     <div className="post-meta">
@@ -428,8 +438,8 @@ const Blog = () => {
                       <span className="dot" />
                       <span className="meta-plain">{getReadTime(post)}</span>
                     </div>
-                    <h3>{post.title}</h3>
-                    <p className="desc">{post.description}</p>
+                    <h3>{stripHtml(post.title)}</h3>
+                    <RichTextView className="desc" html={post.description} />
                     <p className="byline">By {getAuthorName(post)}</p>
                     <Link to={`/projects/${post.id}`} className="read-more">
                       {t("blog.posts.readMoreButton")}

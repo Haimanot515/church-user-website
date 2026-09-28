@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Blog.css";
 import "./Detail.css";
 
@@ -122,22 +123,12 @@ const Detail = () => {
       : "";
 
   const getReadTime = (p) => {
-    const words = (p.content || p.description || "").split(/\s+/).filter(Boolean).length;
+    // Strip tags first — otherwise every "<p>", "<span style=...>" etc.
+    // gets counted as a word and inflates the estimate.
+    const plain = stripHtml(p.content || p.description || "");
+    const words = plain.split(/\s+/).filter(Boolean).length;
     const minutes = Math.max(1, Math.round(words / 200));
     return `${minutes} min read`;
-  };
-
-  // === Body content may come as one big string; split on blank lines into paragraphs ===
-  const renderBody = (p) => {
-    const raw = p.content || p.description || "";
-    const paragraphs = raw.split(/\n\s*\n/).filter(Boolean);
-    if (paragraphs.length === 0) return null;
-
-    return paragraphs.map((para, i) => (
-      <p key={i} className="desc" style={{ marginBottom: "22px" }}>
-        {para}
-      </p>
-    ));
   };
 
   if (loading) {
@@ -192,7 +183,7 @@ const Detail = () => {
             <span className="meta-plain">{getReadTime(post)}</span>
           </div>
 
-          <h1 className="display">{post.title}</h1>
+          <h1 className="display">{stripHtml(post.title)}</h1>
           <p className="byline">By {getAuthorName(post)}</p>
         </div>
       </section>
@@ -203,7 +194,7 @@ const Detail = () => {
           <div className="wrapper" style={{ maxWidth: "980px" }}>
             <img
               src={post.imageUrl}
-              alt={post.title}
+              alt={stripHtml(post.title)}
               style={{
                 width: "100%",
                 aspectRatio: "16/9",
@@ -219,7 +210,7 @@ const Detail = () => {
       {/* BODY */}
       <section style={{ background: "#ffffff" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
-          {renderBody(post)}
+          <RichTextView className="desc" html={post.content || post.description} />
         </div>
       </section>
 
@@ -258,12 +249,12 @@ const Detail = () => {
                 >
                   <img
                     src={p.imageUrl}
-                    alt={p.title}
+                    alt={stripHtml(p.title)}
                     style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}
                   />
                   <div style={{ padding: "16px" }}>
                     <span className="tag">{getCategoryName(p)}</span>
-                    <h4 style={{ fontSize: "1.3rem", margin: "10px 0 0 0" }}>{p.title}</h4>
+                    <h4 style={{ fontSize: "1.3rem", margin: "10px 0 0 0" }}>{stripHtml(p.title)}</h4>
                   </div>
                 </Link>
               ))}

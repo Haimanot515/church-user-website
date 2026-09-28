@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 
+/**
+ * RICH TEXT: title / description / schedule / location come from the admin
+ * RichTextField editor as HTML.
+ *  - description (full, untruncated)  -> <RichTextView />  (formatting shows)
+ *  - title, schedule, location, alt   -> stripHtml()       (plain text only)
+ * Related-card titles are stripped the same way.
+ */
 const ServiceDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -137,6 +145,9 @@ const ServiceDetail = () => {
       color: #a9c2d3;
       line-height: 1.7;
     }
+    /* Rich text renders <p>, <ul>, etc. inside the description wrapper */
+    .service-detail-description p { margin: 0 0 1em 0; }
+    .service-detail-description a { color: var(--gold, #cf9f3f); }
 
     /* --- "You may also like" section --- */
     .service-related-section {
@@ -252,6 +263,9 @@ const ServiceDetail = () => {
   }
 
   const resolvedImageUrl = getImageUrl(entry.imageUrl);
+  const plainTitle = stripHtml(entry.title);
+  const plainSchedule = stripHtml(entry.schedule);
+  const plainLocation = stripHtml(entry.location);
 
   return (
     <div className="church-portal">
@@ -263,7 +277,7 @@ const ServiceDetail = () => {
           {resolvedImageUrl ? (
             <img
               src={resolvedImageUrl}
-              alt={entry.title || "Service"}
+              alt={plainTitle || "Service"}
               className="service-detail-image"
             />
           ) : (
@@ -271,21 +285,23 @@ const ServiceDetail = () => {
           )}
 
           <h1 className="display service-detail-title">
-            {entry.title}
+            {plainTitle}
           </h1>
 
           <p className="service-detail-time">
-            {entry.schedule}
-            {entry.location ? ` · ${entry.location}` : ""}
+            {plainSchedule}
+            {plainLocation ? ` · ${plainLocation}` : ""}
           </p>
 
           {entry.isFeatured && (
             <p className="service-detail-note">Featured Service</p>
           )}
 
-          <p className="service-detail-description">
-            {entry.description}
-          </p>
+          {/* Was <p>{entry.description}</p>. Rich text can contain <p>, so it
+              needs a <div> wrapper (a <p> inside a <p> is invalid HTML). */}
+          <div className="service-detail-description">
+            <RichTextView html={entry.description} />
+          </div>
         </div>
       </section>
 
@@ -296,6 +312,7 @@ const ServiceDetail = () => {
             <div className="service-related-grid">
               {related.map((s) => {
                 const img = getImageUrl(s.imageUrl);
+                const relatedTitle = stripHtml(s.title);
                 return (
                   <div
                     key={s.id}
@@ -308,11 +325,11 @@ const ServiceDetail = () => {
                     }}
                   >
                     {img ? (
-                      <img src={img} alt={s.title} className="service-related-img" />
+                      <img src={img} alt={relatedTitle} className="service-related-img" />
                     ) : (
                       <div className="service-related-img-placeholder" aria-hidden="true" />
                     )}
-                    <p className="service-related-name">{s.title}</p>
+                    <p className="service-related-name">{relatedTitle}</p>
                   </div>
                 );
               })}

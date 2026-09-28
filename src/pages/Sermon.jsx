@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import API from "../api/api";
+import { stripHtml } from "../components/RichTextView";
 import "./Sermon.css";
 
 /**
@@ -29,6 +30,10 @@ import "./Sermon.css";
  * pattern/markup as Media.jsx's VideoSection/AudioSection, with a
  * Download option that fetches the file as a blob and saves it
  * (works cross-origin, unlike a plain <a download>).
+ *
+ * RICH TEXT: a sermon's title is RichTextField HTML. It's only used in
+ * cards, alt text and a download filename here, so each sermon carries
+ * a plainTitle (tags stripped).
  */
 
 function formatTime(totalSeconds) {
@@ -103,6 +108,7 @@ const Sermon = () => {
         ...m,
         mediaUrl: getMediaUrl(m.mediaUrl),
         thumbnail: getMediaUrl(m.thumbnail),
+        plainTitle: stripHtml(m.title),
       }));
 
   useEffect(() => {
@@ -411,7 +417,7 @@ const Sermon = () => {
                       >
                         <div className="sermon-thumb-wrap">
                           {s.thumbnail ? (
-                            <img src={s.thumbnail} alt={s.title} />
+                            <img src={s.thumbnail} alt={s.plainTitle} />
                           ) : (
                             <div
                               style={{
@@ -429,7 +435,7 @@ const Sermon = () => {
                           {i === sermonIndex && !videoClosed && (
                             <div className="sermon-now-playing">{t("sermon.sermons.nowPlaying")}</div>
                           )}
-                          <h3>{s.title}</h3>
+                          <h3>{s.plainTitle}</h3>
                         </div>
                       </button>
 
@@ -496,7 +502,7 @@ const Sermon = () => {
                               whiteSpace: "nowrap",
                             }}
                             onClick={() => {
-                              handleDownload(s.mediaUrl, s.title);
+                              handleDownload(s.mediaUrl, s.plainTitle);
                               setOpenMenuId(null);
                             }}
                           >

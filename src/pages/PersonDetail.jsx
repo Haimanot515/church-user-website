@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./PersonDetail.css";
 
 const PersonDetail = () => {
@@ -69,9 +70,14 @@ const PersonDetail = () => {
     );
   }
 
+  // name / role / title may be RichTextField HTML — plain-text versions
+  // for the heading, tag line, alt text and avatar fallback.
+  const plainName = stripHtml(entry.name);
+  const plainRole = stripHtml(entry.role || entry.title);
+
   const photo =
     (entry.photos && entry.photos[0]) ||
-    `https://ui-avatars.com/api/?name=${entry.name}&background=0070f3&color=fff`;
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(plainName)}&background=0070f3&color=fff`;
 
   // Category-aware label + body text, since a leader, a special-thanks
   // entry, and a testimony all land on this same page but shape their
@@ -94,18 +100,20 @@ const PersonDetail = () => {
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <span className="person-detail-label">{label}</span>
 
-          <img src={photo} alt={entry.name} className="person-detail-photo" />
+          <img src={photo} alt={plainName} className="person-detail-photo" />
 
-          {bodyText && (
-            <p className="person-detail-quote">
-              {isQuote ? `"${bodyText}"` : bodyText}
-            </p>
-          )}
+          {bodyText &&
+            (isQuote ? (
+              // Testimonies are wrapped in literal quotation marks, which
+              // can't sit cleanly around block-level HTML — so the quote
+              // is shown as plain text to keep the quoted look.
+              <p className="person-detail-quote">{`"${stripHtml(bodyText)}"`}</p>
+            ) : (
+              <RichTextView className="person-detail-quote" html={bodyText} />
+            ))}
 
-          <h1 className="person-detail-name">{entry.name}</h1>
-          {(entry.role || entry.title) && (
-            <p className="person-detail-title-tag">{entry.role || entry.title}</p>
-          )}
+          <h1 className="person-detail-name">{plainName}</h1>
+          {plainRole && <p className="person-detail-title-tag">{plainRole}</p>}
         </div>
       </section>
     </div>

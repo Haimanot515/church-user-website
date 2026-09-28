@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/api.jsx";
+import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Blog.css";
 import "./Detail.css";
 import "./PromotionDetail.css";
@@ -85,18 +86,16 @@ const PromotionDetail = () => {
           {image && (
             <img
               src={image}
-              alt={promotion.title || "Sponsored content"}
+              alt={stripHtml(promotion.title) || "Sponsored content"}
               className="promo-hero-image"
             />
           )}
 
           <h1 className="promo-title">
-            {promotion.title}
+            {stripHtml(promotion.title)}
           </h1>
 
-          <p className="promo-description">
-            {promotion.description}
-          </p>
+          <RichTextView className="promo-description" html={promotion.description} />
 
           {promotion.link && (
             <button
@@ -130,7 +129,7 @@ const PromotionDetail = () => {
                     {thumb && (
                       <img
                         src={thumb}
-                        alt={p.title || "Sponsored content"}
+                        alt={stripHtml(p.title) || "Sponsored content"}
                         className="promo-more-thumb"
                       />
                     )}
@@ -139,10 +138,10 @@ const PromotionDetail = () => {
                         Sponsored
                       </span>
                       <h4 className="promo-more-card-title">
-                        {p.title}
+                        {stripHtml(p.title)}
                       </h4>
                       <p className="promo-more-card-desc">
-                        {p.description}
+                        {stripHtml(p.description)}
                       </p>
                     </div>
                   </div>
