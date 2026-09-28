@@ -569,7 +569,6 @@ const Media = () => {
 
       <section className="media-hero">
         <div className="wrapper">
-          <span className="eyebrow">{t("media.hero.eyebrow")}</span>
           <h1 className="display">{t("media.hero.title")}</h1>
           <p>{t("media.hero.description")}</p>
         </div>

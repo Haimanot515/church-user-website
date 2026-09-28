@@ -45,18 +45,28 @@ a { color: inherit; text-decoration: none; }
 .media-hero h1 { font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 700; color: #eaf3f8; margin: 16px 0 18px 0; }
 .media-hero p { font-size: 1.2rem; color: #a9c2d3; max-width: 560px; margin: 0 auto; line-height: 1.65; }
 
+/* ---- MEDIA SECTIONS: full width, no narrow centered column ---- */
 .media-sections { padding: 80px 0; }
+.media-sections .wrapper {
+  max-width: none;
+  width: 100%;
+  padding: 0 48px;
+}
 .media-section:not(:last-child) { margin-bottom: 90px; padding-bottom: 80px; border-bottom: 1px solid rgba(28,58,82,0.12); }
 .media-section h2 { font-size: 2.6rem; font-weight: 700; color: var(--navy-deep); margin: 8px 0 10px 0; }
 .section-intro { font-size: 1.1rem; color: var(--slate); margin: 0 0 34px 0; max-width: 620px; }
 
-/* Shared 3-column grid */
-.media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
-@media (max-width: 800px) { .media-grid { grid-template-columns: 1fr; } }
+/* Shared full-width grid: as many cards per row as fit, with wide gaps */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: 44px;
+}
 .grid-card {
   background: #fff; border: 1px solid rgba(28,58,82,0.12); border-radius: 10px;
   overflow: hidden; text-align: left; cursor: pointer; padding: 0; font-family: inherit;
   box-shadow: 0 8px 18px rgba(15,36,56,0.06);
+  width: 100%;
 }
 .grid-card-title { font-size: 0.98rem; font-weight: 700; color: var(--navy-deep); margin: 0; padding: 14px 16px; line-height: 1.35; }
 
@@ -210,4 +220,17 @@ a { color: inherit; text-decoration: none; }
   .media-footer .footer-grid {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* ---------- Responsive spacing for the full-width media grids ---------- */
+@media (max-width: 1024px) {
+  .media-sections .wrapper { padding: 0 28px; }
+  .media-grid { gap: 32px; }
+}
+@media (max-width: 600px) {
+  .media-sections { padding: 56px 0; }
+  .media-sections .wrapper { padding: 0 16px; }
+  .media-grid { gap: 24px; }
+  .media-section:not(:last-child) { margin-bottom: 56px; padding-bottom: 48px; }
+  .media-section h2 { font-size: 2rem; }
 }
