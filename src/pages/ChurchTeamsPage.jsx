@@ -36,7 +36,7 @@ const PersonCard = ({ person, variant, avatarBg, quote }) => (
 );
 
 const ChurchTeamsPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // Leadership, testimonials and special thanks all come from /church-persons
   const [leaders, setLeaders] = useState([]);
@@ -79,26 +79,25 @@ const ChurchTeamsPage = () => {
     fetchChurchPersons("leader", setLeaders, setLeadersFallback, setLeadersLoading);
     fetchChurchPersons("specialThanks", setThanksList, setThanksFallback, setThanksLoading);
     fetchChurchPersons("testimony", setTestimonialsList, setTestimonialsFallback, setTestimonialsLoading);
-  }, [t]);
+    // Refetch whenever the user switches language
+  }, [i18n.language]);
 
   return (
     <div className="teams-page">
       {/* PAGE INTRO */}
       <header className="teams-hero">
         <div className="teams-container">
-          <h1 className="teams-hero-title">
-            {t("about.teams.heading", { defaultValue: "Our Team" })}
-          </h1>
+          <h1 className="teams-hero-title">{t("team.heading")}</h1>
         </div>
       </header>
 
       {/* LEADERSHIP TEAM */}
       <section className="teams-section teams-section--red">
         <div className="teams-container">
-          <h2 className="teams-heading">{t("about.leadership.heading")}</h2>
+          <h2 className="teams-heading">{t("team.leadership.heading")}</h2>
 
           {leadersFallback && !leadersLoading && (
-            <p className="teams-notice">{t("about.leadership.fallbackNotice")}</p>
+            <p className="teams-notice">{t("team.leadership.fallbackNotice")}</p>
           )}
 
           {leadersLoading ? (
@@ -116,10 +115,10 @@ const ChurchTeamsPage = () => {
       {/* TESTIMONIALS */}
       <section className="teams-section teams-section--sky">
         <div className="teams-container">
-          <h2 className="teams-heading">{t("about.testimonials.heading")}</h2>
+          <h2 className="teams-heading">{t("team.testimonials.heading")}</h2>
 
           {testimonialsFallback && !testimonialsLoading && (
-            <p className="teams-notice">{t("about.testimonials.fallbackNotice")}</p>
+            <p className="teams-notice">{t("team.testimonials.fallbackNotice")}</p>
           )}
 
           {testimonialsLoading ? (
@@ -137,10 +136,10 @@ const ChurchTeamsPage = () => {
       {/* SPECIAL THANKS */}
       <section className="teams-section teams-section--white">
         <div className="teams-container">
-          <h2 className="teams-heading">{t("about.specialThanks.heading")}</h2>
+          <h2 className="teams-heading">{t("team.specialThanks.heading")}</h2>
 
           {thanksFallback && !thanksLoading && (
-            <p className="teams-notice">{t("about.specialThanks.fallbackNotice")}</p>
+            <p className="teams-notice">{t("team.specialThanks.fallbackNotice")}</p>
           )}
 
           {thanksLoading ? (

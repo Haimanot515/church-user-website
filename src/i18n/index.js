@@ -10,6 +10,7 @@ import enNavbar from "../locales/en/navbar.json";
 import enFooter from "../locales/en/footer.json";
 import enHome from "../locales/en/home.json";
 import enAbout from "../locales/en/about.json";
+import enTeam from "../locales/en/team.json";
 import enBlog from "../locales/en/blog.json";
 import enTravel from "../locales/en/travel.json";
 import enContact from "../locales/en/contact.json";
@@ -32,6 +33,7 @@ import amNavbar from "../locales/am/navbar.json";
 import amFooter from "../locales/am/footer.json";
 import amHome from "../locales/am/home.json";
 import amAbout from "../locales/am/about.json";
+import amTeam from "../locales/am/team.json";
 import amBlog from "../locales/am/blog.json";
 import amTravel from "../locales/am/travel.json";
 import amContact from "../locales/am/contact.json";
@@ -54,6 +56,7 @@ import itNavbar from "../locales/it/navbar.json";
 import itFooter from "../locales/it/footer.json";
 import itHome from "../locales/it/home.json";
 import itAbout from "../locales/it/about.json";
+import itTeam from "../locales/it/team.json";
 import itBlog from "../locales/it/blog.json";
 import itTravel from "../locales/it/travel.json";
 import itContact from "../locales/it/contact.json";
@@ -86,6 +89,7 @@ i18n
           footer: enFooter,
           home: enHome,
           about: enAbout,
+          team: enTeam,
           blog: enBlog,
           travel: enTravel,
           contact: enContact,
@@ -111,6 +115,7 @@ i18n
           footer: amFooter,
           home: amHome,
           about: amAbout,
+          team: amTeam,
           blog: amBlog,
           travel: amTravel,
           contact: amContact,
@@ -136,6 +141,7 @@ i18n
           footer: itFooter,
           home: itHome,
           about: itAbout,
+          team: itTeam,
           blog: itBlog,
           travel: itTravel,
           contact: itContact,

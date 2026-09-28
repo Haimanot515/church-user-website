@@ -1,0 +1,15 @@
+{
+  "heading": "ቡድናችን",
+  "leadership": {
+    "heading": "የአመራር ቡድናችን",
+    "fallbackNotice": "ይህ ይዘት በቋንቋዎ ገና አልተዘጋጀም። የእንግሊዝኛው ስሪት እየታየ ነው።"
+  },
+  "testimonials": {
+    "heading": "ከማኅበረሰባችን የመጡ ምስክርነቶች",
+    "fallbackNotice": "ምስክርነቶች በቋንቋዎ ገና አልተዘጋጁም። የእንግሊዝኛው ስሪት እየታየ ነው።"
+  },
+  "specialThanks": {
+    "heading": "ልዩ ምስጋና",
+    "fallbackNotice": "ይህ ይዘት በቋንቋዎ ገና አልተዘጋጀም። የእንግሊዝኛው ስሪት እየታየ ነው።"
+  }
+}

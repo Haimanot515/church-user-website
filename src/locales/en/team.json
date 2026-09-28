@@ -1,0 +1,15 @@
+{
+  "heading": "Our Team",
+  "leadership": {
+    "heading": "Our Leadership Team",
+    "fallbackNotice": "This content is not yet available in your language. Showing the English version."
+  },
+  "testimonials": {
+    "heading": "Voices from Our Community",
+    "fallbackNotice": "Testimonials are not yet available in your language. Showing the English version."
+  },
+  "specialThanks": {
+    "heading": "Special Thanks",
+    "fallbackNotice": "This content is not yet available in your language. Showing the English version."
+  }
+}

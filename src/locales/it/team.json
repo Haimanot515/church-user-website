@@ -1,0 +1,15 @@
+{
+  "heading": "Il Nostro Team",
+  "leadership": {
+    "heading": "La Nostra Guida",
+    "fallbackNotice": "Questo contenuto non è ancora disponibile nella tua lingua. Viene mostrata la versione inglese."
+  },
+  "testimonials": {
+    "heading": "Voci della Nostra Comunità",
+    "fallbackNotice": "Le testimonianze non sono ancora disponibili nella tua lingua. Viene mostrata la versione inglese."
+  },
+  "specialThanks": {
+    "heading": "Ringraziamenti Speciali",
+    "fallbackNotice": "Questo contenuto non è ancora disponibile nella tua lingua. Viene mostrata la versione inglese."
+  }
+}

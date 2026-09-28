@@ -501,9 +501,6 @@ const ChurchAboutPage = () => {
           .about-container { padding: 0 18px; }
           section { padding: 50px 0; }
           .about-section { padding: 50px 0; }
-
-          .give-info-box { width: 100% !important; padding: 22px !important; }
-          .give-info-box p { word-break: break-word; }
         }
 
         @media (max-width: 600px) {
@@ -551,9 +548,6 @@ const ChurchAboutPage = () => {
             line-height: 1.5 !important;
           }
           .about-description { margin-bottom: 16px !important; }
-
-          .give-info-box { padding: 18px !important; }
-          .give-info-box p { font-size: 1rem !important; }
         }
 
         @media (max-width: 360px) {
@@ -928,7 +922,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* SUPPORT & GET INVOLVED: account details plus give/volunteer buttons */}
+      {/* SUPPORT & GET INVOLVED: give/volunteer buttons */}
       <div style={{ background: 'var(--deep-red)' }}>
         <section className="cta-band">
           <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
@@ -938,29 +932,6 @@ const ChurchAboutPage = () => {
             <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
               {t("about.support.description")}
             </p>
-
-            <div
-              className="give-info-box"
-              style={{
-                display: 'inline-block',
-                textAlign: 'left',
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '12px',
-                padding: '28px 34px',
-                marginBottom: '34px',
-              }}
-            >
-              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>{t("about.support.bankTransferLabel")}</p>
-              <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: '0 0 20px 0' }}>
-                {t("about.support.accountName", { churchName: CHURCH_NAME })}<br />
-                {t("about.support.accountNumber")}
-              </p>
-              <p className="eyebrow" style={{ fontSize: '0.7rem', marginBottom: '6px' }}>{t("about.support.onlineGivingLabel")}</p>
-              <p style={{ color: '#ffffff', fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.15rem', fontWeight: 600, margin: 0 }}>
-                {t("about.support.merchantName", { churchName: CHURCH_NAME })}
-              </p>
-            </div>
 
             {/* Give and Volunteer link to the #accounts and #volunteer sections on /church-support */}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
