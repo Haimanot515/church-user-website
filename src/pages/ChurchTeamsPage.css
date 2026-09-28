@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* All classes are prefixed with teams- so they cannot clash with global styles */
+
+.teams-page {
+  --t-sky-low: #f3f8fa;
+  --t-sky-mid: #d5eaf3;
+  --t-navy: #1c3a52;
+  --t-navy-deep: #0f2438;
+  --t-slate: #3d5a6c;
+  --t-gold: #cf9f3f;
+  --t-red: #7a1010;
+
+  width: 100%;
+  text-align: center;
+  font-family: 'Nunito Sans', sans-serif;
+  color: var(--t-navy);
+  background: var(--t-sky-low);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.teams-page *,
+.teams-page *::before,
+.teams-page *::after {
+  box-sizing: border-box;
+}
+
+.teams-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Full-width container: wide, with fluid side padding instead of a narrow fixed box */
+.teams-container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 56px);
+}
+
+.teams-section {
+  width: 100%;
+  padding-block: clamp(48px, 8vw, 110px);
+}
+.teams-section--red { background: var(--t-red); }
+.teams-section--sky { background: var(--t-sky-low); }
+.teams-section--white { background: #ffffff; }
+
+/* INTRO BANNER */
+.teams-hero {
+  width: 100%;
+  padding-block: clamp(56px, 9vw, 120px);
+  background: linear-gradient(180deg, var(--t-navy) 0%, var(--t-navy-deep) 100%);
+}
+.teams-hero-title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #eaf3f8;
+}
+
+/* SECTION HEADINGS */
+.teams-heading {
+  margin: 0 0 clamp(28px, 4vw, 52px) 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--t-navy-deep);
+}
+.teams-section--red .teams-heading { color: #ffffff; }
+
+.teams-notice {
+  margin: -20px 0 28px 0;
+  font-size: 0.9rem;
+  color: #6b7f8c;
+}
+.teams-section--red .teams-notice { color: #f2d9d9; }
+
+/* GRID: flex-wrap and centered, so one or two people never sit lopsided on the left */
+.teams-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(20px, 3vw, 40px);
+}
+
+/* CARD BASE */
+.teams-card {
+  flex: 1 1 290px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+  padding: clamp(22px, 2.6vw, 34px);
+  border-radius: 20px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.teams-card:hover { transform: translateY(-5px); }
+.teams-card:focus-visible {
+  outline: 3px solid var(--t-gold);
+  outline-offset: 3px;
+}
+
+.teams-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  border-radius: 16px;
+  border: 3px solid var(--t-gold);
+}
+
+.teams-card-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.teams-name {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.teams-role {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+.teams-text {
+  margin-top: 6px;
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+.teams-text p { margin: 0; }
+
+/* Centering rule: rich text from the API (paragraphs, lists, headings, inline styles) is centered too */
+.teams-page .teams-text,
+.teams-page .teams-text *,
+.teams-page .teams-role,
+.teams-page .teams-role * {
+  text-align: center !important;
+}
+.teams-text ul,
+.teams-text ol {
+  list-style-position: inside;
+  padding: 0;
+  margin: 0;
+}
+
+/* LEADERS: translucent panels on the red section */
+.teams-card--leader {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.teams-card--leader:hover {
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.28);
+}
+.teams-card--leader .teams-name { color: #ffffff; }
+.teams-card--leader .teams-role { color: var(--t-gold); }
+.teams-card--leader .teams-text { color: rgba(255, 255, 255, 0.9); }
+
+/* VOICES (testimonials and special thanks): white raised cards */
+.teams-card--voice {
+  background: #ffffff;
+  border: 1px solid rgba(28, 58, 82, 0.1);
+  box-shadow: 0 14px 34px rgba(15, 36, 56, 0.09);
+}
+.teams-card--voice:hover { box-shadow: 0 26px 50px rgba(15, 36, 56, 0.17); }
+.teams-card--voice .teams-name { color: var(--t-navy-deep); }
+.teams-card--voice .teams-role { color: var(--t-red); }
+.teams-card--voice .teams-text { color: var(--t-slate); }
+
+/* Cards on a white section get a tinted background so they still read as cards */
+.teams-section--white .teams-card--voice {
+  background: var(--t-sky-low);
+  box-shadow: none;
+}
+.teams-section--white .teams-card--voice:hover {
+  box-shadow: 0 22px 44px rgba(15, 36, 56, 0.13);
+}
+
+/* LOADING SPINNER */
+.teams-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 0;
+  width: 100%;
+}
+.teams-spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(28, 58, 82, 0.15);
+  border-top-color: var(--t-gold);
+  animation: teams-spin 0.85s linear infinite;
+}
+.teams-spinner--light {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-top-color: var(--t-gold);
+}
+@keyframes teams-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .teams-card { flex-basis: 100%; max-width: 440px; gap: 18px; }
+  .teams-text { font-size: 1rem; line-height: 1.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .teams-card,
+  .teams-spinner { transition: none; animation: none; }
+  .teams-card:hover { transform: none; }
+}

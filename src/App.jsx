@@ -12,6 +12,7 @@ import Skill from "./pages/Sermon";
 import Testimonials from "./pages/Travel";
 import Church from "./pages/Church";
 import ChurchSupport from "./pages/ChurchSupport";
+import ChurchTeamsPage from "./pages/ChurchTeamsPage";
 import Services from "./pages/Services";
 import ServiceDetail from "./pages/ServiceDetail";
 import Media from "./pages/Media";
@@ -35,7 +36,7 @@ function App() {
   );
 
   // Keeps <title> and the head <meta> tags (description, og:*, twitter:*)
-  // in sync with the active i18next language — re-runs on every language
+  // in sync with the active i18next language. Re-runs on every language
   // switch, same as the fetch effects in Home.jsx.
   useDocumentMeta();
 
@@ -61,6 +62,10 @@ function App() {
         <Route
           path="/church-support"
           element={<ChurchSupport />}
+        />
+        <Route
+          path="/church-teams"
+          element={<ChurchTeamsPage />}
         />
 
         {/* Services */}

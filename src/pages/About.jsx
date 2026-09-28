@@ -2,38 +2,31 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
-import RichTextView, { stripHtml, Rich } from "../components/RichTextView";
+import { stripHtml, Rich } from "../components/RichTextView";
 
-// Rich text (formatted titles/previews) comes from the shared RichTextView file:
-// <Rich /> keeps colors/bold/links, stripHtml gives plain text for alt/aria.
+// Rich keeps colors/bold/links; stripHtml gives plain text for alt/aria.
+// Leadership, Testimonials and Special Thanks now live in ChurchTeamsPage.jsx.
 
 const ChurchAboutPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Localized church name — falls back to English if no translation exists for the active locale
+  // Localized church name, falls back to English if no translation exists
   const CHURCH_NAME = t("about.churchName", {
     defaultValue:
       "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
   });
 
-  // Localized map query used to build the embedded Google Maps URL below.
-  // NOTE: includes the business name (not just the street address) so the
-  // geocoder resolves to the actual verified Place listing — matching what
-  // opens from the church's Google Maps share link — rather than dropping a
-  // generic pin on the street.
+  // Map query includes the business name so the geocoder resolves to the verified Place listing
   const MAP_QUERY =
     "LA CHIESA ORTODOSSA TEWAHDO D'ETIOPI Abune g.menfeskidus, Via Baldasseria Bassa, 353, 33100 Udine UD, Italy";
 
-  // The verified Google Maps place link (same one people get when they tap
-  // "Directions"/"Share" on the actual listing). Used for the "open in maps"
-  // link below the embed so it points at the exact same place as the embed.
+  // Verified Google Maps place link, same place as the embed
   const MAP_PLACE_URL = "https://maps.app.goo.gl/561B5ceMkyJfWMaZ6";
 
-  const [activeChapter, setActiveChapter] = useState(0);
   const [activeFaq, setActiveFaq] = useState(null);
 
-  // === About/Hero content fetched from /about ===
+  // About/Hero content from /about
   const [about, setAbout] = useState(null);
   const [aboutFallback, setAboutFallback] = useState(false);
   const [aboutLoading, setAboutLoading] = useState(true);
@@ -71,49 +64,7 @@ const ChurchAboutPage = () => {
     fetchAbout();
   }, [t]);
 
-  // === Leadership Team / Special Thanks / Testimonials fetched from /church-persons ===
-  const [leaders, setLeaders] = useState([]);
-  const [thanksList, setThanksList] = useState([]);
-  const [testimonialsList, setTestimonialsList] = useState([]);
-  const [leadersFallback, setLeadersFallback] = useState(false);
-  const [thanksFallback, setThanksFallback] = useState(false);
-  const [testimonialsFallback, setTestimonialsFallback] = useState(false);
-  const [leadersLoading, setLeadersLoading] = useState(true);
-  const [thanksLoading, setThanksLoading] = useState(true);
-  const [testimonialsLoading, setTestimonialsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchChurchPersons = async (category, setter, setFallback, setLoading) => {
-      try {
-        setLoading(true);
-        setFallback(false);
-
-        let res = await API.get("/church-persons", { params: { category } });
-        let data = Array.isArray(res.data) ? res.data : [];
-
-        if (data.length === 0) {
-          res = await API.get("/church-persons", {
-            params: { category },
-            headers: { "Accept-Language": "en" },
-          });
-          data = Array.isArray(res.data) ? res.data : [];
-          if (data.length > 0) setFallback(true);
-        }
-
-        setter(data);
-      } catch (err) {
-        console.error(`Error fetching ${category}:`, err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChurchPersons("leader", setLeaders, setLeadersFallback, setLeadersLoading);
-    fetchChurchPersons("specialThanks", setThanksList, setThanksFallback, setThanksLoading);
-    fetchChurchPersons("testimony", setTestimonialsList, setTestimonialsFallback, setTestimonialsLoading);
-  }, [t]);
-
-  // === "Our Church Story" chapters fetched from /church-story (paginated server-side) ===
+  // "Our Church Story" chapters from /church-story (paginated server-side)
   const HISTORY_PAGE_SIZE = 10;
   const [history, setHistory] = useState([]);
   const [historyPage, setHistoryPage] = useState(1);
@@ -169,7 +120,7 @@ const ChurchAboutPage = () => {
     fetchHistory(nextPage);
   };
 
-  // === Mission & Vision fetched from /mission-vision ===
+  // Mission & Vision from /mission-vision
   const [missionVision, setMissionVision] = useState([]);
   const [missionVisionLoading, setMissionVisionLoading] = useState(true);
   const [missionVisionFallback, setMissionVisionFallback] = useState(false);
@@ -209,7 +160,7 @@ const ChurchAboutPage = () => {
     fetchMissionVision();
   }, [t]);
 
-  // === Faith questions fetched from /faq?category=Faith — shown in its own section above the FAQ section ===
+  // Faith questions from /faq?category=Faith, shown above the FAQ section
   const [faithFaqs, setFaithFaqs] = useState([]);
   const [faithFaqsLoading, setFaithFaqsLoading] = useState(true);
   const [faithFaqsFallback, setFaithFaqsFallback] = useState(false);
@@ -237,7 +188,7 @@ const ChurchAboutPage = () => {
         setFaithFaqs(
           sorted.map((item) => ({
             q: stripHtml(item.question), // plain text for the button label
-            a: item.answer,              // HTML, rendered with RichTextView
+            a: item.answer, // HTML, rendered with Rich
           }))
         );
       } catch (err) {
@@ -250,7 +201,7 @@ const ChurchAboutPage = () => {
     fetchFaithFaqs();
   }, [t]);
 
-  // === FAQ accordion fetched from /faq?category=Information ===
+  // FAQ accordion from /faq?category=Information
   const [faqs, setFaqs] = useState([]);
   const [faqLoading, setFaqLoading] = useState(true);
   const [faqFallback, setFaqFallback] = useState(false);
@@ -278,7 +229,7 @@ const ChurchAboutPage = () => {
         setFaqs(
           sorted.map((item) => ({
             q: stripHtml(item.question), // plain text for the button label
-            a: item.answer,              // HTML, rendered with RichTextView
+            a: item.answer, // HTML, rendered with Rich
           }))
         );
       } catch (err) {
@@ -349,129 +300,13 @@ const ChurchAboutPage = () => {
 
         section { padding: 90px 0; position: relative; z-index: 1; }
 
-        .nav-bar {
-          position: sticky; top: 0; z-index: 40;
-          display: flex; align-items: center; gap: 26px;
-          padding: 0 24px; height: 100px;
-          background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid rgba(255,255,255,0.12);
-          overflow-x: auto; white-space: nowrap; scrollbar-width: none;
-        }
-        .nav-bar::-webkit-scrollbar { display: none; }
-        .nav-brand { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.6rem; color: #eaf3f8; margin-right: 10px; flex-shrink: 0; }
-        .nav-item { font-size: 1.05rem; font-weight: 700; color: #ffffff; cursor: pointer; flex-shrink: 0; position: relative; padding: 4px 0; transition: color 0.2s ease; }
-        .nav-item:hover { color: var(--gold); }
-        .nav-item::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 2px; background: var(--gold); transition: width 0.25s ease; }
-        .nav-item:hover::after { width: 100%; }
-        .nav-item.active { color: var(--gold); }
-        .nav-item.active::after { width: 100%; }
-
         .card { background: rgba(255,255,255,0.7); border: 1px solid rgba(28,58,82,0.10); border-radius: 12px; backdrop-filter: blur(6px); }
-
-        .cross-track {
-          position: absolute; top: 0; bottom: 0; width: 50px;
-          display: flex; flex-direction: column; justify-content: space-around; align-items: center;
-          pointer-events: none; z-index: 0;
-        }
-        .cross-track.left { left: 3%; }
-        .cross-track.right { right: 3%; }
-        .wave-cross { animation: waveMotion 3.2s ease-in-out infinite; }
-        @keyframes waveMotion { 0% { transform: translateX(-14px) scaleX(0.85); } 50% { transform: translateX(14px) scaleX(1.2); } 100% { transform: translateX(-14px) scaleX(0.85); } }
-        @media (max-width: 900px) { .cross-track { display: none; } }
-
-        .chapter-rail { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin-bottom: 40px; padding-bottom: 4px; }
-        .chapter-rail::-webkit-scrollbar { display: none; }
-        .chapter-tab {
-          flex-shrink: 0;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.85rem; font-weight: 500;
-          padding: 12px 20px;
-          border-radius: 30px;
-          border: 1.5px solid rgba(28,58,82,0.18);
-          background: rgba(255,255,255,0.5);
-          color: var(--navy);
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .chapter-tab:hover { border-color: var(--gold); }
-        .chapter-tab.active { background: var(--navy-deep); border-color: var(--navy-deep); color: #eaf3f8; }
 
         .fact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: rgba(255,255,255,0.14); border-radius: 12px; overflow: hidden; }
         .fact-item { background: rgba(255,255,255,0.06); padding: 26px 28px; text-align: center; }
         .fact-label { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; letter-spacing: 0.01em; text-transform: none; color: var(--gold); margin: 0 0 10px 0; }
         .fact-value { font-family: 'Nunito Sans', sans-serif; font-size: 1.4rem; font-weight: 600; color: #eaf3f8; margin: 0; line-height: 1.65; }
         @media (max-width: 600px) { .fact-grid { grid-template-columns: 1fr; } }
-
-        .pull-quote { border-left: 4px solid var(--gold); padding-left: 30px; margin: 0; }
-
-        .edu-row {
-          display: grid;
-          grid-template-columns: 160px 1fr;
-          gap: 30px;
-          padding: 30px 0;
-          border-bottom: 1px solid rgba(28,58,82,0.14);
-        }
-        .edu-row:first-child { padding-top: 0; }
-        .edu-row:last-child { border-bottom: none; }
-        .edu-years {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.85rem; font-weight: 500; color: var(--gold);
-          letter-spacing: 0.02em;
-        }
-        @media (max-width: 600px) { .edu-row { grid-template-columns: 1fr; gap: 6px; } }
-
-        .journey-path { position: relative; }
-        .journey-line {
-          position: absolute; left: 21px; top: 12px; bottom: 12px; width: 2px;
-          background: linear-gradient(180deg, var(--gold) 0%, rgba(207,159,63,0.15) 100%);
-        }
-        .journey-step { position: relative; padding: 0 0 46px 64px; }
-        .journey-step:last-child { padding-bottom: 0; }
-        .journey-marker {
-          position: absolute; left: 0; top: 0;
-          width: 44px; height: 44px; border-radius: 50%;
-          background: var(--navy-deep); color: var(--gold);
-          display: flex; align-items: center; justify-content: center;
-          font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.3rem;
-          border: 2px solid var(--gold);
-        }
-
-        .thanks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-        @media (max-width: 900px) { .thanks-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 560px) { .thanks-grid { grid-template-columns: 1fr; } }
-        .thanks-card {
-          display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.14);
-          border-radius: 12px;
-          padding: 26px;
-        }
-        .thanks-photo {
-          width: 100%; aspect-ratio: 1 / 1; border-radius: 12px; object-fit: cover;
-          flex-shrink: 0; border: 3px solid var(--gold); display: block;
-        }
-
-        .dream-card {
-          padding: 32px;
-          border-radius: 12px;
-          background: rgba(255,255,255,0.7);
-          border: 3px solid var(--deep-red);
-        }
-        .dream-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-        @media (max-width: 650px) { .dream-grid { grid-template-columns: 1fr; } }
-
-        .photo-card {
-          overflow: hidden;
-          background: #ffffff;
-          border-radius: 12px;
-          border: 1px solid rgba(28,58,82,0.10);
-          box-shadow: 0 10px 24px rgba(15,36,56,0.10);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .photo-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(15,36,56,0.16); }
-        .photo-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
-        .photo-card-body { padding: 18px 20px 22px 20px; }
 
         .body-copy {
           font-family: 'Nunito Sans', sans-serif;
@@ -483,17 +318,6 @@ const ChurchAboutPage = () => {
         }
         .body-copy.on-dark { color: #ffffff; }
         .body-copy.on-red { color: rgba(255,255,255,0.9); }
-
-        .badge {
-          display: inline-block;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.75rem; letter-spacing: 0.06em;
-          padding: 8px 16px; border-radius: 20px;
-          background: rgba(207,159,63,0.14);
-          border: 1px solid rgba(207,159,63,0.4);
-          color: var(--gold);
-          margin-bottom: 20px;
-        }
 
         .accordion-item { border-bottom: 1px solid rgba(28,58,82,0.14); }
         .accordion-item:first-child { border-top: 1px solid rgba(28,58,82,0.14); }
@@ -511,38 +335,6 @@ const ChurchAboutPage = () => {
         }
         .accordion-icon { font-family: 'IBM Plex Mono', monospace; color: var(--gold); font-size: 1.2rem; flex-shrink: 0; margin-left: 20px; }
         .accordion-body { padding: 0 4px 24px 4px; max-width: 640px; }
-
-        .list-card {
-          display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-          padding: 20px 24px; border-radius: 10px;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.14);
-        }
-        .list-card + .list-card { margin-top: 12px; }
-        .list-card-title { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 1.3rem; color: #ffffff; }
-        .list-card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--gold); }
-
-        .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-        @media (max-width: 800px) { .testimonial-grid { grid-template-columns: 1fr; } }
-        .testimonial-card { padding: 30px; border-radius: 12px; }
-        .testimonial-photo {
-          width: 100%;
-          aspect-ratio: 1 / 1;
-          object-fit: cover;
-          border-radius: 10px;
-          border: 3px solid var(--gold);
-          margin-bottom: 18px;
-          display: block;
-        }
-        .testimonial-title {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase;
-          color: var(--deep-red); margin: 2px 0 0 0;
-        }
-
-        .lang-toggle { display: inline-flex; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.3); overflow: hidden; margin-bottom: 24px; }
-        .lang-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; padding: 8px 16px; background: transparent; border: none; color: #eaf3f8; cursor: pointer; }
-        .lang-btn.active { background: var(--gold); color: var(--navy-deep); font-weight: 700; }
 
         .cta-band { text-align: center; }
 
@@ -701,9 +493,6 @@ const ChurchAboutPage = () => {
         @media (max-width: 900px) {
           section { padding: 60px 0; }
           .about-section { padding: 60px 0; }
-          .nav-bar { height: 80px; gap: 20px; padding: 0 16px; }
-          .nav-brand { font-size: 1.3rem; }
-          .nav-item { font-size: 0.95rem; }
           .about-hero-flex { gap: 36px !important; }
         }
 
@@ -715,10 +504,6 @@ const ChurchAboutPage = () => {
 
           .give-info-box { width: 100% !important; padding: 22px !important; }
           .give-info-box p { word-break: break-word; }
-
-          .thanks-card { padding: 20px; }
-
-          .testimonial-card { padding: 22px; }
         }
 
         @media (max-width: 600px) {
@@ -727,18 +512,12 @@ const ChurchAboutPage = () => {
           .wrapper { padding: 0 16px; }
           .about-container { padding: 0 16px; }
 
-          .nav-bar { height: 64px; gap: 16px; padding: 0 14px; }
-          .nav-brand { font-size: 1.1rem; margin-right: 4px; }
-          .nav-item { font-size: 0.85rem; }
-
           .about-hero-flex { gap: 28px !important; }
           .about-hero-image-col { flex: 0 1 260px !important; min-width: 220px !important; }
 
           .hero-title { margin-bottom: 20px !important; }
           .hero-desc { font-size: 1.05rem !important; line-height: 1.55 !important; margin-bottom: 20px !important; max-width: none !important; }
 
-          /* Same fix applied to every description/body paragraph on the page,
-             not just the hero: oversized text and uneven spacing on mobile */
           .body-copy,
           .about-description,
           .fact-value {
@@ -750,9 +529,6 @@ const ChurchAboutPage = () => {
           .fact-item { padding: 20px; }
           .accordion-head { font-size: 1.25rem; padding: 20px 4px; }
           .accordion-body { padding: 0 4px 20px 4px; }
-
-          .lang-toggle { margin-bottom: 18px; }
-          .lang-btn { padding: 7px 13px; font-size: 0.72rem; }
         }
 
         @media (max-width: 480px) {
@@ -760,9 +536,6 @@ const ChurchAboutPage = () => {
           .about-section { padding: 32px 0; }
           .wrapper { padding: 0 14px; }
           .about-container { padding: 0 14px; }
-
-          .nav-bar { height: 56px; gap: 12px; }
-          .nav-brand { display: none; }
 
           .about-hero-flex { gap: 22px !important; }
           .about-hero-text-col { min-width: 0 !important; }
@@ -788,9 +561,6 @@ const ChurchAboutPage = () => {
           .about-container { padding: 0 12px; }
           section { padding: 26px 0; }
           .about-section { padding: 26px 0; }
-
-          .nav-bar { gap: 10px; padding: 0 12px; }
-          .nav-item { font-size: 0.78rem; }
 
           .about-image { height: 300px; }
         }
@@ -834,14 +604,11 @@ const ChurchAboutPage = () => {
           .about-label { display: block; text-align: center; }
         }
 
-        /* Center all titles, body text, leader names/roles, and tags on tablet and mobile */
         @media (max-width: 900px) {
           h1.display, h2.display, h4.display { text-align: center !important; }
           .body-copy { text-align: center; }
           .eyebrow { display: block; text-align: center; }
           .about-tags { justify-content: center; }
-          .thanks-card, .testimonial-card, .list-card, .dream-card { text-align: center; }
-          .list-card { justify-content: center; }
           .accordion-head { justify-content: center; text-align: center; }
           .accordion-body { text-align: center; margin: 0 auto; }
           .fact-item { text-align: center !important; }
@@ -882,9 +649,7 @@ const ChurchAboutPage = () => {
                 <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   <Rich html={about?.title} fallback={t("about.hero.titleFallback")} />
                 </h1>
-                {/* Inside a <Link>: links in the text become plain underlined
-                    text (an <a> inside an <a> is invalid); the whole block
-                    still opens the about page. Full text, not truncated. */}
+                {/* Inside a Link: links in the text render as plain underlined text (nested anchors are invalid) */}
                 <Rich
                   className="hero-desc"
                   inline={false}
@@ -974,7 +739,7 @@ const ChurchAboutPage = () => {
             <div className="fact-grid">
               {missionVision.map((m, i) => (
                 <div className="fact-item" key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  {/* <div>, not <p>: rich text renders block HTML */}
+                  {/* div, not p: rich text renders block HTML */}
                   <div className="fact-label" style={{ textAlign: 'center' }}>
                     <Rich html={m.label} unwrapLinks={false} />
                   </div>
@@ -1000,10 +765,7 @@ const ChurchAboutPage = () => {
           )}
 
           {history.map((item, index) => {
-            // Only the most recent story (index 0, i.e. the latest chapter)
-            // is shown in full — older ones are truncated to a word limit
-            // (formatting kept) so the page stays scannable and the
-            // "Read full story" link has a real purpose for them.
+            // Only the latest chapter (index 0) is shown in full, older ones are truncated
             const STORY_WORD_LIMIT = 60;
             const isLatest = index === 0;
 
@@ -1035,7 +797,7 @@ const ChurchAboutPage = () => {
                 <h2 className="about-title">
                   <Rich html={item.title} unwrapLinks={false} />
                 </h2>
-                {/* Not inside a <Link>, so links stay real, clickable links */}
+                {/* Not inside a Link, so links stay clickable */}
                 <div className="about-description">
                   {isLatest ? (
                     <Rich html={item.desc} inline={false} unwrapLinks={false} />
@@ -1081,134 +843,22 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* LEADERSHIP TEAM — order: name, role, description */}
-      <div className="cross-bg" style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
-        <section>
-          <div className="wrapper" style={{ maxWidth: '1000px' }}>
-            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 44px 0', color: '#ffffff', textAlign: 'left' }}>
-              {t("about.leadership.heading")}
-            </h2>
-
-            {leadersFallback && !leadersLoading && (
-              <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#f2d9d9', marginTop: '-24px', marginBottom: '30px' }}>
-                {t("about.leadership.fallbackNotice")}
-              </p>
-            )}
-
-            {leadersLoading ? (
-              <Spinner light />
-            ) : (
-            <div className="thanks-grid">
-              {leaders.map((p) => (
-                <Link
-                  to={`/church-persons/${p.id}`}
-                  className="thanks-card"
-                  key={p.id}
-                  style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }}
-                >
-                  <img
-                    className="thanks-photo"
-                    src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=0f2438&color=fff`}
-                    alt={stripHtml(p.name)}
-                  />
-                  <div>
-                    <h4 className="display" style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 2px 0', color: '#ffffff' }}>{stripHtml(p.name)}</h4>
-                    <div className="eyebrow" style={{ fontSize: '0.75rem' }}><Rich html={p.role} /></div>
-                    <div className="body-copy on-red" style={{ fontSize: '1.2rem', marginTop: '10px' }}>
-                      <Rich html={p.description} words={20} />
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            )}
-          </div>
-        </section>
-      </div>
-
-      {/* TESTIMONIALS — order: name, role, description */}
-      <section style={{ background: '#ffffff' }}>
-        <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
-            {t("about.testimonials.heading")}
+      {/* LINK TO TEAMS PAGE */}
+      <section style={{ background: 'var(--deep-red)', paddingTop: '50px', paddingBottom: '50px' }}>
+        <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
+          <h2 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
+            {t("about.teamLink.heading", { defaultValue: "Meet Our Team" })}
           </h2>
-
-          {testimonialsFallback && !testimonialsLoading && (
-            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
-              {t("about.testimonials.fallbackNotice")}
-            </p>
-          )}
-
-          {testimonialsLoading ? (
-            <Spinner />
-          ) : (
-          <div className="testimonial-grid">
-            {testimonialsList.map((person) => (
-              <Link
-                to={`/church-persons/${person.id}`}
-                className="card testimonial-card"
-                key={person.id}
-                style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
-              >
-                <img
-                  className="testimonial-photo"
-                  src={(person.photos && person.photos[0]) || `https://ui-avatars.com/api/?name=${person.name}&background=0070f3&color=fff`}
-                  alt={stripHtml(person.name)}
-                />
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{stripHtml(person.name)}</p>
-                <div className="testimonial-title"><Rich html={person.role} /></div>
-                <div className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
-                  <Rich html={person.description} words={20} quote />
-                </div>
-              </Link>
-            ))}
-          </div>
-          )}
+          <Link
+            to="/church-teams"
+            style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, borderRadius: '30px', display: 'inline-block' }}
+          >
+            {t("about.teamLink.button", { defaultValue: "View the team" })}
+          </Link>
         </div>
       </section>
 
-      {/* SPECIAL THANKS — order: name, role, description */}
-      <section style={{ background: '#ffffff' }}>
-        <div className="wrapper" style={{ maxWidth: '1000px' }}>
-          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 34px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
-            {t("about.specialThanks.heading")}
-          </h2>
-
-          {thanksFallback && !thanksLoading && (
-            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#888', marginTop: '-14px', marginBottom: '30px' }}>
-              {t("about.specialThanks.fallbackNotice")}
-            </p>
-          )}
-
-          {thanksLoading ? (
-            <Spinner />
-          ) : (
-          <div className="testimonial-grid">
-            {thanksList.map((p) => (
-              <Link
-                to={`/church-persons/${p.id}`}
-                className="card testimonial-card"
-                key={p.id}
-                style={{ textDecoration: "none", color: "inherit", cursor: "pointer", display: "block" }}
-              >
-                <img
-                  className="testimonial-photo"
-                  src={(p.photos && p.photos[0]) || `https://ui-avatars.com/api/?name=${p.name}&background=7a1010&color=fff`}
-                  alt={stripHtml(p.name)}
-                />
-                <p style={{ fontWeight: 700, margin: 0, color: 'var(--navy-deep)' }}>{stripHtml(p.name)}</p>
-                <div className="testimonial-title"><Rich html={p.role} /></div>
-                <div className="body-copy" style={{ fontSize: '1.4rem', marginTop: '12px' }}>
-                  <Rich html={p.description} words={20} />
-                </div>
-              </Link>
-            ))}
-          </div>
-          )}
-        </div>
-      </section>
-
-      {/* FAITH QUESTIONS — its own section, fetched with /faq?category=Faith, shown above the FAQ section */}
+      {/* FAITH QUESTIONS from /faq?category=Faith, above the FAQ section */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
@@ -1243,7 +893,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* FAQ (fetched with /faq?category=Information) */}
+      {/* FAQ from /faq?category=Information */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
@@ -1278,7 +928,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* SUPPORT & GET INVOLVED — merged: account details + give/volunteer buttons in one section */}
+      {/* SUPPORT & GET INVOLVED: account details plus give/volunteer buttons */}
       <div style={{ background: 'var(--deep-red)' }}>
         <section className="cta-band">
           <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
@@ -1312,11 +962,7 @@ const ChurchAboutPage = () => {
               </p>
             </div>
 
-            {/* Give -> the account-numbers section (id="accounts") on
-                ChurchSupport.jsx, mounted at /church-support in App.jsx.
-                Volunteer -> that page's id="volunteer" section. The page
-                already has its own hash-scroll effect (useLocation +
-                scrollIntoView), so these just work once routed there. */}
+            {/* Give and Volunteer link to the #accounts and #volunteer sections on /church-support */}
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
               <Link
                 to="/church-support#accounts"
@@ -1335,10 +981,7 @@ const ChurchAboutPage = () => {
         </section>
       </div>
 
-      {/* FIND US (MAP) — placed directly below the merged Support/Get Involved section.
-          Below the map we now also show the plain-text address and a link to
-          the verified Google Maps place — the same one the embed above uses —
-          so "open in maps" always matches the map that's shown on the page. */}
+      {/* FIND US (MAP) with plain-text address and link to the verified Google Maps place */}
       <div style={{ background: '#ffffff' }}>
         <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
           <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>

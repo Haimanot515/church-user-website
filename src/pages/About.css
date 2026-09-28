@@ -20,8 +20,7 @@
   height: 80vh;
 }
 
-/* Circular loading spinner, identical in behavior to the one used on
-   the Home page */
+/* Circular loading spinner, same as the Home page */
 .loading-spinner-wrap {
   display: flex;
   align-items: center;
@@ -99,9 +98,7 @@
   font-size: 0.85rem;
 }
 
-/* MATCHES HOME: sermon/recommended item title size (2rem) instead of
-   the previous oversized 2.8rem, so item-level headings read at the
-   same scale as Home's post titles */
+/* Matches Home: item title size (2rem) */
 .about-title {
   font-size: 2rem;
   color: #0f172a;
@@ -110,9 +107,7 @@
   line-height: 1.1;
 }
 
-/* MATCHES HOME: sermon item description size (1.5rem / line-height 1.6)
-   instead of the previous 1.1rem, which read noticeably smaller than
-   equivalent body copy on Home */
+/* Matches Home: item description size (1.5rem, line-height 1.6) */
 .about-description {
   font-size: 1.5rem;
   line-height: 1.6;
@@ -142,40 +137,7 @@
   font-weight: 600;
 }
 
-/* LEADER / TESTIMONIAL / SPECIAL-THANKS CARDS
-   (name + role live inside these) */
-.thanks-card,
-.testimonial-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 12px;
-}
-
-.thanks-card h4,
-.testimonial-card p:first-of-type {
-  margin: 0;
-}
-
-.leader-name,
-.testimonial-name {
-  font-weight: 700;
-  color: #0f172a;
-  text-align: center;
-}
-
-.leader-role,
-.testimonial-role {
-  color: #2563eb;
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-/* Hero CTA buttons — kept side by side on mobile instead of stacking,
-   matching the Home page layout */
+/* Hero CTA buttons stay side by side on mobile, like the Home page */
 .hero-cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
 @media (max-width: 600px) {
   .hero-cta-row { flex-wrap: nowrap; gap: 10px; align-items: stretch; }
@@ -216,28 +178,19 @@
     text-align: center;
   }
 
-  /* Role/leader tag centered below the photo once the layout stacks
-     vertically */
+  /* Role tag centers below the photo once the layout stacks */
   .about-label {
     display: block;
     text-align: center;
   }
 
-  /* Every heading, body paragraph, leader name, and role centers on
-     tablet and mobile */
+  /* Headings and paragraphs center on tablet and mobile */
   h1, h2, h3, h4, h5, h6 {
     text-align: center;
   }
 
   .about-container p,
   .about-item p {
-    text-align: center;
-  }
-
-  .leader-name,
-  .leader-role,
-  .testimonial-name,
-  .testimonial-role {
     text-align: center;
   }
 }

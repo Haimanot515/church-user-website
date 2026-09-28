@@ -36,10 +36,8 @@ const ThornCrownLogo = () => (
   </svg>
 );
 
-// Was a native <select> — on mobile that opens the OS's own full-screen
-// picker/popup, which is what you were seeing and wanted changed.
-// Replaced with a plain button + list so it renders as an inline
-// dropdown everywhere (desktop and mobile alike).
+// Language picker is a button + list (not a native select) so it renders
+// as an inline dropdown on desktop and mobile alike.
 const LANGUAGES = [
   { code: "en", label: "EN" },
   { code: "am", label: "አማ" },
@@ -70,8 +68,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Close the language dropdown on outside click / Escape, same
-  // behavior users expect from a normal dropdown.
+  // Close the language dropdown on outside click or Escape
   useEffect(() => {
     if (!isLangOpen) return;
 
@@ -189,9 +186,8 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
             {theme === "light" ? <FaMoon /> : <FaSun />}
           </button>
 
-          {/* Top-level auth buttons — only shown when logged out.
-              Same openLogin/openRegister handlers as the mobile
-              nav-auth buttons below, so both trigger the same modal. */}
+          {/* Top-level auth buttons, only shown when logged out. */}
+          {/* Same openLogin/openRegister handlers as the mobile nav-auth buttons below. */}
           {!loggedIn && (
             <div className="navbar-auth-top">
               <button
@@ -223,6 +219,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
           <div className="nav-links-row">
             <div className="nav-links-primary">
               <Link to="/about" onClick={closeMenu}>{t("navbar.links.about")}</Link>
+              <Link to="/church-teams" onClick={closeMenu}>{t("navbar.links.teams", "Team")}</Link>
               <Link to="/cv" onClick={closeMenu}>{t("navbar.links.church")}</Link>
               <Link to="/skill" onClick={closeMenu}>{t("navbar.links.sermon")}</Link>
               <Link to="/services" onClick={closeMenu}>{t("navbar.links.services")}</Link>
