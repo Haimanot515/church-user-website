@@ -234,3 +234,17 @@ a { color: inherit; text-decoration: none; }
   .media-section:not(:last-child) { margin-bottom: 56px; padding-bottom: 48px; }
   .media-section h2 { font-size: 2rem; }
 }
+
+/* AUDIO PLAYER (play / pause / close) */
+.audio-controls { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.audio-controls .audio-play-btn { margin: 0; flex-shrink: 0; transition: transform 0.15s ease; }
+.audio-controls .audio-play-btn:hover { transform: scale(1.06); }
+.audio-stop-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--navy-deep, #0f2438); color: #fff;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.audio-stop-btn:hover { background: #b3261e; }
+.audio-progress { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+.audio-progress input[type="range"] { width: 100%; accent-color: var(--gold, #cf9f3f); cursor: pointer; }
+.audio-time { font-size: 0.78rem; color: var(--slate, #5b6b7b); font-family: 'IBM Plex Mono', monospace; text-align: center; }

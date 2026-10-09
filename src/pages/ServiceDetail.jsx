@@ -99,19 +99,16 @@ const ServiceDetail = () => {
     .service-detail-image {
       display: block;
       width: 100%;
-      max-width: 420px;
-      aspect-ratio: 4/3;
-      object-fit: cover;
+      height: auto;
       border-radius: 16px;
-      margin: 0 auto 28px auto;
+      margin: 0 0 28px 0;
       box-shadow: 0 18px 30px rgba(15,36,56,0.32);
     }
     .service-detail-image-placeholder {
       width: 100%;
-      max-width: 420px;
-      aspect-ratio: 4/3;
+      aspect-ratio: 16/9;
       border-radius: 16px;
-      margin: 0 auto 28px auto;
+      margin: 0 0 28px 0;
       box-shadow: 0 18px 30px rgba(15,36,56,0.32);
       background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
     }
@@ -119,7 +116,7 @@ const ServiceDetail = () => {
     .service-detail-title {
       font-size: 2.4rem;
       margin: 0 0 12px 0;
-      color: #eaf3f8;
+      color: inherit;
       text-align: center;
     }
     .service-detail-time {
@@ -135,14 +132,14 @@ const ServiceDetail = () => {
     .service-detail-note {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.85rem;
-      color: #a9c2d3;
+      color: #666;
       font-style: italic;
       margin: 0 0 20px 0;
       text-align: center;
     }
     .service-detail-description {
       font-size: 1.2rem;
-      color: #a9c2d3;
+      color: inherit;
       line-height: 1.7;
     }
     /* Rich text renders <p>, <ul>, etc. inside the description wrapper */
@@ -152,11 +149,11 @@ const ServiceDetail = () => {
     /* --- "You may also like" section --- */
     .service-related-section {
       padding: 50px 0 70px 0;
-      background: rgba(255,255,255,0.03);
+      background: #f7f7f7;
     }
     .service-related-title {
       font-size: 1.5rem;
-      color: #eaf3f8;
+      color: #222;
       margin: 0 0 24px 0;
     }
     .service-related-grid {
@@ -188,7 +185,7 @@ const ServiceDetail = () => {
     }
     .service-related-name {
       font-size: 1.05rem;
-      color: #eaf3f8;
+      color: #222;
       margin: 0;
     }
 
@@ -197,7 +194,6 @@ const ServiceDetail = () => {
       .service-detail-section { padding: 50px 0; }
       .service-detail-title { font-size: 2.1rem; }
       .service-detail-description { font-size: 1.1rem; }
-      .service-detail-image, .service-detail-image-placeholder { max-width: 380px; }
     }
 
     /* --- Tablets portrait / large phones (max-width: 768px) ------------------ */
@@ -206,7 +202,6 @@ const ServiceDetail = () => {
       .service-detail-title { font-size: 1.9rem; margin-bottom: 10px; }
       .service-detail-description { font-size: 1.05rem; }
       .service-detail-back-btn { top: 78px; left: 18px; width: 36px; height: 36px; }
-      .service-detail-image, .service-detail-image-placeholder { max-width: 320px; }
       .service-related-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
@@ -215,7 +210,6 @@ const ServiceDetail = () => {
       .service-detail-section { padding: 34px 0; }
       .service-detail-title { font-size: 1.6rem; }
       .service-detail-description { font-size: 1rem; line-height: 1.6; }
-      .service-detail-image, .service-detail-image-placeholder { max-width: 280px; }
       .service-related-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
     }
 
@@ -225,7 +219,6 @@ const ServiceDetail = () => {
       .service-detail-title { font-size: 1.4rem; }
       .service-detail-description { font-size: 0.95rem; }
       .service-detail-back-btn { top: 70px; left: 14px; width: 32px; height: 32px; }
-      .service-detail-image, .service-detail-image-placeholder { max-width: 240px; }
       .service-related-section { padding: 40px 0 50px 0; }
     }
 
@@ -272,7 +265,7 @@ const ServiceDetail = () => {
       <style>{responsiveStyles}</style>
       <BackButton />
 
-      <section className="service-detail-section" style={{ background: "linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)" }}>
+      <section className="service-detail-section">
         <div className="wrapper" style={{ maxWidth: "900px" }}>
           {resolvedImageUrl ? (
             <img
@@ -306,7 +299,7 @@ const ServiceDetail = () => {
       </section>
 
       {related.length > 0 && (
-        <section className="service-related-section" style={{ background: "var(--navy-deep, #0f2438)" }}>
+        <section className="service-related-section">
           <div className="wrapper" style={{ maxWidth: "900px" }}>
             <h3 className="service-related-title">You may also like</h3>
             <div className="service-related-grid">

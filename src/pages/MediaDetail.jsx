@@ -42,6 +42,25 @@ const handleDownload = async (url, title) => {
     window.open(url, "_blank", "noopener,noreferrer");
   }
 };
+const BackButton = () => (
+  <Link to="/media" aria-label="Go back" className="media-detail-back-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  </Link>
+);
+const Shell = ({ children }) => (
+  <div className="media-portal">
+    <div className="cloud-layer">
+      <div className="cloud cloud-a" />
+      <div className="cloud cloud-b" />
+      <div className="cloud cloud-c" />
+    </div>
+    <BackButton />
+    {children}
+  </div>
+);
+
 const MediaDetail = () => {
   const { id } = useParams();
   const [entry, setEntry] = useState(null);
@@ -164,6 +183,14 @@ const MediaDetail = () => {
       }
     }
   };
+  const stopAudio = () => {
+    const el = audioRef.current;
+    if (!el) return;
+    el.pause();
+    el.currentTime = 0;
+    setCurrentTime(0);
+    setIsPlaying(false);
+  };
   const handleSeek = (e) => {
     const el = audioRef.current;
     if (!el) return;
@@ -186,24 +213,6 @@ const MediaDetail = () => {
     el.muted = next;
     setIsMuted(next);
   };
-  const BackButton = () => (
-    <Link to="/media" aria-label="Go back" className="media-detail-back-btn">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </Link>
-  );
-  const Shell = ({ children }) => (
-    <div className="media-portal">
-      <div className="cloud-layer">
-        <div className="cloud cloud-a" />
-        <div className="cloud cloud-b" />
-        <div className="cloud cloud-c" />
-      </div>
-      <BackButton />
-      {children}
-    </div>
-  );
   if (loading) {
     return (
       <Shell>
@@ -331,6 +340,7 @@ const MediaDetail = () => {
             )}
             {entry.mediaType === "audio" && (
               <div className="media-detail-audio-card">
+                <div className="media-detail-audio-controls">
                 <button
                   className="media-detail-audio-play-btn"
                   onClick={toggleAudio}
@@ -342,6 +352,17 @@ const MediaDetail = () => {
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                   )}
                 </button>
+                {(isPlaying || currentTime > 0) && (
+                  <button
+                    type="button"
+                    className="media-detail-audio-stop-btn"
+                    onClick={stopAudio}
+                    aria-label="Close player"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
+                  </button>
+                )}
+                </div>
                 <div className="media-detail-audio-progress">
                   <input
                     type="range"

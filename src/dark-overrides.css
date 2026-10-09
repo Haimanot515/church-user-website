@@ -478,3 +478,30 @@
 [data-theme="dark"] section:has(.faq-item) {
   background: #1a1a1a !important;
 }
+
+/* ============================================================
+   ABOUT FIND US MAP DARK MODE
+   The map section on the About page has a hardcoded white
+   background and inline text colours. Dark-only rules.
+   ============================================================ */
+[data-theme="dark"] .about-map-wrap {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .about-map-heading {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .about-map-desc {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .about-map-wrap .map-address-line {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .about-map-wrap .map-address-link {
+  color: #e6c67a !important;
+}
+[data-theme="dark"] .about-map-wrap .map-address-link:hover {
+  color: #ffffff !important;
+}
+[data-theme="dark"] .about-map-wrap .map-frame iframe {
+  filter: grayscale(0.25) brightness(0.85) contrast(1.05) !important;
+}

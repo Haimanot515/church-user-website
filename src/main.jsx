@@ -5,6 +5,7 @@ import App from "./App";
 import "./i18n";
 import "./theme.css";
 import "./dark-overrides.css";
+import "./dark-detail-fix.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>

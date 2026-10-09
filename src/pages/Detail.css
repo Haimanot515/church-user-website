@@ -230,3 +230,7 @@
     gap: 22px !important;
   }
 }
+/* Blog detail header: plain background like the promotion page */
+.church-portal .hero-blog.hero-blog-plain { background: transparent; }
+.church-portal .hero-blog.hero-blog-plain h1 { color: inherit; }
+.church-portal .hero-blog.hero-blog-plain p { color: #666; }

@@ -76,8 +76,8 @@ const HeroDetail = () => {
     }
     .hero-detail-image {
       width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
+      height: auto;
+      display: block;
       border-radius: 18px;
       margin-bottom: 30px;
       box-shadow: 0 24px 40px rgba(15,36,56,0.35);
@@ -85,11 +85,11 @@ const HeroDetail = () => {
     .hero-detail-title {
       font-size: 2.6rem;
       margin: 0 0 20px 0;
-      color: #eaf3f8;
+      color: inherit;
     }
     .hero-detail-description {
       font-size: 1.3rem;
-      color: #a9c2d3;
+      color: inherit;
       line-height: 1.7;
     }
 
@@ -160,7 +160,7 @@ const HeroDetail = () => {
       <style>{responsiveStyles}</style>
       <BackButton />
 
-      <section className="hero-detail-section" style={{ background: "linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)" }}>
+      <section className="hero-detail-section">
         <div className="wrapper" style={{ maxWidth: "900px" }}>
           {entry.image && (
             <img

@@ -953,13 +953,13 @@ const ChurchAboutPage = () => {
       </div>
 
       {/* FIND US (MAP) with plain-text address and link to the verified Google Maps place */}
-      <div style={{ background: '#ffffff' }}>
+      <div className="about-map-wrap" style={{ background: '#ffffff' }}>
         <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
           <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>
-            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: 'var(--navy-deep)' }}>
+            <h2 className="display about-map-heading" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: 'var(--navy-deep)' }}>
               {t("about.map.heading", { defaultValue: "Find Us" })}
             </h2>
-            <p className="body-copy" style={{ margin: '0 auto 34px auto', maxWidth: '600px', color: 'var(--slate)' }}>
+            <p className="body-copy about-map-desc" style={{ margin: '0 auto 34px auto', maxWidth: '600px', color: 'var(--slate)' }}>
               {t("about.map.description", { churchName: CHURCH_NAME, defaultValue: "Visit us at {{churchName}}." })}
             </p>
             <div className="map-frame" style={{ marginBottom: 0 }}>

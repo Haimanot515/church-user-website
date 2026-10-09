@@ -1,0 +1,131 @@
+/* DARK MODE — DETAIL PAGES TEXT FIX (scoped to html[data-theme="dark"]; light mode untouched) */
+
+/* Page backgrounds that were still white / light */
+html[data-theme="dark"] .church-detail-page,
+html[data-theme="dark"] .service-detail-portal,
+html[data-theme="dark"] .promo-more-section {
+  background: #1a1a1a !important;
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .church-detail-details,
+html[data-theme="dark"] .promo-more-card,
+html[data-theme="dark"] .service-related-card,
+html[data-theme="dark"] .media-detail-related-card {
+  background: #242424 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: none !important;
+}
+
+/* Titles / headings: white */
+html[data-theme="dark"] .church-portal .hero-blog h1,
+html[data-theme="dark"] .church-portal .hero-blog.hero-blog-plain h1,
+html[data-theme="dark"] .church-portal .story-title,
+html[data-theme="dark"] .church-portal .hero-detail-title,
+html[data-theme="dark"] .church-portal .story-related-heading,
+html[data-theme="dark"] .church-portal .story-related-card-title,
+html[data-theme="dark"] .church-portal .card h4,
+html[data-theme="dark"] .church-portal section h3.display,
+html[data-theme="dark"] .service-detail-title,
+html[data-theme="dark"] .service-related-title,
+html[data-theme="dark"] .service-related-name,
+html[data-theme="dark"] .person-detail-name,
+html[data-theme="dark"] .about-detail-title,
+html[data-theme="dark"] .promo-title,
+html[data-theme="dark"] .promo-more-heading,
+html[data-theme="dark"] .promo-more-card-title,
+html[data-theme="dark"] .church-detail-line strong,
+html[data-theme="dark"] .media-detail-title,
+html[data-theme="dark"] .media-detail-related-heading,
+html[data-theme="dark"] .media-detail-related-title,
+html[data-theme="dark"] .media-detail-related-thumb {
+  color: #f8fafc !important;
+}
+
+/* Secondary text: soft white-grey */
+html[data-theme="dark"] .church-portal .hero-blog.hero-blog-plain p,
+html[data-theme="dark"] .church-portal .byline,
+html[data-theme="dark"] .church-portal .story-byline,
+html[data-theme="dark"] .church-portal .post-meta .meta-plain,
+html[data-theme="dark"] .church-portal .card p,
+html[data-theme="dark"] .service-detail-time,
+html[data-theme="dark"] .service-detail-note,
+html[data-theme="dark"] .promo-more-card-desc,
+html[data-theme="dark"] .church-detail-line,
+html[data-theme="dark"] .media-detail-audio-time {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .church-portal .post-meta .dot {
+  background: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Accent labels that were dark red on dark */
+html[data-theme="dark"] .person-detail-title-tag {
+  color: #f0a8a8 !important;
+}
+html[data-theme="dark"] .promo-hero-section span[style*="rgb(211, 47, 47)"],
+html[data-theme="dark"] .promo-more-card-body span[style*="rgb(211, 47, 47)"] {
+  color: #f0a8a8 !important;
+}
+
+/* Rich-text bodies: force readable light colour over editor inline colours
+   (text with an inline background/highlight is left alone) */
+html[data-theme="dark"] :is(
+  .church-portal .desc, .story-rich, .about-detail-description, .promo-description,
+  .church-detail-description, .media-detail-description, .person-detail-quote,
+  .service-detail-description, .service-detail-copy
+),
+html[data-theme="dark"] :is(
+  .church-portal .desc, .story-rich, .about-detail-description, .promo-description,
+  .church-detail-description, .media-detail-description, .person-detail-quote,
+  .service-detail-description, .service-detail-copy
+) :where(*:not(a):not([style*="background"])) {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] :is(
+  .church-portal .desc, .story-rich, .about-detail-description, .promo-description,
+  .church-detail-description, .media-detail-description, .service-detail-description
+) :is(h1, h2, h3, h4, h5, h6, strong, b) {
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .person-detail-quote,
+html[data-theme="dark"] .person-detail-quote :where(*:not(a):not([style*="background"])) {
+  color: #f8fafc !important;
+}
+/* links inside rich text: gold instead of browser/editor blue */
+html[data-theme="dark"] :is(
+  .church-portal .desc, .story-rich, .about-detail-description, .promo-description,
+  .church-detail-description, .media-detail-description, .person-detail-quote,
+  .service-detail-description
+) a,
+html[data-theme="dark"] :is(
+  .church-portal .desc, .story-rich, .about-detail-description, .promo-description,
+  .church-detail-description, .media-detail-description, .person-detail-quote,
+  .service-detail-description
+) a * {
+  color: #e6c67a !important;
+}
+
+/* Inline-styled outline button (blog detail "load more") */
+html[data-theme="dark"] .church-portal button[style*="--navy-deep"] {
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Media detail audio controls */
+html[data-theme="dark"] .media-portal .media-detail-audio-seek {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .media-detail-audio-play-btn {
+  color: #f8fafc !important;
+}
+
+/* Back buttons: keep visible on the dark page */
+html[data-theme="dark"] .person-detail-back-btn,
+html[data-theme="dark"] .media-detail-back-btn {
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .person-detail-back-btn:hover,
+html[data-theme="dark"] .media-detail-back-btn:hover {
+  color: var(--navy-deep, #0f2438) !important;
+}

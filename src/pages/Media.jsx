@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api";
@@ -304,7 +304,53 @@ const AudioSection = ({ items, fallback, t }) => {
   // Tracks which audio track is currently playing inline (by id), so
   // the play button plays the audio right where it is instead of
   // navigating away.
-  const [playingId, setPlayingId] = useState(null);
+  const audioRef = useRef(null);
+  const [activeId, setActiveId] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [time, setTime] = useState(0);
+  const [dur, setDur] = useState(0);
+
+  const fmt = (n) => {
+    if (!Number.isFinite(n)) return "0:00";
+    const m = Math.floor(n / 60);
+    const sec = Math.floor(n % 60);
+    return `${m}:${String(sec).padStart(2, "0")}`;
+  };
+  // Play / pause the same track, or switch to a different one.
+  const togglePlay = (id, url) => {
+    const el = audioRef.current;
+    if (!el) return;
+    if (activeId === id) {
+      if (el.paused) el.play().catch(() => {});
+      else el.pause();
+    } else {
+      setActiveId(id);
+      setTime(0);
+      setDur(0);
+      el.src = url;
+      el.load();
+      el.play().catch(() => {});
+    }
+  };
+  // Close the player completely.
+  const stopAudio = () => {
+    const el = audioRef.current;
+    if (el) {
+      el.pause();
+      el.removeAttribute("src");
+      el.load();
+    }
+    setActiveId(null);
+    setIsPlaying(false);
+    setTime(0);
+    setDur(0);
+  };
+  const seekAudio = (e) => {
+    const el = audioRef.current;
+    const v = Number(e.target.value);
+    if (el) el.currentTime = v;
+    setTime(v);
+  };
   // Tracks which card's three-dot (⋮) menu is currently open, so only
   // one menu shows at a time — same pattern as VideoSection.
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -328,29 +374,60 @@ const AudioSection = ({ items, fallback, t }) => {
       {fallback && (
         <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
       )}
+      <audio
+        ref={audioRef}
+        preload="none"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={stopAudio}
+        onTimeUpdate={(e) => setTime(e.target.currentTime)}
+        onLoadedMetadata={(e) => setDur(e.target.duration)}
+        onDurationChange={(e) => setDur(e.target.duration)}
+      />
       <div className="media-grid">
         {visible.map((a, i) => {
           const id = a.id || i;
-          const isPlaying = playingId === id;
+          const active = activeId === id;
+          const playingNow = active && isPlaying;
           return (
             <div className="grid-card audio-card" style={{ position: "relative" }} key={id}>
-              {isPlaying ? (
-                <audio
-                  className="audio-play-btn"
-                  src={a.mediaUrl}
-                  controls
-                  autoPlay
-                  onEnded={() => setPlayingId(null)}
-                />
-              ) : (
+              <div className="audio-controls">
                 <button
                   type="button"
                   className="audio-play-btn"
-                  aria-label={t("media.video.openAria", { title: a.plainTitle })}
-                  onClick={() => setPlayingId(id)}
+                  aria-label={playingNow ? t("media.audio.pause", { defaultValue: "Pause" }) : t("media.audio.play", { defaultValue: "Play" })}
+                  onClick={() => togglePlay(id, a.mediaUrl)}
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                  {playingNow ? (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+                  ) : (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                  )}
                 </button>
+                {active && (
+                  <button
+                    type="button"
+                    className="audio-stop-btn"
+                    aria-label={t("media.audio.close", { defaultValue: "Close player" })}
+                    onClick={stopAudio}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
+                  </button>
+                )}
+              </div>
+              {active && (
+                <div className="audio-progress">
+                  <input
+                    type="range"
+                    min="0"
+                    max={Number.isFinite(dur) && dur > 0 ? dur : 0}
+                    step="0.1"
+                    value={Number.isFinite(time) ? time : 0}
+                    onChange={seekAudio}
+                    aria-label="Seek"
+                  />
+                  <span className="audio-time">{fmt(time)} / {fmt(dur)}</span>
+                </div>
               )}
               <Link to={`/media/${a.id}`}>
                 <p className="grid-card-title">{a.plainTitle}</p>

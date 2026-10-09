@@ -9,7 +9,7 @@
 
 .church-detail-page {
   font-family: 'Nunito Sans', sans-serif;
-  background: var(--cream);
+  background: #ffffff;
   color: var(--navy);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;

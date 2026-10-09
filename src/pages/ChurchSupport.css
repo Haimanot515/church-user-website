@@ -741,3 +741,78 @@
     transition: none;
   }
 }
+
+/* ============================================================
+   CHURCH SUPPORT DARK MODE
+   This page uses its own --support-* colours and hardcoded white
+   backgrounds, so the global dark theme never reached it.
+   Light mode is untouched: every rule below is dark-only.
+   ============================================================ */
+[data-theme="dark"] .church-support-page {
+  background: #1a1a1a;
+  color: #cbd5e1;
+}
+
+/* Navy hero and volunteer sections are already dark: deepen them slightly */
+[data-theme="dark"] .support-hero {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(207, 159, 63, 0.14), transparent 42%),
+    linear-gradient(180deg, #14283a, #0b1824);
+}
+[data-theme="dark"] .volunteer-section {
+  background: linear-gradient(180deg, #14283a, #0b1824);
+}
+
+/* Light sections become dark (two shades so they still alternate) */
+[data-theme="dark"] .account-section { background: #1a1a1a; }
+[data-theme="dark"] .ways-section { background: #202020; }
+
+[data-theme="dark"] .section-heading h2 { color: #f8fafc; }
+[data-theme="dark"] .section-heading p { color: #9fb3c0; }
+[data-theme="dark"] .light-heading h2 { color: #ffffff; }
+[data-theme="dark"] .light-heading p { color: #a9c2d3; }
+
+/* Account table */
+[data-theme="dark"] .account-table-wrapper {
+  background: #242424;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .account-table thead {
+  background: linear-gradient(180deg, #14283a, #0b1824);
+}
+[data-theme="dark"] .account-table td {
+  color: #cbd5e1;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .account-table tbody tr:hover { background: #2e2e2e; }
+[data-theme="dark"] .account-table td:first-child { color: #e5bd67; }
+[data-theme="dark"] .account-table td strong { color: #f8fafc; }
+[data-theme="dark"] .account-number {
+  background: rgba(207, 159, 63, 0.14);
+  border-color: rgba(207, 159, 63, 0.4);
+  color: #e5bd67;
+}
+
+/* Note under the table */
+[data-theme="dark"] .account-note {
+  background: rgba(207, 159, 63, 0.12);
+  border-color: rgba(207, 159, 63, 0.35);
+}
+[data-theme="dark"] .account-note p { color: #e8d4a0; }
+
+/* "Other ways to help" cards */
+[data-theme="dark"] .way-card {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+}
+[data-theme="dark"] .way-card:hover { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6); }
+[data-theme="dark"] .way-card h3 { color: #f8fafc; }
+[data-theme="dark"] .way-card p { color: #9fb3c0; }
+
+/* Contact banner */
+[data-theme="dark"] .support-cta {
+  background: linear-gradient(135deg, #14283a, #0b1824);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}

@@ -944,3 +944,33 @@ img, video { max-width: 100%; height: auto; }
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
+/* BRIGHT PHOTO ARROWS - big gold buttons that stand out on any background */
+.photo-carousel .photo-arrow {
+  width: 56px; height: 56px;
+  background: var(--gold, #f5b800) !important;
+  color: var(--navy-deep, #0f2438) !important;
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  opacity: 1;
+}
+.photo-carousel .photo-arrow svg { width: 26px; height: 26px; }
+.photo-carousel .photo-arrow:hover:not(:disabled) {
+  background: var(--navy-deep, #0f2438) !important;
+  color: #ffffff !important;
+  border-color: var(--gold, #f5b800) !important;
+}
+.photo-carousel .photo-arrow:disabled { opacity: 0.45; }
+[data-theme="dark"] .photo-carousel .photo-arrow {
+  background: var(--gold, #f5b800) !important;
+  color: #0f2438 !important;
+  border-color: #ffffff !important;
+}
+[data-theme="dark"] .photo-carousel .photo-arrow:hover:not(:disabled) {
+  background: #ffffff !important;
+  color: #0f2438 !important;
+  border-color: var(--gold, #f5b800) !important;
+}
+@media (max-width: 700px) {
+  .photo-carousel .photo-arrow { width: 46px; height: 46px; }
+  .photo-carousel .photo-arrow svg { width: 22px; height: 22px; }
+}

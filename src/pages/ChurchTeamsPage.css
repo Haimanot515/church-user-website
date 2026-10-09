@@ -230,3 +230,55 @@
   .teams-spinner { transition: none; animation: none; }
   .teams-card:hover { transform: none; }
 }
+
+/* ============================================================
+   TEAM PAGE DARK MODE
+   This page uses its own --t-* colours and hardcoded light
+   backgrounds, so the global dark theme never reached it.
+   Light mode is untouched: every rule below is dark-only.
+   ============================================================ */
+[data-theme="dark"] .teams-page {
+  background: #1a1a1a;
+  color: #f8fafc;
+}
+
+/* Intro banner and red leadership section are already dark: just deepen them a little */
+[data-theme="dark"] .teams-hero {
+  background: linear-gradient(180deg, #14283a 0%, #0b1824 100%);
+}
+[data-theme="dark"] .teams-section--red { background: #5a0c0c; }
+
+/* Light sections become dark (two shades so they still alternate) */
+[data-theme="dark"] .teams-section--sky { background: #1a1a1a; }
+[data-theme="dark"] .teams-section--white { background: #202020; }
+
+[data-theme="dark"] .teams-heading { color: #f8fafc; }
+[data-theme="dark"] .teams-section--red .teams-heading { color: #ffffff; }
+[data-theme="dark"] .teams-notice { color: #9fb3c0; }
+[data-theme="dark"] .teams-section--red .teams-notice { color: #f2d9d9; }
+
+/* White "voice" cards (testimonials and special thanks) */
+[data-theme="dark"] .teams-card--voice {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+}
+[data-theme="dark"] .teams-card--voice:hover {
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] .teams-section--white .teams-card--voice {
+  background: #2a2a2a;
+  box-shadow: none;
+}
+[data-theme="dark"] .teams-section--white .teams-card--voice:hover {
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .teams-card--voice .teams-name { color: #f8fafc; }
+[data-theme="dark"] .teams-card--voice .teams-role { color: #f0a8a8; }
+[data-theme="dark"] .teams-card--voice .teams-text { color: #cbd5e1; }
+
+/* Spinner on dark sections */
+[data-theme="dark"] .teams-spinner {
+  border-color: rgba(255, 255, 255, 0.18);
+  border-top-color: var(--t-gold);
+}

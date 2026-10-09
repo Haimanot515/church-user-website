@@ -5,6 +5,20 @@ import API from "../api/api.jsx";
 import { stripHtml, Rich } from "../components/RichTextView";
 import "./Home.css";
 
+const getMediaUrl = (u) => {
+  if (!u) return null;
+  if (/^(https?:)?\/\//i.test(u) || /^(data|blob):/i.test(u)) return u;
+  const base = (API.defaults.baseURL || "").replace(/\/api\/?$/, "");
+  return `${base}${u.startsWith("/") ? u : `/uploads/${u}`}`;
+};
+const mapPhotos = (d) => {
+  const arr = Array.isArray(d) ? d : d?.media || d?.items || d?.data || d?.photos || [];
+  return arr
+    .filter((m) => m.status !== "draft")
+    .map((m) => ({ ...m, mediaUrl: getMediaUrl(m.mediaUrl || m.url || m.image || m.imageUrl) }))
+    .filter((m) => m.mediaUrl);
+};
+
 const POSTS_PER_PAGE = 10;
 
 // Rich text (formatted titles/previews) comes from the shared RichTextView file:
@@ -244,23 +258,11 @@ const Home = () => {
   // remember (via pendingPhotoIndex) which photo to land on: the FIRST photo
   // when going forward, the LAST photo when going back.
   const showPrevPhoto = () => {
-    if (photosPageLoading) return;
-    if (photoIndex > 0) {
-      setPhotoIndex((i) => i - 1);
-    } else if (photosPage > 1) {
-      pendingPhotoIndex.current = "last";
-      setPhotosPage((p) => p - 1);
-    }
+    if (photos.length > 1) setPhotoIndex((i) => (i - 1 + photos.length) % photos.length);
   };
 
   const showNextPhoto = () => {
-    if (photosPageLoading) return;
-    if (photoIndex < photos.length - 1) {
-      setPhotoIndex((i) => i + 1);
-    } else if (photosPage < photosTotalPages) {
-      pendingPhotoIndex.current = 0;
-      setPhotosPage((p) => p + 1);
-    }
+    if (photos.length > 1) setPhotoIndex((i) => (i + 1) % photos.length);
   };
 
   const angelScrollRef = useRef(null);
@@ -460,51 +462,44 @@ const Home = () => {
   }, [sponsoredDelayPassed, promotions.length]);
 
   useEffect(() => {
-    const fetchPhotos = async (page) => {
+    let cancelled = false;
+    const loadPhotos = async () => {
       try {
-        // Only show the full-section spinner on the very first load of
-        // this section. On every later page turn, keep the carousel (and
-        // its arrows) mounted and use a small overlay spinner instead —
-        // otherwise the whole section unmounts on every Next/Prev click
-        // at a page boundary, which looked like the button did nothing.
-        if (!photosLoadedOnce.current) {
-          setPhotosLoading(true);
-        } else {
-          setPhotosPageLoading(true);
-        }
+        setPhotosLoading(true);
         setPhotosError("");
-
-        const res = await API.get("/media/type/photo", {
-          params: {
-            page,
-            limit: 10,
-          },
-        });
-
-        const mediaData = Array.isArray(res.data) ? res.data : res.data.media;
-        const list = mediaData || [];
+        let res = await API.get("/media/type/photo");
+        let list = mapPhotos(res.data);
+        const seen = new Set(list.map((m) => m.id));
+        const addMore = (arr) => arr.forEach((m) => { if (!seen.has(m.id)) { seen.add(m.id); list.push(m); } });
+        // also pull every photo from the main media list (what the Media page shows)
+        try {
+          const all = await API.get("/media");
+          addMore(mapPhotos(all.data).filter((m) => m.mediaType === "photo"));
+        } catch (e) { /* ignore */ }
+        // still fewer than 2? add photos from the other languages too
+        if (list.length < 2) {
+          const others = await Promise.all(["en", "am", "it"].map((l) =>
+            API.get("/media/type/photo", { headers: { "Accept-Language": l } })
+              .then((r) => mapPhotos(r.data)).catch(() => [])));
+          addMore(others.flat());
+        }
+        console.log('[Home photos] loaded:', list.length);
+        if (cancelled) return;
         setPhotos(list);
-        // Land on the first photo (going forward / first load) or the last
-        // photo of the page (going back across a page boundary).
-        setPhotoIndex(
-          pendingPhotoIndex.current === "last"
-            ? Math.max(list.length - 1, 0)
-            : 0
-        );
-        pendingPhotoIndex.current = 0;
-        setPhotosTotalPages(res.data.totalPages || 1);
+        setPhotoIndex(0);
+        setPhotosPage(1);
+        setPhotosTotalPages(1);
       } catch (err) {
         console.log(err);
-        pendingPhotoIndex.current = 0;
-        setPhotosError(err.response?.data?.message || t("home.photos.errorDefault"));
+        if (!cancelled) setPhotosError(err.response?.data?.message || t("home.photos.errorDefault"));
       } finally {
-        setPhotosLoading(false);
-        setPhotosPageLoading(false);
-        photosLoadedOnce.current = true;
+        if (!cancelled) setPhotosLoading(false);
       }
     };
-    fetchPhotos(photosPage);
-  }, [photosPage, t]);
+    loadPhotos();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language]);
 
   // "all" fetches every post with no category filter, same limit as every category.
   // On the first page of a language/category combo, if nothing comes
@@ -1300,13 +1295,14 @@ const Home = () => {
                     className="photo-arrow left"
                     aria-label={t("home.photos.prevAriaLabel")}
                     onClick={showPrevPhoto}
-                    disabled={photosPageLoading || (photoIndex === 0 && photosPage === 1)}
+                    disabled={photos.length < 2}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
                   <img
+                    key={photos[photoIndex]?.id || photoIndex}
                     src={photos[photoIndex]?.mediaUrl}
                     alt={stripHtml(photos[photoIndex]?.title)}
                     onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
@@ -1336,7 +1332,7 @@ const Home = () => {
                     className="photo-arrow right"
                     aria-label={t("home.photos.nextAriaLabel")}
                     onClick={showNextPhoto}
-                    disabled={photosPageLoading || (photoIndex === photos.length - 1 && photosPage === photosTotalPages)}
+                    disabled={photos.length < 2}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -1355,6 +1351,7 @@ const Home = () => {
                     <Rich html={photos[photoIndex]?.description} words={50} unwrapLinks={false} />
                   </div>
                 </div>
+                <p style={{ textAlign: "center", margin: "10px 0 0", fontSize: "14px", color: "#666" }}>{photoIndex + 1} / {photos.length}</p>
                 <div className="photo-dots">
                   {photos.map((_, i) => (
                     <span

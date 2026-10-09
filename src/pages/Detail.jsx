@@ -173,7 +173,7 @@ const Detail = () => {
       <BackButton />
 
       {/* HERO */}
-      <section className="hero-blog">
+      <section className="hero-blog hero-blog-plain">
         <div className="wrapper" style={{ maxWidth: "820px" }}>
           <div className="post-meta" style={{ marginBottom: "18px" }}>
             <span className="tag">{getCategoryName(post)}</span>
@@ -191,14 +191,14 @@ const Detail = () => {
       {/* FEATURED IMAGE */}
       {post.imageUrl && (
         <section style={{ background: "#ffffff" }}>
-          <div className="wrapper" style={{ maxWidth: "980px" }}>
+          <div className="wrapper" style={{ maxWidth: "900px" }}>
             <img
               src={post.imageUrl}
               alt={stripHtml(post.title)}
               style={{
                 width: "100%",
-                aspectRatio: "16/9",
-                objectFit: "cover",
+                height: "auto",
+                display: "block",
                 borderRadius: "10px",
                 boxShadow: "0 16px 30px rgba(0,0,0,0.15)",
               }}

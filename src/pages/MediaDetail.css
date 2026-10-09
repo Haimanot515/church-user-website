@@ -32,7 +32,7 @@
 }
 
 .media-detail-hero {
-  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  background: transparent;
   padding: 70px 0 40px 0;
   text-align: center;
 }
@@ -69,8 +69,8 @@
 /* Photo — bigger standard cap, doesn't grow past this box */
 .media-detail-photo {
   width: 100%;
-  max-width: 520px;
-  max-height: 520px;
+  max-width: none;
+  max-height: none;
   height: auto;
   object-fit: contain;
   display: block;
@@ -400,3 +400,13 @@
 @media (max-width: 480px) {
   .media-detail-back-btn { top: 14px; left: 14px; width: 32px; height: 32px; }
 }
+
+/* AUDIO: play/pause + close side by side */
+.media-detail-audio-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 0 auto 18px auto; }
+.media-detail-audio-controls .media-detail-audio-play-btn { margin: 0; flex-shrink: 0; }
+.media-detail-audio-stop-btn {
+  width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0;
+  background: var(--navy-deep, #0f2438); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.media-detail-audio-stop-btn:hover { background: #b3261e; }
