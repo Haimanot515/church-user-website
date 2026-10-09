@@ -27,7 +27,10 @@
   "audio": {
     "eyebrow": "Ascolta",
     "title": "Audio",
-    "intro": "Inni e registrazioni di predicazioni da ascoltare in qualsiasi momento."
+    "intro": "Inni e registrazioni di predicazioni da ascoltare in qualsiasi momento.",
+    "play": "Riproduci",
+    "pause": "Pausa",
+    "close": "Chiudi il lettore"
   },
   "book": {
     "eyebrow": "Leggi",
@@ -35,9 +38,31 @@
     "intro": "Guide di studio, opuscoli e materiali di lettura da scaricare o leggere online."
   },
   "footer": {
-    "visit": { "title": "Visita", "items": ["Orari delle Funzioni", "Indicazioni", "Cosa Aspettarsi"] },
-    "getInvolved": { "title": "Partecipa", "items": ["Ministeri", "Volontariato", "Dona", "Missioni"] },
-    "connect": { "title": "Connettiti", "items": ["Facebook", "Instagram", "YouTube"] }
+    "visit": {
+      "title": "Visita",
+      "items": [
+        "Orari delle Funzioni",
+        "Indicazioni",
+        "Cosa Aspettarsi"
+      ]
+    },
+    "getInvolved": {
+      "title": "Partecipa",
+      "items": [
+        "Ministeri",
+        "Volontariato",
+        "Dona",
+        "Missioni"
+      ]
+    },
+    "connect": {
+      "title": "Connettiti",
+      "items": [
+        "Facebook",
+        "Instagram",
+        "YouTube"
+      ]
+    }
   },
   "errors": {
     "mediaDefault": "Impossibile caricare i contenuti multimediali"

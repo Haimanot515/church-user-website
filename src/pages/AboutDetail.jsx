@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import RichTextView, { stripHtml, Rich } from "../components/RichTextView";
 import "./AboutDetail.css";
+import Spinner from "../components/Spinner";
 
 /**
  * RICH TEXT: title and description are RichTextField HTML. Both are shown
@@ -10,6 +12,7 @@ import "./AboutDetail.css";
  * underlined automatically. Only the image alt text is plain text.
  */
 const AboutDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [entry, setEntry] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +34,7 @@ const AboutDetail = () => {
         setEntry(match || null);
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.message || "Failed to load this entry");
+        setError(err.response?.data?.message || t("common.errors.entry"));
       } finally {
         setLoading(false);
       }
@@ -40,7 +43,7 @@ const AboutDetail = () => {
   }, [id]);
 
   const BackButton = () => (
-    <Link to="/about" aria-label="Go back" className="about-detail-back-btn">
+    <Link to="/about" aria-label={t("common.goBack")} className="about-detail-back-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -52,7 +55,7 @@ const AboutDetail = () => {
       <div className="church-portal">
         <BackButton />
         <div className="wrapper" style={{ padding: "80px 0", textAlign: "center" }}>
-          <p>Loading...</p>
+          <Spinner />
         </div>
       </div>
     );
@@ -63,8 +66,8 @@ const AboutDetail = () => {
       <div className="church-portal">
         <BackButton />
         <div className="wrapper" style={{ padding: "80px 0", textAlign: "center" }}>
-          <p style={{ color: "red" }}>{error || "Not found."}</p>
-          <Link to="/about" style={{ color: "var(--gold, #b8860b)" }}>Back to About</Link>
+          <p style={{ color: "red" }}>{error || t("common.notFound")}</p>
+          <Link to="/about" style={{ color: "var(--gold, #b8860b)" }}>{t("common.backTo.about")}</Link>
         </div>
       </div>
     );
@@ -76,12 +79,12 @@ const AboutDetail = () => {
 
       <section className="about-detail-section">
         <div className="wrapper" style={{ maxWidth: "900px" }}>
-          <span className="about-detail-label">From the Priest</span>
+          <span className="about-detail-label">{t("common.labels.fromThePriest")}</span>
 
           {entry.image && (
             <img
               src={entry.image}
-              alt={stripHtml(entry.title) || "Priest"}
+              alt={stripHtml(entry.title) || t("common.labels.priest")}
               className="about-detail-image"
             />
           )}

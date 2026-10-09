@@ -19,11 +19,20 @@
     "contact": "Contact",
     "media": "Media",
     "books": "Books",
-    "admin": "Admin"
+    "admin": "Admin",
+    "dailyMisbak": "Daily Misbak"
   },
   "auth": {
     "login": "Login",
     "register": "Register",
     "logout": "Logout"
+  },
+  "language": {
+    "toggle": "Change language"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "dark": "Dark mode",
+    "light": "Light mode"
   }
 }

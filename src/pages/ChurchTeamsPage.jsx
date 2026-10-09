@@ -4,12 +4,8 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import { stripHtml, Rich } from "../components/RichTextView";
 import "./ChurchTeamsPage.css";
+import Spinner from "../components/Spinner";
 
-const Spinner = ({ light }) => (
-  <div className="teams-spinner-wrap">
-    <div className={`teams-spinner${light ? " teams-spinner--light" : ""}`} />
-  </div>
-);
 
 // One person card. variant is "leader" (red section) or "voice" (white cards)
 const PersonCard = ({ person, variant, avatarBg, quote }) => (

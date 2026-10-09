@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import { stripHtml, Rich } from "../components/RichTextView";
+import Spinner from "../components/Spinner";
+import useInView from "../hooks/useInView";
 
 // Rich keeps colors/bold/links; stripHtml gives plain text for alt/aria.
 // Leadership, Testimonials and Special Thanks now live in ChurchTeamsPage.jsx.
@@ -25,6 +27,11 @@ const ChurchAboutPage = () => {
   const MAP_PLACE_URL = "https://maps.app.goo.gl/561B5ceMkyJfWMaZ6";
 
   const [activeFaq, setActiveFaq] = useState(null);
+  // Lower sections only request their data when the visitor scrolls near them.
+  const [historyRef, historySeen] = useInView();
+  const [missionRef, missionSeen] = useInView();
+  const [faithRef, faithSeen] = useInView();
+  const [faqRef, faqSeen] = useInView();
 
   // About/Hero content from /about
   const [about, setAbout] = useState(null);
@@ -110,9 +117,9 @@ const ChurchAboutPage = () => {
   };
 
   useEffect(() => {
-    fetchHistory(1);
+    if (historySeen) fetchHistory(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t]);
+  }, [t, historySeen]);
 
   const handleLoadMoreStory = () => {
     const nextPage = historyPage + 1;
@@ -157,8 +164,8 @@ const ChurchAboutPage = () => {
         setMissionVisionLoading(false);
       }
     };
-    fetchMissionVision();
-  }, [t]);
+    if (missionSeen) fetchMissionVision();
+  }, [t, missionSeen]);
 
   // Faith questions from /faq?category=Faith, shown above the FAQ section
   const [faithFaqs, setFaithFaqs] = useState([]);
@@ -198,8 +205,8 @@ const ChurchAboutPage = () => {
         setFaithFaqsLoading(false);
       }
     };
-    fetchFaithFaqs();
-  }, [t]);
+    if (faithSeen) fetchFaithFaqs();
+  }, [t, faithSeen]);
 
   // FAQ accordion from /faq?category=Information
   const [faqs, setFaqs] = useState([]);
@@ -239,14 +246,9 @@ const ChurchAboutPage = () => {
         setFaqLoading(false);
       }
     };
-    fetchFaqs();
-  }, [t]);
+    if (faqSeen) fetchFaqs();
+  }, [t, faqSeen]);
 
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   return (
     <div className="church-portal">
@@ -719,6 +721,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
+      <div ref={missionRef} />
       {/* MISSION & VISION */}
       <section style={{ background: 'var(--deep-red)', paddingTop: '60px', paddingBottom: '60px' }}>
         <div className="wrapper">
@@ -728,7 +731,7 @@ const ChurchAboutPage = () => {
             </p>
           )}
           {missionVisionLoading ? (
-            <Spinner light />
+            missionSeen ? <Spinner light /> : <div style={{ minHeight: 320 }} />
           ) : (
             <div className="fact-grid">
               {missionVision.map((m, i) => (
@@ -746,6 +749,7 @@ const ChurchAboutPage = () => {
       </section>
 
       {/* OUR STORY (paginated via /church-story?page=&limit=) */}
+      <div ref={historyRef} />
       <section className="about-section" id="our-church-story">
         <div className="about-container">
           <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 50px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
@@ -813,7 +817,7 @@ const ChurchAboutPage = () => {
           })}
 
           {history.length === 0 && historyLoading && (
-            <Spinner />
+            historySeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           )}
 
           {history.length === 0 && !historyLoading && (
@@ -852,6 +856,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
+      <div ref={faithRef} />
       {/* FAITH QUESTIONS from /faq?category=Faith, above the FAQ section */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
@@ -866,7 +871,7 @@ const ChurchAboutPage = () => {
           )}
 
           {faithFaqsLoading ? (
-            <Spinner />
+            faithSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : (
             <div>
               {faithFaqs.map((f, i) => (
@@ -887,6 +892,7 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
+      <div ref={faqRef} />
       {/* FAQ from /faq?category=Information */}
       <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
@@ -901,7 +907,7 @@ const ChurchAboutPage = () => {
           )}
 
           {faqLoading ? (
-            <Spinner />
+            faqSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : (
             <div>
               {faqs.map((f, i) => (

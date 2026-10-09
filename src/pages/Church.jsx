@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import API from "../api/api";
 import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Church.css";
+import Spinner from "../components/Spinner";
+import useInView from "../hooks/useInView";
 
 const Church = () => {
   const { t, i18n } = useTranslation();
@@ -30,23 +32,25 @@ const Church = () => {
 
   const BLOG_LIMIT = 20;
 
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConstructionAd(true), 5000);
     return () => clearTimeout(timer);
   }, []);
 
+  const [blogRef, blogSeen] = useInView();
+
   useEffect(() => {
     fetchPrimaryChurch();
     fetchCurrentChurch();
-    fetchBlogChurches(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
+
+  // The churches list is below the fold: fetch it when it is about to be seen.
+  useEffect(() => {
+    if (blogSeen) fetchBlogChurches(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t, blogSeen]);
 
   const fetchPrimaryChurch = async () => {
     try {
@@ -288,7 +292,7 @@ const Church = () => {
                         currentChurch.church?.image ||
                         ""
                       }
-                      alt={stripHtml(currentChurch.user?.name) || "Leader"}
+                      alt={stripHtml(currentChurch.user?.name) || t("common.labels.leader")}
                     />
                   </Link>
                 ) : (
@@ -299,7 +303,7 @@ const Church = () => {
                       currentChurch.church?.image ||
                       ""
                     }
-                    alt={stripHtml(currentChurch.user?.name) || "Leader"}
+                    alt={stripHtml(currentChurch.user?.name) || t("common.labels.leader")}
                   />
                 )}
                 <span className="serve-now-badge">{t("church.serveNow.badge")}</span>
@@ -361,6 +365,7 @@ const Church = () => {
         </div>
       </section>
 
+      <div ref={blogRef} />
       <section className="blog-section">
         <div className="wrapper">
           <div className="blog-head">
@@ -370,7 +375,7 @@ const Church = () => {
           </div>
 
           {blogLoading ? (
-            <Spinner />
+            blogSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : blogError ? (
             <p style={{ color: "red" }}>{blogError}</p>
           ) : visibleBlogChurches.length === 0 ? (

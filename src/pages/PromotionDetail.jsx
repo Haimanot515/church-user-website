@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/api.jsx";
@@ -5,8 +6,10 @@ import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Blog.css";
 import "./Detail.css";
 import "./PromotionDetail.css";
+import Spinner from "../components/Spinner";
 
 const PromotionDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [promotion, setPromotion] = useState(null);
@@ -31,7 +34,7 @@ const PromotionDetail = () => {
         setOtherPromotions((list || []).filter((p) => p.id !== id));
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.message || "Failed to load this promotion");
+        setError(err.response?.data?.message || t("common.errors.promotion"));
       } finally {
         setLoading(false);
       }
@@ -41,7 +44,7 @@ const PromotionDetail = () => {
 
   // === Same fixed top-left back button used on the Detail page ===
   const BackButton = () => (
-    <Link to="/" aria-label="Go back" className="detail-back-btn">
+    <Link to="/" aria-label={t("common.goBack")} className="detail-back-btn">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -53,7 +56,7 @@ const PromotionDetail = () => {
       <div className="church-portal">
         <BackButton />
         <div className="wrapper" style={{ padding: "80px 0", textAlign: "center" }}>
-          <p>Loading promotion...</p>
+          <Spinner />
         </div>
       </div>
     );
@@ -64,8 +67,8 @@ const PromotionDetail = () => {
       <div className="church-portal">
         <BackButton />
         <div className="wrapper" style={{ padding: "80px 0", textAlign: "center" }}>
-          <p style={{ color: "red" }}>{error || "Promotion not found."}</p>
-          <Link to="/" style={{ color: "var(--gold, #b8860b)" }}>Back to Home</Link>
+          <p style={{ color: "red" }}>{error || t("common.errors.promotionNotFound")}</p>
+          <Link to="/" style={{ color: "var(--gold, #b8860b)" }}>{t("common.backTo.home")}</Link>
         </div>
       </div>
     );
@@ -80,13 +83,13 @@ const PromotionDetail = () => {
       <section className="promo-hero-section">
         <div className="wrapper" style={{ maxWidth: "900px" }}>
           <span style={{ fontSize: "0.75rem", fontWeight: "bold", color: "#d32f2f", textTransform: "uppercase", marginBottom: "16px", display: "block" }}>
-            Sponsored Content
+            {t("common.labels.sponsoredContent")}
           </span>
 
           {image && (
             <img
               src={image}
-              alt={stripHtml(promotion.title) || "Sponsored content"}
+              alt={stripHtml(promotion.title) || t("common.labels.sponsoredContent")}
               className="promo-hero-image"
             />
           )}
@@ -102,7 +105,7 @@ const PromotionDetail = () => {
               className="promo-visit-btn"
               onClick={() => window.open(promotion.link, "_blank", "noopener,noreferrer")}
             >
-              Visit Sponsor
+              {t("common.labels.visitSponsor")}
             </button>
           )}
         </div>
@@ -112,7 +115,7 @@ const PromotionDetail = () => {
         <section className="promo-more-section">
           <div className="wrapper" style={{ maxWidth: "1080px" }}>
             <h3 className="promo-more-heading">
-              More Promotions
+              {t("common.related.morePromotions")}
             </h3>
             <div className="promo-more-grid">
               {otherPromotions.map((p) => {
@@ -129,13 +132,13 @@ const PromotionDetail = () => {
                     {thumb && (
                       <img
                         src={thumb}
-                        alt={stripHtml(p.title) || "Sponsored content"}
+                        alt={stripHtml(p.title) || t("common.labels.sponsoredContent")}
                         className="promo-more-thumb"
                       />
                     )}
                     <div className="promo-more-card-body">
                       <span style={{ fontSize: "0.7rem", fontWeight: "bold", color: "#d32f2f", textTransform: "uppercase" }}>
-                        Sponsored
+                        {t("common.labels.sponsored")}
                       </span>
                       <h4 className="promo-more-card-title">
                         {stripHtml(p.title)}

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import { stripHtml } from "../components/RichTextView";
 import "./Book.css";
+import Spinner from "../components/Spinner";
 
 const PAGE_SIZE = 12;
 
@@ -56,15 +57,6 @@ const DownloadIcon = ({ size = 14 }) => (
   </svg>
 );
 
-// Reusable inline loading spinner — same markup/classes as Home.jsx and
-// Media.jsx's Spinner, shown while data is being fetched from the
-// backend so the user never sees hardcoded frontend placeholder
-// content before the real data arrives.
-const Spinner = ({ light }) => (
-  <div className="loading-spinner-wrap">
-    <div className={`loading-spinner${light ? " light" : ""}`} />
-  </div>
-);
 
 // Reusable cover image with graceful fallback to BookIcon
 // if the thumbnail URL is missing or fails to load.

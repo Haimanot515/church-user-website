@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import RichTextView from "../components/RichTextView";
 import "./Blog.css";
+import Spinner from "../components/Spinner";
 
 const POSTS_PER_PAGE = 10;
 
@@ -52,15 +53,6 @@ const Blog = () => {
   // before) have actually arrived.
   const pendingFooterScroll = useRef(false);
 
-  // Reusable inline loading spinner — shown while a section's data is
-  // being fetched from the backend, so no hardcoded frontend placeholder
-  // content is ever visible before the real data arrives. Same markup
-  // and classes as the one in Home.jsx, so it matches exactly.
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   // ---------- Inlined category nav bar state/refs (formerly CategoryNav.jsx) ----------
   const catNavBarRef = useRef(null); // the sticky <nav> itself — measured for its height so scrolling to the post list doesn't leave the first post hidden underneath it

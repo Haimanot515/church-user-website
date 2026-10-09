@@ -15,12 +15,30 @@
   "quickFacts": {
     "heading": "Prima di leggere",
     "items": [
-      { "label": "Paesi visitati", "value": "14, e in aumento" },
-      { "label": "Viaggio preferito finora", "value": "Anno missionario in Kenya, 2019" },
-      { "label": "Prossima partenza", "value": "Ritiro in Scozia — settembre" },
-      { "label": "Filosofia dei bagagli", "value": "Una borsa a testa, sempre. Nessuna eccezione." },
-      { "label": "Chi viaggia", "value": "Staff, anziani e squadre di volontari della congregazione" },
-      { "label": "Souvenir preferito", "value": "Un innario locale o una preghiera scritta a mano" }
+      {
+        "label": "Paesi visitati",
+        "value": "14, e in aumento"
+      },
+      {
+        "label": "Viaggio preferito finora",
+        "value": "Anno missionario in Kenya, 2019"
+      },
+      {
+        "label": "Prossima partenza",
+        "value": "Ritiro in Scozia — settembre"
+      },
+      {
+        "label": "Filosofia dei bagagli",
+        "value": "Una borsa a testa, sempre. Nessuna eccezione."
+      },
+      {
+        "label": "Chi viaggia",
+        "value": "Staff, anziani e squadre di volontari della congregazione"
+      },
+      {
+        "label": "Souvenir preferito",
+        "value": "Un innario locale o una preghiera scritta a mano"
+      }
     ]
   },
   "travelKinds": {
@@ -96,7 +114,8 @@
         "q": "La chiesa viaggia mai solo per riposare, senza alcun impegno di ministero?",
         "a": "Ci proviamo, anche se non sempre ci riusciamo bene. I ritiri dello staff sono pensati esattamente per questo, e stiamo imparando — lentamente — a lasciare che un viaggio sia solo per il riposo, senza trasformarlo in un progetto."
       }
-    ]
+    ],
+    "fallbackNotice": "Contenuto mostrato in inglese."
   },
   "quote": {
     "text": "Ogni viaggio che la nostra chiesa ha fatto ci ha insegnato la stessa lezione da un'angolazione diversa: Dio era già lì prima del nostro arrivo, e vi resterà a lungo dopo che saremo tornati a casa.",

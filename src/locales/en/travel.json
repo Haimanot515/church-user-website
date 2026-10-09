@@ -15,12 +15,30 @@
   "quickFacts": {
     "heading": "Before You Read",
     "items": [
-      { "label": "Countries Visited", "value": "14, and counting" },
-      { "label": "Favorite Trip So Far", "value": "Kenya mission year, 2019" },
-      { "label": "Next Departure", "value": "Scotland retreat — September" },
-      { "label": "Packing Philosophy", "value": "One bag each, always. No exceptions." },
-      { "label": "Who Travels", "value": "Staff, elders, and volunteer teams from the congregation" },
-      { "label": "Souvenir Of Choice", "value": "A local hymn book or prayer written by hand" }
+      {
+        "label": "Countries Visited",
+        "value": "14, and counting"
+      },
+      {
+        "label": "Favorite Trip So Far",
+        "value": "Kenya mission year, 2019"
+      },
+      {
+        "label": "Next Departure",
+        "value": "Scotland retreat — September"
+      },
+      {
+        "label": "Packing Philosophy",
+        "value": "One bag each, always. No exceptions."
+      },
+      {
+        "label": "Who Travels",
+        "value": "Staff, elders, and volunteer teams from the congregation"
+      },
+      {
+        "label": "Souvenir Of Choice",
+        "value": "A local hymn book or prayer written by hand"
+      }
     ]
   },
   "travelKinds": {
@@ -96,7 +114,8 @@
         "q": "Does the church ever travel just for rest, with no ministry attached?",
         "a": "We try to, though we're not always good at it. Staff retreats are meant to be exactly that, and we're learning — slowly — to let a trip be only for rest without turning it into a project."
       }
-    ]
+    ],
+    "fallbackNotice": "Showing English content."
   },
   "quote": {
     "text": "Every trip our church has taken has taught us the same lesson from a different angle: God was already there before we arrived, and He'll stay long after we've gone home.",

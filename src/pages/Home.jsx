@@ -3,7 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import { stripHtml, Rich } from "../components/RichTextView";
+import HomeMediaGrid from "../components/HomeMediaGrid";
 import "./Home.css";
+import Spinner from "../components/Spinner";
+import useInView from "../hooks/useInView";
 
 const getMediaUrl = (u) => {
   if (!u) return null;
@@ -59,6 +62,7 @@ const Home = () => {
   const [photosPage, setPhotosPage] = useState(1);
   const [photosTotalPages, setPhotosTotalPages] = useState(1);
   const [showSponsored, setShowSponsored] = useState(true);
+
   // the sponsored block shouldn't appear immediately on page load — it
   // only becomes eligible to render 10s after mount.
   const [sponsoredDelayPassed, setSponsoredDelayPassed] = useState(false);
@@ -99,14 +103,6 @@ const Home = () => {
   // fallback because the active language had none
   const [recommendedFallback, setRecommendedFallback] = useState(false);
 
-  // Reusable inline loading spinner — shown while a section's data is
-  // being fetched from the backend so the user never sees hardcoded
-  // frontend placeholder content before the real data arrives.
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   // "All" is always first, so users can clear the category filter.
   // Each entry is { name, slug } — slug is the language-independent
@@ -267,6 +263,12 @@ const Home = () => {
 
   const angelScrollRef = useRef(null);
   const sermonSectionRef = useRef(null);
+  // Below-the-fold sections only start their backend request when the
+  // visitor scrolls near them.
+  const [trendingRef, trendingSeen] = useInView();
+  const [recommendedRef, recommendedSeen] = useInView();
+  const [priestRef, priestSeen] = useInView();
+  const [photosRef, photosSeen] = useInView();
   const scrollAngels = (direction) => {
     if (angelScrollRef.current) {
       const amount = angelScrollRef.current.clientWidth * 0.8;
@@ -382,8 +384,8 @@ const Home = () => {
         setPriestLoading(false);
       }
     };
-    fetchPriest();
-  }, [t]);
+    if (priestSeen) fetchPriest();
+  }, [t, priestSeen]);
 
   // Promotions: fetch the 5 most recent. Try current language first; if
   // page 1 is empty, retry explicitly in English and flag the fallback so
@@ -462,6 +464,7 @@ const Home = () => {
   }, [sponsoredDelayPassed, promotions.length]);
 
   useEffect(() => {
+    if (!photosSeen) return undefined;
     let cancelled = false;
     const loadPhotos = async () => {
       try {
@@ -472,7 +475,7 @@ const Home = () => {
         const seen = new Set(list.map((m) => m.id));
         const addMore = (arr) => arr.forEach((m) => { if (!seen.has(m.id)) { seen.add(m.id); list.push(m); } });
         // also pull every photo from the main media list (what the Media page shows)
-        try {
+        if (list.length < 2) try {
           const all = await API.get("/media");
           addMore(mapPhotos(all.data).filter((m) => m.mediaType === "photo"));
         } catch (e) { /* ignore */ }
@@ -499,7 +502,7 @@ const Home = () => {
     loadPhotos();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language]);
+  }, [i18n.language, photosSeen]);
 
   // "all" fetches every post with no category filter, same limit as every category.
   // On the first page of a language/category combo, if nothing comes
@@ -585,8 +588,8 @@ const Home = () => {
         setTrendingLoading(false);
       }
     };
-    fetchTrending(trendingPage);
-  }, [trendingPage, t]);
+    if (trendingSeen) fetchTrending(trendingPage);
+  }, [trendingPage, t, trendingSeen]);
 
   // Recommended: try current language first; if page 1 is empty, retry
   // explicitly in English and flag the fallback so the UI can show a note.
@@ -623,8 +626,8 @@ const Home = () => {
         setRecommendedLoading(false);
       }
     };
-    fetchRecommended(recommendedPage);
-  }, [recommendedPage, t]);
+    if (recommendedSeen) fetchRecommended(recommendedPage);
+  }, [recommendedPage, t, recommendedSeen]);
 
   // prepend "All" (UI-only, never comes from the DB) before the fetched
   // categories. Each entry is stored as { name, slug } — slug is the
@@ -994,7 +997,7 @@ const Home = () => {
                   textDecoration: 'none',
                   color: 'inherit'
                 }}>
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={item.imageUrl}
                     alt={stripHtml(item.title)}
                     style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
@@ -1041,6 +1044,7 @@ const Home = () => {
         </div>
       </section>
 
+      <div ref={trendingRef} />
       <section className="angel-divider">
         {/* wrapper-wide: lets the trending cards spread across a wider row */}
         <div className="wrapper wrapper-wide">
@@ -1056,7 +1060,7 @@ const Home = () => {
           )}
 
           {trendingLoading ? (
-            <Spinner light />
+            trendingSeen ? <Spinner light /> : <div style={{ minHeight: 320 }} />
           ) : (
           <div className="angel-carousel">
             <button type="button" className="angel-arrow left" aria-label={t("home.trending.scrollLeftAriaLabel")} onClick={() => scrollAngels(-1)}>
@@ -1119,6 +1123,7 @@ const Home = () => {
         </div>
       </section>
 
+      <div ref={recommendedRef} />
       <section style={{ background: '#ffffff' }}>
         {/* wrapper-wide: lets the recommended cards use more of the screen */}
         <div className="wrapper wrapper-wide">
@@ -1134,7 +1139,7 @@ const Home = () => {
           )}
 
           {recommendedLoading ? (
-            <Spinner />
+            recommendedSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : recommended.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.recommended.none")}</p>
           ) : (
@@ -1143,7 +1148,7 @@ const Home = () => {
                 <Link key={post.id} to={`/projects/${post.id}`} className="card" style={{ overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.25s ease', background: '#ffffff', backdropFilter: 'none', display: 'block', textDecoration: 'none', color: 'inherit' }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                  <img src={post.imageUrl} alt={stripHtml(post.title)} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
+                  <img loading="lazy" decoding="async" src={post.imageUrl} alt={stripHtml(post.title)} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block', filter: 'brightness(1.25) saturate(1.1)' }} />
                   <div style={{ padding: '18px' }}>
                     <h4 className="display" style={{ fontSize: '2rem', fontWeight: 600, margin: '0 0 8px 0', color: '#a80070' }}><Rich html={post.title} /></h4>
                     <div style={{ fontSize: '1.6rem', color: '#000000', margin: 0 }}><Rich html={post.description} words={20} /></div>
@@ -1179,6 +1184,7 @@ const Home = () => {
         </div>
       </section>
 
+      <div ref={priestRef} />
       <div className="cross-bg" style={{ background: 'var(--deep-red)', position: 'relative', overflow: 'hidden' }}>
         <div className="cross-track left">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -1208,8 +1214,8 @@ const Home = () => {
 
         <section>
           {priestLoading ? (
-            <div className="wrapper">
-              <Spinner light />
+            <div className="wrapper" style={{ minHeight: 320 }}>
+              {priestSeen && <Spinner light />}
             </div>
           ) : (
           <Link to={`/about/${priest?.id}`} style={{
@@ -1226,7 +1232,7 @@ const Home = () => {
             textDecoration: 'none',
             color: 'inherit'
           }} className="wrapper about-card" >
-            <img
+            <img loading="lazy" decoding="async"
               className="about-photo"
               src={priest?.image || "https://images.unsplash.com/photo-1776454660072-222a8bdf122e?auto=format&fit=crop&w=400&q=80"}
               alt={stripHtml(priest?.title) || t("home.priest.imageAltFallback")}
@@ -1277,13 +1283,14 @@ const Home = () => {
         <span className="h-string" />
       </div>
 
+      <div ref={photosRef} />
       <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
         <div className="wrapper photo-wrapper" style={{ maxWidth: '1000px' }}>
           <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.photos.heading")}</h3>
           {photosError && <p style={{ color: 'red', textAlign: 'center' }}>{photosError}</p>}
 
           {photosLoading ? (
-            <Spinner />
+            photosSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : photos.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.photos.none")}</p>
           ) : (
@@ -1301,7 +1308,7 @@ const Home = () => {
                       <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
-                  <img
+                  <img loading="lazy" decoding="async"
                     key={photos[photoIndex]?.id || photoIndex}
                     src={photos[photoIndex]?.mediaUrl}
                     alt={stripHtml(photos[photoIndex]?.title)}
@@ -1343,12 +1350,12 @@ const Home = () => {
                   style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?.id ? 'pointer' : 'default' }}
                   onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
                 >
-                  <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e' }}>
-                    <Rich html={photos[photoIndex]?.title} />
+                  <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <Rich html={photos[photoIndex]?.title} words={8} />
                   </h3>
-                  <div style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px' }}>
+                  <div style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {/* This block is not inside a <Link>, so links stay clickable */}
-                    <Rich html={photos[photoIndex]?.description} words={50} unwrapLinks={false} />
+                    <Rich html={photos[photoIndex]?.description} words={20} unwrapLinks={false} />
                   </div>
                 </div>
                 <p style={{ textAlign: "center", margin: "10px 0 0", fontSize: "14px", color: "#666" }}>{photoIndex + 1} / {photos.length}</p>
@@ -1371,6 +1378,10 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      <HomeMediaGrid type="video" />
+
+      <HomeMediaGrid type="audio" />
 
     </div>
   );

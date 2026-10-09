@@ -19,11 +19,20 @@
     "contact": "Contatti",
     "media": "Media",
     "books": "Libri",
-    "admin": "Amministrazione"
+    "admin": "Amministrazione",
+    "dailyMisbak": "Misbak del giorno"
   },
   "auth": {
     "login": "Accedi",
     "register": "Registrati",
     "logout": "Esci"
+  },
+  "language": {
+    "toggle": "Cambia lingua"
+  },
+  "theme": {
+    "toggle": "Cambia tema",
+    "dark": "Modalità scura",
+    "light": "Modalità chiara"
   }
 }

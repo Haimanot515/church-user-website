@@ -5,12 +5,30 @@
   },
   "quickFacts": {
     "items": [
-      { "label": "Best For", "value": "Questions, feedback, or just saying hello" },
-      { "label": "Response Time", "value": "Usually within 2–3 days" },
-      { "label": "Office Hours", "value": "Tue – Fri, 9:00 AM – 3:00 PM" },
-      { "label": "Urgent Priestly Care", "value": "Call the church office directly" },
-      { "label": "Preferred For Long Notes", "value": "Email over social media" },
-      { "label": "Newsletter", "value": "Monthly, no spam, easy to unsubscribe" }
+      {
+        "label": "Best For",
+        "value": "Questions, feedback, or just saying hello"
+      },
+      {
+        "label": "Response Time",
+        "value": "Usually within 2–3 days"
+      },
+      {
+        "label": "Office Hours",
+        "value": "Tue – Fri, 9:00 AM – 3:00 PM"
+      },
+      {
+        "label": "Urgent Priestly Care",
+        "value": "Call the church office directly"
+      },
+      {
+        "label": "Preferred For Long Notes",
+        "value": "Email over social media"
+      },
+      {
+        "label": "Newsletter",
+        "value": "Monthly, no spam, easy to unsubscribe"
+      }
     ]
   },
   "reachMethods": {
@@ -67,7 +85,8 @@
         "q": "Do you read and reply to every comment on the blog?",
         "a": "We try to. It sometimes takes a week or two, but we've never left one unread."
       }
-    ]
+    ],
+    "fallbackNotice": "Showing English content."
   },
   "quote": {
     "text": "You don't need the right words or a good reason. If something's on your heart, we'd rather hear it imperfectly than not at all.",

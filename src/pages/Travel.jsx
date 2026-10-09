@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api.jsx";
 import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Travel.css";
+import Spinner from "../components/Spinner";
+import useInView from "../hooks/useInView";
 
 /**
  * RICH TEXT: post title/description and FAQ question/answer are
@@ -50,15 +52,6 @@ const Travel = () => {
   const [faqLoading, setFaqLoading] = useState(true);
   const [faqFallback, setFaqFallback] = useState(false);
 
-  // Reusable inline loading spinner — shown while a section's data is
-  // being fetched from the backend, so no hardcoded frontend placeholder
-  // content is ever visible before the real data arrives. Same
-  // markup/classes as Home.jsx's Spinner, so it renders identically.
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   // === Fetch travel posts, same Accept-Language fallback pattern as
   // ChurchAboutPage's fetchChurchPersons/fetchHistory and Blog's
@@ -106,6 +99,8 @@ const Travel = () => {
     }
   };
 
+  const [faqRef, faqSeen] = useInView();
+
   useEffect(() => {
     fetchTravelPosts(upcomingPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,8 +141,8 @@ const Travel = () => {
         setFaqLoading(false);
       }
     };
-    fetchFaqs();
-  }, [t]);
+    if (faqSeen) fetchFaqs();
+  }, [t, faqSeen]);
 
   const handleLoadMoreTrips = () => {
     if (upcomingPage < upcomingTotalPages) setUpcomingPage((p) => p + 1);
@@ -276,6 +271,7 @@ const Travel = () => {
         </div>
       </section>
 
+      <div ref={faqRef} />
       <section style={{ background: '#ffffff' }}>
         <div className="wrapper" style={{ maxWidth: '760px' }}>
           <h2 className="display" style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
@@ -289,7 +285,7 @@ const Travel = () => {
           )}
 
           {faqLoading ? (
-            <Spinner />
+            faqSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : (
             <div>
               {faqs.map((f, i) => (

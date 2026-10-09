@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import "./CategoryNav.css";
 
@@ -27,6 +28,7 @@ import "./CategoryNav.css";
  *   resumes it a couple of seconds after you let go.
  */
 export default function CategoryNav({ categories, activeCategory, onSelect }) {
+  const { t } = useTranslation();
   const viewportRef = useRef(null); // clipped outer window
   const trackRef = useRef(null); // the moving inner element
   const posRef = useRef(0); // current translateX, always in (-half, 0]
@@ -142,7 +144,7 @@ export default function CategoryNav({ categories, activeCategory, onSelect }) {
   };
 
   return (
-    <nav className="cat-nav-bar" aria-label="Post categories">
+    <nav className="cat-nav-bar" aria-label={t("common.postCategories")}>
       <div
         className="cat-nav-track"
         ref={viewportRef}

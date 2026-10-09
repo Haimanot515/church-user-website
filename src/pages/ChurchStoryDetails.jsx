@@ -1,11 +1,14 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import RichTextView, { stripHtml } from "../components/RichTextView";
+import Spinner from "../components/Spinner";
 
 const RELATED_LIMIT = 3;
 
 const StoryDetail = () => {
+  const { t } = useTranslation();
   const { slug: id } = useParams();
 
   const [post, setPost] = useState(null);
@@ -30,7 +33,7 @@ const StoryDetail = () => {
         setPost(postData || null);
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.message || "Failed to load this chapter");
+        setError(err.response?.data?.message || t("common.errors.chapter"));
       } finally {
         setLoading(false);
       }
@@ -41,7 +44,7 @@ const StoryDetail = () => {
     } else {
       // No id in the route params — surface this instead of hanging on "Loading..." forever
       console.error("StoryDetail: no 'id' route param found. Check that the route is defined as '/about/story/:id'.");
-      setError("This story couldn't be loaded (missing id in the URL).");
+      setError(t("common.errors.storyMissingId"));
       setLoading(false);
     }
     window.scrollTo(0, 0);
@@ -122,7 +125,7 @@ const StoryDetail = () => {
 
   // === Same fixed top-left back button used on Detail / PromotionDetail / HeroDetail ===
   const BackButton = () => (
-    <Link to="/about" aria-label="Back to Our Story" className="story-back-btn">
+    <Link to="/about" aria-label={t("common.backTo.story")} className="story-back-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -237,7 +240,7 @@ const StoryDetail = () => {
         <BackButton />
         <section className="hero-blog">
           <div className="wrapper">
-            <p style={{ textAlign: "center" }}>Loading chapter...</p>
+            <Spinner />
           </div>
         </section>
       </div>
@@ -251,9 +254,9 @@ const StoryDetail = () => {
         <BackButton />
         <section className="hero-blog">
           <div className="wrapper" style={{ textAlign: "center" }}>
-            <p style={{ color: "red" }}>{error || "Chapter not found."}</p>
+            <p style={{ color: "red" }}>{error || t("common.errors.chapterNotFound")}</p>
             <Link to="/about" className="read-more">
-              Back to Our Story
+              {t("common.backTo.story")}
             </Link>
           </div>
         </section>
@@ -335,14 +338,14 @@ const StoryDetail = () => {
         <section style={{ background: "#ffffff" }}>
           <div className="wrapper">
             <h3 className="display story-related-heading" style={{ marginBottom: "34px", textAlign: "center" }}>
-              More of Our Story
+              {t("common.related.moreOfStory")}
             </h3>
 
             <div style={{ position: "relative" }}>
               {relatedPage > 1 && (
                 <button
                   onClick={() => goToRelatedPage(relatedPage - 1)}
-                  aria-label="Previous"
+                  aria-label={t("common.previous")}
                   style={arrowButtonStyle("left")}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -375,7 +378,7 @@ const StoryDetail = () => {
               {relatedPage < relatedTotalPages && (
                 <button
                   onClick={() => goToRelatedPage(relatedPage + 1)}
-                  aria-label="Next"
+                  aria-label={t("common.next")}
                   style={arrowButtonStyle("right")}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

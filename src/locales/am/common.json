@@ -1,0 +1,79 @@
+{
+  "goBack": "ወደ ኋላ ተመለስ",
+  "loading": "በመጫን ላይ",
+  "loadingMore": "በመጫን ላይ...",
+  "loadMore": "ተጨማሪ ጫን",
+  "notFound": "አልተገኘም።",
+  "seek": "ወደ ቦታው ዝለል",
+  "previous": "ቀዳሚ",
+  "next": "ቀጣይ",
+  "page404": "404 - ገጹ አልተገኘም",
+  "postCategories": "የጽሑፍ ምድቦች",
+  "play": "አጫውት",
+  "pause": "ለአፍታ አቁም",
+  "mute": "ድምፅ አጥፋ",
+  "unmute": "ድምፅ አብራ",
+  "download": "አውርድ",
+  "downloadAudio": "ኦዲዮውን አውርድ",
+  "openDocument": "ሰነዱን ክፈት",
+  "moreOptions": "ተጨማሪ አማራጮች",
+  "closePlayer": "ማጫወቻውን ዝጋ",
+  "changeSpeed": "የማጫወት ፍጥነት ቀይር",
+  "backTo": {
+    "about": "ወደ ስለ እኛ ተመለስ",
+    "churches": "ወደ አብያተ ክርስቲያናት ተመለስ",
+    "home": "ወደ መነሻ ገጽ ተመለስ",
+    "media": "ወደ ሚዲያ ተመለስ",
+    "services": "ወደ አገልግሎቶች ተመለስ",
+    "story": "ወደ ታሪካችን ተመለስ",
+    "posts": "ወደ ሁሉም ጽሑፎች ተመለስ"
+  },
+  "related": {
+    "youMayAlsoLike": "እነዚህንም ሊወዱ ይችላሉ",
+    "moreOfStory": "ተጨማሪ የታሪካችን ክፍሎች",
+    "morePromotions": "ተጨማሪ ማስታወቂያዎች"
+  },
+  "errors": {
+    "entry": "ይህን ግቤት መጫን አልተቻለም።",
+    "church": "ይህን ቤተ ክርስቲያን መጫን አልተቻለም።",
+    "chapter": "ይህን ምዕራፍ መጫን አልተቻለም።",
+    "post": "ይህን ጽሑፍ መጫን አልተቻለም።",
+    "item": "ይህን ንጥል መጫን አልተቻለም።",
+    "promotion": "ይህን ማስታወቂያ መጫን አልተቻለም።",
+    "service": "ይህን አገልግሎት መጫን አልተቻለም።",
+    "storyMissingId": "ይህ ታሪክ መጫን አልቻለም (በአድራሻው ውስጥ መለያ ቁጥር የለም)።",
+    "chapterNotFound": "ምዕራፉ አልተገኘም።",
+    "postNotFound": "ጽሑፉ አልተገኘም።",
+    "promotionNotFound": "ማስታወቂያው አልተገኘም።"
+  },
+  "labels": {
+    "primary": "ዋና",
+    "featured": "ተመራጭ",
+    "address": "አድራሻ፡",
+    "service": "አገልግሎት፡",
+    "getDirections": "አቅጣጫ አሳየኝ",
+    "fromThePriest": "ከካህኑ",
+    "priest": "ካህን",
+    "churchHero": "የቤተ ክርስቲያን ዋና ምስል",
+    "featuredService": "ተመራጭ አገልግሎት",
+    "serviceAlt": "አገልግሎት",
+    "sponsoredContent": "በስፖንሰር የቀረበ ይዘት",
+    "sponsored": "ስፖንሰር የተደረገ",
+    "visitSponsor": "ስፖንሰሩን ይጎብኙ",
+    "general": "አጠቃላይ",
+    "leader": "መሪ"
+  },
+  "person": {
+    "leadershipTeam": "የአመራር ቡድን",
+    "specialThanks": "ልዩ ምስጋና",
+    "testimony": "ምስክርነት",
+    "churchFamily": "የቤተ ክርስቲያን ቤተሰብ"
+  },
+  "mediaEyebrow": {
+    "video": "ይመልከቱ",
+    "photo": "ወደ ኋላ ተመልከቱ",
+    "audio": "ያዳምጡ",
+    "document": "ያንብቡ",
+    "default": "ሚዲያ"
+  }
+}

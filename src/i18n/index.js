@@ -24,6 +24,8 @@ import enForm from "../locales/en/form.json";
 import enLogin from "../locales/en/login.json";
 import enVerify from "../locales/en/verify.json";
 import enMeta from "../locales/en/meta.json";
+import enCommon from "../locales/en/common.json";
+import enMisbak from "../locales/en/misbak.json";
 
 // =====================================================
 // AMHARIC
@@ -47,6 +49,8 @@ import amForm from "../locales/am/form.json";
 import amLogin from "../locales/am/login.json";
 import amVerify from "../locales/am/verify.json";
 import amMeta from "../locales/am/meta.json";
+import amCommon from "../locales/am/common.json";
+import amMisbak from "../locales/am/misbak.json";
 
 // =====================================================
 // ITALIAN
@@ -70,6 +74,8 @@ import itForm from "../locales/it/form.json";
 import itLogin from "../locales/it/login.json";
 import itVerify from "../locales/it/verify.json";
 import itMeta from "../locales/it/meta.json";
+import itCommon from "../locales/it/common.json";
+import itMisbak from "../locales/it/misbak.json";
 
 // =====================================================
 // INITIALIZE I18N
@@ -103,6 +109,8 @@ i18n
           login: enLogin,
           verify: enVerify,
           meta: enMeta,
+          common: enCommon,
+          misbak: enMisbak,
         },
       },
 
@@ -129,6 +137,8 @@ i18n
           login: amLogin,
           verify: amVerify,
           meta: amMeta,
+          common: amCommon,
+          misbak: amMisbak,
         },
       },
 
@@ -155,6 +165,8 @@ i18n
           login: itLogin,
           verify: itVerify,
           meta: itMeta,
+          common: itCommon,
+          misbak: itMisbak,
         },
       },
     },

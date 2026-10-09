@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import { stripHtml } from "../components/RichTextView";
 import "./Sermon.css";
+import Spinner from "../components/Spinner";
 
 /**
  * Sermons are fetched from the Media API (`/media/type/video`, same
@@ -93,11 +94,6 @@ const Sermon = () => {
 
   const [openMenuId, setOpenMenuId] = useState(null);
 
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   const currentSermon = sermons[sermonIndex];
 

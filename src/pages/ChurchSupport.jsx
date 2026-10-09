@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import API from "../api/api";
 import "./ChurchSupport.css";
+import Spinner from "../components/Spinner";
 
 const ChurchSupport = () => {
   const { t, i18n } = useTranslation();
@@ -96,7 +97,7 @@ const ChurchSupport = () => {
           </div>
 
           {accountsLoading ? (
-            <p>{t("churchSupport.accounts.loading")}</p>
+            <Spinner />
           ) : accountsError ? (
             <p>{t("churchSupport.accounts.error")}</p>
           ) : (

@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Contact.css";
+import Spinner from "../components/Spinner";
+import useInView from "../hooks/useInView";
 
 /**
  * Reusable infinite-drift + drag-to-scroll strip.
@@ -173,6 +175,8 @@ const Contact = () => {
   const [faqLoading, setFaqLoading] = useState(true);
   const [faqFallback, setFaqFallback] = useState(false);
 
+  const [faqRef, faqSeen] = useInView();
+
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
@@ -209,8 +213,8 @@ const Contact = () => {
         setFaqLoading(false);
       }
     };
-    fetchFaqs();
-  }, [t]);
+    if (faqSeen) fetchFaqs();
+  }, [t, faqSeen]);
 
   // Scroll to whichever section matches the URL hash (e.g. #contact-form,
   // #location) once the page has rendered. Handles any hash generically
@@ -367,6 +371,7 @@ const Contact = () => {
         </div>
       </section>
 
+      <div ref={faqRef} />
       <section style={{ background: "#ffffff" }}>
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <h2 className="display" style={{ fontSize: "clamp(2.4rem, 5vw, 3.4rem)", fontWeight: 700, margin: "0 0 20px 0", color: "var(--navy-deep)" }}>
@@ -380,9 +385,7 @@ const Contact = () => {
           )}
 
           {faqLoading ? (
-            <div className="loading-spinner-wrap">
-              <div className="loading-spinner" />
-            </div>
+            faqSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
           ) : (
             <div>
               {faqs.map((f, i) => (

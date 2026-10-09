@@ -5,12 +5,30 @@
   },
   "quickFacts": {
     "items": [
-      { "label": "Ideale per", "value": "Domande, commenti o anche solo per fare un saluto" },
-      { "label": "Tempo di risposta", "value": "Di solito entro 2–3 giorni" },
-      { "label": "Orari di ufficio", "value": "Mar – Ven, 9:00 – 15:00" },
-      { "label": "Assistenza sacerdotale urgente", "value": "Chiama direttamente l'ufficio parrocchiale" },
-      { "label": "Preferito per messaggi lunghi", "value": "E-mail rispetto ai social media" },
-      { "label": "Newsletter", "value": "Mensile, niente spam, ci si disiscrive facilmente" }
+      {
+        "label": "Ideale per",
+        "value": "Domande, commenti o anche solo per fare un saluto"
+      },
+      {
+        "label": "Tempo di risposta",
+        "value": "Di solito entro 2–3 giorni"
+      },
+      {
+        "label": "Orari di ufficio",
+        "value": "Mar – Ven, 9:00 – 15:00"
+      },
+      {
+        "label": "Assistenza sacerdotale urgente",
+        "value": "Chiama direttamente l'ufficio parrocchiale"
+      },
+      {
+        "label": "Preferito per messaggi lunghi",
+        "value": "E-mail rispetto ai social media"
+      },
+      {
+        "label": "Newsletter",
+        "value": "Mensile, niente spam, ci si disiscrive facilmente"
+      }
     ]
   },
   "reachMethods": {
@@ -67,7 +85,8 @@
         "q": "Leggete e rispondete a ogni commento sul blog?",
         "a": "Proviamo a farlo. A volte occorrono una o due settimane, ma non ne abbiamo mai lasciato uno non letto."
       }
-    ]
+    ],
+    "fallbackNotice": "Contenuto mostrato in inglese."
   },
   "quote": {
     "text": "Non servono le parole giuste o un motivo particolare. Se hai qualcosa nel cuore, preferiamo ascoltarlo in modo imperfetto piuttosto che non ascoltarlo affatto.",

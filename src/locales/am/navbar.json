@@ -19,11 +19,20 @@
     "contact": "ያግኙን",
     "media": "ሚዲያ",
     "books": "መጻሕፍት",
-    "admin": "አስተዳዳሪ"
+    "admin": "አስተዳዳሪ",
+    "dailyMisbak": "የዕለቱ ምስባክ"
   },
   "auth": {
     "login": "ግባ",
     "register": "ተመዝገብ",
     "logout": "ውጣ"
+  },
+  "language": {
+    "toggle": "ቋንቋ ቀይር"
+  },
+  "theme": {
+    "toggle": "ገጽታ ቀይር",
+    "dark": "ጨለማ ሁነታ",
+    "light": "ብርሃን ሁነታ"
   }
 }

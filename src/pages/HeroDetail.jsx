@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import { stripHtml, Rich } from "../components/RichTextView";
+import Spinner from "../components/Spinner";
 
 /**
  * RICH TEXT: title and description are RichTextField HTML. Both are shown
@@ -10,6 +12,7 @@ import { stripHtml, Rich } from "../components/RichTextView";
  * Only the image alt text uses plain text (stripHtml).
  */
 const HeroDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
@@ -32,7 +35,7 @@ const HeroDetail = () => {
         setEntry(match || null);
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.message || "Failed to load this entry");
+        setError(err.response?.data?.message || t("common.errors.entry"));
       } finally {
         setLoading(false);
       }
@@ -42,7 +45,7 @@ const HeroDetail = () => {
 
   // === Same fixed top-left back button used on the Detail / PromotionDetail pages ===
   const BackButton = () => (
-    <Link to="/" aria-label="Go back" className="hero-detail-back-btn">
+    <Link to="/" aria-label={t("common.goBack")} className="hero-detail-back-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -136,7 +139,7 @@ const HeroDetail = () => {
         <style>{responsiveStyles}</style>
         <BackButton />
         <div className="wrapper" style={{ padding: "80px 0", textAlign: "center" }}>
-          <p>Loading...</p>
+          <Spinner />
         </div>
       </div>
     );
@@ -148,8 +151,8 @@ const HeroDetail = () => {
         <style>{responsiveStyles}</style>
         <BackButton />
         <div className="wrapper" style={{ padding: "80px 0", textAlign: "center" }}>
-          <p style={{ color: "red" }}>{error || "Not found."}</p>
-          <Link to="/" style={{ color: "var(--gold, #b8860b)" }}>Back to Home</Link>
+          <p style={{ color: "red" }}>{error || t("common.notFound")}</p>
+          <Link to="/" style={{ color: "var(--gold, #b8860b)" }}>{t("common.backTo.home")}</Link>
         </div>
       </div>
     );
@@ -165,7 +168,7 @@ const HeroDetail = () => {
           {entry.image && (
             <img
               src={entry.image}
-              alt={stripHtml(entry.title) || "Church hero"}
+              alt={stripHtml(entry.title) || t("common.labels.churchHero")}
               className="hero-detail-image"
             />
           )}

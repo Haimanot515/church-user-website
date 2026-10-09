@@ -27,7 +27,10 @@
   "audio": {
     "eyebrow": "Listen",
     "title": "Audio",
-    "intro": "Hymns and sermon recordings you can listen to anytime."
+    "intro": "Hymns and sermon recordings you can listen to anytime.",
+    "play": "Play",
+    "pause": "Pause",
+    "close": "Close player"
   },
   "book": {
     "eyebrow": "Read",
@@ -35,9 +38,31 @@
     "intro": "Study guides, booklets, and reading materials to download or read online."
   },
   "footer": {
-    "visit": { "title": "Visit", "items": ["Service Times", "Directions", "What to Expect"] },
-    "getInvolved": { "title": "Get Involved", "items": ["Ministries", "Volunteer", "Give", "Missions"] },
-    "connect": { "title": "Connect", "items": ["Facebook", "Instagram", "YouTube"] }
+    "visit": {
+      "title": "Visit",
+      "items": [
+        "Service Times",
+        "Directions",
+        "What to Expect"
+      ]
+    },
+    "getInvolved": {
+      "title": "Get Involved",
+      "items": [
+        "Ministries",
+        "Volunteer",
+        "Give",
+        "Missions"
+      ]
+    },
+    "connect": {
+      "title": "Connect",
+      "items": [
+        "Facebook",
+        "Instagram",
+        "YouTube"
+      ]
+    }
   },
   "errors": {
     "mediaDefault": "Failed to load media"

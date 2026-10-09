@@ -1,23 +1,29 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api.jsx";
 import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./Blog.css";
 import "./Detail.css";
+import Spinner from "../components/Spinner";
 
 const RELATED_LIMIT = 3;
 
 // Single source of truth for the back button — rendered once per
 // return path so there's never a chance of two showing at once.
-const BackButton = () => (
-  <Link to="/projects" aria-label="Go back" className="detail-back-btn">
+const BackButton = () => {
+  const { t } = useTranslation();
+  return (
+  <Link to="/projects" aria-label={t("common.goBack")} className="detail-back-btn">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   </Link>
-);
+  );
+};
 
 const Detail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
 
   const [post, setPost] = useState(null);
@@ -43,7 +49,7 @@ const Detail = () => {
         setPost(postData || null);
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.message || "Failed to load this post");
+        setError(err.response?.data?.message || t("common.errors.post"));
       } finally {
         setLoading(false);
       }
@@ -106,7 +112,7 @@ const Detail = () => {
   const getCategoryName = (p) =>
     typeof p.category === "object" && p.category !== null
       ? p.category.name
-      : p.category || "General";
+      : p.category || t("common.labels.general");
 
   const getAuthorName = (p) =>
     typeof p.author === "object" && p.author !== null
@@ -137,7 +143,7 @@ const Detail = () => {
         <BackButton />
         <section className="hero-blog">
           <div className="wrapper">
-            <p style={{ textAlign: "center" }}>Loading post...</p>
+            <Spinner />
           </div>
         </section>
       </div>
@@ -150,9 +156,9 @@ const Detail = () => {
         <BackButton />
         <section className="hero-blog">
           <div className="wrapper" style={{ textAlign: "center" }}>
-            <p style={{ color: "red" }}>{error || "Post not found."}</p>
+            <p style={{ color: "red" }}>{error || t("common.errors.postNotFound")}</p>
             <Link to="/projects" className="read-more">
-              Back to all posts
+              {t("common.backTo.posts")}
             </Link>
           </div>
         </section>
@@ -236,7 +242,7 @@ const Detail = () => {
         <section style={{ background: "#ffffff" }}>
           <div className="wrapper">
             <h3 className="display" style={{ marginBottom: "34px", fontSize: "2.2rem", textAlign: "center" }}>
-              You Might Also Like
+              {t("common.related.youMayAlsoLike")}
             </h3>
 
             <div className="related-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "26px" }}>
@@ -276,7 +282,7 @@ const Detail = () => {
                     opacity: relatedLoadingMore ? 0.6 : 1,
                   }}
                 >
-                  {relatedLoadingMore ? "Loading..." : "Load More"}
+                  {relatedLoadingMore ? t("common.loadingMore") : t("common.loadMore")}
                 </button>
               </div>
             )}

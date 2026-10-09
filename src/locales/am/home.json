@@ -4,19 +4,22 @@
     "closeAriaLabel": "የተደገፈ ይዘት ዝጋ",
     "sponsoredContent": "የተደገፈ ይዘት",
     "imageAltFallback": "የተደገፈ ይዘት",
-    "openButton": "ክፈት"
+    "openButton": "ክፈት",
+    "fallbackNotice": "ይህ ማስታወቂያ በእንግሊዝኛ እየታየ ነው።"
   },
   "hero": {
     "titleFallback": "በጸጋ ላይ የተመሰረተ፣ ወደ ብርሃን የሚደርስ",
     "descriptionFallback": "ከጉባኤያችን የተገኙ ግንዛቤዎች፣ የስብከት ማስታወሻዎች እና ታሪኮች፣ በየሳምንቱ ቅዱስ መጽሐፍን አብረን እየተጓዝን።",
     "watchSermonButton": "የቅርብ ጊዜ ስብከት ይመልከቱ",
     "planVisitButton": "ጉብኝት ያቅዱ",
-    "imageAltFallback": "የክርስቶስ የኦርቶዶክስ ምስል በምስለ በዓት ላይ"
+    "imageAltFallback": "የክርስቶስ የኦርቶዶክስ ምስል በምስለ በዓት ላይ",
+    "fallbackNotice": "የዋና ገጽ ይዘት በእንግሊዝኛ እየታየ ነው — በመረጡት ቋንቋ እስካሁን የለም።"
   },
   "categoryNav": {
     "ariaLabel": "የልጥፍ ምድቦች",
     "all": "ሁሉም",
-    "errorDefault": "ምድቦችን መጫን አልተሳካም"
+    "errorDefault": "ምድቦችን መጫን አልተሳካም",
+    "fallbackNotice": "ምድቦች በእንግሊዝኛ እየታዩ ነው — በመረጡት ቋንቋ እስካሁን የሉም።"
   },
   "sermons": {
     "heading": "የአሁን ተከታታይ ",
@@ -25,7 +28,8 @@
     "noneCategory": "በ\"{{category}}\" ውስጥ ምንም ልጥፎች አልተገኙም።",
     "loadingMore": "በመጫን ላይ...",
     "loadMoreButton": "ተጨማሪ ልጥፎችን ይጫኑ",
-    "errorDefault": "የስብከት ተከታታይን መጫን አልተሳካም"
+    "errorDefault": "የስብከት ተከታታይን መጫን አልተሳካም",
+    "fallbackNotice": "በመረጡት ቋንቋ እስካሁን ጽሑፍ የለም — በምትኩ እንግሊዝኛ እየታየ ነው።"
   },
   "trending": {
     "heading": "ተወዳጅ",
@@ -33,13 +37,15 @@
     "scrollRightAriaLabel": "ወደ ቀኝ ያሸብልሉ",
     "loading": "ተወዳጅ ልጥፎችን በመጫን ላይ...",
     "none": "ምንም ተወዳጅ ልጥፎች አልተገኙም።",
-    "errorDefault": "ተወዳጅ ልጥፎችን መጫን አልተሳካም"
+    "errorDefault": "ተወዳጅ ልጥፎችን መጫን አልተሳካም",
+    "fallbackNotice": "ተወዳጅ ጽሑፎች በእንግሊዝኛ እየታዩ ነው።"
   },
   "recommended": {
     "heading": "የተመከሩ",
     "loading": "የተመከሩ ልጥፎችን በመጫን ላይ...",
     "none": "ምንም የተመከሩ ልጥፎች አልተገኙም።",
-    "errorDefault": "የተመከሩ ልጥፎችን መጫን አልተሳካም"
+    "errorDefault": "የተመከሩ ልጥፎችን መጫን አልተሳካም",
+    "fallbackNotice": "የሚመከሩ ጽሑፎች በእንግሊዝኛ እየታዩ ነው።"
   },
   "pagination": {
     "prev": "ቀዳሚ",
@@ -54,7 +60,8 @@
     "eyebrow": "ከካህኑ",
     "titleFallback": "አብረን እየተጓዝን፣ አንድ እሁድ በአንድ ጊዜ",
     "descriptionFallback": "ሃያ ዓመታት በአገልግሎት ውስጥ ያስተማረኝ እምነት በማህበረሰብ ውስጥ በተሻለ ሁኔታ እንደሚያድግ ነው። ይህ ገጽ እግዚአብሔር የሚያስተምረንን - በስብከቶች፣ በምስክርነቶች እና በቤተክርስቲያናችን ቤተሰብ በዕለት ተዕለት ሕይወት - የምናካፍልበት ነው።",
-    "imageAltFallback": "ካህን በተዋበ ልብስ የስርዓት በትር ይዞ"
+    "imageAltFallback": "ካህን በተዋበ ልብስ የስርዓት በትር ይዞ",
+    "fallbackNotice": "ይህ ይዘት በእንግሊዝኛ እየታየ ነው — በመረጡት ቋንቋ እስካሁን የለም።"
   },
   "testimonials": {
     "heading": "ሰዎች ስለ ቤተ ክርስቲያኗ የሚሉት",
@@ -69,5 +76,19 @@
     "errorDefault": "ፎቶዎችን መጫን አልተሳካም",
     "prevAriaLabel": "ቀዳሚ ፎቶ",
     "nextAriaLabel": "ቀጣይ ፎቶ"
+  },
+  "audios": {
+    "errorDefault": "ኦዲዮን መጫን አልተቻለም።",
+    "heading": "ኦዲዮ",
+    "none": "ምንም ኦዲዮ አልተገኘም።",
+    "prevAriaLabel": "ቀዳሚ",
+    "nextAriaLabel": "ቀጣይ"
+  },
+  "videos": {
+    "errorDefault": "ቪዲዮዎችን መጫን አልተቻለም።",
+    "heading": "ቪዲዮዎች",
+    "none": "ምንም ቪዲዮ አልተገኘም።",
+    "prevAriaLabel": "ቀዳሚ",
+    "nextAriaLabel": "ቀጣይ"
   }
 }

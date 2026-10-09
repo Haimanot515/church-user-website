@@ -1,0 +1,79 @@
+{
+  "goBack": "Go back",
+  "loading": "Loading",
+  "loadingMore": "Loading...",
+  "loadMore": "Load More",
+  "notFound": "Not found.",
+  "seek": "Seek",
+  "previous": "Previous",
+  "next": "Next",
+  "page404": "404 - Page Not Found",
+  "postCategories": "Post categories",
+  "play": "Play",
+  "pause": "Pause",
+  "mute": "Mute",
+  "unmute": "Unmute",
+  "download": "Download",
+  "downloadAudio": "Download audio",
+  "openDocument": "Open Document",
+  "moreOptions": "More options",
+  "closePlayer": "Close player",
+  "changeSpeed": "Change playback speed",
+  "backTo": {
+    "about": "Back to About",
+    "churches": "Back to Churches",
+    "home": "Back to Home",
+    "media": "Back to Media",
+    "services": "Back to Services",
+    "story": "Back to Our Story",
+    "posts": "Back to all posts"
+  },
+  "related": {
+    "youMayAlsoLike": "You May Also Like",
+    "moreOfStory": "More of Our Story",
+    "morePromotions": "More Promotions"
+  },
+  "errors": {
+    "entry": "Failed to load this entry",
+    "church": "Failed to load this church",
+    "chapter": "Failed to load this chapter",
+    "post": "Failed to load this post",
+    "item": "Failed to load this item",
+    "promotion": "Failed to load this promotion",
+    "service": "Failed to load this service",
+    "storyMissingId": "This story couldn't be loaded (missing id in the URL).",
+    "chapterNotFound": "Chapter not found.",
+    "postNotFound": "Post not found.",
+    "promotionNotFound": "Promotion not found."
+  },
+  "labels": {
+    "primary": "Primary",
+    "featured": "Featured",
+    "address": "Address:",
+    "service": "Service:",
+    "getDirections": "Get Directions",
+    "fromThePriest": "From the Priest",
+    "priest": "Priest",
+    "churchHero": "Church hero",
+    "featuredService": "Featured Service",
+    "serviceAlt": "Service",
+    "sponsoredContent": "Sponsored Content",
+    "sponsored": "Sponsored",
+    "visitSponsor": "Visit Sponsor",
+    "general": "General",
+    "leader": "Leader"
+  },
+  "person": {
+    "leadershipTeam": "Leadership Team",
+    "specialThanks": "Special Thanks",
+    "testimony": "Testimony",
+    "churchFamily": "Church Family"
+  },
+  "mediaEyebrow": {
+    "video": "Watch",
+    "photo": "Look Back",
+    "audio": "Listen",
+    "document": "Read",
+    "default": "Media"
+  }
+}

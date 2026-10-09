@@ -30,10 +30,22 @@
   "faith": {
     "heading": "Cosa Crediamo",
     "points": [
-      { "title": "Scrittura", "desc": "Crediamo che la Bibbia sia la parola di Dio, degna di fiducia e sufficiente per comprendere la fede e la vita." },
-      { "title": "La Trinità", "desc": "Crediamo in un solo Dio che esiste eternamente come Padre, Figlio e Spirito Santo." },
-      { "title": "Salvezza per Grazia", "desc": "Crediamo che le persone siano riconciliate con Dio per grazia mediante la fede, non per opere, attraverso la morte e risurrezione di Gesù." },
-      { "title": "La Chiesa", "desc": "Crediamo che la chiesa sia la famiglia di Dio sulla terra, chiamata ad adorare insieme, servirsi a vicenda e raggiungere il mondo." }
+      {
+        "title": "Scrittura",
+        "desc": "Crediamo che la Bibbia sia la parola di Dio, degna di fiducia e sufficiente per comprendere la fede e la vita."
+      },
+      {
+        "title": "La Trinità",
+        "desc": "Crediamo in un solo Dio che esiste eternamente come Padre, Figlio e Spirito Santo."
+      },
+      {
+        "title": "Salvezza per Grazia",
+        "desc": "Crediamo che le persone siano riconciliate con Dio per grazia mediante la fede, non per opere, attraverso la morte e risurrezione di Gesù."
+      },
+      {
+        "title": "La Chiesa",
+        "desc": "Crediamo che la chiesa sia la famiglia di Dio sulla terra, chiamata ad adorare insieme, servirsi a vicenda e raggiungere il mondo."
+      }
     ],
     "whyWeWriteHeading": "Perché Scriviamo Questo Blog",
     "whyWeWriteQuote": "Ci riuniamo la domenica, ma un servizio può contenere solo una parte. Qui mettiamo il resto — i dubbi che non esprimiamo sempre ad alta voce, le piccole misericordie che altrimenti dimenticheremmo, e la trama ordinaria del cercare di essere una chiesa per questa comunità, in questa stagione."
@@ -54,10 +66,22 @@
     "heading": "Domande Frequenti",
     "fallbackNotice": "Contenuto mostrato in inglese.",
     "items": [
-      { "q": "Cosa devo aspettarmi come visitatore per la prima volta?", "a": "Un'accoglienza calorosa, un posto a sedere dove preferisci, e nessuna pressione a firmare nulla o alzarti a presentarti." },
-      { "q": "C'è un programma per i bambini durante il servizio?", "a": "Sì — un servizio di accoglienza supervisionato e attività adatte all'età si svolgono durante entrambe le funzioni della domenica." },
-      { "q": "Dove posso parcheggiare?", "a": "Nelle vicinanze è disponibile parcheggio su strada, con ulteriori posti dietro il santuario." },
-      { "q": "Devo essere membro per unirmi a un piccolo gruppo?", "a": "Assolutamente no. I piccoli gruppi sono aperti a tutti, sia che tu sia in visita per la prima volta o che sia qui da anni." }
+      {
+        "q": "Cosa devo aspettarmi come visitatore per la prima volta?",
+        "a": "Un'accoglienza calorosa, un posto a sedere dove preferisci, e nessuna pressione a firmare nulla o alzarti a presentarti."
+      },
+      {
+        "q": "C'è un programma per i bambini durante il servizio?",
+        "a": "Sì — un servizio di accoglienza supervisionato e attività adatte all'età si svolgono durante entrambe le funzioni della domenica."
+      },
+      {
+        "q": "Dove posso parcheggiare?",
+        "a": "Nelle vicinanze è disponibile parcheggio su strada, con ulteriori posti dietro il santuario."
+      },
+      {
+        "q": "Devo essere membro per unirmi a un piccolo gruppo?",
+        "a": "Assolutamente no. I piccoli gruppi sono aperti a tutti, sia che tu sia in visita per la prima volta o che sia qui da anni."
+      }
     ]
   },
   "specialThanks": {
@@ -67,14 +91,18 @@
   "location": {
     "eyebrow": "Vieni a Trovarci",
     "note": "Le nostre porte sono aperte la maggior parte delle mattine, e il nostro team è di solito raggiungibile nel piccolo edificio dietro il santuario.",
-    "serviceTimes": ["Domenica — 9:00 e 11:00", "Preghiera del Mercoledì — 18:30"],
+    "serviceTimes": [
+      "Domenica — 9:00 e 11:00",
+      "Preghiera del Mercoledì — 18:30"
+    ],
     "mapAlt": "Mappa dell'area vicino a {{churchName}}"
   },
   "map": {
     "heading": "Dove Siamo",
     "description": "Vieni a trovarci a {{churchName}}.",
     "iframeTitle": "Mappa della posizione della chiesa",
-    "query": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy"
+    "query": "Via Baldasseria Bassa, 353, 33100 Udine UD, Italy",
+    "linkLabel": "Apri in Google Maps"
   },
   "support": {
     "eyebrow": "Dona Online o di Persona",
@@ -93,6 +121,21 @@
     "volunteerButton": "Fai Volontariato"
   },
   "nav": {
-    "categories": ["Home", "Riflessioni", "Prediche", "Diario", "Libri che Sto Leggendo", "Famiglia", "Preghiera", "Archivio", "Chi Siamo", "Contatti"]
+    "categories": [
+      "Home",
+      "Riflessioni",
+      "Prediche",
+      "Diario",
+      "Libri che Sto Leggendo",
+      "Famiglia",
+      "Preghiera",
+      "Archivio",
+      "Chi Siamo",
+      "Contatti"
+    ]
+  },
+  "teamLink": {
+    "heading": "Conosci il nostro team",
+    "button": "Vedi il team"
   }
 }

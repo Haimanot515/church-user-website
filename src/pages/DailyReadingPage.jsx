@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import "./DailyReadingPage.css";
 
@@ -31,6 +32,7 @@ const misbaks = [
 const lines = (text) => text.split("\n").filter(Boolean);
 
 export default function DailyReadingPage() {
+  const { t } = useTranslation();
   // start on the newest misbak
   const [index, setIndex] = useState(misbaks.length - 1);
   const misbak = misbaks[index];
@@ -61,8 +63,8 @@ export default function DailyReadingPage() {
           className="daily__arrow daily__arrow--prev"
           onClick={() => setIndex(index - 1)}
           disabled={!hasPrev}
-          aria-label="ቀዳሚ ምስባክ"
-          title="ቀዳሚ"
+          aria-label={t("misbak.prevAria")}
+          title={t("common.previous")}
         >
           <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
             <path
@@ -82,7 +84,7 @@ export default function DailyReadingPage() {
           aria-labelledby="misbak-verse"
         >
           <h1 className="misbak__tag">
-            {misbak.title}
+            {t("navbar.links.dailyMisbak")}
             <svg
               className="misbak__quote"
               viewBox="0 0 24 24"
@@ -107,7 +109,7 @@ export default function DailyReadingPage() {
             ))}
           </div>
 
-          <h3 className="misbak__sub">ትርጉም</h3>
+          <h3 className="misbak__sub">{t("misbak.meaning")}</h3>
 
           <div className="misbak__body">
             {lines(misbak.meaning).map((line) => (
@@ -121,8 +123,8 @@ export default function DailyReadingPage() {
           className="daily__arrow daily__arrow--next"
           onClick={() => setIndex(index + 1)}
           disabled={!hasNext}
-          aria-label="ቀጣይ ምስባክ"
-          title="ቀጣይ"
+          aria-label={t("misbak.nextAria")}
+          title={t("common.next")}
         >
           <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
             <path

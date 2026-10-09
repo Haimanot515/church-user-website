@@ -4,19 +4,22 @@
     "closeAriaLabel": "Chiudi contenuto sponsorizzato",
     "sponsoredContent": "Contenuto sponsorizzato",
     "imageAltFallback": "Contenuto sponsorizzato",
-    "openButton": "Apri"
+    "openButton": "Apri",
+    "fallbackNotice": "Promozione mostrata in inglese."
   },
   "hero": {
     "titleFallback": "Radicati nella grazia, protesi verso la luce",
     "descriptionFallback": "Riflessioni, appunti di predicazione e storie della nostra congregazione, mentre percorriamo insieme le Scritture, settimana dopo settimana.",
     "watchSermonButton": "Guarda l'ultima predica",
     "planVisitButton": "Pianifica una visita",
-    "imageAltFallback": "Icona ortodossa di Cristo sull'iconostasi"
+    "imageAltFallback": "Icona ortodossa di Cristo sull'iconostasi",
+    "fallbackNotice": "Contenuto principale mostrato in inglese: non ancora disponibile nella lingua selezionata."
   },
   "categoryNav": {
     "ariaLabel": "Categorie dei post",
     "all": "Tutti",
-    "errorDefault": "Impossibile caricare le categorie"
+    "errorDefault": "Impossibile caricare le categorie",
+    "fallbackNotice": "Categorie mostrate in inglese: non ancora disponibili nella lingua selezionata."
   },
   "sermons": {
     "heading": "Serie di prediche attuale",
@@ -25,7 +28,8 @@
     "noneCategory": "Nessun post trovato in \"{{category}}\".",
     "loadingMore": "Caricamento...",
     "loadMoreButton": "Carica altri post",
-    "errorDefault": "Impossibile caricare la serie di prediche"
+    "errorDefault": "Impossibile caricare la serie di prediche",
+    "fallbackNotice": "Ancora nessun post nella lingua selezionata: viene mostrato l'inglese."
   },
   "trending": {
     "heading": "Di tendenza",
@@ -33,13 +37,15 @@
     "scrollRightAriaLabel": "Scorri a destra",
     "loading": "Caricamento dei post di tendenza...",
     "none": "Nessun post di tendenza trovato.",
-    "errorDefault": "Impossibile caricare i post di tendenza"
+    "errorDefault": "Impossibile caricare i post di tendenza",
+    "fallbackNotice": "Post di tendenza mostrati in inglese."
   },
   "recommended": {
     "heading": "Consigliati",
     "loading": "Caricamento dei post consigliati...",
     "none": "Nessun post consigliato trovato.",
-    "errorDefault": "Impossibile caricare i post consigliati"
+    "errorDefault": "Impossibile caricare i post consigliati",
+    "fallbackNotice": "Post consigliati mostrati in inglese."
   },
   "pagination": {
     "prev": "Indietro",
@@ -54,7 +60,8 @@
     "eyebrow": "Dal sacerdote",
     "titleFallback": "Camminando insieme, una domenica alla volta",
     "descriptionFallback": "Vent'anni di ministero mi hanno insegnato che la fede cresce meglio in comunità. Questa pagina è dove condividiamo ciò che Dio ci sta insegnando — attraverso prediche, testimonianze e la vita quotidiana della nostra famiglia parrocchiale.",
-    "imageAltFallback": "Sacerdote in abiti ornati con un bastone cerimoniale"
+    "imageAltFallback": "Sacerdote in abiti ornati con un bastone cerimoniale",
+    "fallbackNotice": "Contenuto mostrato in inglese: non ancora disponibile nella lingua selezionata."
   },
   "testimonials": {
     "heading": "Cosa dicono le persone della chiesa",
@@ -69,5 +76,19 @@
     "errorDefault": "Impossibile caricare le foto",
     "prevAriaLabel": "Foto precedente",
     "nextAriaLabel": "Foto successiva"
+  },
+  "audios": {
+    "errorDefault": "Impossibile caricare l'audio.",
+    "heading": "Audio",
+    "none": "Nessun audio trovato.",
+    "prevAriaLabel": "Precedente",
+    "nextAriaLabel": "Successivo"
+  },
+  "videos": {
+    "errorDefault": "Impossibile caricare i video.",
+    "heading": "Video",
+    "none": "Nessun video trovato.",
+    "prevAriaLabel": "Precedente",
+    "nextAriaLabel": "Successivo"
   }
 }

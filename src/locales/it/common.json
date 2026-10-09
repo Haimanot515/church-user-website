@@ -1,0 +1,79 @@
+{
+  "goBack": "Torna indietro",
+  "loading": "Caricamento",
+  "loadingMore": "Caricamento...",
+  "loadMore": "Carica altro",
+  "notFound": "Non trovato.",
+  "seek": "Vai al punto",
+  "previous": "Precedente",
+  "next": "Successivo",
+  "page404": "404 - Pagina non trovata",
+  "postCategories": "Categorie dei post",
+  "play": "Riproduci",
+  "pause": "Pausa",
+  "mute": "Disattiva audio",
+  "unmute": "Attiva audio",
+  "download": "Scarica",
+  "downloadAudio": "Scarica audio",
+  "openDocument": "Apri documento",
+  "moreOptions": "Altre opzioni",
+  "closePlayer": "Chiudi il lettore",
+  "changeSpeed": "Cambia velocità di riproduzione",
+  "backTo": {
+    "about": "Torna a Chi siamo",
+    "churches": "Torna alle chiese",
+    "home": "Torna alla home",
+    "media": "Torna ai media",
+    "services": "Torna ai servizi",
+    "story": "Torna alla nostra storia",
+    "posts": "Torna a tutti i post"
+  },
+  "related": {
+    "youMayAlsoLike": "Potrebbe interessarti anche",
+    "moreOfStory": "Altro dalla nostra storia",
+    "morePromotions": "Altre promozioni"
+  },
+  "errors": {
+    "entry": "Impossibile caricare questa voce",
+    "church": "Impossibile caricare questa chiesa",
+    "chapter": "Impossibile caricare questo capitolo",
+    "post": "Impossibile caricare questo post",
+    "item": "Impossibile caricare questo elemento",
+    "promotion": "Impossibile caricare questa promozione",
+    "service": "Impossibile caricare questo servizio",
+    "storyMissingId": "Impossibile caricare questa storia (ID mancante nell'URL).",
+    "chapterNotFound": "Capitolo non trovato.",
+    "postNotFound": "Post non trovato.",
+    "promotionNotFound": "Promozione non trovata."
+  },
+  "labels": {
+    "primary": "Principale",
+    "featured": "In evidenza",
+    "address": "Indirizzo:",
+    "service": "Servizio:",
+    "getDirections": "Indicazioni stradali",
+    "fromThePriest": "Dal sacerdote",
+    "priest": "Sacerdote",
+    "churchHero": "Immagine principale della chiesa",
+    "featuredService": "Servizio in evidenza",
+    "serviceAlt": "Servizio",
+    "sponsoredContent": "Contenuto sponsorizzato",
+    "sponsored": "Sponsorizzato",
+    "visitSponsor": "Visita lo sponsor",
+    "general": "Generale",
+    "leader": "Responsabile"
+  },
+  "person": {
+    "leadershipTeam": "Team di guida",
+    "specialThanks": "Ringraziamenti speciali",
+    "testimony": "Testimonianza",
+    "churchFamily": "Famiglia della chiesa"
+  },
+  "mediaEyebrow": {
+    "video": "Guarda",
+    "photo": "Uno sguardo indietro",
+    "audio": "Ascolta",
+    "document": "Leggi",
+    "default": "Media"
+  }
+}

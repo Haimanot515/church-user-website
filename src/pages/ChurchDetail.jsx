@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api";
 import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./ChurchDetail.css";
+import Spinner from "../components/Spinner";
 
 /**
  * Church detail page — single-church view reached from the
@@ -13,6 +15,7 @@ import "./ChurchDetail.css";
  * the other detail pages (AboutDetail, MediaDetail, etc.).
  */
 const ChurchDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [church, setChurch] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +34,7 @@ const ChurchDetail = () => {
         setChurch(res.data);
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.message || "Failed to load this church");
+        setError(err.response?.data?.message || t("common.errors.church"));
       } finally {
         setLoading(false);
       }
@@ -40,7 +43,7 @@ const ChurchDetail = () => {
   }, [id]);
 
   const BackButton = () => (
-    <Link to="/cv" aria-label="Go back" className="church-detail-back-btn">
+    <Link to="/cv" aria-label={t("common.goBack")} className="church-detail-back-btn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -52,7 +55,7 @@ const ChurchDetail = () => {
       <div className="church-detail-page">
         <BackButton />
         <div className="wrapper" style={{ padding: "160px 0", textAlign: "center" }}>
-          <p>Loading...</p>
+          <Spinner />
         </div>
       </div>
     );
@@ -63,8 +66,8 @@ const ChurchDetail = () => {
       <div className="church-detail-page">
         <BackButton />
         <div className="wrapper" style={{ padding: "160px 0", textAlign: "center" }}>
-          <p style={{ color: "red" }}>{error || "Not found."}</p>
-          <Link to="/cv" style={{ color: "var(--gold)" }}>Back to Churches</Link>
+          <p style={{ color: "red" }}>{error || t("common.notFound")}</p>
+          <Link to="/cv" style={{ color: "var(--gold)" }}>{t("common.backTo.churches")}</Link>
         </div>
       </div>
     );
@@ -80,9 +83,9 @@ const ChurchDetail = () => {
           alt={stripHtml(church.churchName)}
         />
         <div className="church-detail-hero-content">
-          {church.isPrimary && <span className="church-detail-tag">Primary</span>}
+          {church.isPrimary && <span className="church-detail-tag">{t("common.labels.primary")}</span>}
           {!church.isPrimary && church.isFeatured && (
-            <span className="church-detail-tag">Featured</span>
+            <span className="church-detail-tag">{t("common.labels.featured")}</span>
           )}
           <h1>{stripHtml(church.churchName)}</h1>
         </div>
@@ -99,12 +102,12 @@ const ChurchDetail = () => {
             <div className="church-detail-details">
               {church.address && (
                 <div className="church-detail-line">
-                  <strong>Address:</strong> {church.address}
+                  <strong>{t("common.labels.address")}</strong> {church.address}
                 </div>
               )}
               {(church.serviceDays || church.serviceTime) && (
                 <div className="church-detail-line">
-                  <strong>Service:</strong> {church.serviceDays}
+                  <strong>{t("common.labels.service")}</strong> {church.serviceDays}
                   {church.serviceDays && church.serviceTime ? " · " : ""}
                   {church.serviceTime}
                 </div>
@@ -118,7 +121,7 @@ const ChurchDetail = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Get Directions
+                {t("common.labels.getDirections")}
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M5 12H19M19 12L13 6M19 12L13 18"

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
@@ -32,6 +33,7 @@ import useDocumentMeta from "./hooks/useDocumentMeta";
 import "./styles.css";
 
 function App() {
+  const { t } = useTranslation();
   const [loggedIn, setLoggedIn] = useState(
     !!localStorage.getItem("token")
   );
@@ -108,7 +110,7 @@ function App() {
         {/* 404 */}
         <Route
           path="*"
-          element={<h2>404 - Page Not Found</h2>}
+          element={<h2>{t("common.page404")}</h2>}
         />
       </Routes>
 

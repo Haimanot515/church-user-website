@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import API from "../api/api";
 import { stripHtml } from "../components/RichTextView";
 import "./Media.css";
+import Spinner from "../components/Spinner";
 
 /**
  * Media page — one page, four sections, each laid out as a
@@ -101,15 +102,6 @@ const mapItems = (data) =>
       plainDescription: stripHtml(m.description),
     }));
 
-// Reusable inline loading spinner — same markup/classes as Home.jsx's
-// Spinner, shown while data is being fetched from the backend so the
-// user never sees hardcoded frontend placeholder content before the
-// real data arrives.
-const Spinner = ({ light }) => (
-  <div className="loading-spinner-wrap">
-    <div className={`loading-spinner${light ? " light" : ""}`} />
-  </div>
-);
 
 const VideoSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -424,7 +416,7 @@ const AudioSection = ({ items, fallback, t }) => {
                     step="0.1"
                     value={Number.isFinite(time) ? time : 0}
                     onChange={seekAudio}
-                    aria-label="Seek"
+                    aria-label={t("common.seek")}
                   />
                   <span className="audio-time">{fmt(time)} / {fmt(dur)}</span>
                 </div>

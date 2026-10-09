@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../api/api";
 import RichTextView, { stripHtml } from "../components/RichTextView";
 import "./MediaDetail.css";
+import Spinner from "../components/Spinner";
 /**
  * Media detail page — single-item view for whatever was clicked on
  * the Media page. Renders differently depending on entry.mediaType:
@@ -42,13 +44,16 @@ const handleDownload = async (url, title) => {
     window.open(url, "_blank", "noopener,noreferrer");
   }
 };
-const BackButton = () => (
-  <Link to="/media" aria-label="Go back" className="media-detail-back-btn">
+const BackButton = () => {
+  const { t } = useTranslation();
+  return (
+  <Link to="/media" aria-label={t("common.goBack")} className="media-detail-back-btn">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   </Link>
-);
+  );
+};
 const Shell = ({ children }) => (
   <div className="media-portal">
     <div className="cloud-layer">
@@ -62,6 +67,7 @@ const Shell = ({ children }) => (
 );
 
 const MediaDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [entry, setEntry] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -109,7 +115,7 @@ const MediaDetail = () => {
           thumbnail: getMediaUrl(item.thumbnail),
         });
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load this item");
+        setError(err.response?.data?.message || t("common.errors.item"));
       } finally {
         setLoading(false);
       }
@@ -217,7 +223,7 @@ const MediaDetail = () => {
     return (
       <Shell>
         <div className="wrapper" style={{ padding: "160px 0", textAlign: "center" }}>
-          <p>Loading...</p>
+          <Spinner />
         </div>
       </Shell>
     );
@@ -226,17 +232,17 @@ const MediaDetail = () => {
     return (
       <Shell>
         <div className="wrapper" style={{ padding: "160px 0", textAlign: "center" }}>
-          <p style={{ color: "#dc2626" }}>{error || "Not found."}</p>
-          <Link to="/media" style={{ color: "var(--gold)" }}>Back to Media</Link>
+          <p style={{ color: "#dc2626" }}>{error || t("common.notFound")}</p>
+          <Link to="/media" style={{ color: "var(--gold)" }}>{t("common.backTo.media")}</Link>
         </div>
       </Shell>
     );
   }
   const eyebrowByType = {
-    video: "Watch",
-    photo: "Look Back",
-    audio: "Listen",
-    document: "Read",
+    video: t("common.mediaEyebrow.video"),
+    photo: t("common.mediaEyebrow.photo"),
+    audio: t("common.mediaEyebrow.audio"),
+    document: t("common.mediaEyebrow.document"),
   };
   // title is RichTextField HTML — plain-text version for the heading,
   // alt text and download filename.
@@ -245,7 +251,7 @@ const MediaDetail = () => {
     <Shell>
       <section className="media-detail-hero">
         <div className="wrapper">
-          <span className="eyebrow">{eyebrowByType[entry.mediaType] || "Media"}</span>
+          <span className="eyebrow">{eyebrowByType[entry.mediaType] || t("common.mediaEyebrow.default")}</span>
         </div>
       </section>
       <section className="media-detail-section">
@@ -263,7 +269,7 @@ const MediaDetail = () => {
                 <button
                   type="button"
                   className="media-detail-menu-btn"
-                  aria-label="More options"
+                  aria-label={t("common.moreOptions")}
                   style={{
                     position: "absolute",
                     top: 8,
@@ -332,7 +338,7 @@ const MediaDetail = () => {
                         <path d="M7 10l5 5 5-5" />
                         <path d="M5 21h14" />
                       </svg>
-                      Download
+                      {t("common.download")}
                     </button>
                   </div>
                 )}
@@ -344,7 +350,7 @@ const MediaDetail = () => {
                 <button
                   className="media-detail-audio-play-btn"
                   onClick={toggleAudio}
-                  aria-label={isPlaying ? "Pause" : "Play"}
+                  aria-label={isPlaying ? t("common.pause") : t("common.play")}
                 >
                   {isPlaying ? (
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
@@ -357,7 +363,7 @@ const MediaDetail = () => {
                     type="button"
                     className="media-detail-audio-stop-btn"
                     onClick={stopAudio}
-                    aria-label="Close player"
+                    aria-label={t("common.closePlayer")}
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
                   </button>
@@ -372,7 +378,7 @@ const MediaDetail = () => {
                     step="0.1"
                     onChange={handleSeek}
                     className="media-detail-audio-seek"
-                    aria-label="Seek"
+                    aria-label={t("common.seek")}
                   />
                   <div className="media-detail-audio-time">
                     <span>{formatTime(currentTime)}</span>
@@ -384,7 +390,7 @@ const MediaDetail = () => {
                     type="button"
                     className="media-detail-mute-btn"
                     onClick={toggleMute}
-                    aria-label={isMuted ? "Unmute" : "Mute"}
+                    aria-label={isMuted ? t("common.unmute") : t("common.mute")}
                   >
                     {isMuted ? (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -399,13 +405,13 @@ const MediaDetail = () => {
                         <path d="M18.5 5.5a9 9 0 0 1 0 13" />
                       </svg>
                     )}
-                    {isMuted ? "Unmute" : "Mute"}
+                    {isMuted ? t("common.unmute") : t("common.mute")}
                   </button>
                   <button
                     type="button"
                     className="media-detail-speed-btn"
                     onClick={cycleSpeed}
-                    aria-label="Change playback speed"
+                    aria-label={t("common.changeSpeed")}
                   >
                     {playbackRate}x
                   </button>
@@ -413,14 +419,14 @@ const MediaDetail = () => {
                     type="button"
                     className="media-detail-download-btn"
                     onClick={() => handleDownload(entry.mediaUrl, plainTitle)}
-                    aria-label="Download audio"
+                    aria-label={t("common.downloadAudio")}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 3v12" />
                       <path d="M7 10l5 5 5-5" />
                       <path d="M5 21h14" />
                     </svg>
-                    Download
+                    {t("common.download")}
                   </button>
                 </div>
                 <audio
@@ -469,7 +475,7 @@ const MediaDetail = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Open Document
+                    {t("common.openDocument")}
                   </a>
                 </div>
               </div>
@@ -481,7 +487,7 @@ const MediaDetail = () => {
           </div>
           {relatedItems.length > 0 && (
             <div className="media-detail-related">
-              <h2 className="media-detail-related-heading">You May Also Like</h2>
+              <h2 className="media-detail-related-heading">{t("common.related.youMayAlsoLike")}</h2>
               <div className="media-detail-related-grid">
                 {relatedItems.map((item) => (
                   <Link

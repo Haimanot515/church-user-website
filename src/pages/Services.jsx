@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/api";
 import { stripHtml } from "../components/RichTextView";
 import "./Services.css";
+import Spinner from "../components/Spinner";
 
 /**
  * Public Services page.
@@ -43,15 +44,6 @@ const Services = () => {
   // fallback because the active language had none
   const [servicesFallback, setServicesFallback] = useState(false);
 
-  // Reusable inline loading spinner — shown while a section's data is
-  // being fetched from the backend, so no hardcoded frontend placeholder
-  // content is ever visible before the real data arrives. Same
-  // markup/classes as Home.jsx's Spinner, so it renders identically.
-  const Spinner = ({ light }) => (
-    <div className="loading-spinner-wrap">
-      <div className={`loading-spinner${light ? " light" : ""}`} />
-    </div>
-  );
 
   // Turns whatever the API sends back for imageUrl (a full URL, or just a
   // filename/relative path saved from an upload) into a usable <img src>.
