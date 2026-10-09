@@ -5,6 +5,7 @@ import Verify from "../pages/Registration/Verify";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTimes, FaBars, FaGlobe, FaSun, FaMoon, FaChevronDown } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import socialLinks from "./socialLinks";
 import "./Navbar.css";
 
 // Crown of thorns logo
@@ -142,6 +143,41 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
         </Link>
 
         <div className="navbar-right">
+          <Link to="/daily-misbak" className="navbar-daily-link">
+            {t("navbar.links.dailyMisbak", "የዕለቱ ምስባክ")}
+          </Link>
+          <Link to="/skill" className="navbar-daily-link">
+            {t("navbar.links.sermon")}
+          </Link>
+          <Link to="/church-support" className="navbar-daily-link">
+            {t("navbar.links.churchSupport")}
+          </Link>
+          <Link to="/projects" className="navbar-daily-link">
+            {t("navbar.links.blogs")}
+          </Link>
+          <Link to="/book" className="navbar-daily-link">
+            {t("navbar.links.books")}
+          </Link>
+          <Link to="/services" className="navbar-daily-link">
+            {t("navbar.links.services")}
+          </Link>
+
+          <div className="navbar-social">
+            {socialLinks.map(({ key, href, label, Icon }) => (
+              <a
+                key={key}
+                href={href}
+                className="navbar-social-icon"
+                aria-label={label}
+                title={label}
+                target={key === "email" ? undefined : "_blank"}
+                rel={key === "email" ? undefined : "noopener noreferrer"}
+              >
+                <Icon size={16} />
+              </a>
+            ))}
+          </div>
+
           <div
             className={`navbar-language-group${isLangOpen ? " open" : ""}`}
             ref={langGroupRef}
@@ -227,6 +263,7 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
             </div>
 
             <div className="nav-links-secondary">
+              <Link to="/daily-misbak" onClick={closeMenu}>{t("navbar.links.dailyMisbak", "የዕለቱ ምስባክ")}</Link>
               <Link to="/media" onClick={closeMenu}>{t("navbar.links.media")}</Link>
               <Link to="/book" onClick={closeMenu}>{t("navbar.links.books")}</Link>
               <Link to="/testimonials" onClick={closeMenu}>{t("navbar.links.travel")}</Link>
@@ -250,6 +287,22 @@ const Navbar = ({ loggedIn, isAdmin, setLoggedIn, setIsAdmin }) => {
                 <button onClick={() => { openRegister(); closeMenu(); }}>{t("navbar.auth.register")}</button>
               </>
             )}
+
+            <div className="nav-social">
+              {socialLinks.map(({ key, href, label, Icon }) => (
+                <a
+                  key={key}
+                  href={href}
+                  className="nav-social-icon"
+                  aria-label={label}
+                  target={key === "email" ? undefined : "_blank"}
+                  rel={key === "email" ? undefined : "noopener noreferrer"}
+                  onClick={closeMenu}
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
+            </div>
 
             <div className="language-switcher">
               <button onClick={() => changeLanguage("en")}>EN</button>

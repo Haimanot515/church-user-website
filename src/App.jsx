@@ -25,6 +25,7 @@ import StoryDetail from "./pages/ChurchStoryDetails";
 import MediaDetail from "./pages/MediaDetail";
 import ChurchDetail from "./pages/ChurchDetail";
 import PersonDetail from "./pages/PersonDetail";
+import DailyReadingPage from "./pages/DailyReadingPage";
 
 import useDocumentMeta from "./hooks/useDocumentMeta";
 
@@ -67,6 +68,9 @@ function App() {
           path="/church-teams"
           element={<ChurchTeamsPage />}
         />
+
+        {/* Daily reading */}
+        <Route path="/daily-misbak" element={<DailyReadingPage />} />
 
         {/* Services */}
         <Route path="/services" element={<Services />} />

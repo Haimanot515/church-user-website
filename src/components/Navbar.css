@@ -600,3 +600,87 @@
     display: none;
   }
 }
+
+/* daily misbak link next to the language selector */
+.navbar-daily-link {
+  padding: 6px 14px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.navbar-daily-link:visited {
+  color: #fff;
+}
+
+.navbar-daily-link:hover {
+  background: #fff;
+  color: #4d0000;
+}
+
+/* the top bar is crowded on small screens, so only the menu link shows there */
+@media (max-width: 700px) {
+  .navbar-daily-link {
+    display: none;
+  }
+}
+
+/* social icons in the top bar (same look as the other top-bar buttons) */
+.navbar-social {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.navbar-social-icon:visited { color: #fff; }
+
+.navbar-social-icon:hover {
+  background: #fff;
+  color: #4d0000;
+}
+
+/* mobile dropdown row */
+.nav-social {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex: 0 0 100%;
+}
+
+.nav-content .nav-auth a.nav-social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
+.nav-content .nav-auth a.nav-social-icon:hover { padding: 0; }
+
+/* top bar is crowded on small screens: icons live in the dropdown there */
+@media (max-width: 700px) {
+  .navbar-social { display: none; }
+}
+@media (min-width: 701px) {
+  .nav-social { display: none; }
+}

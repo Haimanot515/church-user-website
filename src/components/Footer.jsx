@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import API from "../api/api.jsx";
 import { useTranslation } from "react-i18next";
 import { FaArrowUp, FaEnvelope } from "react-icons/fa";
+import socialLinks from "./socialLinks";
 import "./Footer.css";
 
 const footerColumns = [
@@ -44,32 +45,6 @@ const quickLinks = [
   { to: "/contact", key: "contact" },
   { to: "/media", key: "media" },
   { to: "/book", key: "books" },
-];
-
-const socialLinks = [
-  {
-    key: "facebook",
-    href:
-      "https://web.facebook.com/people/\u12E8\u12A1\u12F5\u1294-\u12F0\u1265\u1228-\u1230\u120B\u121D-\u12A3\u1261\u1290-\u1308\u1265\u1228\u1218\u1295\u1348\u1235-\u1245\u12F1\u1235/pfbid0Gmvo48jeTiFVEBNUrfDAoHVAWFydhpuaSCWFxp6hpd7rCoUJci6sUJRBDVtn3g7Ql/",
-    label: "Facebook",
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
-      </svg>
-    ),
-  },
-  {
-    key: "email",
-    href: "mailto:abunegebremenfeskidus@gmail.com",
-    label: "Email",
-    icon: <FaEnvelope aria-hidden="true" size={18} />,
-  },
 ];
 
 const Footer = () => {
@@ -257,8 +232,8 @@ const Footer = () => {
   };
 
   // If the link has a hash (e.g. "/church-support#accounts"), let the
-  // target page's hash-scroll effect handle positioning — don't yank
-  // the viewport back to the top of the page.
+  // target page's hash-scroll effect handle positioning, so the viewport
+  // isn't yanked back to the top of the page.
   const scrollToTopOnNavigate = (to) => {
     if (to && to.includes("#")) return;
     window.scrollTo(0, 0);
@@ -586,7 +561,7 @@ const Footer = () => {
                 target={s.key === "email" ? undefined : "_blank"}
                 rel={s.key === "email" ? undefined : "noopener noreferrer"}
               >
-                {s.icon}
+                <s.Icon size={18} />
               </a>
             ))}
           </div>

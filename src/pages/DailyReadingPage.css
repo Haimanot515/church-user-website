@@ -1,0 +1,568 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap");
+
+/* same palette as the teams page, footer and about page */
+.daily {
+  --sky-low: #f3f8fa;
+  --sky-mid: #d5eaf3;
+  --navy: #1c3a52;
+  --navy-deep: #0f2438;
+  --slate: #3d5a6c;
+  --gold: #cf9f3f;
+  --gold-light: #e6bf68;
+  --gold-soft: rgba(207, 159, 63, 0.4);
+  --gold-faint: rgba(207, 159, 63, 0.2);
+
+  display: grid;
+  place-items: center;
+  min-height: 75vh;
+  padding: 3.5rem 1.25rem 4.5rem;
+  background: var(--sky-low);
+  color: var(--navy);
+  font-family: "Noto Sans Ethiopic", "Nunito Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.daily *,
+.daily *::before,
+.daily *::after {
+  box-sizing: border-box;
+}
+
+/* card in the middle, arrows outside it on both sides */
+.daily__stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 36rem) auto;
+  grid-template-areas:
+    "prev card next"
+    ". date .";
+  align-items: center;
+  justify-content: center;
+  column-gap: clamp(0.75rem, 2.5vw, 1.75rem);
+  row-gap: 1.25rem;
+  width: 100%;
+}
+
+.daily__stage > .misbak {
+  grid-area: card;
+}
+
+/* the misbak card, in the footer's navy */
+.misbak {
+  position: relative;
+  padding: clamp(1.75rem, 5vw, 2.75rem) clamp(1.5rem, 5vw, 2.5rem) clamp(2rem, 5vw, 3rem);
+  border: 1px solid var(--gold-soft);
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  color: #fff;
+  box-shadow: 0 30px 60px -24px rgba(15, 36, 56, 0.55);
+  animation: misbak-in 0.8s ease-out both;
+}
+
+/* thin inner frame, like a manuscript page */
+.misbak::before {
+  content: "";
+  position: absolute;
+  inset: 0.55rem;
+  border: 1px solid var(--gold-faint);
+  border-radius: 0.9rem;
+  pointer-events: none;
+}
+
+.misbak > * {
+  position: relative;
+}
+
+/* title pill with the quote mark */
+.misbak__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0.35rem 1.1rem 0.35rem 1.25rem;
+  border: 1px solid var(--gold-soft);
+  border-radius: 999px;
+  background: rgba(207, 159, 63, 0.12);
+  color: var(--sky-mid);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.misbak__quote {
+  color: var(--gold-light);
+}
+
+/* verse number */
+.misbak__ref {
+  margin: 1.75rem 0 1.25rem;
+  color: var(--gold-light);
+  font-size: clamp(1.3rem, 4.5vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.misbak__body p {
+  margin: 0;
+}
+
+.misbak__body p + p {
+  margin-top: 0.7rem;
+}
+
+/* the misbak itself is the focal point */
+.misbak__body--geez p {
+  color: #fff;
+  font-size: clamp(1.3rem, 4.8vw, 1.55rem);
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+/* each line steps in a little, like verse on a manuscript page */
+@media (min-width: 520px) {
+  .misbak__body--geez p:nth-child(2) {
+    padding-left: 1rem;
+  }
+
+  .misbak__body--geez p:nth-child(3) {
+    padding-left: 2rem;
+  }
+}
+
+/* translation label with rules on both sides */
+.misbak__sub {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 2.25rem 0 1.25rem;
+  color: var(--gold-light);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.misbak__sub::before,
+.misbak__sub::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-soft));
+}
+
+.misbak__sub::after {
+  background: linear-gradient(270deg, transparent, var(--gold-soft));
+}
+
+/* translation is quieter than the Ge'ez */
+.misbak__body:not(.misbak__body--geez) p {
+  color: var(--sky-mid);
+  font-size: clamp(1.08rem, 4vw, 1.2rem);
+  line-height: 1.8;
+}
+
+/* date under the card */
+.daily__date {
+  grid-area: date;
+  justify-self: center;
+  margin: 0;
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--gold-soft);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--slate);
+  font-family: "Nunito Sans", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* round gold arrow buttons */
+.daily__arrow {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  color: var(--navy-deep);
+  box-shadow:
+    0 0 0 5px var(--gold-faint),
+    0 10px 22px -10px rgba(15, 36, 56, 0.5);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.daily__arrow--prev {
+  grid-area: prev;
+}
+
+.daily__arrow--next {
+  grid-area: next;
+}
+
+.daily__arrow:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 7px var(--gold-soft),
+    0 14px 28px -10px rgba(15, 36, 56, 0.55);
+}
+
+.daily__arrow:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 5px;
+}
+
+.daily__arrow:disabled {
+  opacity: 0.25;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* dark mode, same grey as the other pages */
+[data-theme="dark"] .daily {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .daily__date {
+  background: #242424;
+  color: var(--sky-mid);
+}
+
+[data-theme="dark"] .daily__arrow:focus-visible {
+  outline-color: var(--sky-mid);
+}
+
+/* on phones there is no room beside the card, so the arrows go under it */
+@media (max-width: 640px) {
+  .daily__stage {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "card card card"
+      "prev date next";
+    row-gap: 1.5rem;
+  }
+
+  .daily__arrow {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+@keyframes misbak-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .misbak {
+    animation: none;
+  }
+
+  .daily__arrow {
+    transition: none;
+  }
+}
+
+/* vertical gold string with a cross on both sides, as on the home page */
+.daily {
+  position: relative;
+}
+
+.daily__string {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40px;
+  color: var(--gold);
+  pointer-events: none;
+}
+
+.daily__string--left {
+  left: max(4%, calc(50% - 590px - 40px));
+}
+
+.daily__string--right {
+  right: max(4%, calc(50% - 590px - 40px));
+}
+
+.daily__line {
+  flex: 1;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(207, 159, 63, 0) 0%,
+    rgba(207, 159, 63, 0.6) 15%,
+    rgba(207, 159, 63, 0.6) 85%,
+    rgba(207, 159, 63, 0) 100%
+  );
+}
+
+.daily__string svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+@media (max-width: 900px) {
+  .daily__string {
+    display: none;
+  }
+}
+
+/* arrows go to the outer edges of the row, the card stays centered */
+.daily__stage {
+  justify-content: space-between;
+  max-width: 62rem;
+}
+
+/* keep the arrows clear of the gold crosses on wide screens */
+@media (min-width: 901px) {
+  .daily {
+    padding-inline: 5.5rem;
+  }
+}
+
+/* back and next arrows: navy with a gold chevron, like the card */
+.daily__arrow {
+  border: 1px solid var(--gold-soft);
+  background: linear-gradient(135deg, var(--navy), var(--navy-deep));
+  color: var(--gold-light);
+}
+
+/* date on top, above the card */
+.daily__stage {
+  grid-template-areas:
+    ". date ."
+    "prev card next";
+}
+
+@media (max-width: 640px) {
+  .daily__stage {
+    grid-template-areas:
+      "date date date"
+      "card card card"
+      "prev . next";
+  }
+}
+
+/* card sits higher on the page */
+.daily {
+  align-content: start;
+  padding-top: 1.75rem;
+}
+
+/* smaller back and next arrows */
+.daily__arrow {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+.daily__arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 640px) {
+  .daily__arrow {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+}
+
+/* card hangs from the navbar on a gold string, the date acts as a tag on it */
+.daily {
+  padding-top: 0;
+}
+
+.daily__stage {
+  --drop: 2.25rem;
+  --hang: 1.5rem;
+  row-gap: var(--hang);
+}
+
+.daily__date {
+  position: relative;
+  margin-top: var(--drop);
+}
+
+/* string from the navbar down to the date */
+.daily__date::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 2px;
+  height: var(--drop);
+  background: var(--gold);
+  transform: translateX(-50%);
+}
+
+/* string from the date down to the card, ending in a ring */
+.daily__date::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 14px;
+  height: calc(var(--hang) + 6px);
+  background:
+    linear-gradient(var(--gold), var(--gold)) 50% 0 / 2px 100% no-repeat,
+    radial-gradient(
+      circle at 50% calc(100% - 6px),
+      var(--sky-low) 0 2.5px,
+      var(--gold) 3px 5.5px,
+      transparent 6px
+    );
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .daily__date::after {
+  background:
+    linear-gradient(var(--gold), var(--gold)) 50% 0 / 2px 100% no-repeat,
+    radial-gradient(
+      circle at 50% calc(100% - 6px),
+      #1a1a1a 0 2.5px,
+      var(--gold) 3px 5.5px,
+      transparent 6px
+    );
+}
+
+/* the card swings from the ring, then settles */
+.misbak {
+  transform-origin: 50% 0;
+  animation:
+    misbak-in 0.8s ease-out both,
+    misbak-swing 2.8s ease-out 0.15s both;
+}
+
+@keyframes misbak-swing {
+  0% {
+    transform: rotate(2.4deg);
+  }
+
+  22% {
+    transform: rotate(-1.6deg);
+  }
+
+  45% {
+    transform: rotate(1deg);
+  }
+
+  68% {
+    transform: rotate(-0.5deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .misbak {
+    animation: none;
+  }
+}
+
+/* second string: from the footer up to the bottom middle of the card */
+.daily {
+  --tail: 3.5rem;
+  min-height: 0;
+  padding-bottom: var(--tail);
+}
+
+.daily__stage {
+  position: relative;
+}
+
+.daily__stage::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 6px);
+  left: 50%;
+  width: 14px;
+  height: calc(var(--tail) + 6px);
+  background:
+    linear-gradient(var(--gold), var(--gold)) 50% 6px / 2px calc(100% - 6px) no-repeat,
+    radial-gradient(
+      circle at 50% 6px,
+      transparent 0 2.5px,
+      var(--gold) 3px 5.5px,
+      transparent 6px
+    );
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* on phones the arrows sit under the card, so the string rises between them */
+@media (max-width: 640px) {
+  .daily__stage::after {
+    top: calc(100% - 3.9rem - 6px);
+    height: calc(3.9rem + var(--tail) + 6px);
+  }
+}
+
+/* the card is held at both ends now, so it no longer swings */
+.misbak {
+  animation: misbak-in 0.8s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .misbak {
+    animation: none;
+  }
+}
+
+/* title and date without a background or outline */
+.misbak__tag,
+.daily__date,
+[data-theme="dark"] .daily__date {
+  border: 0;
+  background: none;
+}
+
+/* title and date without a background or outline */
+.misbak__tag,
+.daily__date,
+[data-theme="dark"] .daily__date {
+  border: 0;
+  background: none;
+}
+
+/* wider card */
+@media (min-width: 641px) {
+  .daily__stage {
+    grid-template-columns: auto minmax(0, 44rem) auto;
+    max-width: 70rem;
+  }
+}
+
+/* card sits higher: shorter strings above it */
+.daily__stage {
+  --drop: 1rem;
+  --hang: 1rem;
+}
+
+/* equal side columns: back arrow on the left edge, next arrow on the right edge */
+@media (min-width: 641px) {
+  .daily__stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 44rem) minmax(0, 1fr);
+    justify-content: center;
+  }
+
+  .daily__arrow--prev {
+    justify-self: start;
+  }
+
+  .daily__arrow--next {
+    justify-self: end;
+  }
+}
