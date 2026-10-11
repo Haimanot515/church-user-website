@@ -103,7 +103,7 @@ const PersonDetail = () => {
         <div className="wrapper" style={{ maxWidth: "760px" }}>
           <span className="person-detail-label">{label}</span>
 
-          <img src={photo} alt={plainName} className="person-detail-photo" />
+          <img loading="lazy" decoding="async" src={photo} alt={plainName} className="person-detail-photo" />
 
           {bodyText &&
             (isQuote ? (

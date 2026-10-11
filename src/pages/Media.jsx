@@ -154,7 +154,7 @@ const VideoSection = ({ items, fallback, t }) => {
                   onClick={() => setPlayingId(id)}
                 >
                   {v.thumbnail ? (
-                    <img src={v.thumbnail} alt={v.plainTitle} />
+                    <img loading="lazy" decoding="async" src={v.thumbnail} alt={v.plainTitle} />
                   ) : (
                     <div className="video-thumb-placeholder" />
                   )}
@@ -274,7 +274,7 @@ const PhotoSection = ({ items, fallback, t }) => {
       <div className="media-grid">
         {visible.map((p, i) => (
           <Link className="grid-card photo-card" to={`/media/${p.id}`} key={p.id || i}>
-            <img src={p.mediaUrl} alt={p.plainTitle} />
+            <img loading="lazy" decoding="async" src={p.mediaUrl} alt={p.plainTitle} />
             <p className="grid-card-title">{p.plainTitle}</p>
           </Link>
         ))}
@@ -535,7 +535,7 @@ const BookSection = ({ items, fallback, t }) => {
           <Link className="grid-card book-card" to={`/media/${b.id}`} key={b.id || i}>
             <div className="book-cover">
               {b.thumbnail ? (
-                <img src={b.thumbnail} alt={b.plainTitle} />
+                <img loading="lazy" decoding="async" src={b.thumbnail} alt={b.plainTitle} />
               ) : (
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />

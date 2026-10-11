@@ -16,7 +16,7 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
     setError("");
 
     try {
-      const pendingUser = localStorage.getItem("pendingUser");
+      const pendingUser = sessionStorage.getItem("pendingUser");
       if (!pendingUser) {
         setError(t("verify.messages.noRegistrationData"));
         return;
@@ -34,7 +34,7 @@ const Verify = ({ setLoggedIn, setIsAdmin, closeModal }) => {
       const { token, msg } = res.data;
 
       // 1. Store the token
-      localStorage.removeItem("pendingUser");
+      sessionStorage.removeItem("pendingUser");
       localStorage.setItem("token", token);
 
       // 2. Decode the token payload 🔓

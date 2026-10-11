@@ -68,7 +68,7 @@ const Cover = ({ src, alt, iconSize }) => {
   }
 
   return (
-    <img
+    <img decoding="async"
       src={src}
       alt={alt}
       onError={() => setFailed(true)}

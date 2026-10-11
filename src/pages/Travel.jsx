@@ -216,7 +216,7 @@ const Travel = () => {
                   to={`/projects/${trip.id}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  <img src={trip.imageUrl} alt={trip.plainTitle} />
+                  <img loading="lazy" decoding="async" src={trip.imageUrl} alt={trip.plainTitle} />
                   <div className="upcoming-card-body">
                     <span className="upcoming-card-date">{getFormattedDate(trip)}</span>
                     <h4 className="upcoming-card-title">{trip.plainTitle}</h4>

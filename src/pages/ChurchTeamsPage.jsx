@@ -13,7 +13,7 @@ const PersonCard = ({ person, variant, avatarBg, quote }) => (
     to={`/church-persons/${person.id}`}
     className={`teams-card teams-card--${variant}`}
   >
-    <img
+    <img loading="lazy" decoding="async"
       className="teams-photo"
       src={
         (person.photos && person.photos[0]) ||

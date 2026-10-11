@@ -294,7 +294,7 @@ const StoryDetail = () => {
       {(post.photo || post.imageUrl) && (
         <section style={{ background: "#ffffff" }}>
           <div className="wrapper" style={{ maxWidth: "980px" }}>
-            <img
+            <img loading="lazy" decoding="async"
               src={post.photo || post.imageUrl}
               alt={stripHtml(post.title)}
               className="story-featured-image"
@@ -362,7 +362,7 @@ const StoryDetail = () => {
                     className="card"
                     style={{ textDecoration: "none", color: "inherit", overflow: "hidden", display: "block" }}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={p.photo || p.imageUrl}
                       alt={stripHtml(p.title)}
                       style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}

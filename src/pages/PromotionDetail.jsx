@@ -87,7 +87,7 @@ const PromotionDetail = () => {
           </span>
 
           {image && (
-            <img
+            <img loading="lazy" decoding="async"
               src={image}
               alt={stripHtml(promotion.title) || t("common.labels.sponsoredContent")}
               className="promo-hero-image"
@@ -130,7 +130,7 @@ const PromotionDetail = () => {
                     }}
                   >
                     {thumb && (
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={thumb}
                         alt={stripHtml(p.title) || t("common.labels.sponsoredContent")}
                         className="promo-more-thumb"

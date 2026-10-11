@@ -198,7 +198,7 @@ const Detail = () => {
       {post.imageUrl && (
         <section style={{ background: "#ffffff" }}>
           <div className="wrapper" style={{ maxWidth: "900px" }}>
-            <img
+            <img loading="lazy" decoding="async"
               src={post.imageUrl}
               alt={stripHtml(post.title)}
               style={{
@@ -253,7 +253,7 @@ const Detail = () => {
                   className="card"
                   style={{ textDecoration: "none", color: "inherit", overflow: "hidden", display: "block" }}
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={p.imageUrl}
                     alt={stripHtml(p.title)}
                     style={{ width: "100%", height: "160px", objectFit: "cover", display: "block" }}

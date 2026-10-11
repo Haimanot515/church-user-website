@@ -26,7 +26,7 @@ const ServiceDetail = () => {
   }, [id]);
 
   // Turns whatever the API sends back for imageUrl (a full URL, or just a
-  // filename/relative path saved from an upload) into a usable <img src>.
+  // filename/relative path saved from an upload) into a usable <img loading="lazy" decoding="async" src>.
   const getImageUrl = (imageUrl) => {
     if (!imageUrl) return null;
     if (/^https?:\/\//i.test(imageUrl)) return imageUrl; // already a full URL
@@ -271,7 +271,7 @@ const ServiceDetail = () => {
       <section className="service-detail-section">
         <div className="wrapper" style={{ maxWidth: "900px" }}>
           {resolvedImageUrl ? (
-            <img
+            <img loading="lazy" decoding="async"
               src={resolvedImageUrl}
               alt={plainTitle || t("common.labels.serviceAlt")}
               className="service-detail-image"
@@ -321,7 +321,7 @@ const ServiceDetail = () => {
                     }}
                   >
                     {img ? (
-                      <img src={img} alt={relatedTitle} className="service-related-img" />
+                      <img loading="lazy" decoding="async" src={img} alt={relatedTitle} className="service-related-img" />
                     ) : (
                       <div className="service-related-img-placeholder" aria-hidden="true" />
                     )}

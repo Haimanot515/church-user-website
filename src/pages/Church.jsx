@@ -208,7 +208,7 @@ const Church = () => {
           <div className="church-hero-media">
             {primaryChurch?.id ? (
               <Link to={`/churches/${primaryChurch.id}`}>
-                <img
+                <img loading="lazy" decoding="async"
                   src={
                     primaryChurch?.image ||
                     "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
@@ -217,7 +217,7 @@ const Church = () => {
                 />
               </Link>
             ) : (
-              <img
+              <img loading="lazy" decoding="async"
                 src={
                   primaryChurch?.image ||
                   "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
@@ -233,7 +233,7 @@ const Church = () => {
         <div style={{ background: "var(--navy-deep)", padding: "1px 24px 40px 24px" }}>
           <div className="construction-ad visible">
             <div className="construction-ad-img-wrap">
-              <img
+              <img loading="lazy" decoding="async"
                 src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80"
                 alt={t("church.constructionAd.imageAlt")}
               />
@@ -285,7 +285,7 @@ const Church = () => {
               <div className="serve-now-img-wrap">
                 {currentChurchId ? (
                   <Link to={`/churches/${currentChurchId}`}>
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={
                         currentChurch.image ||
                         currentChurch.user?.image ||
@@ -296,7 +296,7 @@ const Church = () => {
                     />
                   </Link>
                 ) : (
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={
                       currentChurch.image ||
                       currentChurch.user?.image ||
@@ -391,7 +391,7 @@ const Church = () => {
                 {visibleBlogChurches.map((c) => (
                   <div className="blog-card" key={c.id}>
                     <Link to={`/churches/${c.id}`}>
-                      <img src={c.image || ""} alt={stripHtml(c.churchName)} />
+                      <img loading="lazy" decoding="async" src={c.image || ""} alt={stripHtml(c.churchName)} />
                     </Link>
                     <div className="blog-card-body">
                       <div className="blog-tag">

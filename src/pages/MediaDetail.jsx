@@ -264,7 +264,7 @@ const MediaDetail = () => {
                     <video src={entry.mediaUrl} controls autoPlay />
                   </div>
                 ) : (
-                  <img src={entry.mediaUrl} alt={plainTitle} className="media-detail-photo" />
+                  <img loading="lazy" decoding="async" src={entry.mediaUrl} alt={plainTitle} className="media-detail-photo" />
                 )}
                 <button
                   type="button"
@@ -461,7 +461,7 @@ const MediaDetail = () => {
             {entry.mediaType === "document" && (
               <div className="media-detail-document">
                 {entry.thumbnail ? (
-                  <img src={entry.thumbnail} alt={plainTitle} style={{ maxWidth: "220px", borderRadius: "6px" }} />
+                  <img loading="lazy" decoding="async" src={entry.thumbnail} alt={plainTitle} style={{ maxWidth: "220px", borderRadius: "6px" }} />
                 ) : (
                   <svg className="media-detail-document-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
@@ -497,7 +497,7 @@ const MediaDetail = () => {
                   >
                     <div className="media-detail-related-thumb">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={stripHtml(item.title)} />
+                        <img loading="lazy" decoding="async" src={item.thumbnail} alt={stripHtml(item.title)} />
                       ) : (
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                           <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />

@@ -82,7 +82,7 @@ const AboutDetail = () => {
           <span className="about-detail-label">{t("common.labels.fromThePriest")}</span>
 
           {entry.image && (
-            <img
+            <img loading="lazy" decoding="async"
               src={entry.image}
               alt={stripHtml(entry.title) || t("common.labels.priest")}
               className="about-detail-image"

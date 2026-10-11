@@ -30,7 +30,6 @@ const POSTS_PER_PAGE = 10;
 const Home = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
   const [hero, setHero] = useState(null);
   // true when the hero currently shown came from the English
   // fallback because the active language had none
@@ -276,53 +275,6 @@ const Home = () => {
     }
   };
 
-  const videos = [
-    {
-      title: "Joey's Journey: A Testimony of Coming Home",
-      tag: "NOW PLAYING",
-      img: "https://images.unsplash.com/photo-1594990375715-2d008aaaa31b?auto=format&fit=crop&w=900&q=80",
-      alt: "Blue and gold Orthodox cathedral interior",
-      youtubeId: "YBJE7mJfEYk"
-    },
-    {
-      title: "Sunday Highlights: Hope in Hard Seasons, Week 3",
-      img: "https://images.unsplash.com/photo-1627573897879-1eff66f2c228?auto=format&fit=crop&w=200&q=80",
-      alt: "Low angle view of Orthodox cathedral interior",
-      youtubeId: "Y_O0yIoz8Hs"
-    },
-    {
-      title: "Behind the Scenes: Our Worship Team at Rehearsal",
-      img: "https://images.unsplash.com/photo-1739061749940-124120c10264?auto=format&fit=crop&w=200&q=80",
-      alt: "Priest holding a cross during service",
-      youtubeId: "YBJE7mJfEYk"
-    },
-    {
-      title: "Youth Retreat Recap: Faith, Fire Pits & Fellowship",
-      img: "https://images.unsplash.com/photo-1649105703438-0992d6844823?auto=format&fit=crop&w=200&q=80",
-      alt: "Priest standing in front of a cross",
-      youtubeId: "Y_O0yIoz8Hs"
-    },
-    {
-      title: "Missions Update: Stories from the Field",
-      img: "https://images.unsplash.com/photo-1612005660287-62b37fad2eb5?auto=format&fit=crop&w=200&q=80",
-      alt: "Orthodox cross atop a church dome",
-      youtubeId: "YBJE7mJfEYk"
-    }
-  ];
-
-  const [activeVideoId, setActiveVideoId] = useState(videos[0].youtubeId);
-  const [activeVideoTitle, setActiveVideoTitle] = useState(videos[0].title);
-
-  useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const response = await API.get("/landingheros");
-        setData(Array.isArray(response.data) ? response.data[0] : response.data);
-      } catch (err) { console.error("Error:", err); }
-    };
-    fetchContent();
-  }, []);
-
   // Hero: try current language first; if none, retry explicitly in English
   // and flag the fallback so the UI can show a note about it.
   useEffect(() => {
@@ -417,8 +369,8 @@ const Home = () => {
         setPromotionLoading(false);
       }
     };
-    fetchPromotions();
-  }, [t]);
+    if (sponsoredDelayPassed) fetchPromotions();
+  }, [t, sponsoredDelayPassed]);
 
   // About: the photo is a square whose side equals the text column's height.
   // This is stable (no shaking) because on wide screens the text column has a
@@ -788,7 +740,7 @@ const Home = () => {
             {t("home.sponsored.sponsoredContent")}
           </span>
           <div className="sponsored-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', alignItems: 'center', width: '100%' }}>
-            <img
+            <img loading="lazy" decoding="async"
               src={promotion?.image || promotion?.photo || promotion?.photoUrl || promotion?.imageUrl}
               alt={stripHtml(promotion?.title) || t("home.sponsored.imageAltFallback")}
               onClick={() => promotion?.id && navigate(`/promotions/${promotion.id}`)}

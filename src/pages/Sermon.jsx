@@ -413,7 +413,7 @@ const Sermon = () => {
                       >
                         <div className="sermon-thumb-wrap">
                           {s.thumbnail ? (
-                            <img src={s.thumbnail} alt={s.plainTitle} />
+                            <img loading="lazy" decoding="async" src={s.thumbnail} alt={s.plainTitle} />
                           ) : (
                             <div
                               style={{

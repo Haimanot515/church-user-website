@@ -420,7 +420,7 @@ const Blog = () => {
               <React.Fragment key={post.id || index}>
                 <div className={`post-row${index % 2 === 1 ? " reverse" : ""}`}>
                   <Link to={`/projects/${post.id}`} className="post-media">
-                    <img src={post.imageUrl} alt={stripHtml(post.title)} />
+                    <img loading="lazy" decoding="async" src={post.imageUrl} alt={stripHtml(post.title)} />
                   </Link>
                   <div className="post-copy">
                     <div className="post-meta">

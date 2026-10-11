@@ -691,14 +691,14 @@ const ChurchAboutPage = () => {
             <div style={{ position: 'relative', width: '100%' }}>
               {about?.id ? (
                 <Link to={`/about/${about.id}`} style={{ display: 'block', width: '100%' }}>
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
                     alt={stripHtml(about?.title) || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
                     style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', cursor: 'pointer', display: 'block' }}
                   />
                 </Link>
               ) : (
-                <img
+                <img loading="lazy" decoding="async"
                   src={about?.image || "https://images.unsplash.com/photo-1519491050282-cf00c82424b4?auto=format&fit=crop&w=900&q=80"}
                   alt={stripHtml(about?.title) || t("about.hero.imageAltFallback", { churchName: CHURCH_NAME })}
                   style={{ width: '100%', aspectRatio: '4/5', objectFit: 'cover', borderRadius: '18px', boxShadow: '0 24px 40px rgba(15,36,56,0.35)', display: 'block' }}
@@ -773,7 +773,7 @@ const ChurchAboutPage = () => {
               <div className="about-photo-side">
                 {item.photo && (
                   <Link to={`/about/story/${item.id}`} className="about-img-wrapper">
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={item.photo}
                       alt={stripHtml(item.title)}
                       className="about-image"

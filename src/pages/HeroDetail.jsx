@@ -166,7 +166,7 @@ const HeroDetail = () => {
       <section className="hero-detail-section">
         <div className="wrapper" style={{ maxWidth: "900px" }}>
           {entry.image && (
-            <img
+            <img loading="lazy" decoding="async"
               src={entry.image}
               alt={stripHtml(entry.title) || t("common.labels.churchHero")}
               className="hero-detail-image"

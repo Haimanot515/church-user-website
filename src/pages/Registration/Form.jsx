@@ -71,7 +71,7 @@ const Form = ({ setLoggedIn, setIsAdmin, closeModal, switchToLogin, switchToVeri
       setSubmitting(true);
 
       await API.post("/auth/register", form);
-      localStorage.setItem("pendingUser", JSON.stringify(form));
+      sessionStorage.setItem("pendingUser", JSON.stringify(form));
       setSuccess(t("form.messages.verificationSent"));
 
       setTimeout(() => {

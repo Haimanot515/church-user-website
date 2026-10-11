@@ -46,7 +46,7 @@ const Services = () => {
 
 
   // Turns whatever the API sends back for imageUrl (a full URL, or just a
-  // filename/relative path saved from an upload) into a usable <img src>.
+  // filename/relative path saved from an upload) into a usable <img loading="lazy" decoding="async" src>.
   const getImageUrl = (imageUrl) => {
     if (!imageUrl) return null;
     if (/^https?:\/\//i.test(imageUrl)) return imageUrl; // already a full URL
@@ -158,7 +158,7 @@ const Services = () => {
                 }}
               >
                 {s.resolvedImageUrl ? (
-                  <img src={s.resolvedImageUrl} alt={s.plainTitle} />
+                  <img loading="lazy" decoding="async" src={s.resolvedImageUrl} alt={s.plainTitle} />
                 ) : (
                   <div className="service-img-placeholder" aria-hidden="true" />
                 )}

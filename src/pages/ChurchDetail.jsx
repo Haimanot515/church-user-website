@@ -78,7 +78,7 @@ const ChurchDetail = () => {
       <BackButton />
 
       <section className="church-detail-hero">
-        <img
+        <img loading="lazy" decoding="async"
           src={church.image || ""}
           alt={stripHtml(church.churchName)}
         />
