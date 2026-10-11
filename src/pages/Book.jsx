@@ -15,11 +15,7 @@ const getMediaUrl = (mediaUrl) => {
   return `${base}${path}`;
 };
 
-// Forces a real file download instead of the browser navigating to /
-// opening the file. Using the `download` attribute on an <a> only
-// works when the file is same-origin; since media files are usually
-// served from a different host/CDN, we fetch the bytes as a blob and
-// download from that instead, which works regardless of origin.
+// Fetch as a blob so the download works even when the file is served from another origin.
 const handleDownload = async (url, title) => {
   if (!url) return;
   try {
@@ -35,9 +31,6 @@ const handleDownload = async (url, title) => {
     link.remove();
     window.URL.revokeObjectURL(blobUrl);
   } catch (err) {
-    // Fallback: if fetching as a blob fails (e.g. CORS blocked at the
-    // network level), open the file in a new tab so the user can at
-    // least save it manually from there.
     window.open(url, "_blank", "noopener,noreferrer");
   }
 };
@@ -58,8 +51,6 @@ const DownloadIcon = ({ size = 14 }) => (
 );
 
 
-// Reusable cover image with graceful fallback to BookIcon
-// if the thumbnail URL is missing or fails to load.
 const Cover = ({ src, alt, iconSize }) => {
   const [failed, setFailed] = useState(false);
 
@@ -145,9 +136,6 @@ const Book = () => {
           ...m,
           mediaUrl: getMediaUrl(m.mediaUrl),
           thumbnail: getMediaUrl(m.thumbnail),
-          // title/description are RichTextField HTML — keep plain-text
-          // versions for the card, alt text, download filename, search
-          // and sorting so tags never leak or get matched.
           plainTitle: stripHtml(m.title),
           plainDescription: stripHtml(m.description),
           authorName: m.author && typeof m.author === "object" ? m.author.name : "",
@@ -168,7 +156,6 @@ const Book = () => {
       const res = await API.get("/categories");
       setCategoryList(res.data || []);
     } catch (err) {
-      // Non-fatal: fall back to categories derived from loaded books
       console.error("Failed to load categories", err);
     }
   };
@@ -176,12 +163,8 @@ const Book = () => {
   useEffect(() => {
     fetchBooks();
     fetchCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
 
-  // Category tabs come from the backend category list (so every
-  // category shows up, even ones with zero published books right
-  // now), with live counts computed from the loaded books.
   const categories = useMemo(() => {
     const counts = new Map();
     bookItems.forEach((b) => {
@@ -196,7 +179,6 @@ const Book = () => {
         .sort((a, b) => a[0].localeCompare(b[0]));
     }
 
-    // Fallback: derive from whatever categories appear in loaded books
     return Array.from(counts.entries()).sort((a, b) => a[0].localeCompare(b[0]));
   }, [categoryList, bookItems]);
 
@@ -220,7 +202,6 @@ const Book = () => {
     } else if (sortBy === "author") {
       list = [...list].sort((a, b) => (a.authorName || "").localeCompare(b.authorName || ""));
     }
-    // "newest" relies on the backend's default createdAt desc order — no re-sort needed.
 
     return list;
   }, [bookItems, query, activeCategory, sortBy]);
@@ -229,12 +210,6 @@ const Book = () => {
 
   return (
     <div className="book-portal">
-      <div className="cloud-layer">
-        <div className="cloud cloud-a" />
-        <div className="cloud cloud-b" />
-        <div className="cloud cloud-c" />
-      </div>
-
       <section className="book-hero">
         <div className="wrapper">
           <span className="eyebrow">{t("book.hero.eyebrow")}</span>
