@@ -75,20 +75,23 @@
     "none": "Nessuna foto trovata.",
     "errorDefault": "Impossibile caricare le foto",
     "prevAriaLabel": "Foto precedente",
-    "nextAriaLabel": "Foto successiva"
+    "nextAriaLabel": "Foto successiva",
+    "more": "Altro"
   },
   "audios": {
     "errorDefault": "Impossibile caricare l'audio.",
     "heading": "Audio",
     "none": "Nessun audio trovato.",
     "prevAriaLabel": "Precedente",
-    "nextAriaLabel": "Successivo"
+    "nextAriaLabel": "Successivo",
+    "more": "Altro"
   },
   "videos": {
     "errorDefault": "Impossibile caricare i video.",
     "heading": "Video",
     "none": "Nessun video trovato.",
     "prevAriaLabel": "Precedente",
-    "nextAriaLabel": "Successivo"
+    "nextAriaLabel": "Successivo",
+    "more": "Altro"
   }
 }

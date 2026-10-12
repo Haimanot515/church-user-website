@@ -75,20 +75,23 @@
     "none": "No photos found.",
     "errorDefault": "Failed to load photos",
     "prevAriaLabel": "Previous photo",
-    "nextAriaLabel": "Next photo"
+    "nextAriaLabel": "Next photo",
+    "more": "More"
   },
   "audios": {
     "errorDefault": "Failed to load audio.",
     "heading": "Audio",
     "none": "No audio found.",
     "prevAriaLabel": "Previous",
-    "nextAriaLabel": "Next"
+    "nextAriaLabel": "Next",
+    "more": "More"
   },
   "videos": {
     "errorDefault": "Failed to load videos.",
     "heading": "Videos",
     "none": "No videos found.",
     "prevAriaLabel": "Previous",
-    "nextAriaLabel": "Next"
+    "nextAriaLabel": "Next",
+    "more": "More"
   }
 }

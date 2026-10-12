@@ -75,20 +75,23 @@
     "none": "ምንም ፎቶዎች አልተገኙም።",
     "errorDefault": "ፎቶዎችን መጫን አልተሳካም",
     "prevAriaLabel": "ቀዳሚ ፎቶ",
-    "nextAriaLabel": "ቀጣይ ፎቶ"
+    "nextAriaLabel": "ቀጣይ ፎቶ",
+    "more": "ተጨማሪ"
   },
   "audios": {
     "errorDefault": "ኦዲዮን መጫን አልተቻለም።",
     "heading": "ኦዲዮ",
     "none": "ምንም ኦዲዮ አልተገኘም።",
     "prevAriaLabel": "ቀዳሚ",
-    "nextAriaLabel": "ቀጣይ"
+    "nextAriaLabel": "ቀጣይ",
+    "more": "ተጨማሪ"
   },
   "videos": {
     "errorDefault": "ቪዲዮዎችን መጫን አልተቻለም።",
     "heading": "ቪዲዮዎች",
     "none": "ምንም ቪዲዮ አልተገኘም።",
     "prevAriaLabel": "ቀዳሚ",
-    "nextAriaLabel": "ቀጣይ"
+    "nextAriaLabel": "ቀጣይ",
+    "more": "ተጨማሪ"
   }
 }

@@ -1256,8 +1256,8 @@ const Home = () => {
 
       <div ref={photosRef} />
       <section className="home-photo-section" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className="wrapper photo-wrapper" style={{ maxWidth: '1200px' }}>
-          <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.photos.heading")}</h3>
+        <div className="wrapper photo-wrapper" style={{ maxWidth: '1400px' }}>
+          <h3 className="display" style={{ marginBottom: '90px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.photos.heading")}</h3>
           {photosError && <p style={{ color: 'red', textAlign: 'center' }}>{photosError}</p>}
 
           {photosLoading ? (
@@ -1265,7 +1265,8 @@ const Home = () => {
           ) : photos.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.photos.none")}</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', gap: '24px' }}>
+            <>
+            <div className="photo-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(480px, 100%), 1fr))', gap: '72px' }}>
               {photos.map((p, i) => (
                 <div
                   key={p.id || i}
@@ -1277,7 +1278,7 @@ const Home = () => {
                     decoding="async"
                     src={p.mediaUrl}
                     alt={stripHtml(p.title)}
-                    style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', display: 'block', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                    style={{ width: '100%', aspectRatio: '5/4', objectFit: 'cover', display: 'block', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
                   />
                   <p style={{ margin: '12px 0 0 0', textAlign: 'center', fontSize: '1rem', fontWeight: 700, color: 'var(--navy-deep)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     <Rich html={p.title} words={8} />
@@ -1285,6 +1286,10 @@ const Home = () => {
                 </div>
               ))}
             </div>
+            <div className="hm-more-wrap">
+              <Link to="/media" className="load-more-btn">{t("home.photos.more")}</Link>
+            </div>
+            </>
           )}
         </div>
       </section>

@@ -984,4 +984,30 @@ img, video { max-width: 100%; height: auto; }
   .about-card { padding: 0 40px 0 0 !important; overflow: hidden; }
   .about-photo { border: 0 !important; border-radius: 0 !important; }
   .about-text { padding: 40px 0; }
+}.photo-grid > div:nth-child(even) { transform: rotate(2deg); }
+
+/* Photos: more breathing room above and below the section (wide screens). */
+@media (min-width: 1100px) {
+  .home-photo-section { padding: 120px 0; }
 }
+
+/* Photos: normal rectangles. The title sits on the photo, so the gaps
+   between photos are plain empty space and equal in both directions. */
+.photo-grid > div { position: relative; }
+.photo-grid > div > p {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  margin: 0 !important; padding: 48px 16px 16px;
+  border-radius: 0 0 8px 8px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.75) 100%);
+}
+.photo-grid > div > p, .photo-grid > div > p * { color: #fff !important; }
+
+/* Photos: straight grid, no offset or tilt (overrides any older rule). */
+.photo-grid { padding-bottom: 0 !important; }
+.photo-grid > div { transform: none !important; }
+
+/* Photos: on hover the card pops outward. */
+.photo-grid > div { transition: transform 0.3s ease; }
+.photo-grid > div > img { transition: box-shadow 0.3s ease; }
+.photo-grid > div:hover { transform: scale(1.06) !important; z-index: 5; }
+.photo-grid > div:hover > img { box-shadow: 0 22px 40px rgba(0,0,0,0.3) !important; }
