@@ -85,7 +85,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: clamp(20px, 3vw, 40px);
+  column-gap: clamp(48px, 8vw, 140px);
+  row-gap: clamp(48px, 7vw, 110px);
 }
 
 /* CARD BASE */
@@ -109,7 +110,7 @@
 
 .teams-photo {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
   display: block;
   border-radius: 16px;
@@ -282,3 +283,129 @@
   border-color: rgba(255, 255, 255, 0.18);
   border-top-color: var(--t-gold);
 }
+
+/* SPECIAL THANKS BG START */
+.teams-section--white {
+  background: var(--t-sky-mid, #d5eaf3);
+}
+.teams-section--white .teams-card--voice {
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(15, 36, 56, 0.12);
+}
+.teams-section--white .teams-card--voice:hover {
+  box-shadow: 0 26px 50px rgba(15, 36, 56, 0.2);
+}
+[data-theme="dark"] .teams-section--white {
+  background: #0f2233;
+}
+[data-theme="dark"] .teams-section--white .teams-card--voice {
+  background: #1b2f42;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+}
+/* SPECIAL THANKS BG END */
+
+
+/* SAME CARD SIZE START */
+.teams-page .teams-grid {
+  --cols: 3;
+  --t-gap: clamp(48px, 8vw, 140px);
+  column-gap: var(--t-gap);
+  align-items: stretch;
+}
+/* every card = exactly 1/3 of the row minus the gaps, in every section */
+.teams-page .teams-card {
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--t-gap)) / var(--cols));
+  width: calc((100% - (var(--cols) - 1) * var(--t-gap)) / var(--cols));
+  max-width: none;
+}
+@media (max-width: 900px) {
+  .teams-page .teams-grid { --cols: 2; --t-gap: clamp(24px, 5vw, 48px); }
+}
+@media (max-width: 600px) {
+  .teams-page .teams-grid { --cols: 1; }
+  .teams-page .teams-card { max-width: 440px; }
+}
+/* SAME CARD SIZE END */
+
+/* LEADERSHIP WHITE START */
+.teams-page .teams-section--red {
+  background: #ffffff;
+}
+.teams-page .teams-section--red .teams-heading { color: var(--t-navy-deep); }
+.teams-page .teams-section--red .teams-notice { color: #6b7f8c; }
+.teams-page .teams-section--red .teams-card--leader {
+  background: var(--t-sky-low);
+  border: 1px solid rgba(28, 58, 82, 0.1);
+  box-shadow: 0 14px 34px rgba(15, 36, 56, 0.09);
+}
+.teams-page .teams-section--red .teams-card--leader:hover {
+  background: var(--t-sky-low);
+  box-shadow: 0 26px 50px rgba(15, 36, 56, 0.17);
+}
+.teams-page .teams-section--red .teams-card--leader .teams-name { color: var(--t-navy-deep); }
+.teams-page .teams-section--red .teams-card--leader .teams-role { color: var(--t-red); }
+.teams-page .teams-section--red .teams-card--leader .teams-text { color: var(--t-slate); }
+
+/* dark mode keeps a dark leadership section */
+[data-theme="dark"] .teams-page .teams-section--red { background: #202020; }
+[data-theme="dark"] .teams-page .teams-section--red .teams-heading { color: #f8fafc; }
+[data-theme="dark"] .teams-page .teams-section--red .teams-notice { color: #9fb3c0; }
+[data-theme="dark"] .teams-page .teams-section--red .teams-card--leader {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+}
+[data-theme="dark"] .teams-page .teams-section--red .teams-card--leader:hover {
+  background: #2a2a2a;
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] .teams-page .teams-section--red .teams-card--leader .teams-name { color: #f8fafc; }
+[data-theme="dark"] .teams-page .teams-section--red .teams-card--leader .teams-role { color: #f0a8a8; }
+[data-theme="dark"] .teams-page .teams-section--red .teams-card--leader .teams-text { color: #cbd5e1; }
+/* LEADERSHIP WHITE END */
+
+/* TESTIMONIALS BG START */
+.teams-page .teams-section--sky {
+  background: #faf3e3;
+}
+[data-theme="dark"] .teams-page .teams-section--sky {
+  background: #25211a;
+}
+/* TESTIMONIALS BG END */
+
+/* PHOTO BORDER START */
+.teams-page .teams-photo {
+  border: 3px solid #7a1010;
+}
+[data-theme="dark"] .teams-page .teams-photo {
+  border-color: #c25b5b;
+}
+/* PHOTO BORDER END */
+
+/* BRIGHTEN START */
+/* brighter, lighter blue intro banner */
+.teams-page .teams-hero {
+  background: linear-gradient(180deg, #2f6a96 0%, #1f4d73 100%);
+}
+/* brighter section tints */
+.teams-page .teams-section--sky   { background: #fffaf0; }
+.teams-page .teams-section--white { background: #e4f3fb; }
+/* livelier photos */
+.teams-page .teams-photo {
+  filter: brightness(1.07) saturate(1.1) contrast(1.03);
+}
+/* softer, lighter card shadows */
+.teams-page .teams-card--voice,
+.teams-page .teams-section--red .teams-card--leader {
+  box-shadow: 0 12px 30px rgba(47, 106, 150, 0.14);
+}
+/* dark mode: just lift the photos and banner a little */
+[data-theme="dark"] .teams-page .teams-hero {
+  background: linear-gradient(180deg, #1c3d58 0%, #11263a 100%);
+}
+[data-theme="dark"] .teams-page .teams-section--sky   { background: #25211a; }
+[data-theme="dark"] .teams-page .teams-section--white { background: #0f2233; }
+[data-theme="dark"] .teams-page .teams-photo {
+  filter: brightness(1.1) saturate(1.1);
+}
+/* BRIGHTEN END */
