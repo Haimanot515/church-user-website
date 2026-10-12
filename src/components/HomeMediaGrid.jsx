@@ -5,13 +5,7 @@ import API from "../api/api.jsx";
 import { Rich, stripHtml } from "./RichTextView";
 import Spinner from "./Spinner";
 import useInView from "../hooks/useInView";
-
-// Home-page grid for videos and audio.
-// Shows the first set of items in a grid; the Next / Back arrows (same
-// .photo-arrow buttons as the Photos section) move to the next / previous
-// set. Everything else (heading, arrows, dots, colors) matches Photos.
-//
-// Usage:  <HomeMediaGrid type="video" />   <HomeMediaGrid type="audio" />
+import "./HomeMediaGrid.css";
 
 const getMediaUrl = (u) => {
   if (!u) return null;
@@ -26,16 +20,14 @@ const mapItems = (d) => {
     .filter((m) => m.status !== "draft")
     .map((m) => ({
       ...m,
-      mediaUrl: getMediaUrl(m.mediaUrl || m.url),
+      mediaUrl: getMediaUrl(m.mediaUrl || m.url || m.image || m.imageUrl),
       thumbnail: getMediaUrl(m.thumbnail),
     }))
     .filter((m) => m.mediaUrl);
 };
 
-// Each set shows this many rows of cards.
 const ROWS = 3;
 
-// Cards per row: 3 on desktop, 2 on tablet, 1 on phones.
 const getColumns = () => {
   if (typeof window === "undefined") return 3;
   const w = window.innerWidth;
@@ -44,33 +36,24 @@ const getColumns = () => {
   return 1;
 };
 
-const useColumns = () => {
-  const [cols, setCols] = useState(getColumns);
-  useEffect(() => {
-    const onResize = () => setCols(getColumns());
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-  return cols;
+const getVideoColumns = () => {
+  if (typeof document === "undefined") return 3;
+  const vw = document.documentElement.clientWidth;
+  const pad = vw <= 600 ? 16 : vw <= 1024 ? 28 : 48;
+  const gap = vw <= 600 ? 24 : vw <= 1024 ? 32 : 44;
+  return Math.max(1, Math.floor((vw - pad * 2 + gap) / (340 + gap)));
 };
 
-const handleDownload = async (url, title) => {
-  if (!url) return;
-  try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    const ext = (url.split(".").pop() || "").split("?")[0];
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = ext ? `${title || "download"}.${ext}` : title || "download";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(blobUrl);
-  } catch (err) {
-    window.open(url, "_blank", "noopener,noreferrer");
-  }
+const useColumns = (isAudio) => {
+  const read = isAudio ? getColumns : getVideoColumns;
+  const [cols, setCols] = useState(read);
+  useEffect(() => {
+    const onResize = () => setCols(read());
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [read]);
+  return cols;
 };
 
 const clamp = (extra) => ({
@@ -84,24 +67,16 @@ const HomeMediaGrid = ({ type = "video" }) => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const isAudio = type === "audio";
-  const key = isAudio ? "home.audios" : "home.videos";
-  const cols = useColumns();
+  const isPhoto = type === "photo";
+  const key = isAudio ? "home.audios" : isPhoto ? "home.photos" : "home.videos";
+  const cols = useColumns(isAudio);
   const [sectionRef, seen] = useInView();
 
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  // Same behaviour as the Media page: play inline, one ⋮ menu open at a time.
   const [playingId, setPlayingId] = useState(null);
-  const [openMenuId, setOpenMenuId] = useState(null);
-
-  useEffect(() => {
-    if (openMenuId === null) return undefined;
-    const closeMenu = () => setOpenMenuId(null);
-    document.addEventListener("click", closeMenu);
-    return () => document.removeEventListener("click", closeMenu);
-  }, [openMenuId]);
 
   useEffect(() => {
     if (!seen) return undefined;
@@ -113,14 +88,20 @@ const HomeMediaGrid = ({ type = "video" }) => {
         const res = await API.get(`/media/type/${type}`);
         const list = mapItems(res.data);
         const seen = new Set(list.map((m) => m.id));
-        if (list.length === 0) try {
+        const addMore = (arr) => arr.forEach((m) => {
+          if (!seen.has(m.id)) { seen.add(m.id); list.push(m); }
+        });
+        const minItems = isPhoto ? 2 : 1;
+        if (list.length < minItems) try {
           const all = await API.get("/media");
-          mapItems(all.data)
-            .filter((m) => m.mediaType === type)
-            .forEach((m) => {
-              if (!seen.has(m.id)) { seen.add(m.id); list.push(m); }
-            });
-        } catch (e) { /* ignore */ }
+          addMore(mapItems(all.data).filter((m) => m.mediaType === type));
+        } catch (e) { }
+        if (isPhoto && list.length < minItems) {
+          const others = await Promise.all(["en", "am", "it"].map((l) =>
+            API.get(`/media/type/${type}`, { headers: { "Accept-Language": l } })
+              .then((r) => mapItems(r.data)).catch(() => [])));
+          addMore(others.flat());
+        }
         if (cancelled) return;
         setItems(list);
         setPage(0);
@@ -132,10 +113,8 @@ const HomeMediaGrid = ({ type = "video" }) => {
     };
     load();
     return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language, type, seen]);
 
-  // One shared <audio> element, same player logic as the Media page.
   const audioRef = useRef(null);
   const [activeId, setActiveId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -187,87 +166,55 @@ const HomeMediaGrid = ({ type = "video" }) => {
   const safePage = Math.min(page, pageCount - 1);
   const visible = items.slice(safePage * perPage, safePage * perPage + perPage);
 
-  const prev = () => pageCount > 1 && setPage((safePage - 1 + pageCount) % pageCount);
-  const next = () => pageCount > 1 && setPage((safePage + 1) % pageCount);
   const open = (m) => m?.id && navigate(`/media/${m.id}`);
 
-  // Video card — same look and behaviour as the Media page video grid.
   const renderVideoCard = (m, i) => {
     const id = m.id || i;
     const title = stripHtml(m.title);
     const isPlaying = playingId === id;
     return (
-      <div
-        key={id}
-        style={{
-          position: "relative", minWidth: 0, background: "#fff", border: "1px solid rgba(28,58,82,0.12)",
-          borderRadius: "10px", overflow: "hidden", boxShadow: "0 8px 18px rgba(15,36,56,0.06)", width: "100%",
-          textAlign: "left", colorScheme: "light",
-        }}
-      >
+      <div key={id} className={`hm-card${isPlaying ? " active" : ""}`}>
         {isPlaying ? (
-          <video
-            src={m.mediaUrl}
-            controls
-            autoPlay
-            playsInline
-            onEnded={() => setPlayingId(null)}
-            style={{ width: "100%", aspectRatio: "16/9", display: "block", background: "#000" }}
-          />
+          <div className="hm-thumb-wrap">
+            <video src={m.mediaUrl} controls autoPlay playsInline onEnded={() => setPlayingId(null)} />
+          </div>
         ) : (
-          <button
-            type="button"
-            aria-label={title}
-            onClick={() => setPlayingId(id)}
-            style={{ position: "relative", display: "block", width: "100%", border: "none", padding: 0, cursor: "pointer", background: "none" }}
-          >
-            {m.thumbnail ? (
-              <img loading="lazy" decoding="async" src={m.thumbnail} alt={title} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block" }} />
-            ) : (
-              <div style={{ width: "100%", aspectRatio: "16/9", background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%)" }} />
-            )}
-            <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(15,36,56,0.35)", color: "#fff" }}>
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-            </span>
+          <button type="button" className="hm-card-btn" aria-label={title} onClick={() => setPlayingId(id)}>
+            <div className="hm-thumb-wrap">
+              {m.thumbnail ? (
+                <img loading="lazy" decoding="async" src={m.thumbnail} alt={title} />
+              ) : (
+                <div className="hm-thumb-fallback" />
+              )}
+              <div className="hm-play-badge">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1.4" opacity="0.85" /><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor" /></svg>
+              </div>
+            </div>
           </button>
         )}
-
-        <Link to={`/media/${m.id}`} style={{ color: "inherit", textDecoration: "none" }}>
-          <p style={{ fontSize: "0.98rem", fontWeight: 700, color: "var(--navy-deep)", margin: 0, padding: "14px 16px", lineHeight: 1.35 }}>{title}</p>
+        <Link to={`/media/${m.id}`} className="hm-card-body">
+          {isPlaying && <div className="hm-now-playing">{t("sermon.sermons.nowPlaying", "Now playing")}</div>}
+          <h3>{title}</h3>
         </Link>
-
-        <button
-          type="button"
-          aria-label={t("media.common.moreOptions", "More options")}
-          style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: "50%", border: "none", background: "rgba(0,0,0,0.55)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 2 }}
-          onClick={(e) => { e.stopPropagation(); setOpenMenuId((cur) => (cur === id ? null : id)); }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="5" r="1.7" /><circle cx="12" cy="12" r="1.7" /><circle cx="12" cy="19" r="1.7" />
-          </svg>
-        </button>
-        {openMenuId === id && (
-          <div
-            style={{ position: "absolute", top: 42, right: 8, background: "#fff", borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 3 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 14px", border: "none", background: "transparent", color: "#222", fontSize: "0.9rem", cursor: "pointer", whiteSpace: "nowrap" }}
-              onClick={() => { handleDownload(m.mediaUrl, title); setOpenMenuId(null); }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" />
-              </svg>
-              {t("media.common.download", "Download")}
-            </button>
-          </div>
-        )}
       </div>
     );
   };
 
-  // Audio card — same look and behaviour as the Media page audio grid.
+  const renderPhotoCard = (m, i) => {
+    const id = m.id || i;
+    const title = stripHtml(m.title);
+    return (
+      <Link key={id} to={`/media/${m.id}`} className="hm-card hm-photo-card">
+        <div className="hm-thumb-wrap">
+          <img loading="lazy" decoding="async" src={m.mediaUrl} alt={title} />
+        </div>
+        <div className="hm-card-body">
+          <h3>{title}</h3>
+        </div>
+      </Link>
+    );
+  };
+
   const renderCard = (m, i) => {
     const id = m.id || i;
     const title = stripHtml(m.title);
@@ -327,98 +274,58 @@ const HomeMediaGrid = ({ type = "video" }) => {
           <p style={{ fontSize: "0.98rem", fontWeight: 700, color: "#ffffff", margin: 0, padding: "14px 0 4px 0", lineHeight: 1.35, textAlign: "center" }}>{title}</p>
         </Link>
         <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.78)", margin: 0, textAlign: "center", fontFamily: "'IBM Plex Mono', monospace" }}>{stripHtml(m.description)}</p>
-
-        <button
-          type="button"
-          aria-label={t("media.common.moreOptions", "More options")}
-          style={{ position: "absolute", top: 8, right: 8, width: 30, height: 30, borderRadius: "50%", border: "none", background: "rgba(0,0,0,0.55)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 2 }}
-          onClick={(e) => { e.stopPropagation(); setOpenMenuId((cur) => (cur === id ? null : id)); }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="5" r="1.7" /><circle cx="12" cy="12" r="1.7" /><circle cx="12" cy="19" r="1.7" />
-          </svg>
-        </button>
-        {openMenuId === id && (
-          <div
-            style={{ position: "absolute", top: 42, right: 8, background: "#fff", borderRadius: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.18)", overflow: "hidden", zIndex: 3 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px 14px", border: "none", background: "transparent", color: "#222", fontSize: "0.9rem", cursor: "pointer", whiteSpace: "nowrap" }}
-              onClick={() => { handleDownload(m.mediaUrl, title); setOpenMenuId(null); }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" />
-              </svg>
-              {t("media.common.download", "Download")}
-            </button>
-          </div>
-        )}
       </div>
     );
   };
 
   return (
-    <section ref={sectionRef} style={{ background: "#ffffff", position: "relative", overflow: "hidden" }}>
-      <div className="wrapper photo-wrapper" style={{ maxWidth: "1200px" }}>
+    <section
+      ref={sectionRef}
+      className={isAudio ? "hm-audio-section" : `hm-video-section${isPhoto ? " hm-photo-section" : ""}`}
+      style={isAudio ? { position: "relative", overflow: "hidden" } : undefined}
+    >
+      <div className={isAudio ? "wrapper photo-wrapper" : "hm-video-wrapper"} style={isAudio ? { maxWidth: "1200px" } : undefined}>
         <h3 className="display" style={{ marginBottom: "44px", fontSize: "2.8rem", fontWeight: 700, textAlign: "center", color: "var(--navy-deep)" }}>
-          {t(`${key}.heading`, isAudio ? "Audio" : "Videos")}
+          {t(`${key}.heading`, isAudio ? "Audio" : isPhoto ? "Photos" : "Videos")}
         </h3>
         {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
         {loading ? (
           seen ? <Spinner /> : <div style={{ minHeight: 360 }} />
         ) : items.length === 0 ? (
-          <p style={{ textAlign: "center" }}>{t(`${key}.none`, isAudio ? "No audio found." : "No videos found.")}</p>
-        ) : (
-          <div className="photo-carousel">
-            <div className="photo-carousel-frame">
-              {isAudio && (
-                <audio
-                  ref={audioRef}
-                  preload="none"
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  onEnded={stopAudio}
-                  onTimeUpdate={(e) => setTime(e.target.currentTime)}
-                  onLoadedMetadata={(e) => setDur(e.target.duration)}
-                  onDurationChange={(e) => setDur(e.target.duration)}
-                />
-              )}
-              <div className="photo-image-wrap" style={{ position: "relative" }}>
-                <button type="button" className="photo-arrow left" aria-label={t(`${key}.prevAriaLabel`, "Previous")} onClick={prev} disabled={pageCount < 2}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-
-                <div
-                  style={{
-                    flex: 1, minWidth: 0, position: "relative", zIndex: 1, width: "100%",
-                    display: "grid", gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-                    gap: cols === 3 ? "44px" : cols === 2 ? "32px" : "24px",
-                    alignItems: "start",
-                  }}
-                >
-                  {visible.map((m, i) => (isAudio ? renderCard(m, i) : renderVideoCard(m, i)))}
-                </div>
-
-                <button type="button" className="photo-arrow right" aria-label={t(`${key}.nextAriaLabel`, "Next")} onClick={next} disabled={pageCount < 2}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
-
-              <p style={{ textAlign: "center", margin: "26px 0 0", fontSize: "14px", color: "#666" }}>{safePage + 1} / {pageCount}</p>
-              <div className="photo-dots">
-                {Array.from({ length: pageCount }).map((_, i) => (
-                  <span key={i} className={`photo-dot${i === safePage ? " active" : ""}`} onClick={() => setPage(i)} />
-                ))}
-              </div>
+          <p style={{ textAlign: "center" }}>{t(`${key}.none`, isAudio ? "No audio found." : isPhoto ? "No photos found." : "No videos found.")}</p>
+        ) : !isAudio ? (
+          <>
+            <div className="hm-grid">{visible.map((m, i) => (isPhoto ? renderPhotoCard(m, i) : renderVideoCard(m, i)))}</div>
+            <div className="hm-more-wrap">
+              <Link to="/media" className="load-more-btn">{t(`${key}.more`, "More")}</Link>
             </div>
-          </div>
+          </>
+        ) : (
+          <>
+            <audio
+              ref={audioRef}
+              preload="none"
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={stopAudio}
+              onTimeUpdate={(e) => setTime(e.target.currentTime)}
+              onLoadedMetadata={(e) => setDur(e.target.duration)}
+              onDurationChange={(e) => setDur(e.target.duration)}
+            />
+            <div
+              style={{
+                display: "grid", gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+                gap: cols === 3 ? "44px" : cols === 2 ? "32px" : "24px",
+                alignItems: "start",
+              }}
+            >
+              {visible.map((m, i) => renderCard(m, i))}
+            </div>
+            <div className="hm-more-wrap">
+              <Link to="/media" className="load-more-btn">{t(`${key}.more`, "More")}</Link>
+            </div>
+          </>
         )}
       </div>
     </section>

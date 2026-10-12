@@ -91,23 +91,6 @@ a { color: inherit; text-decoration: none; }
   justify-content: center;
   padding-top: 34px;
 }
-.load-more-btn {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.85rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: #fff;
-  background: var(--navy);
-  border: 1px solid var(--navy);
-  border-radius: 999px;
-  padding: 14px 34px;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-.load-more-btn:hover {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--navy-deep);
-}
 
 /* Photo cards */
 .photo-card { display: block; }

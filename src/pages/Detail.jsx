@@ -271,16 +271,7 @@ const Detail = () => {
                 <button
                   onClick={loadMoreRelated}
                   disabled={relatedLoadingMore}
-                  style={{
-                    padding: "12px 28px",
-                    borderRadius: "999px",
-                    border: "1px solid var(--navy-deep, #1e293b)",
-                    background: "transparent",
-                    color: "var(--navy-deep, #1e293b)",
-                    fontWeight: 600,
-                    cursor: relatedLoadingMore ? "not-allowed" : "pointer",
-                    opacity: relatedLoadingMore ? 0.6 : 1,
-                  }}
+                  className="load-more-btn"
                 >
                   {relatedLoadingMore ? t("common.loadingMore") : t("common.loadMore")}
                 </button>

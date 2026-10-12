@@ -128,13 +128,6 @@ section { padding: 90px 0; position: relative; z-index: 1; }
 }
 
 .load-more-wrap { text-align: center; margin-top: 20px; }
-.load-more-btn {
-  background: var(--deep-red); color: #fff; border: none;
-  padding: 13px 34px; font-size: 1rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.04em; border-radius: 4px; cursor: pointer; transition: background 0.25s ease;
-}
-.load-more-btn:hover { background: #5c0c0c; }
-.load-more-btn:disabled { background: #ccc; cursor: not-allowed; }
 
 /* ---------- Loading spinner (shown while a section's data is being
    fetched from the backend, so no hardcoded frontend placeholder
@@ -288,7 +281,6 @@ html, body { overflow-x: clip; }
   .post-copy .byline { font-size: 0.85rem; }
   .read-more { font-size: 0.72rem; }
 
-  .load-more-btn { width: 100%; padding: 13px 0; }
 
   .newsletter-form { flex-direction: column; align-items: center; }
   .newsletter-form input,
@@ -310,7 +302,6 @@ html, body { overflow-x: clip; }
   .wrapper { padding: 0 12px; }
   .hero-blog h1 { font-size: 1.7rem; }
   .post-copy h3 { font-size: 1.25rem; }
-  .load-more-btn { font-size: 0.9rem; padding: 12px 0; }
 }
 
 /* ===== Short-height mobile devices in landscape orientation ===== */
@@ -323,7 +314,6 @@ html, body { overflow-x: clip; }
 @media (hover: none) and (pointer: coarse) {
   .nav-item { padding: 10px 4px; }
   .read-more { padding-bottom: 8px; }
-  .load-more-btn { min-height: 44px; }
 }
 
 /* ============================================================

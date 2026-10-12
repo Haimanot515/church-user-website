@@ -453,21 +453,6 @@ const ChurchAboutPage = () => {
           transition: all 0.2s ease;
         }
         .read-full-story-btn:hover { background: var(--navy-deep); border-color: var(--navy-deep); }
-        .load-more-btn {
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 0.85rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          color: var(--navy-deep);
-          background: transparent;
-          border: 1.5px solid var(--navy-deep);
-          padding: 12px 30px;
-          border-radius: 30px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .load-more-btn:hover { background: var(--navy-deep); color: #eaf3f8; }
-        .load-more-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         @media (max-width: 900px) {
           .about-item { flex-direction: column; align-items: center; text-align: center; }
           .about-photo-side { flex: 0 1 100%; width: 100%; max-width: 450px; }

@@ -158,3 +158,17 @@ button[type="submit"] {
 /* Success & Error Messages */
 .success { color: #28a745; text-align: center; margin-top: 10px; }
 .error { color: #dc3545; text-align: center; margin-top: 10px; }
+
+/* Shared "Load more" button: same colour and shape as the Blog page. */
+.load-more-wrap { text-align: center; }
+.load-more-btn {
+  display: inline-block; text-decoration: none; text-align: center;
+  background: #7a1010; color: #fff; border: none;
+  padding: 13px 34px; font-size: 1rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; border-radius: 4px; cursor: pointer; transition: background 0.25s ease;
+}
+.load-more-btn:hover { background: #5c0c0c; }
+.load-more-btn:disabled { background: #ccc; cursor: not-allowed; }
+@media (max-width: 600px) { .load-more-btn { width: 100%; padding: 13px 0; } }
+@media (max-width: 320px) { .load-more-btn { font-size: 0.9rem; padding: 12px 0; } }
+@media (hover: none) and (pointer: coarse) { .load-more-btn { min-height: 44px; } }

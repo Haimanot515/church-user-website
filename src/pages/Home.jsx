@@ -382,7 +382,7 @@ const Home = () => {
     if (!el) return;
     const update = () => {
       const h = Math.round(el.getBoundingClientRect().height);
-      const next = Math.min(Math.max(h, 260), 420);
+      const next = Math.min(Math.max(h, 260), 460);
       setPriestPhotoSize((prev) => (Math.abs(prev - next) > 1 ? next : prev));
       // photo HEIGHT is exactly the text height (not clamped)
       if (h > 0) setPriestTextHeight((prev) => (Math.abs(prev - h) > 1 ? h : prev));
@@ -1171,7 +1171,7 @@ const Home = () => {
             </div>
           ) : (
           <Link to={`/about/${priest?.id}`} style={{
-            maxWidth: '1000px',
+            maxWidth: '1120px',
             display: 'flex',
             gap: '50px',
             alignItems: 'center',    // text keeps its natural height; the photo is sized to match it
@@ -1235,9 +1235,28 @@ const Home = () => {
         <span className="h-string" />
       </div>
 
+      <HomeMediaGrid type="video" />
+
+      <div className="section-cross-divider">
+        <span className="h-string" />
+        <svg width="18" height="26" viewBox="0 0 18 26" xmlns="http://www.w3.org/2000/svg">
+          <rect x="7" y="0" width="4" height="26" fill="var(--gold)" opacity="0.6" />
+          <rect x="0" y="6" width="18" height="4" fill="var(--gold)" opacity="0.6" />
+        </svg>
+        <svg width="26" height="38" viewBox="0 0 26 38" xmlns="http://www.w3.org/2000/svg">
+          <rect x="11" y="0" width="4" height="38" fill="var(--gold)" />
+          <rect x="2" y="9" width="22" height="4" fill="var(--gold)" />
+        </svg>
+        <svg width="18" height="26" viewBox="0 0 18 26" xmlns="http://www.w3.org/2000/svg">
+          <rect x="7" y="0" width="4" height="26" fill="var(--gold)" opacity="0.6" />
+          <rect x="0" y="6" width="18" height="4" fill="var(--gold)" opacity="0.6" />
+        </svg>
+        <span className="h-string" />
+      </div>
+
       <div ref={photosRef} />
-      <section style={{ background: '#ffffff', position: 'relative', overflow: 'hidden' }}>
-        <div className="wrapper photo-wrapper" style={{ maxWidth: '1000px' }}>
+      <section className="home-photo-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className="wrapper photo-wrapper" style={{ maxWidth: '1200px' }}>
           <h3 className="display" style={{ marginBottom: '44px', fontSize: '2.8rem', fontWeight: 700, textAlign: 'center', color: 'var(--navy-deep)' }}>{t("home.photos.heading")}</h3>
           {photosError && <p style={{ color: 'red', textAlign: 'center' }}>{photosError}</p>}
 
@@ -1246,92 +1265,29 @@ const Home = () => {
           ) : photos.length === 0 ? (
             <p style={{ textAlign: 'center' }}>{t("home.photos.none")}</p>
           ) : (
-            <div className="photo-carousel">
-              <div className="photo-carousel-frame">
-                <div className="photo-image-wrap" style={{ position: 'relative' }}>
-                  <button
-                    type="button"
-                    className="photo-arrow left"
-                    aria-label={t("home.photos.prevAriaLabel")}
-                    onClick={showPrevPhoto}
-                    disabled={photos.length < 2}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M15 4L7 12L15 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <img loading="lazy" decoding="async"
-                    key={photos[photoIndex]?.id || photoIndex}
-                    src={photos[photoIndex]?.mediaUrl}
-                    alt={stripHtml(photos[photoIndex]?.title)}
-                    onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
-                    style={{ width: '100%', aspectRatio: '16/9', objectFit: 'contain', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)', cursor: photos[photoIndex]?.id ? 'pointer' : 'default' }}
-                  />
-                  {/* Overlay spinner shown only while turning to a new page —
-                      the image/arrows underneath stay mounted the whole time
-                      so Next/Prev never appears to "do nothing".
-                      pointerEvents:none so it can never swallow clicks. */}
-                  {photosPageLoading && (
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: 'rgba(255,255,255,0.55)',
-                      borderRadius: '8px',
-                      pointerEvents: 'none',
-                      zIndex: 2
-                    }}>
-                      <div className="loading-spinner" />
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    className="photo-arrow right"
-                    aria-label={t("home.photos.nextAriaLabel")}
-                    onClick={showNextPhoto}
-                    disabled={photos.length < 2}
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 4L17 12L9 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', gap: '24px' }}>
+              {photos.map((p, i) => (
                 <div
-                  style={{ marginTop: '26px', textAlign: 'center', cursor: photos[photoIndex]?.id ? 'pointer' : 'default' }}
-                  onClick={() => photos[photoIndex]?.id && navigate(`/media/${photos[photoIndex].id}`)}
+                  key={p.id || i}
+                  onClick={() => p.id && navigate(`/media/${p.id}`)}
+                  style={{ cursor: p.id ? 'pointer' : 'default', minWidth: 0 }}
                 >
-                  <h3 style={{ fontSize: '2.6rem', margin: '0 0 15px 0', fontFamily: 'Georgia, serif', lineHeight: '1.1', fontWeight: '800', color: '#c1440e', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    <Rich html={photos[photoIndex]?.title} words={8} />
-                  </h3>
-                  <div style={{ fontSize: '1.3rem', color: '#333', margin: '0 auto', lineHeight: '1.6', maxWidth: '620px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {/* This block is not inside a <Link>, so links stay clickable */}
-                    <Rich html={photos[photoIndex]?.description} words={20} unwrapLinks={false} />
-                  </div>
-                </div>
-                <p style={{ textAlign: "center", margin: "10px 0 0", fontSize: "14px", color: "#666" }}>{photoIndex + 1} / {photos.length}</p>
-                <div className="photo-dots">
-                  {photos.map((_, i) => (
-                    <span
-                      key={i}
-                      className={`photo-dot${i === photoIndex ? ' active' : ''}`}
-                      onClick={() => setPhotoIndex(i)}
-                    />
-                  ))}
-                </div>
-                {photosTotalPages > 1 && (
-                  <p style={{ textAlign: 'center', fontSize: '14px', color: '#444', marginTop: '15px' }}>
-                    {t("home.pagination.pageInfo", { page: photosPage, total: photosTotalPages })}
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src={p.mediaUrl}
+                    alt={stripHtml(p.title)}
+                    style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', display: 'block', backgroundColor: '#f4f4f4', borderRadius: '8px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}
+                  />
+                  <p style={{ margin: '12px 0 0 0', textAlign: 'center', fontSize: '1rem', fontWeight: 700, color: 'var(--navy-deep)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <Rich html={p.title} words={8} />
                   </p>
-                )}
-              </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
       </section>
-
-      <HomeMediaGrid type="video" />
 
       <HomeMediaGrid type="audio" />
 

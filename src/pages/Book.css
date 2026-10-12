@@ -114,12 +114,6 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .load-more-wrap { display: flex; justify-content: center; padding-top: 72px; }
-.load-more-btn {
-  font-family: 'Work Sans', sans-serif; font-size: 22px; font-weight: 700; color: #1b1b1b;
-  background: var(--bk-accent); border: 2px solid var(--bk-accent); border-radius: 4px; padding: 16px 52px;
-  cursor: pointer; transition: background 0.2s ease;
-}
-.load-more-btn:hover { background: var(--bk-accent-dark); border-color: var(--bk-accent-dark); }
 
 @media (max-width: 1000px) {
   .book-catalog-grid { grid-template-columns: repeat(2, 286px); }

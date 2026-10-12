@@ -923,10 +923,10 @@ img, video { max-width: 100%; height: auto; }
   flex: 0 0 auto;
 }
 .about-text {
-  flex: 0 0 440px;
+  flex: 0 0 500px;
 }
 /* Narrow screens: stack, photo is a plain square capped at 340px */
-@media (max-width: 1000px) {
+@media (max-width: 1150px) {
   .about-card { justify-content: center; }
   .about-photo {
     width: min(100%, 340px);
@@ -973,4 +973,15 @@ img, video { max-width: 100%; height: auto; }
 @media (max-width: 700px) {
   .photo-carousel .photo-arrow { width: 46px; height: 46px; }
   .photo-carousel .photo-arrow svg { width: 22px; height: 22px; }
+}
+
+/* Church & faith: bring the card closer to its title. */
+.cross-bg > section:first-of-type { padding-bottom: 20px; }
+.cross-bg > section + section { padding-top: 30px; }
+
+/* Church & faith (wide screens): photo starts at the card's left edge. */
+@media (min-width: 1151px) {
+  .about-card { padding: 0 40px 0 0 !important; overflow: hidden; }
+  .about-photo { border: 0 !important; border-radius: 0 !important; }
+  .about-text { padding: 40px 0; }
 }

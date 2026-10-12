@@ -423,7 +423,7 @@ const Church = () => {
               {hasMoreBlog && (
                 <div style={{ display: "flex", justifyContent: "center", marginTop: "32px" }}>
                   <button
-                    className="hero-cta"
+                    className="load-more-btn"
                     onClick={handleLoadMoreBlog}
                     disabled={blogLoadingMore}
                   >

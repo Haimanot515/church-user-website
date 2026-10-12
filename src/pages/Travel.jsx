@@ -232,20 +232,7 @@ const Travel = () => {
               <button
                 onClick={handleLoadMoreTrips}
                 disabled={upcomingLoading}
-                style={{
-                  backgroundColor: upcomingLoading ? '#ccc' : '#7a1010',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '12px 30px',
-                  fontSize: '1.05rem',
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  borderRadius: '4px',
-                  cursor: upcomingLoading ? 'not-allowed' : 'pointer',
-                  transition: 'background 0.3s'
-                }}
-                onMouseOver={(e) => { if (!upcomingLoading) e.target.style.backgroundColor = '#5c0c0c'; }}
-                onMouseOut={(e) => { if (!upcomingLoading) e.target.style.backgroundColor = '#7a1010'; }}
+                className="load-more-btn"
               >
                 {upcomingLoading ? t("travel.upcoming.loadingMoreButton") : t("travel.upcoming.loadMoreButton")}
               </button>
