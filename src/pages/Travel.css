@@ -186,3 +186,13 @@ section { padding: 90px 0; position: relative; z-index: 1; }
   font-size: 1.2rem; font-family: 'IBM Plex Mono', monospace;
 }
 .faq-answer { padding: 0 0 26px 0; font-size: 1.05rem; color: #3d5a6c; line-height: 1.65; max-width: 640px; }
+/* TRAVEL SPACING START */
+.travel-page .upcoming-grid {
+  column-gap: clamp(40px, 6vw, 90px);
+  row-gap: clamp(44px, 6vw, 80px);
+}
+.travel-page .reach-grid {
+  column-gap: clamp(36px, 5vw, 72px);
+  row-gap: clamp(32px, 4.5vw, 60px);
+}
+/* TRAVEL SPACING END */

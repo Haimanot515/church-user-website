@@ -54,6 +54,18 @@ const BackButton = () => {
   </Link>
   );
 };
+const RelatedBookCover = ({ src, alt }) => {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      </svg>
+    );
+  }
+  return <img decoding="async" loading="lazy" src={src} alt={alt} onError={() => setFailed(true)} />;
+};
 const Shell = ({ children }) => (
   <div className="media-portal">
     <div className="cloud-layer">
@@ -135,10 +147,15 @@ const MediaDetail = () => {
         const pool = sameType.length >= 3
           ? sameType
           : all.filter((m) => m.id && String(m.id) !== currentId);
-        const picks = pool.slice(0, 4).map((m) => ({
+        const picks = pool.slice(0, 6).map((m) => ({
           ...m,
           id: m.id,
-          thumbnail: getMediaUrl(m.thumbnail || m.mediaUrl),
+          thumbnail: getMediaUrl(m.mediaType === "photo" ? (m.thumbnail || m.mediaUrl) : m.thumbnail),
+          mediaUrl: getMediaUrl(m.mediaUrl),
+          plainDescription: stripHtml(m.description),
+          authorName: m.author && typeof m.author === "object" ? m.author.name : "",
+          categoryName: m.category && typeof m.category === "object" ? m.category.name : "",
+          languageName: m.language && typeof m.language === "object" ? m.language.name : "",
         }));
         setRelatedItems(picks);
       } catch (err) {
@@ -488,26 +505,92 @@ const MediaDetail = () => {
           {relatedItems.length > 0 && (
             <div className="media-detail-related">
               <h2 className="media-detail-related-heading">{t("common.related.youMayAlsoLike")}</h2>
-              <div className="media-detail-related-grid">
-                {relatedItems.map((item) => (
-                  <Link
-                    to={`/media/${item.id}`}
-                    key={item.id}
-                    className="media-detail-related-card"
-                  >
-                    <div className="media-detail-related-thumb">
+              {/* Same grid + cards as the Photo section on the Media page */}
+              <div className="media-grid">
+                {relatedItems.map((item) => {
+                  const title = stripHtml(item.title);
+                  // VIDEO — same card as the Media page: 16:9 thumbnail + play overlay
+                  if (item.mediaType === "video") {
+                    return (
+                      <Link to={`/media/${item.id}`} key={item.id} className="grid-card video-card">
+                        <div className="video-thumb-btn">
+                          {item.thumbnail ? (
+                            <img loading="lazy" decoding="async" src={item.thumbnail} alt={title} />
+                          ) : (
+                            <div className="video-thumb-placeholder" />
+                          )}
+                          <span className="play-overlay">
+                            <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                          </span>
+                        </div>
+                        <p className="grid-card-title">{title}</p>
+                      </Link>
+                    );
+                  }
+                  // AUDIO — same dark-red card with gold play button as the Media page
+                  if (item.mediaType === "audio") {
+                    return (
+                      <Link to={`/media/${item.id}`} key={item.id} className="grid-card audio-card">
+                        <div className="audio-play-btn">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                        </div>
+                        <p className="grid-card-title">{title}</p>
+                      </Link>
+                    );
+                  }
+                  // PDF / BOOK — same catalog card as the Media page (cover, title, author, tags, buttons)
+                  if (item.mediaType === "document") {
+                    return (
+                      <div className="catalog-card" key={item.id}>
+                        <div className="catalog-cover">
+                          <RelatedBookCover src={item.thumbnail} alt={title} />
+                        </div>
+                        <div className="catalog-card-body">
+                          <div className="catalog-card-text">
+                            <p className="catalog-card-title"><Link to={`/media/${item.id}`}>{title}</Link></p>
+                            {item.authorName && <p className="catalog-card-author">{item.authorName}</p>}
+                            {(item.categoryName || item.languageName) && (
+                              <div className="catalog-card-tags">
+                                {item.categoryName && <span className="tag tag-category tag-sm">{item.categoryName}</span>}
+                                {item.languageName && <span className="tag tag-language tag-sm">{item.languageName}</span>}
+                              </div>
+                            )}
+                            {item.plainDescription && <p className="catalog-card-desc">{item.plainDescription}</p>}
+                          </div>
+                          <div className="catalog-card-actions">
+                            <a className="catalog-card-btn" href={item.mediaUrl} target="_blank" rel="noopener noreferrer">
+                              {t("book.card.readOnline")}
+                            </a>
+                            <button type="button" className="catalog-card-btn catalog-card-btn-outline" onClick={() => handleDownload(item.mediaUrl, title)}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M12 3v12" strokeLinecap="round" />
+                                <path d="M7 11l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M4 19h16" strokeLinecap="round" />
+                              </svg>
+                              {t("book.card.download")}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  // PHOTO — same 4:3 photo card as the Media page
+                  return (
+                    <Link to={`/media/${item.id}`} key={item.id} className="grid-card photo-card">
                       {item.thumbnail ? (
-                        <img loading="lazy" decoding="async" src={item.thumbnail} alt={stripHtml(item.title)} />
+                        <img loading="lazy" decoding="async" src={item.thumbnail} alt={title} />
                       ) : (
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
-                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                        </svg>
+                        <div className="media-detail-related-placeholder">
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                          </svg>
+                        </div>
                       )}
-                    </div>
-                    <span className="media-detail-related-title">{stripHtml(item.title)}</span>
-                  </Link>
-                ))}
+                      <p className="grid-card-title">{title}</p>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

@@ -84,6 +84,7 @@ const ChurchTeamsPage = () => {
       <header className="teams-hero">
         <div className="teams-container">
           <h1 className="teams-hero-title">{t("team.heading")}</h1>
+          <p className="teams-hero-desc">{t("team.description")}</p>
         </div>
       </header>
 

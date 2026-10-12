@@ -161,7 +161,7 @@ const Travel = () => {
   const travelKinds = Array.isArray(travelKindsRaw) ? travelKindsRaw : [];
 
   return (
-    <div className="church-portal">
+    <div className="church-portal travel-page">
       <div className="cloud-layer">
         <div className="cloud cloud-a" />
         <div className="cloud cloud-b" />

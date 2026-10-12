@@ -409,3 +409,13 @@
   filter: brightness(1.1) saturate(1.1);
 }
 /* BRIGHTEN END */
+
+/* HERO DESC START */
+.teams-page .teams-hero-desc {
+  max-width: 760px;
+  margin: clamp(16px, 2.5vw, 26px) auto 0;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.75;
+  color: rgba(234, 243, 248, 0.92);
+}
+/* HERO DESC END */

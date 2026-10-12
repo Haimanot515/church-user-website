@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;600;700&family=Open+Sans:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
@@ -231,3 +232,110 @@ a { color: inherit; text-decoration: none; }
 .audio-progress { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
 .audio-progress input[type="range"] { width: 100%; accent-color: var(--gold, #cf9f3f); cursor: pointer; }
 .audio-time { font-size: 0.78rem; color: var(--slate, #5b6b7b); font-family: 'IBM Plex Mono', monospace; text-align: center; }
+
+/* MEDIA AUDIO LIKE HOME START */
+/* Same look as the audio cards on the Home page: dark red card, white text, gold play button.
+   The dark-theme rules use !important because dark-overrides.css does too; Home keeps the red cards in dark mode. */
+.media-section .media-grid:has(.audio-card) { gap: 44px; align-items: start; }
+
+.grid-card.audio-card {
+  background: #7a1414;
+  border: 1px solid #7a1414;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(15, 36, 56, 0.06);
+  padding: 22px 18px 18px 18px;
+  color-scheme: light;
+}
+.grid-card.audio-card .grid-card-title {
+  color: #ffffff;
+  padding: 14px 0 4px 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+.grid-card.audio-card .audio-artist { color: rgba(255, 255, 255, 0.78); }
+.grid-card.audio-card .audio-play-btn {
+  background: var(--gold, #cf9f3f);
+  color: var(--navy-deep, #0f2438);
+}
+.grid-card.audio-card .audio-stop-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+.grid-card.audio-card .audio-stop-btn:hover { background: rgba(255, 255, 255, 0.34); }
+.grid-card.audio-card .audio-time { color: rgba(255, 255, 255, 0.85); }
+
+/* dark mode: keep the same red cards (beats the !important gray rules) */
+[data-theme="dark"] .media-portal .grid-card.audio-card {
+  background: #7a1414 !important;
+  border-color: #7a1414 !important;
+  color: #ffffff !important;
+}
+[data-theme="dark"] .media-portal .grid-card.audio-card .grid-card-title { color: #ffffff !important; }
+[data-theme="dark"] .media-portal .grid-card.audio-card .audio-artist { color: rgba(255, 255, 255, 0.78) !important; }
+[data-theme="dark"] .media-portal .grid-card.audio-card .audio-time { color: rgba(255, 255, 255, 0.85) !important; }
+[data-theme="dark"] .media-portal .grid-card.audio-card .audio-stop-btn { background: rgba(255, 255, 255, 0.2); color: #ffffff; }
+
+@media (max-width: 1024px) { .media-section .media-grid:has(.audio-card) { gap: 32px; } }
+@media (max-width: 600px)  { .media-section .media-grid:has(.audio-card) { gap: 24px; } }
+/* MEDIA AUDIO LIKE HOME END */
+
+/* MEDIA BOOK CARDS START */
+/* Same book cards as the Books page (colors, cover, author, tags, Read Online / Download buttons) */
+.media-portal {
+  --bk-bg: #e5f3f4; --bk-surface: #ffffff; --bk-navy: #0d3358; --bk-ink: #3d4249; --bk-muted: #6b7380;
+  --bk-line: #c6dfe3; --bk-accent: #fb9400; --bk-accent-dark: #e08300; --bk-link: #1d6a8a;
+}
+[data-theme="dark"] .media-portal {
+  --bk-bg: #14212b; --bk-surface: #1d2e3b; --bk-navy: #e9f2f7; --bk-ink: #dbe5ec; --bk-muted: #9fb2c0;
+  --bk-line: rgba(255,255,255,0.14); --bk-link: #7fc4e0;
+}
+.media-portal .book-catalog-grid { display: grid; grid-template-columns: repeat(3, 286px); justify-content: center; gap: 128px 120px; }
+.media-portal .catalog-card,
+.media-portal .catalog-card * { box-sizing: border-box; }
+.media-portal .catalog-card {
+  background: var(--bk-surface); border-radius: 6px; padding: 32px; display: flex; flex-direction: column;
+  text-align: left; box-shadow: 0 2px 10px rgba(13,51,88,0.08); transition: box-shadow 0.25s ease, transform 0.25s ease;
+  min-width: 0; overflow: hidden; font-family: 'Open Sans', sans-serif; color: var(--bk-ink); line-height: 1.6;
+}
+.media-portal .catalog-card:hover { box-shadow: 0 14px 30px rgba(13,51,88,0.16); transform: translateY(-3px); }
+.media-portal .catalog-card a { color: inherit; text-decoration: none; }
+.media-portal .catalog-cover {
+  width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+  background: var(--bk-bg); color: var(--bk-link); border-radius: 4px; overflow: hidden;
+}
+.media-portal .catalog-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.media-portal .catalog-card-title, .media-portal .catalog-card-author,
+.media-portal .catalog-card-desc, .media-portal .catalog-card-tags {
+  max-width: 100%; white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+}
+.media-portal .catalog-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; padding-top: 28px; }
+.media-portal .catalog-card-title {
+  font-family: 'Work Sans', sans-serif; font-size: 21px; font-weight: 700; color: var(--bk-ink);
+  margin: 0 0 12px; line-height: 29px;
+}
+.media-portal .catalog-card-author { font-size: 15px; color: var(--bk-muted); margin: 0 0 8px; }
+.media-portal .catalog-card-tags { margin-top: 2px; }
+.media-portal .catalog-card .tag {
+  display: inline-block; font-size: 14px; font-weight: 600; color: var(--bk-muted);
+  padding: 0; margin: 0 14px 0 0; background: none; border-radius: 0; text-transform: none; letter-spacing: 0;
+}
+.media-portal .catalog-card .tag-category { color: var(--bk-link); }
+.media-portal .catalog-card .tag-language::before { content: '\2022'; margin-right: 10px; color: var(--bk-line); }
+.media-portal .catalog-card-desc {
+  font-size: 15px; color: var(--bk-muted); line-height: 24px; margin: 16px 0 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.media-portal .catalog-card-actions { display: flex; flex-direction: column; gap: 14px; width: 100%; margin-top: 32px; }
+.media-portal .catalog-card-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Work Sans', sans-serif;
+  font-size: 16px; font-weight: 700; padding: 8px 10px; border-radius: 4px; cursor: pointer;
+  background: var(--bk-accent); color: #1b1b1b; border: 2px solid var(--bk-accent); transition: all 0.2s ease;
+}
+.media-portal .catalog-card-btn:hover { background: var(--bk-accent-dark); border-color: var(--bk-accent-dark); }
+.media-portal .catalog-card-btn-outline { background: transparent; color: var(--bk-navy); border: 2px solid var(--bk-accent); }
+.media-portal .catalog-card-btn-outline:hover { background: rgba(251,148,0,0.14); border-color: var(--bk-accent); }
+@media (max-width: 1000px) { .media-portal .book-catalog-grid { grid-template-columns: repeat(2, 286px); } }
+@media (max-width: 560px)  { .media-portal .book-catalog-grid { grid-template-columns: minmax(0, 286px); gap: 40px; } }
+/* MEDIA BOOK CARDS END */

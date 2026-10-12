@@ -100,6 +100,9 @@ const mapItems = (data) =>
       thumbnail: getMediaUrl(m.thumbnail),
       plainTitle: stripHtml(m.title),
       plainDescription: stripHtml(m.description),
+      authorName: m.author && typeof m.author === "object" ? m.author.name : "",
+      categoryName: m.category && typeof m.category === "object" ? m.category.name : "",
+      languageName: m.language && typeof m.language === "object" ? m.language.name : "",
     }));
 
 
@@ -516,6 +519,27 @@ const AudioSection = ({ items, fallback, t }) => {
   );
 };
 
+const MediaBookIcon = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+  </svg>
+);
+
+const MediaDownloadIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 3v12" strokeLinecap="round" />
+    <path d="M7 11l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 19h16" strokeLinecap="round" />
+  </svg>
+);
+
+const MediaBookCover = ({ src, alt }) => {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return <MediaBookIcon size={36} />;
+  return <img decoding="async" loading="lazy" src={src} alt={alt} onError={() => setFailed(true)} />;
+};
+
 const BookSection = ({ items, fallback, t }) => {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -530,22 +554,35 @@ const BookSection = ({ items, fallback, t }) => {
       {fallback && (
         <p style={{ fontSize: "0.85rem", color: "#888" }}>{t("media.common.fallbackNotice")}</p>
       )}
-      <div className="media-grid">
+      <div className="book-catalog-grid">
         {visible.map((b, i) => (
-          <Link className="grid-card book-card" to={`/media/${b.id}`} key={b.id || i}>
-            <div className="book-cover">
-              {b.thumbnail ? (
-                <img loading="lazy" decoding="async" src={b.thumbnail} alt={b.plainTitle} />
-              ) : (
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5V4.5Z" />
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                </svg>
-              )}
+          <div className="catalog-card" key={b.id || i}>
+            <div className="catalog-cover">
+              <MediaBookCover src={b.thumbnail} alt={b.plainTitle} />
             </div>
-            <p className="grid-card-title">{b.plainTitle}</p>
-            <p className="book-meta">{b.plainDescription}</p>
-          </Link>
+            <div className="catalog-card-body">
+              <div className="catalog-card-text">
+                <p className="catalog-card-title"><Link to={`/media/${b.id}`}>{b.plainTitle}</Link></p>
+                {b.authorName && <p className="catalog-card-author">{b.authorName}</p>}
+                {(b.categoryName || b.languageName) && (
+                  <div className="catalog-card-tags">
+                    {b.categoryName && <span className="tag tag-category tag-sm">{b.categoryName}</span>}
+                    {b.languageName && <span className="tag tag-language tag-sm">{b.languageName}</span>}
+                  </div>
+                )}
+                {b.plainDescription && <p className="catalog-card-desc">{b.plainDescription}</p>}
+              </div>
+              <div className="catalog-card-actions">
+                <a className="catalog-card-btn" href={b.mediaUrl} target="_blank" rel="noopener noreferrer">
+                  {t("book.card.readOnline")}
+                </a>
+                <button type="button" className="catalog-card-btn catalog-card-btn-outline" onClick={() => handleDownload(b.mediaUrl, b.plainTitle)}>
+                  <MediaDownloadIcon />
+                  {t("book.card.download")}
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
       {items.length > visibleCount && (
