@@ -10,6 +10,8 @@
   --gold: #cf9f3f;
   --white: #ffffff;
   --deep-red: #7a1010;
+  --button-red: #a81c1c;
+  --button-red-hover: #7a1010;
 }
 
 * { box-sizing: border-box; }
@@ -1011,3 +1013,47 @@ img, video { max-width: 100%; height: auto; }
 .photo-grid > div > img { transition: box-shadow 0.3s ease; }
 .photo-grid > div:hover { transform: scale(1.06) !important; z-index: 5; }
 .photo-grid > div:hover > img { box-shadow: 0 22px 40px rgba(0,0,0,0.3) !important; }
+
+.hero-cta-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, 200px);
+  justify-content: start;
+  align-items: stretch;
+  gap: 80px !important;
+}
+.hero-cta-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px !important;
+  border: 1.5px solid var(--button-red) !important;
+  border-radius: 10px !important;
+  font-size: 1.05rem !important;
+  line-height: 1.2;
+  text-align: center;
+}
+.hero-cta-btn + .hero-cta-btn { border-color: #eaf3f8 !important; }
+.hero-cta-btn:first-child { background-color: var(--button-red) !important; color: #ffffff !important; }
+.hero-cta-btn:first-child:hover { background-color: var(--button-red-hover) !important; border-color: var(--button-red-hover) !important; }
+.church-portal .load-more-btn {
+  background: var(--button-red);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 34px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+.church-portal .load-more-wrap { display: flex; justify-content: center; margin-top: 44px; padding-top: 0; }
+@media (max-width: 600px) {
+  .church-portal .load-more-wrap { margin-top: 32px; }
+  .church-portal .load-more-btn { width: 100%; padding: 0; }
+}
+.church-portal .load-more-btn:hover { background: var(--button-red-hover); }
+.church-portal .load-more-btn:disabled { background: #ccc; }
+@media (max-width: 600px) {
+  .hero-cta-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px !important; }
+  .hero-cta-btn { font-size: 0.92rem !important; }
+}

@@ -172,3 +172,21 @@ button[type="submit"] {
 @media (max-width: 600px) { .load-more-btn { width: 100%; padding: 13px 0; } }
 @media (max-width: 320px) { .load-more-btn { font-size: 0.9rem; padding: 12px 0; } }
 @media (hover: none) and (pointer: coarse) { .load-more-btn { min-height: 44px; } }
+
+/* Same size for every "load more" button inside .church-portal (Home + Blog) */
+.church-portal .load-more-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 34px;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+.church-portal .load-more-wrap { display: flex; justify-content: center; margin-top: 44px; padding-top: 0; }
+@media (max-width: 600px) {
+  .church-portal .load-more-wrap { margin-top: 32px; }
+  .church-portal .load-more-btn { width: 100%; padding: 0; }
+}

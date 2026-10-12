@@ -265,6 +265,8 @@ const ChurchAboutPage = () => {
           --gold: #cf9f3f;
           --white: #ffffff;
           --deep-red: #7a1010;
+          --button-red: #a81c1c;
+          --button-red-hover: #7a1010;
         }
 
         * { box-sizing: border-box; }
@@ -339,6 +341,45 @@ const ChurchAboutPage = () => {
         .accordion-body { padding: 0 4px 24px 4px; max-width: 640px; }
 
         .cta-band { text-align: center; }
+
+        .about-hero-text-col .hero-cta-row {
+          display: grid !important;
+          grid-template-columns: repeat(2, 200px);
+          justify-content: start;
+          align-items: stretch;
+        }
+        .about-hero-text-col .hero-cta-btn {
+          width: 100%;
+          min-height: 44px;
+          padding: 10px 16px !important;
+          border: 1.5px solid var(--button-red) !important;
+          font-size: 1.05rem !important;
+          line-height: 1.2;
+          text-align: center;
+          border-radius: 10px !important;
+        }
+        .about-hero-text-col .hero-cta-btn + .hero-cta-btn { border-color: #eaf3f8 !important; }
+        .about-hero-text-col .hero-cta-btn:first-child { background-color: var(--button-red) !important; color: #ffffff !important; }
+        .about-hero-text-col .hero-cta-btn:first-child:hover { background-color: var(--button-red-hover) !important; border-color: var(--button-red-hover) !important; }
+        .about-section .load-more-btn { background: var(--button-red); }
+        .about-section .load-more-btn:hover { background: var(--button-red-hover); }
+        .about-section .load-more-btn:disabled { background: #ccc; }
+        @media (max-width: 600px) {
+          .about-hero-text-col .hero-cta-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .about-hero-text-col .hero-cta-btn { font-size: 0.92rem !important; }
+        }
+
+        .about-hero-text-col .hero-cta-row { gap: 80px !important; }
+        @media (max-width: 600px) {
+          .about-hero-text-col .hero-cta-row { gap: 48px !important; }
+        }
+
+        .about-hero-text-col .hero-desc { margin-bottom: 0 !important; }
+        .about-hero-text-col .hero-desc > :last-child { margin-bottom: 0 !important; }
+        .about-hero-text-col .hero-cta-row { margin-top: 56px; }
+        @media (max-width: 600px) {
+          .about-hero-text-col .hero-cta-row { margin-top: 44px; }
+        }
 
         .map-frame {
           width: 100%;
@@ -445,8 +486,8 @@ const ChurchAboutPage = () => {
           font-weight: 700;
           letter-spacing: 0.04em;
           color: #ffffff;
-          background: var(--deep-red);
-          border: 1.5px solid var(--deep-red);
+          background: var(--button-red);
+          border: 1.5px solid var(--button-red);
           padding: 8px 18px;
           border-radius: 30px;
           cursor: pointer;
