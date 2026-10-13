@@ -1,49 +1,70 @@
 {
   "hero": {
-    "eyebrow": "La Nostra Chiesa",
-    "loading": "Caricamento...",
-    "fallbackTitle": "Una fede viva, radicata in una terra antica.",
-    "fallbackDescription": "Dagli altopiani di Axum alle sale in cui ci riuniamo oggi, la nostra storia fa parte di una delle più antiche tradizioni cristiane continue sulla terra.",
-    "cta": "Leggi La Nostra Storia",
-    "imageAlt": "Una bellissima chiesa piena di luce"
+    "cta": "Scopri le Chiese d'Etiopia",
+    "mapTitle": "Mappa dell'Etiopia"
   },
-  "constructionAd": {
-    "badge": "In Costruzione",
-    "eyebrow": "Costruendo Per Domani",
-    "title": "Una nuova casa per una chiesa in crescita",
-    "description": "Il nostro campus di Eastside ha superato le sue mura — aiutaci a costruire un santuario più grande per le famiglie che si uniscono a noi ogni settimana.",
-    "progressLabel": "Avanzamento",
-    "progressValue": "62% completato",
-    "cta": "Sostieni La Costruzione",
-    "closeAria": "Chiudi",
-    "imageAlt": "Chiesa in fase di costruzione"
+  "ethiopian": {
+    "eyebrow": "In Tutta La Terra",
+    "title": "Le chiese dell'Etiopia",
+    "description": "Chiese da tutto il paese, con la loro storia, la loro posizione e le loro tradizioni viventi.",
+    "all": "Tutte",
+    "locationLabel": "Posizione:",
+    "items": [
+      {
+        "name": "Bete Giyorgis",
+        "location": "Lalibela",
+        "region": "Amhara",
+        "description": "Una chiesa a forma di croce scavata nella roccia viva nel XIII secolo, la più celebre tra le chiese di Lalibela."
+      },
+      {
+        "name": "Chiesa di Nostra Signora Maria di Sion",
+        "location": "Axum",
+        "region": "Tigrè",
+        "description": "La chiesa più sacra della tradizione ortodossa etiope, che secondo la tradizione custodisce l'Arca dell'Alleanza."
+      },
+      {
+        "name": "Monastero di Debre Damo",
+        "location": "Vicino ad Adigrat",
+        "region": "Tigrè",
+        "description": "Un monastero del VI secolo su una montagna dalla cima piatta, raggiungibile solo arrampicandosi su una corda di cuoio."
+      },
+      {
+        "name": "Abuna Yemata Guh",
+        "location": "Gheralta",
+        "region": "Tigrè",
+        "description": "Una chiesa sulla parete di una scogliera con antichi dipinti, raggiungibile con una ripida salita sulla roccia."
+      },
+      {
+        "name": "Debre Berhan Selassie",
+        "location": "Gondar",
+        "region": "Amhara",
+        "description": "Una chiesa del XVII secolo famosa per il soffitto dipinto con file di volti di angeli."
+      },
+      {
+        "name": "Ura Kidane Mehret",
+        "location": "Penisola di Zege, Lago Tana",
+        "region": "Amhara",
+        "description": "Una chiesa monastica sul Lago Tana con pareti interne riccamente dipinte."
+      },
+      {
+        "name": "Monastero di Debre Libanos",
+        "location": "Scioa Settentrionale",
+        "region": "Oromia",
+        "description": "Un monastero del XIII secolo fondato da Abuna Tekle Haymanot, uno dei grandi centri del cristianesimo etiope."
+      },
+      {
+        "name": "Cattedrale della Santa Trinità",
+        "location": "Addis Abeba",
+        "region": "Addis Abeba",
+        "description": "La principale cattedrale della capitale, completata nel 1941 e luogo di sepoltura dell'imperatore Haile Selassie."
+      }
+    ]
   },
-  "serveNow": {
-    "loading": "Caricamento della chiesa attuale...",
-    "none": "Nessun leader è attualmente assegnato a una chiesa.",
-    "badge": "Dove Servo Ora",
-    "since": "In servizio dal {{year}}",
-    "address": "Indirizzo:",
-    "service": "Servizio:",
-    "cta": "Visita Questo Campus"
-  },
-  "blog": {
-    "eyebrow": "Dal Diario",
-    "title": "La chiesa in Etiopia",
-    "description": "Uno sguardo più da vicino alla storia, all'architettura e alle tradizioni viventi che modellano la nostra comunità di fede.",
-    "loading": "Caricamento delle chiese...",
-    "none": "Nessuna chiesa trovata.",
-    "tagPrimary": "Principale",
-    "tagFeatured": "In Evidenza",
+  "list": {
     "tagDefault": "Chiesa",
     "readMore": "Leggi di più",
     "loadMore": "Carica Altro",
     "loadingMore": "Caricamento...",
     "fallbackNotice": "Contenuto in inglese mostrato"
-  },
-  "errors": {
-    "primaryDefault": "Impossibile caricare la chiesa",
-    "currentDefault": "Impossibile caricare la chiesa attuale",
-    "blogDefault": "Impossibile caricare le chiese"
   }
 }

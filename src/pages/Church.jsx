@@ -2,432 +2,173 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import API from "../api/api";
-import RichTextView, { stripHtml } from "../components/RichTextView";
-import "./Church.css";
+import { stripHtml } from "../components/RichTextView";
 import Spinner from "../components/Spinner";
-import useInView from "../hooks/useInView";
+import "./Church.css";
+
+const LIMIT = 10;
+const DESCRIPTION_CHARS = 800;
+
+const clip = (text, max) => {
+  const clean = (text || "").replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  return cut.slice(0, cut.lastIndexOf(" ")) + "...";
+};
 
 const Church = () => {
   const { t, i18n } = useTranslation();
 
-  const [showConstructionAd, setShowConstructionAd] = useState(false);
-
-  const [primaryChurch, setPrimaryChurch] = useState(null);
-  const [primaryLoading, setPrimaryLoading] = useState(true);
-  const [primaryError, setPrimaryError] = useState("");
-  const [primaryFallback, setPrimaryFallback] = useState(false);
-
-  const [currentChurch, setCurrentChurch] = useState(null);
-  const [currentLoading, setCurrentLoading] = useState(true);
-  const [currentError, setCurrentError] = useState("");
-  const [currentFallback, setCurrentFallback] = useState(false);
-
-  const [blogChurches, setBlogChurches] = useState([]);
-  const [blogPage, setBlogPage] = useState(1);
-  const [blogLoading, setBlogLoading] = useState(true);
-  const [blogLoadingMore, setBlogLoadingMore] = useState(false);
-  const [blogError, setBlogError] = useState("");
-  const [hasMoreBlog, setHasMoreBlog] = useState(true);
-  const [blogFallback, setBlogFallback] = useState(false);
-
-  const BLOG_LIMIT = 20;
-
+  const [churches, setChurches] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [fallback, setFallback] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowConstructionAd(true), 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const [blogRef, blogSeen] = useInView();
-
-  useEffect(() => {
-    fetchPrimaryChurch();
-    fetchCurrentChurch();
+    fetchChurches(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t]);
+  }, [i18n.language]);
 
-  // The churches list is below the fold: fetch it when it is about to be seen.
-  useEffect(() => {
-    if (blogSeen) fetchBlogChurches(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t, blogSeen]);
+  const readList = (res) => res.data.churches || res.data.data || res.data || [];
 
-  const fetchPrimaryChurch = async () => {
+  const fetchChurches = async (nextPage) => {
     try {
-      setPrimaryLoading(true);
-      setPrimaryError("");
-      setPrimaryFallback(false);
+      if (nextPage === 1) setLoading(true);
+      else setLoadingMore(true);
 
-      let res = await API.get(`/churches/primary`);
-      let data = res.data || null;
-
-      if (!data || (!data.churchName && !data.name)) {
-        res = await API.get(`/churches/primary`, {
-          headers: { "Accept-Language": "en" },
-        });
-        data = res.data || null;
-        if (data) setPrimaryFallback(true);
-      }
-
-      setPrimaryChurch(data);
-    } catch (err) {
-      console.log(err);
-      if (err.response?.status === 404) {
-        setPrimaryChurch(null);
-      } else {
-        setPrimaryError(err.response?.data?.message || t("church.errors.primaryDefault"));
-      }
-    } finally {
-      setPrimaryLoading(false);
-    }
-  };
-
-  const fetchCurrentChurch = async () => {
-    try {
-      setCurrentLoading(true);
-      setCurrentError("");
-      setCurrentFallback(false);
-
-      let res = await API.get(`/churches/current`);
-      let data = res.data || null;
-
-      if (!data || (!data.church && !data.role)) {
-        res = await API.get(`/churches/current`, {
-          headers: { "Accept-Language": "en" },
-        });
-        data = res.data || null;
-        if (data) setCurrentFallback(true);
-      }
-
-      setCurrentChurch(data);
-    } catch (err) {
-      console.log(err);
-      if (err.response?.status === 404) {
-        setCurrentChurch(null);
-      } else {
-        setCurrentError(err.response?.data?.message || t("church.errors.currentDefault"));
-      }
-    } finally {
-      setCurrentLoading(false);
-    }
-  };
-
-  const fetchBlogChurches = async (page) => {
-    try {
-      if (page === 1) {
-        setBlogLoading(true);
-        setBlogFallback(false);
-      } else {
-        setBlogLoadingMore(true);
-      }
-      setBlogError("");
-
-      let res = await API.get(`/churches?page=${page}&limit=${BLOG_LIMIT}`);
-      let newChurches = res.data.churches || res.data.data || res.data || [];
+      let res = await API.get(`/churches?page=${nextPage}&limit=${LIMIT}`);
+      let list = readList(res);
       let totalPages = res.data.totalPages;
       let usedFallback = false;
 
-      if (page === 1 && newChurches.length === 0) {
-        res = await API.get(`/churches?page=${page}&limit=${BLOG_LIMIT}`, {
+      if (nextPage === 1 && list.length === 0) {
+        res = await API.get(`/churches?page=${nextPage}&limit=${LIMIT}`, {
           headers: { "Accept-Language": "en" },
         });
-        newChurches = res.data.churches || res.data.data || res.data || [];
+        list = readList(res);
         totalPages = res.data.totalPages;
-        if (newChurches.length > 0) usedFallback = true;
+        usedFallback = list.length > 0;
       }
 
-      setBlogChurches((prev) => (page === 1 ? newChurches : [...prev, ...newChurches]));
-      setBlogPage(page);
-      if (page === 1) setBlogFallback(usedFallback);
-
-      if (totalPages != null) {
-        setHasMoreBlog(page < totalPages);
-      } else {
-        setHasMoreBlog(newChurches.length === BLOG_LIMIT);
-      }
+      setChurches((prev) => (nextPage === 1 ? list : [...prev, ...list]));
+      setPage(nextPage);
+      if (nextPage === 1) setFallback(usedFallback);
+      setHasMore(totalPages != null ? nextPage < totalPages : list.length === LIMIT);
     } catch (err) {
       console.log(err);
-      setBlogError(err.response?.data?.message || t("church.errors.blogDefault"));
+      if (nextPage === 1) setChurches([]);
     } finally {
-      setBlogLoading(false);
-      setBlogLoadingMore(false);
+      setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  const handleLoadMoreBlog = () => {
-    if (!blogLoadingMore && hasMoreBlog) {
-      fetchBlogChurches(blogPage + 1);
-    }
+  const scrollToChurches = () => {
+    const el = document.getElementById("ethiopian-churches");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  const dismissConstructionAd = () => setShowConstructionAd(false);
+  const staticItems = t("church.ethiopian.items", { returnObjects: true });
+  const staticList = Array.isArray(staticItems) ? staticItems : [];
 
-  const renderLabel = (value, fallback = "") => {
-    if (!value) return fallback;
-    if (typeof value === "string") return value;
-    if (typeof value === "object") return value.name || value.title || fallback;
-    return fallback;
-  };
-
-  // PostgreSQL/Prisma returns `id`, not MongoDB `_id`
-  const currentChurchId = currentChurch?.church?.id;
-  const visibleBlogChurches = currentChurchId
-    ? blogChurches.filter((c) => c.id !== currentChurchId)
-    : blogChurches;
+  const rows =
+    churches.length > 0
+      ? churches.map((c) => ({
+          key: c.id,
+          id: c.id,
+          image: c.image || "",
+          tag: stripHtml(c.address) || t("church.list.tagDefault"),
+          name: stripHtml(c.churchName),
+          text: clip(stripHtml(c.description || c.shortDescription), DESCRIPTION_CHARS),
+        }))
+      : staticList.map((item) => ({
+          key: item.name,
+          id: null,
+          image: "",
+          tag: item.region,
+          place: item.location,
+          name: item.name,
+          text: item.description,
+        }));
 
   return (
     <div className="church-page">
       <section className="church-hero">
         <div className="wrapper church-hero-inner">
           <div className="church-hero-text">
-            <span className="eyebrow">{t("church.hero.eyebrow")}</span>
-            {primaryLoading ? (
-              <div style={{ width: "100%" }}>
-                <Spinner light />
-              </div>
-            ) : primaryError ? (
-              <p style={{ color: "red" }}>{primaryError}</p>
-            ) : primaryChurch ? (
-              <>
-                <h1 className="display">{stripHtml(primaryChurch.churchName)}</h1>
-                <RichTextView html={primaryChurch.shortDescription || primaryChurch.description} />
-              </>
-            ) : (
-              <>
-                <h1 className="display">{t("church.hero.fallbackTitle")}</h1>
-                <p>{t("church.hero.fallbackDescription")}</p>
-              </>
-            )}
-            {primaryChurch && primaryFallback && (
-              <p style={{ fontSize: "0.85rem", color: "#888", marginTop: "4px" }}>
-                {t("church.blog.fallbackNotice")}
-              </p>
-            )}
-            <button className="hero-cta">{t("church.hero.cta")}</button>
+            <h1 className="display">{t("church.ethiopian.title")}</h1>
+            <p>{t("church.ethiopian.description")}</p>
+            <button className="hero-cta" onClick={scrollToChurches}>
+              {t("church.hero.cta")}
+            </button>
           </div>
           <div className="church-hero-media">
-            {primaryChurch?.id ? (
-              <Link to={`/churches/${primaryChurch.id}`}>
-                <img loading="lazy" decoding="async"
-                  src={
-                    primaryChurch?.image ||
-                    "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
-                  }
-                  alt={stripHtml(primaryChurch?.churchName) || t("church.hero.imageAlt")}
-                />
-              </Link>
-            ) : (
-              <img loading="lazy" decoding="async"
-                src={
-                  primaryChurch?.image ||
-                  "https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80"
-                }
-                alt={stripHtml(primaryChurch?.churchName) || t("church.hero.imageAlt")}
-              />
-            )}
+            <iframe
+              className="ethiopia-map"
+              title={t("church.hero.mapTitle")}
+              src="https://www.openstreetmap.org/export/embed.html?bbox=32.5%2C3.0%2C48.5%2C15.2&layer=mapnik"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
 
-      {showConstructionAd && (
-        <div style={{ background: "var(--navy-deep)", padding: "1px 24px 40px 24px" }}>
-          <div className="construction-ad visible">
-            <div className="construction-ad-img-wrap">
-              <img loading="lazy" decoding="async"
-                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=80"
-                alt={t("church.constructionAd.imageAlt")}
-              />
-              <span className="construction-ad-badge">{t("church.constructionAd.badge")}</span>
-            </div>
-            <button
-              className="construction-ad-close"
-              onClick={dismissConstructionAd}
-              aria-label={t("church.constructionAd.closeAria")}
-            >
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M6 6L18 18M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-            <div className="construction-ad-body">
-              <span className="eyebrow">{t("church.constructionAd.eyebrow")}</span>
-              <h3>{t("church.constructionAd.title")}</h3>
-              <p>{t("church.constructionAd.description")}</p>
-              <div className="ad-progress-label">
-                <span>{t("church.constructionAd.progressLabel")}</span>
-                <strong>{t("church.constructionAd.progressValue")}</strong>
-              </div>
-              <div className="ad-progress-track">
-                <div className="ad-progress-fill" style={{ width: "62%" }} />
-              </div>
-              <button className="construction-ad-support-btn">
-                {t("church.constructionAd.cta")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <section className="serve-now-section">
+      <section className="ethiopia-section" id="ethiopian-churches">
         <div className="wrapper">
-          {currentLoading ? (
+          {loading ? (
             <Spinner />
-          ) : currentError ? (
-            <p style={{ color: "red" }}>{currentError}</p>
-          ) : !currentChurch ? (
-            <p>{t("church.serveNow.none")}</p>
-          ) : (
-            <div className="serve-now-card">
-              <div className="serve-now-img-wrap">
-                {currentChurchId ? (
-                  <Link to={`/churches/${currentChurchId}`}>
-                    <img loading="lazy" decoding="async"
-                      src={
-                        currentChurch.image ||
-                        currentChurch.user?.image ||
-                        currentChurch.church?.image ||
-                        ""
-                      }
-                      alt={stripHtml(currentChurch.user?.name) || t("common.labels.leader")}
-                    />
-                  </Link>
-                ) : (
-                  <img loading="lazy" decoding="async"
-                    src={
-                      currentChurch.image ||
-                      currentChurch.user?.image ||
-                      currentChurch.church?.image ||
-                      ""
-                    }
-                    alt={stripHtml(currentChurch.user?.name) || t("common.labels.leader")}
-                  />
-                )}
-                <span className="serve-now-badge">{t("church.serveNow.badge")}</span>
-              </div>
-              <div className="serve-now-body">
-                <span className="serve-now-role">{renderLabel(currentChurch.role)}</span>
-                <h2 className="display">{stripHtml(currentChurch.church?.churchName)}</h2>
-                <div className="serve-now-since">
-                  {currentChurch.servingSince &&
-                    t("church.serveNow.since", {
-                      year: new Date(currentChurch.servingSince).getFullYear(),
-                    })}
-                </div>
-                <RichTextView className="serve-now-desc" html={currentChurch.description} />
-                <div className="serve-now-details">
-                  <div className="serve-now-line">
-                    <strong>{t("church.serveNow.address")}</strong> {currentChurch.church?.address}
-                  </div>
-                  <div className="serve-now-line">
-                    <strong>{t("church.serveNow.service")}</strong>{" "}
-                    {currentChurch.church?.serviceDays} · {currentChurch.church?.serviceTime}
-                  </div>
-                </div>
-                {currentFallback && (
-                  <p style={{ fontSize: "0.85rem", color: "#888" }}>
-                    {t("church.blog.fallbackNotice")}
-                  </p>
-                )}
-                {currentChurchId ? (
-                  <Link className="serve-now-cta" to={`/churches/${currentChurchId}`}>
-                    {t("church.serveNow.cta")}
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M5 12H19M19 12L13 6M19 12L13 18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </Link>
-                ) : (
-                  <button className="serve-now-cta" disabled>
-                    {t("church.serveNow.cta")}
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M5 12H19M19 12L13 6M19 12L13 18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <div ref={blogRef} />
-      <section className="blog-section">
-        <div className="wrapper">
-          <div className="blog-head">
-            <span className="eyebrow">{t("church.blog.eyebrow")}</span>
-            <h2 className="display">{t("church.blog.title")}</h2>
-            <p>{t("church.blog.description")}</p>
-          </div>
-
-          {blogLoading ? (
-            blogSeen ? <Spinner /> : <div style={{ minHeight: 320 }} />
-          ) : blogError ? (
-            <p style={{ color: "red" }}>{blogError}</p>
-          ) : visibleBlogChurches.length === 0 ? (
-            <p>{t("church.blog.none")}</p>
           ) : (
             <>
-              {blogFallback && (
+              {fallback && (
                 <p style={{ textAlign: "center", fontSize: "0.85rem", color: "#888", marginBottom: "24px" }}>
-                  {t("church.blog.fallbackNotice")}
+                  {t("church.list.fallbackNotice")}
                 </p>
               )}
-              <div className="blog-grid">
-                {visibleBlogChurches.map((c) => (
-                  <div className="blog-card" key={c.id}>
-                    <Link to={`/churches/${c.id}`}>
-                      <img loading="lazy" decoding="async" src={c.image || ""} alt={stripHtml(c.churchName)} />
-                    </Link>
-                    <div className="blog-card-body">
-                      <div className="blog-tag">
-                        {c.isPrimary
-                          ? t("church.blog.tagPrimary")
-                          : c.isFeatured
-                          ? t("church.blog.tagFeatured")
-                          : t("church.blog.tagDefault")}
+              <div className="ethiopia-list">
+                {rows.map((row, index) => {
+                  const media = row.image ? (
+                    <img loading="lazy" decoding="async" src={row.image} alt={row.name} />
+                  ) : (
+                    <>
+                      <span className="ethiopia-media-region">{row.tag}</span>
+                      <span className="ethiopia-media-place">{row.place || row.name}</span>
+                    </>
+                  );
+                  const mediaClass = `ethiopia-media${row.image ? " has-image" : ""}`;
+                  return (
+                    <div className={`ethiopia-row${index % 2 === 1 ? " reverse" : ""}`} key={row.key}>
+                      {row.id ? (
+                        <Link to={`/churches/${row.id}`} className={mediaClass}>
+                          {media}
+                        </Link>
+                      ) : (
+                        <div className={mediaClass}>{media}</div>
+                      )}
+                      <div className="ethiopia-copy">
+                        <div className="blog-tag">{row.tag}</div>
+                        <h3>{row.name}</h3>
+                        <p>{row.text}</p>
+                        {row.id && (
+                          <Link className="read-more" to={`/churches/${row.id}`}>
+                            {t("church.list.readMore")}
+                          </Link>
+                        )}
                       </div>
-                      <h3>{stripHtml(c.churchName)}</h3>
-                      <p>{stripHtml(c.shortDescription || c.description)}</p>
-                      <Link className="read-more" to={`/churches/${c.id}`}>
-                        {t("church.blog.readMore")}
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M5 12H19M19 12L13 6M19 12L13 18"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </Link>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {hasMoreBlog && (
-                <div style={{ display: "flex", justifyContent: "center", marginTop: "32px" }}>
+              {hasMore && (
+                <div className="ethiopia-more">
                   <button
                     className="load-more-btn"
-                    onClick={handleLoadMoreBlog}
-                    disabled={blogLoadingMore}
+                    onClick={() => !loadingMore && fetchChurches(page + 1)}
+                    disabled={loadingMore}
                   >
-                    {blogLoadingMore ? t("church.blog.loadingMore") : t("church.blog.loadMore")}
+                    {loadingMore ? t("church.list.loadingMore") : t("church.list.loadMore")}
                   </button>
                 </div>
               )}

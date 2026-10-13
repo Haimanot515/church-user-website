@@ -1,49 +1,70 @@
 {
   "hero": {
-    "eyebrow": "Our Church",
-    "loading": "Loading...",
-    "fallbackTitle": "A living faith, rooted in ancient soil.",
-    "fallbackDescription": "From the highlands of Aksum to the halls we gather in today, our story is part of one of the oldest continuous Christian traditions on earth.",
-    "cta": "Read Our Story",
-    "imageAlt": "A beautiful church filled with light"
+    "cta": "Explore Ethiopian Churches",
+    "mapTitle": "Map of Ethiopia"
   },
-  "constructionAd": {
-    "badge": "Under Construction",
-    "eyebrow": "Building For Tomorrow",
-    "title": "A new home for a growing church",
-    "description": "Our Eastside campus has outgrown its walls — help us build a larger sanctuary for the families joining us each week.",
-    "progressLabel": "Progress",
-    "progressValue": "62% complete",
-    "cta": "Support the Build",
-    "closeAria": "Close",
-    "imageAlt": "Church building under construction"
+  "ethiopian": {
+    "eyebrow": "Across The Land",
+    "title": "Churches of Ethiopia",
+    "description": "Churches from across the country, with their history, location and living traditions.",
+    "all": "All",
+    "locationLabel": "Location:",
+    "items": [
+      {
+        "name": "Bete Giyorgis",
+        "location": "Lalibela",
+        "region": "Amhara",
+        "description": "A cross-shaped church carved down into solid rock in the 13th century, the most celebrated of the Lalibela churches."
+      },
+      {
+        "name": "Church of Our Lady Mary of Zion",
+        "location": "Aksum",
+        "region": "Tigray",
+        "description": "The most sacred church in Ethiopian Orthodox tradition, said to house the Ark of the Covenant."
+      },
+      {
+        "name": "Debre Damo Monastery",
+        "location": "Near Adigrat",
+        "region": "Tigray",
+        "description": "A 6th-century monastery on a flat-topped mountain, reached only by climbing a leather rope."
+      },
+      {
+        "name": "Abuna Yemata Guh",
+        "location": "Gheralta",
+        "region": "Tigray",
+        "description": "A cliff-face church with ancient paintings, reached by a steep climb up the rock."
+      },
+      {
+        "name": "Debre Berhan Selassie",
+        "location": "Gondar",
+        "region": "Amhara",
+        "description": "A 17th-century church famous for its ceiling painted with rows of angel faces."
+      },
+      {
+        "name": "Ura Kidane Mehret",
+        "location": "Zege Peninsula, Lake Tana",
+        "region": "Amhara",
+        "description": "A monastery church on Lake Tana with richly painted interior walls."
+      },
+      {
+        "name": "Debre Libanos Monastery",
+        "location": "North Shewa",
+        "region": "Oromia",
+        "description": "A 13th-century monastery founded by Abuna Tekle Haymanot, one of the great centres of Ethiopian Christianity."
+      },
+      {
+        "name": "Holy Trinity Cathedral",
+        "location": "Addis Ababa",
+        "region": "Addis Ababa",
+        "description": "The capital's principal cathedral, completed in 1941 and the resting place of Emperor Haile Selassie."
+      }
+    ]
   },
-  "serveNow": {
-    "loading": "Loading current church...",
-    "none": "No leader is currently assigned to a church.",
-    "badge": "Where I Serve Now",
-    "since": "Serving since {{year}}",
-    "address": "Address:",
-    "service": "Service:",
-    "cta": "Visit This Campus"
-  },
-  "blog": {
-    "eyebrow": "From the Journal",
-    "title": "The church in Ethiopia",
-    "description": "A closer look at the history, architecture, and living traditions that shape our faith community.",
-    "loading": "Loading churches...",
-    "none": "No churches found.",
-    "tagPrimary": "Primary",
-    "tagFeatured": "Featured",
+  "list": {
     "tagDefault": "Church",
     "readMore": "Read more",
     "loadMore": "Load More",
     "loadingMore": "Loading...",
     "fallbackNotice": "Showing English content"
-  },
-  "errors": {
-    "primaryDefault": "Failed to load the church",
-    "currentDefault": "Failed to load the current church",
-    "blogDefault": "Failed to load churches"
   }
 }
