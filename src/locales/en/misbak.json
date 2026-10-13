@@ -1,5 +1,8 @@
 {
   "meaning": "Meaning",
   "prevAria": "Previous misbak",
-  "nextAria": "Next misbak"
+  "nextAria": "Next misbak",
+  "empty": "No misbak has been prepared for this day.",
+  "error": "Couldn't load the misbak. Please try again.",
+  "fallbackNotice": "Not available in your language yet, shown in Amharic."
 }

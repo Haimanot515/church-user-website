@@ -1,5 +1,8 @@
 {
   "meaning": "Significato",
   "prevAria": "Misbak precedente",
-  "nextAria": "Misbak successivo"
+  "nextAria": "Misbak successivo",
+  "empty": "Nessun misbak è stato preparato per questo giorno.",
+  "error": "Impossibile caricare il misbak. Riprova.",
+  "fallbackNotice": "Non ancora disponibile nella tua lingua, mostrato in amarico."
 }

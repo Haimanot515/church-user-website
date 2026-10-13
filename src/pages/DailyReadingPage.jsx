@@ -1,44 +1,56 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import API from "../api/api";
+import Spinner from "../components/Spinner";
 import "./DailyReadingPage.css";
 
-// oldest first, newest last; same fields as the Misbak table
-const misbaks = [
-  // placeholder days, delete them and add real ones
-  {
-    date: "23/01/2019",
-    title: "የዕለቱ ምስባክ",
-    verse: "መዝሙር",
-    body: "ምስባክ እዚህ ይገባል",
-    meaning: "ትርጉም እዚህ ይገባል",
-  },
-  {
-    date: "24/01/2019",
-    title: "የዕለቱ ምስባክ",
-    verse: "መዝሙር",
-    body: "ምስባክ እዚህ ይገባል",
-    meaning: "ትርጉም እዚህ ይገባል",
-  },
-  {
-    date: "25/01/2019",
-    title: "የዕለቱ ምስባክ",
-    verse: "መዝሙር 138:7-8",
-    body: "ወአይቴ እጐይይ እምቅድመ ገጽከ\nእመኒ ዐረጉ ውስተ ሰማይ ህየኒ አንተ\nወእመኒ ወረድኩ ውስተ ቀላይ ህየኒ ሀሎከ",
-    meaning: "ከፊትህስ ወዴት እሸሻለሁ?\nወደ ሰማይ ብወጣ፥ አንተ በዚያ ነህ፤\nወደ ሲኦልም ብወርድ፥ በዚያ አለህ።",
-  },
-];
+// shown when the active language has no misbak for a day (Amharic is the original)
+const FALLBACK_LANGUAGE = "am";
 
-// one paragraph per line
 const lines = (text) => text.split("\n").filter(Boolean);
 
-export default function DailyReadingPage() {
-  const { t } = useTranslation();
-  // start on the newest misbak
-  const [index, setIndex] = useState(misbaks.length - 1);
-  const misbak = misbaks[index];
+const fetchMisbak = async (path, lang) => {
+  try {
+    return { data: (await API.get(path)).data, fallback: false };
+  } catch (err) {
+    const canRetry = err.response?.status === 404 && lang !== FALLBACK_LANGUAGE;
+    if (!canRetry) throw err;
+  }
+  const res = await API.get(path, { headers: { "Accept-Language": FALLBACK_LANGUAGE } });
+  return { data: res.data, fallback: true };
+};
 
-  const hasPrev = index > 0;
-  const hasNext = index < misbaks.length - 1;
+export default function DailyReadingPage() {
+  const { t, i18n } = useTranslation();
+  const lang = (i18n.language || "en").split("-")[0].toLowerCase();
+  const [state, setState] = useState({ status: "loading", misbak: null, fallback: false });
+  const latest = useRef(0);
+
+  // only the newest request may update the page, so quick arrow clicks can't race
+  const load = useCallback(
+    async (path) => {
+      const id = ++latest.current;
+      setState((s) => ({ ...s, status: "loading" }));
+      try {
+        const { data, fallback } = await fetchMisbak(path, lang);
+        if (id === latest.current) setState({ status: "ready", misbak: data, fallback });
+      } catch (err) {
+        if (id !== latest.current) return;
+        const status = err.response?.status === 404 ? "empty" : "error";
+        setState({ status, misbak: null, fallback: false });
+      }
+    },
+    [lang]
+  );
+
+  useEffect(() => {
+    load("/misbak/today");
+  }, [load]);
+
+  const { status, misbak, fallback } = state;
+  const busy = status === "loading";
+  const hasPrev = !busy && Boolean(misbak?.prevDate);
+  const hasNext = !busy && Boolean(misbak?.nextDate);
 
   return (
     <main className="daily">
@@ -61,7 +73,7 @@ export default function DailyReadingPage() {
         <button
           type="button"
           className="daily__arrow daily__arrow--prev"
-          onClick={() => setIndex(index - 1)}
+          onClick={() => load("/misbak/date/" + misbak.prevDate)}
           disabled={!hasPrev}
           aria-label={t("misbak.prevAria")}
           title={t("common.previous")}
@@ -78,50 +90,60 @@ export default function DailyReadingPage() {
           </svg>
         </button>
 
-        <article
-          key={misbak.date}
-          className="misbak"
-          aria-labelledby="misbak-verse"
-        >
-          <h1 className="misbak__tag">
-            {t("navbar.links.dailyMisbak")}
-            <svg
-              className="misbak__quote"
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              aria-hidden="true"
-            >
-              <path
-                fill="currentColor"
-                d="M5 18v-5c0-3.5 1.8-5.8 5-6.5l.6 1.5C9 8.6 8.2 9.6 8 11h3v7H5Zm8 0v-5c0-3.5 1.8-5.8 5-6.5l.6 1.5c-1.6.6-2.4 1.6-2.6 3h3v7h-6Z"
-              />
-            </svg>
-          </h1>
+        {misbak ? (
+          <article
+            key={misbak.date}
+            className="misbak"
+            aria-labelledby="misbak-verse"
+          >
+            <h1 className="misbak__tag">
+              {t("navbar.links.dailyMisbak")}
+              <svg
+                className="misbak__quote"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                aria-hidden="true"
+              >
+                <path
+                  fill="currentColor"
+                  d="M5 18v-5c0-3.5 1.8-5.8 5-6.5l.6 1.5C9 8.6 8.2 9.6 8 11h3v7H5Zm8 0v-5c0-3.5 1.8-5.8 5-6.5l.6 1.5c-1.6.6-2.4 1.6-2.6 3h3v7h-6Z"
+                />
+              </svg>
+            </h1>
 
-          <h2 id="misbak-verse" className="misbak__ref">
-            {misbak.verse}
-          </h2>
+            <h2 id="misbak-verse" className="misbak__ref">
+              {misbak.verse}
+            </h2>
 
-          <div className="misbak__body misbak__body--geez">
-            {lines(misbak.body).map((line) => (
-              <p key={line}>{line}</p>
-            ))}
-          </div>
+            <div className="misbak__body misbak__body--geez">
+              {lines(misbak.body).map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
 
-          <h3 className="misbak__sub">{t("misbak.meaning")}</h3>
+            <h3 className="misbak__sub">{t("misbak.meaning")}</h3>
 
-          <div className="misbak__body">
-            {lines(misbak.meaning).map((line) => (
-              <p key={line}>{line}</p>
-            ))}
-          </div>
-        </article>
+            <div className="misbak__body">
+              {lines(misbak.meaning).map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
+
+            {fallback && <p className="misbak__notice">{t("misbak.fallbackNotice")}</p>}
+          </article>
+        ) : (
+          !busy && (
+            <p className="misbak__status" role="status">
+              {t(status === "empty" ? "misbak.empty" : "misbak.error")}
+            </p>
+          )
+        )}
 
         <button
           type="button"
           className="daily__arrow daily__arrow--next"
-          onClick={() => setIndex(index + 1)}
+          onClick={() => load("/misbak/date/" + misbak.nextDate)}
           disabled={!hasNext}
           aria-label={t("misbak.nextAria")}
           title={t("common.next")}
@@ -138,8 +160,10 @@ export default function DailyReadingPage() {
           </svg>
         </button>
 
-        <p className="daily__date">{misbak.date}</p>
+        {misbak && <p className="daily__date">{misbak.ethiopian.label}</p>}
       </div>
+
+      {busy && <Spinner />}
     </main>
   );
 }

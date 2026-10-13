@@ -566,3 +566,19 @@
     justify-self: end;
   }
 }
+
+.daily__stage > .misbak__status {
+  grid-area: card;
+  margin: 0;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--slate);
+}
+
+.misbak__notice {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--gold-light);
+  opacity: 0.85;
+}
