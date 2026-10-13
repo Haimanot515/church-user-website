@@ -6,34 +6,27 @@ import { stripHtml, Rich } from "../components/RichTextView";
 import Spinner from "../components/Spinner";
 import useInView from "../hooks/useInView";
 
-// Rich keeps colors/bold/links; stripHtml gives plain text for alt/aria.
-// Leadership, Testimonials and Special Thanks now live in ChurchTeamsPage.jsx.
 
 const ChurchAboutPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Localized church name, falls back to English if no translation exists
   const CHURCH_NAME = t("about.churchName", {
     defaultValue:
       "Ethiopian Orthodox Tewahedo Church – Debre Selam Abune Gebre Menfes Kidus Church, Udine",
   });
 
-  // Map query includes the business name so the geocoder resolves to the verified Place listing
   const MAP_QUERY =
     "LA CHIESA ORTODOSSA TEWAHDO D'ETIOPI Abune g.menfeskidus, Via Baldasseria Bassa, 353, 33100 Udine UD, Italy";
 
-  // Verified Google Maps place link, same place as the embed
   const MAP_PLACE_URL = "https://maps.app.goo.gl/561B5ceMkyJfWMaZ6";
 
   const [activeFaq, setActiveFaq] = useState(null);
-  // Lower sections only request their data when the visitor scrolls near them.
   const [historyRef, historySeen] = useInView();
   const [missionRef, missionSeen] = useInView();
   const [faithRef, faithSeen] = useInView();
   const [faqRef, faqSeen] = useInView();
 
-  // About/Hero content from /about
   const [about, setAbout] = useState(null);
   const [aboutFallback, setAboutFallback] = useState(false);
   const [aboutLoading, setAboutLoading] = useState(true);
@@ -71,7 +64,6 @@ const ChurchAboutPage = () => {
     fetchAbout();
   }, [t]);
 
-  // "Our Church Story" chapters from /church-story (paginated server-side)
   const HISTORY_PAGE_SIZE = 10;
   const [history, setHistory] = useState([]);
   const [historyPage, setHistoryPage] = useState(1);
@@ -127,7 +119,6 @@ const ChurchAboutPage = () => {
     fetchHistory(nextPage);
   };
 
-  // Mission & Vision from /mission-vision
   const [missionVision, setMissionVision] = useState([]);
   const [missionVisionLoading, setMissionVisionLoading] = useState(true);
   const [missionVisionFallback, setMissionVisionFallback] = useState(false);
@@ -167,7 +158,6 @@ const ChurchAboutPage = () => {
     if (missionSeen) fetchMissionVision();
   }, [t, missionSeen]);
 
-  // Faith questions from /faq?category=Faith, shown above the FAQ section
   const [faithFaqs, setFaithFaqs] = useState([]);
   const [faithFaqsLoading, setFaithFaqsLoading] = useState(true);
   const [faithFaqsFallback, setFaithFaqsFallback] = useState(false);
@@ -194,8 +184,8 @@ const ChurchAboutPage = () => {
 
         setFaithFaqs(
           sorted.map((item) => ({
-            q: stripHtml(item.question), // plain text for the button label
-            a: item.answer, // HTML, rendered with Rich
+            q: stripHtml(item.question),
+            a: item.answer,
           }))
         );
       } catch (err) {
@@ -208,7 +198,6 @@ const ChurchAboutPage = () => {
     if (faithSeen) fetchFaithFaqs();
   }, [t, faithSeen]);
 
-  // FAQ accordion from /faq?category=Information
   const [faqs, setFaqs] = useState([]);
   const [faqLoading, setFaqLoading] = useState(true);
   const [faqFallback, setFaqFallback] = useState(false);
@@ -235,8 +224,8 @@ const ChurchAboutPage = () => {
 
         setFaqs(
           sorted.map((item) => ({
-            q: stripHtml(item.question), // plain text for the button label
-            a: item.answer, // HTML, rendered with Rich
+            q: stripHtml(item.question),
+            a: item.answer,
           }))
         );
       } catch (err) {
@@ -312,6 +301,48 @@ const ChurchAboutPage = () => {
         .fact-value { font-family: 'Nunito Sans', sans-serif; font-size: 1.4rem; font-weight: 600; color: #eaf3f8; margin: 0; line-height: 1.65; }
         @media (max-width: 600px) { .fact-grid { grid-template-columns: 1fr; } }
 
+        .fact-grid.mv-grid {
+          background: transparent;
+          border-radius: 0;
+          overflow: visible;
+          gap: 48px;
+          width: min(1500px, 96vw);
+          max-width: none;
+          position: relative;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+        .fact-item.mv-card {
+          position: relative;
+          padding: 48px 36px;
+          border-radius: 18px;
+          border: 2px solid rgba(207,159,63,0.6);
+          background-color: #4a2e18;
+          background-image:
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='c' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.018' numOctaves='4' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.03 0 0 0 0 0.01 0 0 0 1.6 -0.55'/></filter><rect width='100%25' height='100%25' filter='url(%23c)'/></svg>"),
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='g' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.1 0 0 0 0 0.04 0 0 0 0.9 -0.18'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>"),
+            radial-gradient(circle at 12% 18%, rgba(168,124,78,0.55) 0 2px, transparent 3px),
+            radial-gradient(circle at 63% 41%, rgba(30,17,8,0.7) 0 3px, transparent 4px),
+            radial-gradient(circle at 82% 77%, rgba(150,108,66,0.5) 0 2px, transparent 3px),
+            radial-gradient(circle at 37% 88%, rgba(25,14,6,0.65) 0 2px, transparent 3px),
+            radial-gradient(ellipse at 30% 0%, #7a5330 0%, transparent 60%),
+            linear-gradient(160deg, #6a4527 0%, #4a2e18 55%, #331e0e 100%);
+          background-size: 320px 320px, 260px 260px, 83px 83px, 127px 127px, 97px 97px, 151px 151px, 100% 100%, 100% 100%;
+          box-shadow: inset 0 0 70px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,220,160,0.12), 0 22px 40px rgba(0,0,0,0.38);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .fact-item.mv-card:hover {
+          transform: translateY(-5px);
+          box-shadow: inset 0 0 70px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,220,160,0.12), 0 28px 48px rgba(0,0,0,0.48);
+        }
+        .mv-card .fact-label { text-shadow: 0 2px 6px rgba(0,0,0,0.55); font-size: 2.1rem; }
+        .mv-card .fact-value { color: #f8ecdb; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+        @media (max-width: 600px) {
+          .fact-grid.mv-grid { gap: 30px; }
+          .fact-item.mv-card { padding: 34px 22px; }
+          .mv-card .fact-label { font-size: 1.7rem; }
+        }
+
         .body-copy {
           font-family: 'Nunito Sans', sans-serif;
           font-size: 1.4rem;
@@ -339,6 +370,229 @@ const ChurchAboutPage = () => {
         }
         .accordion-icon { font-family: 'IBM Plex Mono', monospace; color: var(--gold); font-size: 1.2rem; flex-shrink: 0; margin-left: 20px; }
         .accordion-body { padding: 0 4px 24px 4px; max-width: 640px; }
+
+        /* FAQ - same look as Contact and Travel pages */
+        .faq-item { border-bottom: 1px solid rgba(28,58,82,0.14); }
+        .faq-item:first-child { border-top: 1px solid rgba(28,58,82,0.14); }
+        .faq-question {
+          width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+          padding: 24px 0; display: flex; justify-content: space-between; align-items: center;
+          gap: 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; font-weight: 700;
+          color: var(--navy-deep);
+        }
+        .faq-toggle {
+          flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+          border: 1.5px solid var(--gold); color: var(--gold);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.2rem; font-family: 'IBM Plex Mono', monospace;
+        }
+        .faq-answer { padding: 0 0 26px 0; font-size: 1.2rem; color: #3d5a6c; line-height: 1.8; max-width: 640px; text-align: left; }
+        .faq-section + div + .faq-section { padding-top: 0; }
+        @media (max-width: 900px) {
+          .faq-section h2.display { text-align: left !important; }
+        }
+        @media (max-width: 600px) {
+          .faq-question { font-size: 1.35rem; padding: 20px 0; }
+          .faq-answer { font-size: 1.05rem; line-height: 1.65; }
+        }
+
+        /* Unified typography - every section follows the Our Church Story style */
+        .church-portal h2.display {
+          font-size: 2.8rem !important;
+          font-weight: 700 !important;
+          line-height: 1.1 !important;
+          letter-spacing: normal !important;
+          -webkit-text-stroke: 0 !important;
+        }
+        .church-portal h2.display:not(.team-card-title) { margin: 0 0 40px 0 !important; }
+        .church-portal h3.display,
+        .church-portal .location-name {
+          font-size: 2rem !important;
+          font-weight: 700 !important;
+          line-height: 1.1 !important;
+          letter-spacing: normal !important;
+          -webkit-text-stroke: 0 !important;
+        }
+        .church-portal .faq-question { font-size: 1.5rem; font-weight: 700; }
+        .church-portal .team-card-desc,
+        .church-portal .support-card-text,
+        .church-portal .location-address,
+        .church-portal .faq-answer,
+        .church-portal .body-copy.on-red {
+          font-size: 1.5rem !important;
+          font-weight: 400 !important;
+          line-height: 1.6 !important;
+        }
+        .church-portal .faq-answer p { font-size: inherit; line-height: inherit; margin: 0 0 12px 0; }
+        @media (max-width: 900px) {
+          .church-portal h2.display { font-size: 2.3rem !important; }
+          .church-portal h3.display,
+          .church-portal .location-name { font-size: 1.8rem !important; }
+        }
+        @media (max-width: 600px) {
+          .church-portal h2.display { font-size: 2rem !important; }
+          .church-portal .faq-question { font-size: 1.25rem; }
+          .church-portal .team-card-desc,
+          .church-portal .support-card-text,
+          .church-portal .location-address,
+          .church-portal .faq-answer,
+          .church-portal .body-copy.on-red {
+            font-size: 1.05rem !important;
+            line-height: 1.55 !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .church-portal h3.display,
+          .church-portal .location-name { font-size: 1.6rem !important; }
+        }
+
+        /* Unified type - labels, buttons, empty state and notices follow the story style */
+        .church-portal .team-card-label,
+        .church-portal .support-card-label {
+          font-family: 'IBM Plex Mono', monospace !important;
+          font-size: 0.82rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 2px !important;
+          text-transform: uppercase !important;
+        }
+        .church-portal .team-card-btn,
+        .church-portal .support-card-btn,
+        .church-portal .location-btn {
+          font-family: 'IBM Plex Mono', monospace !important;
+          font-size: 0.85rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.04em !important;
+        }
+        .church-portal p.display {
+          font-size: 2rem !important;
+          font-weight: 700 !important;
+          line-height: 1.1 !important;
+        }
+        .church-portal .faq-answer,
+        .church-portal .faq-answer * { font-family: 'Nunito Sans', sans-serif; }
+
+        /* Type matched to the Home page Current Series section */
+        .church-portal .about-title,
+        .church-portal h3.display,
+        .church-portal .location-name,
+        .church-portal p.display {
+          font-family: Georgia, serif !important;
+          font-size: 2rem !important;
+          font-weight: 600 !important;
+          line-height: 1 !important;
+          letter-spacing: normal !important;
+          -webkit-text-stroke: 0 !important;
+        }
+        .church-portal .faq-question {
+          font-family: Georgia, serif !important;
+          font-size: 1.5rem !important;
+          font-weight: 600 !important;
+        }
+        .church-portal .about-description,
+        .church-portal .team-card-desc,
+        .church-portal .support-card-text,
+        .church-portal .location-address,
+        .church-portal .faq-answer,
+        .church-portal .body-copy.on-red {
+          font-family: 'Nunito Sans', sans-serif !important;
+          font-size: 1.5rem !important;
+          font-weight: 400 !important;
+          line-height: 1.6 !important;
+        }
+        .church-portal .read-full-story-btn,
+        .church-portal .team-card-btn,
+        .church-portal .support-card-btn,
+        .church-portal .location-btn {
+          font-family: 'Nunito Sans', sans-serif !important;
+          font-size: 1rem !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.04em !important;
+        }
+        @media (max-width: 900px) {
+          .church-portal .about-title,
+          .church-portal h3.display,
+          .church-portal .location-name,
+          .church-portal p.display { font-size: 1.8rem !important; }
+        }
+        @media (max-width: 600px) {
+          .church-portal .faq-question { font-size: 1.25rem !important; }
+          .church-portal .about-description,
+          .church-portal .team-card-desc,
+          .church-portal .support-card-text,
+          .church-portal .location-address,
+          .church-portal .faq-answer,
+          .church-portal .body-copy.on-red {
+            font-size: 1.05rem !important;
+            line-height: 1.55 !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .church-portal .about-title,
+          .church-portal h3.display,
+          .church-portal .location-name,
+          .church-portal p.display { font-size: 1.6rem !important; }
+        }
+
+        /* Lighter weights from the FAQ sections down to the bottom of the page */
+        .church-portal .team-section ~ * h2.display { font-weight: 600 !important; }
+        .church-portal .team-section ~ * h3.display,
+        .church-portal .team-section ~ * .location-name,
+        .church-portal .team-section ~ * .faq-question { font-weight: 400 !important; }
+        .church-portal .team-section ~ * .support-card-label { font-weight: 500 !important; }
+        .church-portal .team-section ~ * .support-card-btn,
+        .church-portal .team-section ~ * .location-btn { font-weight: 600 !important; }
+
+        /* Lighter weights for the leadership team section too */
+        .church-portal .team-section h2.display { font-weight: 600 !important; }
+        .church-portal .team-section .team-card-label { font-weight: 500 !important; }
+        .church-portal .team-section .team-card-btn { font-weight: 600 !important; }
+
+        /* Lighter weights for the support section, set directly on its own classes */
+        .church-portal .support-head-text h2.display { font-weight: 600 !important; }
+        .church-portal .support-card .support-card-title { font-weight: 400 !important; }
+        .church-portal .support-card .support-card-label { font-weight: 500 !important; }
+        .church-portal .support-card .support-card-btn { font-weight: 600 !important; }
+        .church-portal .support-card .support-card-text,
+        .church-portal .support-head-text .body-copy { font-weight: 400 !important; }
+
+        /* FAQ question and answer sizes match the item titles and text of the other sections */
+        .church-portal .faq-question { font-size: 2rem !important; line-height: 1.1 !important; }
+        .church-portal .faq-answer,
+        .church-portal .faq-answer p { font-size: 1.5rem !important; line-height: 1.6 !important; max-width: 900px; }
+        @media (max-width: 900px) {
+          .church-portal .faq-question { font-size: 1.8rem !important; }
+        }
+        @media (max-width: 600px) {
+          .church-portal .faq-question { font-size: 1.8rem !important; }
+          .church-portal .faq-answer,
+          .church-portal .faq-answer p { font-size: 1.05rem !important; line-height: 1.55 !important; }
+        }
+        @media (max-width: 480px) {
+          .church-portal .faq-question { font-size: 1.6rem !important; }
+        }
+
+        /* FAQ questions use the normal text size of the page */
+        .church-portal .faq-question { font-size: 1.5rem !important; line-height: 1.6 !important; }
+        @media (max-width: 900px) {
+          .church-portal .faq-question { font-size: 1.5rem !important; }
+        }
+        @media (max-width: 600px) {
+          .church-portal .faq-question { font-size: 1.05rem !important; line-height: 1.55 !important; }
+        }
+        @media (max-width: 480px) {
+          .church-portal .faq-question { font-size: 1.05rem !important; }
+        }
+
+        /* No underlines anywhere on the About page, including links from the rich text editor */
+        .church-portal a,
+        .church-portal a:hover,
+        .church-portal u,
+        .church-portal span,
+        .church-portal [style*="underline"] {
+          text-decoration: none !important;
+          text-decoration-line: none !important;
+        }
 
         .cta-band { text-align: center; }
 
@@ -381,16 +635,18 @@ const ChurchAboutPage = () => {
           .about-hero-text-col .hero-cta-row { margin-top: 44px; }
         }
 
-        .map-frame {
-          width: 100%;
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 20px 40px rgba(15,36,56,0.16);
-          border: 1px solid rgba(28,58,82,0.12);
-          background: #ffffff;
+        .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 46px; align-items: center; }
+        .map-frame { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; box-shadow: 0 20px 40px rgba(15,36,56,0.16); border: 1px solid rgba(28,58,82,0.12); }
+        .map-frame iframe { width: 100%; height: 100%; display: block; border: 0; }
+        .location-name { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 700; color: var(--navy-deep); line-height: 1.25; margin: 0 0 14px 0; text-align: left; }
+        .location-address { font-size: 1.25rem; color: var(--slate); line-height: 1.7; margin: 0 0 28px 0; text-align: left; }
+        .location-btn { display: inline-block; }
+        @media (max-width: 800px) {
+          .location-grid { grid-template-columns: 1fr; gap: 30px; }
+          .location-name { font-size: 1.6rem; }
+          .location-address { font-size: 1.05rem; }
+          .location-btn { width: 100%; }
         }
-        .map-frame iframe { width: 100%; height: 420px; display: block; border: 0; }
-        @media (max-width: 600px) { .map-frame iframe { height: 300px; } }
 
         .about-section {
           width: 100%;
@@ -405,16 +661,17 @@ const ChurchAboutPage = () => {
         .about-item {
           display: flex;
           flex-wrap: wrap;
-          align-items: flex-start;
+          align-items: stretch;
           justify-content: center;
           gap: 50px;
           margin-bottom: 60px;
         }
-        .about-photo-side { flex: 0 1 380px; position: relative; }
-        .about-img-wrapper { position: relative; z-index: 2; display: block; cursor: pointer; }
+        .about-photo-side { flex: 0 1 380px; position: relative; align-self: stretch; min-height: 450px; }
+        .about-img-wrapper { position: relative; z-index: 2; display: block; cursor: pointer; height: 100%; }
         .about-image {
           width: 100%;
-          height: 450px;
+          height: 100%;
+          min-height: 450px;
           border-radius: 20px;
           object-fit: cover;
           object-position: center;
@@ -496,13 +753,15 @@ const ChurchAboutPage = () => {
         .read-full-story-btn:hover { background: var(--navy-deep); border-color: var(--navy-deep); }
         @media (max-width: 900px) {
           .about-item { flex-direction: column; align-items: center; text-align: center; }
-          .about-photo-side { flex: 0 1 100%; width: 100%; max-width: 450px; }
+          .about-photo-side { flex: 0 1 100%; width: 100%; max-width: 450px; min-height: 0; }
+          .about-img-wrapper { height: auto; }
+          .about-image { height: 450px; min-height: 0; }
           .about-description { text-align: center; }
           .about-tags { justify-content: center; }
           .about-title { font-size: 1.8rem; }
         }
         @media (max-width: 480px) {
-          .about-image { height: 350px; }
+          .about-image { height: 350px; min-height: 0; }
           .about-title { font-size: 1.6rem; }
         }
 
@@ -648,6 +907,219 @@ const ChurchAboutPage = () => {
           font-weight: 600;
         }
         .map-address-link:hover { color: var(--navy-deep); }
+
+        /* story-fit-override */
+        @media (min-width: 901px) {
+          .about-item { align-items: stretch !important; }
+          .about-photo-side { align-self: stretch !important; min-height: 450px !important; }
+          .about-img-wrapper { height: 100% !important; }
+          .about-image { height: 100% !important; min-height: 450px !important; }
+        }
+
+        /* story-card-cover */
+        .about-art-accent { display: none !important; }
+
+        /* button-shape-match */
+        .read-full-story-btn,
+        .load-more-btn,
+        a[href="/church-teams"],
+        a[href^="/church-support#"] {
+          border-radius: 10px !important;
+        }
+
+        /* story-image-wider-left */
+        @media (min-width: 901px) {
+          .about-photo-side { flex: 0 1 404px !important; margin-left: -24px !important; }
+        }
+        @media (min-width: 1200px) {
+          .about-photo-side { flex: 0 1 480px !important; margin-left: -100px !important; }
+        }
+
+        /* story-gap-after-first */
+        .about-item + .about-item { margin-top: 50px; }
+
+        /* story-image-left-distance */
+        @media (min-width: 901px) {
+          .about-photo-side { flex: 0 1 392px !important; margin-left: -12px !important; }
+        }
+        @media (min-width: 1200px) {
+          .about-photo-side { flex: 0 1 430px !important; margin-left: -50px !important; }
+        }
+
+        /* support-grid */
+        .support-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 28px;
+        }
+        .support-card {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 36px 34px;
+          border-radius: 16px;
+          border: 1.5px solid rgba(207,159,63,0.55);
+          background: rgba(255,255,255,0.07);
+          box-shadow: 0 18px 34px rgba(0,0,0,0.25);
+          transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .support-card:hover {
+          transform: translateY(-4px);
+          background: rgba(255,255,255,0.11);
+          box-shadow: 0 24px 42px rgba(0,0,0,0.35);
+        }
+        .support-card-label {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 0.78rem;
+          font-weight: 700;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: var(--gold);
+        }
+        .support-card-title {
+          font-size: 2.2rem;
+          font-weight: 700;
+          color: #ffffff;
+          margin: 12px 0 12px 0;
+          text-align: left;
+        }
+        .support-card-text {
+          font-family: 'Nunito Sans', sans-serif;
+          font-size: 1.25rem;
+          line-height: 1.6;
+          color: #f3e3e3;
+          margin: 0 0 28px 0;
+          text-align: left;
+          flex: 1;
+        }
+        .support-card-btn {
+          display: inline-block;
+          min-width: 180px;
+          padding: 12px 24px;
+          text-align: center;
+          font-size: 1.05rem;
+          font-weight: 700;
+          text-decoration: none;
+          border-radius: 10px !important;
+        }
+        .support-card-btn-fill { background: var(--gold); color: var(--navy-deep); border: 1.5px solid var(--gold); }
+        .support-card-btn-fill:hover { background: #e0b25a; border-color: #e0b25a; }
+        .support-card-btn-outline { background: transparent; color: #ffffff; border: 1.5px solid #ffffff; }
+        .support-card-btn-outline:hover { background: rgba(255,255,255,0.14); }
+        @media (max-width: 800px) {
+          .support-grid { grid-template-columns: 1fr; gap: 22px; }
+          .support-card { padding: 28px 24px; }
+          .support-card-title { font-size: 1.9rem; }
+          .support-card-btn { width: 100%; }
+        }
+
+        /* support-graphic */
+        .support-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 40px;
+          margin-bottom: 44px;
+        }
+        .support-head-text { flex: 1 1 420px; }
+        .support-art { flex: 0 0 260px; }
+        .support-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 14px 22px rgba(0,0,0,0.3)); }
+        @media (max-width: 800px) {
+          .support-head { flex-direction: column; align-items: center; gap: 24px; }
+          .support-head-text { flex: 0 0 auto; width: 100%; }
+          .support-art { flex: 0 0 auto; width: 200px; max-width: 70%; }
+        }
+
+        /* support-photo */
+        .support-art { flex: 0 0 380px; }
+        .support-photo {
+          width: 100%;
+          aspect-ratio: 4 / 3;
+          object-fit: cover;
+          display: block;
+          border-radius: 16px;
+          border: 1.5px solid rgba(207,159,63,0.6);
+          box-shadow: 0 22px 40px rgba(0,0,0,0.38);
+        }
+        @media (max-width: 800px) {
+          .support-art { width: 100%; max-width: 420px; }
+        }
+
+        /* support-label-bold */
+        .support-card-label {
+          font-family: 'Nunito Sans', sans-serif !important;
+          font-size: 1.05rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 1.5px !important;
+          color: #f5c542 !important;
+        }
+
+        /* support-title-bold */
+        .support-head-text h2 {
+          font-size: clamp(2.5rem, 5vw, 3.6rem) !important;
+          font-weight: 700 !important;
+          -webkit-text-stroke: 1px currentColor;
+          letter-spacing: 0.01em;
+        }
+
+        /* team-card */
+        .team-card {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 40px;
+          padding: 40px 44px;
+          border-radius: 16px;
+          border: 1.5px solid rgba(207,159,63,0.55);
+          background: rgba(255,255,255,0.07);
+          box-shadow: 0 18px 34px rgba(0,0,0,0.25);
+        }
+        .team-card-text { flex: 1 1 auto; max-width: 760px; }
+        .team-card-label {
+          display: block;
+          font-family: 'Nunito Sans', sans-serif;
+          font-size: 1.05rem;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          color: #f5c542;
+        }
+        .team-card-title {
+          font-size: clamp(2.5rem, 5vw, 3.6rem);
+          font-weight: 700;
+          -webkit-text-stroke: 1px currentColor;
+          color: #ffffff;
+          margin: 12px 0 14px 0;
+          text-align: left;
+        }
+        .team-card-desc {
+          font-family: 'Nunito Sans', sans-serif;
+          font-size: 1.25rem;
+          line-height: 1.6;
+          color: #f3e3e3;
+          margin: 0;
+          text-align: left;
+        }
+        .team-card-btn {
+          flex: 0 0 auto;
+          display: inline-block;
+          min-width: 190px;
+          padding: 12px 24px;
+          text-align: center;
+          font-size: 1.05rem;
+          font-weight: 700;
+          text-decoration: none;
+          background: var(--gold);
+          color: var(--navy-deep);
+          border: 1.5px solid var(--gold);
+          border-radius: 10px !important;
+          transition: background 0.2s ease;
+        }
+        .team-card-btn:hover { background: #e0b25a; border-color: #e0b25a; }
+        @media (max-width: 800px) {
+          .team-card { flex-direction: column; align-items: stretch; gap: 26px; padding: 28px 24px; }
+          .team-card-btn { width: 100%; }
+        }
       `}</style>
 
       <div className="cloud-layer">
@@ -656,7 +1128,6 @@ const ChurchAboutPage = () => {
         <div className="cloud cloud-c" />
       </div>
 
-      {/* HERO */}
       <section style={{ padding: '100px 0 80px 0', background: 'linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%)' }}>
         <div className="wrapper about-hero-flex" style={{ display: 'flex', alignItems: 'center', gap: '64px', flexWrap: 'wrap' }}>
           {aboutLoading ? (
@@ -671,7 +1142,6 @@ const ChurchAboutPage = () => {
                 <h1 className="display hero-title" style={{ fontSize: 'clamp(1rem, 6vw, 3rem)', fontWeight: 700, lineHeight: 1.08, margin: '0 0 26px 0', padding: 0, textAlign: 'left', color: '#eaf3f8' }}>
                   <Rich html={about?.title} fallback={t("about.hero.titleFallback")} />
                 </h1>
-                {/* Inside a Link: links in the text render as plain underlined text (nested anchors are invalid) */}
                 <Rich
                   className="hero-desc"
                   inline={false}
@@ -759,10 +1229,9 @@ const ChurchAboutPage = () => {
           {missionVisionLoading ? (
             missionSeen ? <Spinner light /> : <div style={{ minHeight: 320 }} />
           ) : (
-            <div className="fact-grid">
+            <div className="fact-grid mv-grid">
               {missionVision.map((m, i) => (
-                <div className="fact-item" key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  {/* div, not p: rich text renders block HTML */}
+                <div className="fact-item mv-card" key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                   <div className="fact-label" style={{ textAlign: 'center' }}>
                     <Rich html={m.label} unwrapLinks={false} />
                   </div>
@@ -774,7 +1243,6 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* OUR STORY (paginated via /church-story?page=&limit=) */}
       <div ref={historyRef} />
       <section className="about-section" id="our-church-story">
         <div className="about-container">
@@ -789,7 +1257,6 @@ const ChurchAboutPage = () => {
           )}
 
           {history.map((item, index) => {
-            // Only the latest chapter (index 0) is shown in full, older ones are truncated
             const STORY_WORD_LIMIT = 60;
             const isLatest = index === 0;
 
@@ -821,7 +1288,6 @@ const ChurchAboutPage = () => {
                 <h2 className="about-title">
                   <Rich html={item.title} unwrapLinks={false} />
                 </h2>
-                {/* Not inside a Link, so links stay clickable */}
                 <div className="about-description">
                   {isLatest ? (
                     <Rich html={item.desc} inline={false} unwrapLinks={false} />
@@ -867,26 +1333,31 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* LINK TO TEAMS PAGE */}
-      <section style={{ background: 'var(--deep-red)', paddingTop: '50px', paddingBottom: '50px' }}>
-        <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
-          <h2 className="display" style={{ fontSize: '2.4rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
-            {t("about.teamLink.heading", { defaultValue: "Meet Our Team" })}
-          </h2>
-          <Link
-            to="/church-teams"
-            style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, borderRadius: '30px', display: 'inline-block' }}
-          >
-            {t("about.teamLink.button", { defaultValue: "View the team" })}
-          </Link>
+      <section className="team-section" style={{ background: 'var(--deep-red)', paddingTop: '60px', paddingBottom: '60px' }}>
+        <div className="wrapper">
+          <div className="team-card">
+            <div className="team-card-text">
+              <span className="team-card-label">
+                {t("team.leadership.heading", { defaultValue: "Our Leadership Team" })}
+              </span>
+              <h2 className="display team-card-title">
+                {t("about.teamLink.heading", { defaultValue: "Meet Our Team" })}
+              </h2>
+              <p className="team-card-desc">
+                {t("team.description")}
+              </p>
+            </div>
+            <Link to="/church-teams" className="team-card-btn">
+              {t("about.teamLink.button", { defaultValue: "View the team" })}
+            </Link>
+          </div>
         </div>
       </section>
 
       <div ref={faithRef} />
-      {/* FAITH QUESTIONS from /faq?category=Faith, above the FAQ section */}
-      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
-        <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
+      <section className="faq-section" style={{ background: '#ffffff' }}>
+        <div className="wrapper">
+          <h2 className="display" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.4rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
             {t("about.faithFaq.heading", { defaultValue: "Questions of Faith" })}
           </h2>
 
@@ -901,15 +1372,13 @@ const ChurchAboutPage = () => {
           ) : (
             <div>
               {faithFaqs.map((f, i) => (
-                <div className="accordion-item" key={`faith-${i}`}>
-                  <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === `faith-${i}` ? null : `faith-${i}`)}>
-                    {f.q}
-                    <span className="accordion-icon">{activeFaq === `faith-${i}` ? '−' : '+'}</span>
+                <div className="faq-item" key={`faith-${i}`}>
+                  <button className="faq-question" onClick={() => setActiveFaq(activeFaq === `faith-${i}` ? null : `faith-${i}`)}>
+                    <span>{f.q}</span>
+                    <span className="faq-toggle">{activeFaq === `faith-${i}` ? '–' : '+'}</span>
                   </button>
                   {activeFaq === `faith-${i}` && (
-                    <div className="accordion-body">
-                      <Rich className="body-copy" inline={false} unwrapLinks={false} html={f.a} />
-                    </div>
+                    <Rich className="faq-answer" inline={false} unwrapLinks={false} html={f.a} />
                   )}
                 </div>
               ))}
@@ -919,10 +1388,9 @@ const ChurchAboutPage = () => {
       </section>
 
       <div ref={faqRef} />
-      {/* FAQ from /faq?category=Information */}
-      <section style={{ background: 'linear-gradient(180deg, var(--sky-mid) 0%, var(--sky-low) 100%)' }}>
-        <div className="wrapper" style={{ maxWidth: '760px' }}>
-          <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 30px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
+      <section className="faq-section" style={{ background: '#ffffff' }}>
+        <div className="wrapper">
+          <h2 className="display" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.4rem)', fontWeight: 700, margin: '0 0 20px 0', color: 'var(--navy-deep)' }}>
             {t("about.faq.heading")}
           </h2>
 
@@ -937,15 +1405,13 @@ const ChurchAboutPage = () => {
           ) : (
             <div>
               {faqs.map((f, i) => (
-                <div className="accordion-item" key={`info-${i}`}>
-                  <button className="accordion-head" onClick={() => setActiveFaq(activeFaq === `info-${i}` ? null : `info-${i}`)}>
-                    {f.q}
-                    <span className="accordion-icon">{activeFaq === `info-${i}` ? '−' : '+'}</span>
+                <div className="faq-item" key={`info-${i}`}>
+                  <button className="faq-question" onClick={() => setActiveFaq(activeFaq === `info-${i}` ? null : `info-${i}`)}>
+                    <span>{f.q}</span>
+                    <span className="faq-toggle">{activeFaq === `info-${i}` ? '–' : '+'}</span>
                   </button>
                   {activeFaq === `info-${i}` && (
-                    <div className="accordion-body">
-                      <Rich className="body-copy" inline={false} unwrapLinks={false} html={f.a} />
-                    </div>
+                    <Rich className="faq-answer" inline={false} unwrapLinks={false} html={f.a} />
                   )}
                 </div>
               ))}
@@ -954,67 +1420,75 @@ const ChurchAboutPage = () => {
         </div>
       </section>
 
-      {/* SUPPORT & GET INVOLVED: give/volunteer buttons */}
       <div style={{ background: 'var(--deep-red)' }}>
-        <section className="cta-band">
-          <div className="wrapper" style={{ maxWidth: '760px', textAlign: 'center' }}>
-            <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 20px 0', color: '#ffffff' }}>
-              {t("about.support.heading")}
-            </h2>
-            <p className="body-copy on-red" style={{ margin: '0 auto 34px auto', maxWidth: '600px' }}>
-              {t("about.support.description")}
-            </p>
+        <section style={{ paddingTop: '60px', paddingBottom: '70px' }}>
+          <div className="wrapper">
+            <div className="support-head">
+              <div className="support-head-text">
+                <h2 className="display" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: '#ffffff', textAlign: 'left' }}>
+                  {t("about.support.heading")}
+                </h2>
+                <p className="body-copy on-red" style={{ margin: 0, maxWidth: '720px', textAlign: 'left' }}>
+                  {t("about.support.description")}
+                </p>
+              </div>
+            </div>
 
-            {/* Give and Volunteer link to the #accounts and #volunteer sections on /church-support */}
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Link
-                to="/church-support#accounts"
-                style={{ backgroundColor: 'var(--gold)', color: 'var(--navy-deep)', border: 'none', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px', textDecoration: 'none', display: 'inline-block' }}
-              >
-                {t("about.cta.giveButton")}
-              </Link>
-              <Link
-                to="/church-support#volunteer"
-                style={{ backgroundColor: 'transparent', color: '#ffffff', border: '1.5px solid #ffffff', padding: '15px 34px', fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', borderRadius: '30px', textDecoration: 'none', display: 'inline-block' }}
-              >
-                {t("about.cta.volunteerButton")}
-              </Link>
+            <div className="support-grid">
+              <div className="support-card">
+                <span className="support-card-label">
+                  {t("about.support.eyebrow", { defaultValue: "Give Online or In Person" })}
+                </span>
+                <h3 className="display support-card-title">{t("about.cta.giveButton")}</h3>
+                <p className="support-card-text">
+                  {t("about.cta.giveText", { defaultValue: "Send your gift by bank transfer or online, or give in person on Sunday." })}
+                </p>
+                <Link to="/church-support#accounts" className="support-card-btn support-card-btn-fill">
+                  {t("about.cta.giveButton")}
+                </Link>
+              </div>
+
+              <div className="support-card">
+                <span className="support-card-label">
+                  {t("about.cta.volunteerLabel", { defaultValue: "Serve With Us" })}
+                </span>
+                <h3 className="display support-card-title">{t("about.cta.volunteerButton")}</h3>
+                <p className="support-card-text">
+                  {t("about.cta.volunteerText", { defaultValue: "Offer your time and skills. There is a place for you here." })}
+                </p>
+                <Link to="/church-support#volunteer" className="support-card-btn support-card-btn-outline">
+                  {t("about.cta.volunteerButton")}
+                </Link>
+              </div>
             </div>
           </div>
         </section>
       </div>
 
-      {/* FIND US (MAP) with plain-text address and link to the verified Google Maps place */}
-      <div className="about-map-wrap" style={{ background: '#ffffff' }}>
-        <section style={{ paddingTop: '60px', paddingBottom: '0px' }}>
-          <div className="wrapper" style={{ maxWidth: '1000px', textAlign: 'center' }}>
-            <h2 className="display about-map-heading" style={{ fontSize: '2.8rem', fontWeight: 700, margin: '0 0 18px 0', color: 'var(--navy-deep)' }}>
+      <div id="location" className="about-location" style={{ background: '#ffffff', scrollMarginTop: '24px' }}>
+        <section>
+          <div className="wrapper">
+            <h2 className="display" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.4rem)', fontWeight: 700, margin: '0 0 40px 0', color: 'var(--navy-deep)', textAlign: 'left' }}>
               {t("about.map.heading", { defaultValue: "Find Us" })}
             </h2>
-            <p className="body-copy about-map-desc" style={{ margin: '0 auto 34px auto', maxWidth: '600px', color: 'var(--slate)' }}>
-              {t("about.map.description", { churchName: CHURCH_NAME, defaultValue: "Visit us at {{churchName}}." })}
-            </p>
-            <div className="map-frame" style={{ marginBottom: 0 }}>
-              <iframe
-                title={t("about.map.iframeTitle", { defaultValue: "Church location map" })}
-                src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`}
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            <div className="location-grid">
+              <div className="map-frame">
+                <iframe
+                  title={t("about.map.iframeTitle", { defaultValue: "Church location map" })}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <div className="location-info">
+                <p className="location-name">{CHURCH_NAME}</p>
+                <p className="location-address">{t("about.map.placeName", { defaultValue: MAP_QUERY })}</p>
+                <a href={MAP_PLACE_URL} target="_blank" rel="noopener noreferrer" className="team-card-btn location-btn">
+                  {t("about.map.linkLabel", { defaultValue: "Open in Google Maps" })}
+                </a>
+              </div>
             </div>
-            <p className="map-address-line">
-              {t("about.map.placeName", { defaultValue: MAP_QUERY })}
-              {" — "}
-              <a
-                href={MAP_PLACE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="map-address-link"
-              >
-                {t("about.map.linkLabel", { defaultValue: "Open in Google Maps" })}
-              </a>
-            </p>
           </div>
         </section>
       </div>
@@ -1024,3 +1498,5 @@ const ChurchAboutPage = () => {
 };
 
 export default ChurchAboutPage;
+
+export { ChurchAboutPage };

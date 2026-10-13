@@ -12,7 +12,9 @@ import useDocumentMeta from "./hooks/useDocumentMeta";
 
 import "./styles.css";
 
-const About = lazy(() => import("./pages/About"));
+const About = lazy(() =>
+  import("./pages/About").then((m) => ({ default: m.default || m.ChurchAboutPage }))
+);
 const Projects = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Skill = lazy(() => import("./pages/Sermon"));

@@ -505,3 +505,20 @@
 [data-theme="dark"] .about-map-wrap .map-frame iframe {
   filter: grayscale(0.25) brightness(0.85) contrast(1.05) !important;
 }
+
+[data-theme="dark"] .about-location {
+  background: #1a1a1a !important;
+}
+[data-theme="dark"] .about-location h2,
+[data-theme="dark"] .about-location .location-name {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .about-location .location-address {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .about-location .map-frame {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+[data-theme="dark"] .about-location .map-frame iframe {
+  filter: grayscale(0.25) brightness(0.85) contrast(1.05) !important;
+}
